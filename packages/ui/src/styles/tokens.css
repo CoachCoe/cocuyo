@@ -1,0 +1,156 @@
+/**
+ * Firefly Network Design Tokens
+ *
+ * The visual identity is rooted in the Polkadot ecosystem's black-and-white
+ * aesthetic, extended with a single warm accent color (firefly gold) that
+ * represents moments of illumination.
+ *
+ * The 90/8/2 rule: ~90% black/white/gray, ~8% subtle grays for depth,
+ * ~2% accent color. If you're using gold on more than one or two elements
+ * per screen, you're overusing it.
+ */
+
+:root {
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * COLOR PALETTE
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Primary palette — black and white, Polkadot style */
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-tertiary: #141414;
+  --color-bg-elevated: #1a1a1a;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-text-tertiary: #666666;
+
+  --color-border-default: #222222;
+  --color-border-subtle: #1a1a1a;
+  --color-border-emphasis: #333333;
+
+  /* Accent — firefly gold, used sparingly for illumination moments */
+  --color-accent: #e8b931;
+  --color-accent-dim: #c49a1c;
+  --color-accent-glow: rgba(232, 185, 49, 0.15);
+  --color-accent-hover: #f5c842;
+
+  /* Semantic colors */
+  --color-corroborated: #4ade80;
+  --color-challenged: #f87171;
+  --color-pending: #a0a0a0;
+
+  /* Polkadot ecosystem — used ONLY for Polkadot branding/attribution */
+  --color-polkadot-pink: #e6007a;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * TYPOGRAPHY
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Font families */
+  --font-display: 'Unbounded', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Font sizes */
+  --text-xs: 0.75rem; /* 12px — metadata, timestamps */
+  --text-sm: 0.875rem; /* 14px — secondary text */
+  --text-base: 1rem; /* 16px — body text */
+  --text-lg: 1.125rem; /* 18px — emphasis */
+  --text-xl: 1.25rem; /* 20px — section headers */
+  --text-2xl: 1.5rem; /* 24px — page headers */
+  --text-3xl: 2rem; /* 32px — hero text */
+  --text-4xl: 2.5rem; /* 40px — landing hero */
+  --text-5xl: 3rem; /* 48px — large hero */
+
+  /* Line heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  /* Font weights */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SPACING
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem; /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem; /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-8: 2rem; /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem; /* 48px */
+  --spacing-16: 4rem; /* 64px */
+  --spacing-20: 5rem; /* 80px */
+  --spacing-24: 6rem; /* 96px */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * LAYOUT
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Navbar */
+  --navbar-height: 64px;
+  --navbar-height-mobile: 56px;
+
+  /* Content */
+  --content-max-width: 1280px;
+  --content-max-width-narrow: 720px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * BREAKPOINTS (for reference — use Tailwind classes)
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * ANIMATION
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 400ms;
+
+  --ease-default: ease-in-out;
+  --ease-in: ease-in;
+  --ease-out: ease-out;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * Z-INDEX
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --z-base: 0;
+  --z-elevated: 10;
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+    --duration-normal: 0.01ms;
+    --duration-slow: 0.01ms;
+    --duration-slower: 0.01ms;
+  }
+}

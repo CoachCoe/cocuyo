@@ -1,0 +1,316 @@
+/**
+ * Bounties page — Community-funded requests for information.
+ *
+ * Bounties create a functioning market for investigative information,
+ * funded by the people who need it. No intermediary takes a cut,
+ * no payment processor can block the transaction.
+ */
+
+import type { ReactElement } from 'react';
+import Link from 'next/link';
+import { Footer } from '@cocuyo/ui';
+import { AppNavbar } from '@/components/AppNavbar';
+import { getOpenBounties, getBountyPreviews } from '@/lib/services/mock-data-bounties';
+
+/**
+ * Format funding amount from smallest unit to display.
+ */
+function formatFunding(amount: bigint): string {
+  const usdc = Number(amount) / 1_000_000;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(usdc);
+}
+
+/**
+ * Format expiration as days remaining.
+ */
+function formatExpiration(timestamp: number): string {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = timestamp - now;
+
+  if (diff < 0) return 'Expired';
+
+  const days = Math.floor(diff / 86400);
+  if (days === 0) return 'Expires today';
+  if (days === 1) return '1 day left';
+  return `${days} days left`;
+}
+
+/**
+ * Get status badge styling.
+ */
+function getStatusStyle(status: string): { color: string; bg: string } {
+  switch (status) {
+    case 'open':
+      return { color: 'var(--color-corroborated)', bg: 'rgba(74, 222, 128, 0.1)' };
+    case 'fulfilled':
+      return { color: 'var(--color-accent)', bg: 'var(--color-accent-glow)' };
+    case 'expired':
+      return { color: 'var(--color-text-tertiary)', bg: 'var(--color-bg-elevated)' };
+    default:
+      return { color: 'var(--color-text-secondary)', bg: 'var(--color-bg-elevated)' };
+  }
+}
+
+export default function BountiesPage(): ReactElement {
+  const openBounties = getOpenBounties();
+  const allBounties = getBountyPreviews();
+  const fulfilledBounties = allBounties.filter((b) => b.status === 'fulfilled');
+
+  // Calculate total funding available
+  const totalFunding = openBounties.reduce(
+    (sum, b) => sum + b.fundingAmount,
+    BigInt(0)
+  );
+
+  return (
+    <>
+      <AppNavbar currentPath="/bounties" />
+
+      <main className="pt-16">
+        {/* Header */}
+        <section className="py-12 border-b border-[var(--color-border-default)]">
+          <div className="container-wide">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+              <div>
+                <h1 className="text-3xl font-bold mb-4">Information Bounties</h1>
+                <p className="text-[var(--color-text-secondary)] max-w-2xl">
+                  Community-funded requests for specific information. Contribute
+                  verified signals to earn compensation directly — no intermediaries,
+                  no payment processors.
+                </p>
+              </div>
+              <div className="flex flex-col items-start md:items-end gap-2">
+                <span className="text-sm text-[var(--color-text-secondary)]">
+                  Total funding available
+                </span>
+                <span className="text-2xl font-bold text-[var(--color-accent)]">
+                  {formatFunding(totalFunding)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats bar */}
+        <section className="py-6 border-b border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]">
+          <div className="container-wide">
+            <div className="flex flex-wrap gap-8 text-sm">
+              <div>
+                <span className="text-[var(--color-text-secondary)]">Open bounties: </span>
+                <span className="text-[var(--color-text-primary)] font-medium">{openBounties.length}</span>
+              </div>
+              <div>
+                <span className="text-[var(--color-text-secondary)]">Fulfilled: </span>
+                <span className="text-[var(--color-accent)] font-medium">
+                  {fulfilledBounties.length}
+                </span>
+              </div>
+              <div>
+                <span className="text-[var(--color-text-secondary)]">
+                  Total distributed:{' '}
+                </span>
+                <span className="text-[var(--color-text-primary)] font-medium">
+                  {formatFunding(
+                    fulfilledBounties.reduce((sum, b) => sum + b.fundingAmount, BigInt(0))
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Open Bounties */}
+        <section className="py-12">
+          <div className="container-wide">
+            <h2 className="text-xl font-semibold mb-6">Open Bounties</h2>
+
+            <div className="grid gap-4">
+              {openBounties.map((bounty) => {
+                const statusStyle = getStatusStyle(bounty.status);
+                return (
+                  <article
+                    key={bounty.id}
+                    className="p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg hover:border-[var(--color-border-emphasis)] transition-colors"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span
+                            className="px-2 py-0.5 text-xs rounded capitalize"
+                            style={{
+                              color: statusStyle.color,
+                              backgroundColor: statusStyle.bg,
+                            }}
+                          >
+                            {bounty.status}
+                          </span>
+                          <span className="text-xs text-[var(--color-text-tertiary)]">
+                            {formatExpiration(bounty.expiresAt)}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
+                          {bounty.title}
+                        </h3>
+                        {bounty.location != null && (
+                          <p className="text-sm text-[var(--color-text-tertiary)] mb-3">
+                            {bounty.location}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-start lg:items-end gap-2">
+                        <span className="text-2xl font-bold text-[var(--color-accent)]">
+                          {formatFunding(bounty.fundingAmount)}
+                        </span>
+                        <span className="text-xs text-[var(--color-text-tertiary)]">
+                          bounty reward
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Topics */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {bounty.topics.map((topic) => (
+                        <span
+                          key={topic}
+                          className="px-2 py-0.5 text-xs bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] rounded"
+                        >
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-4 border-t border-[var(--color-border-subtle)]">
+                      <span className="text-sm text-[var(--color-text-secondary)]">
+                        {bounty.contributionCount > 0 ? (
+                          <>
+                            <span className="text-[var(--color-text-primary)]">{bounty.contributionCount}</span>
+                            {' '}contribution{bounty.contributionCount !== 1 ? 's' : ''} so far
+                          </>
+                        ) : (
+                          'No contributions yet'
+                        )}
+                      </span>
+                      <Link
+                        href={`/bounties/${bounty.id}`}
+                        className="px-3 py-1.5 text-sm font-medium border border-[var(--color-text-primary)] rounded text-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)] hover:text-[var(--color-bg-primary)] transition-colors"
+                      >
+                        Contribute
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {openBounties.length === 0 && (
+              <p className="text-[var(--color-text-secondary)] text-center py-12">
+                No open bounties at the moment. Check back soon.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* Recently Fulfilled */}
+        {fulfilledBounties.length > 0 && (
+          <section className="py-12 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-default)]">
+            <div className="container-wide">
+              <h2 className="text-xl font-semibold mb-6">Recently Fulfilled</h2>
+
+              <div className="grid gap-4">
+                {fulfilledBounties.map((bounty) => {
+                  const statusStyle = getStatusStyle(bounty.status);
+                  return (
+                    <article
+                      key={bounty.id}
+                      className="p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg opacity-80"
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span
+                              className="px-2 py-0.5 text-xs rounded capitalize"
+                              style={{
+                                color: statusStyle.color,
+                                backgroundColor: statusStyle.bg,
+                              }}
+                            >
+                              {bounty.status}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-medium text-[var(--color-text-primary)]">
+                            {bounty.title}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <span className="text-sm text-[var(--color-text-secondary)]">
+                            <span className="text-[var(--color-text-primary)]">{bounty.contributionCount}</span>
+                            {' '}contributions
+                          </span>
+                          <span className="text-lg font-semibold text-[var(--color-accent)]">
+                            {formatFunding(bounty.fundingAmount)}
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* How Bounties Work */}
+        <section className="py-16 border-t border-[var(--color-border-default)]">
+          <div className="container-narrow">
+            <h2 className="text-2xl font-semibold mb-8 text-center">
+              How Bounties Work
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] flex items-center justify-center text-[var(--color-accent)] font-bold">
+                  1
+                </div>
+                <h3 className="font-semibold mb-2">Fund a Request</h3>
+                <p className="text-sm text-[var(--color-text-secondary)]">
+                  Anyone can post a bounty requesting specific information.
+                  Fund it with stablecoin — no payment processor can block it.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] flex items-center justify-center text-[var(--color-accent)] font-bold">
+                  2
+                </div>
+                <h3 className="font-semibold mb-2">Contribute Signals</h3>
+                <p className="text-sm text-[var(--color-text-secondary)]">
+                  Fireflies contribute verified signals that address the bounty.
+                  Each contribution is weighted by corroboration and reputation.
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] flex items-center justify-center text-[var(--color-accent)] font-bold">
+                  3
+                </div>
+                <h3 className="font-semibold mb-2">Earn Directly</h3>
+                <p className="text-sm text-[var(--color-text-secondary)]">
+                  When the bounty is fulfilled, contributors receive compensation
+                  proportional to their contribution — directly to their wallet.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </>
+  );
+}
