@@ -14,6 +14,17 @@ This is **not** a social media platform. It is a collective intelligence network
 - **Signals** are observations, evidence, or data points — not "posts"
 - **Story Chains** emerge when signals connect around topics or events
 - **Corroboration** is the core interaction — a reputation-staked act of verification, not a "like"
+- **Bounties** are community-funded requests for specific information
+
+## Features
+
+- **Explore View** — Browse signals and story chains in list or map view
+- **Interactive Map** — Visualize signals (gold markers) and story chains (green rings) geographically using Leaflet
+- **Illuminate Modal** — Universal signal creation flow with smart suggestions for linking to chains and bounties
+- **Information Bounties** — Fund requests for specific information; contributors earn rewards
+- **Wallet Connection** — Connect via Web3Modal for identity verification
+- **Light/Dark Theme** — Toggle between light and dark modes
+- **Responsive Design** — Works on desktop and mobile
 
 ## Quick Start
 
@@ -55,6 +66,8 @@ cocuyo/
 | Language | TypeScript (strict mode) |
 | Styling | Tailwind CSS + CSS custom properties |
 | Fonts | Unbounded (Polkadot ecosystem) + Inter |
+| Maps | Leaflet + React-Leaflet |
+| Web3 | Web3Modal + Ethers.js |
 | Monorepo | pnpm workspaces + Turborepo |
 | Testing | Vitest + React Testing Library + Playwright |
 
