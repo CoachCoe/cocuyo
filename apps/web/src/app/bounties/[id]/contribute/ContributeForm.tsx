@@ -6,7 +6,7 @@
 
 import type { ReactElement } from 'react';
 import { useState } from 'react';
-import { useWeb3ModalAccount } from '@web3modal/ethers/react';
+import { useAppKitAccount } from '@reown/appkit/react';
 import { Button } from '@cocuyo/ui';
 
 interface ContributeFormProps {
@@ -18,7 +18,7 @@ export function ContributeForm({
   bountyId,
   bountyTitle,
 }: ContributeFormProps): ReactElement {
-  const { address, isConnected } = useWeb3ModalAccount();
+  const { address, isConnected } = useAppKitAccount();
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [links, setLinks] = useState('');

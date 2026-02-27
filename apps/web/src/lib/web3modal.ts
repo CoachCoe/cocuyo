@@ -1,44 +1,57 @@
 /**
- * Web3Modal configuration for wallet connection.
+ * AppKit (formerly Web3Modal) configuration for wallet connection.
  *
  * Supports MetaMask, WalletConnect, Coinbase Wallet, and 270+ wallets.
  * Configured for Polkadot ecosystem chains.
  */
 
-import { createWeb3Modal, defaultConfig } from '@web3modal/ethers/react';
+import { createAppKit, type ChainAdapter } from '@reown/appkit/react';
+import { EthersAdapter } from '@reown/appkit-adapter-ethers';
 
-// WalletConnect project ID - get one free at https://cloud.walletconnect.com/
+// WalletConnect project ID - get one free at https://cloud.reown.com/
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? 'demo-project-id';
 
 /**
  * Supported chains for the Firefly Network.
  * Currently supporting Polkadot ecosystem chains.
  */
-const chains = [
-  {
-    chainId: 420420420,
-    name: 'Polkadot Asset Hub',
-    currency: 'DOT',
-    explorerUrl: 'https://assethub-polkadot.subscan.io',
-    rpcUrl: 'https://polkadot-asset-hub-rpc.polkadot.io',
+const polkadotAssetHub = {
+  id: 420420420,
+  name: 'Polkadot Asset Hub',
+  nativeCurrency: { name: 'DOT', symbol: 'DOT', decimals: 10 },
+  rpcUrls: {
+    default: { http: ['https://polkadot-asset-hub-rpc.polkadot.io'] },
   },
-  {
-    chainId: 420420421,
-    name: 'Westend Asset Hub',
-    currency: 'WND',
-    explorerUrl: 'https://assethub-westend.subscan.io',
-    rpcUrl: 'https://westend-asset-hub-rpc.polkadot.io',
+  blockExplorers: {
+    default: { name: 'Subscan', url: 'https://assethub-polkadot.subscan.io' },
   },
-  {
-    chainId: 420420417,
-    name: 'Polkadot Hub TestNet',
-    currency: 'DOT',
-    explorerUrl: '',
-    rpcUrl: 'https://testnet-rpc.polkadot.io',
-  },
-];
+};
 
-// Metadata for Web3Modal
+const westendAssetHub = {
+  id: 420420421,
+  name: 'Westend Asset Hub',
+  nativeCurrency: { name: 'WND', symbol: 'WND', decimals: 12 },
+  rpcUrls: {
+    default: { http: ['https://westend-asset-hub-rpc.polkadot.io'] },
+  },
+  blockExplorers: {
+    default: { name: 'Subscan', url: 'https://assethub-westend.subscan.io' },
+  },
+};
+
+const polkadotTestnet = {
+  id: 420420417,
+  name: 'Polkadot Hub TestNet',
+  nativeCurrency: { name: 'DOT', symbol: 'DOT', decimals: 10 },
+  rpcUrls: {
+    default: { http: ['https://testnet-rpc.polkadot.io'] },
+  },
+  blockExplorers: {
+    default: { name: 'Explorer', url: '' },
+  },
+};
+
+// Metadata for AppKit
 const metadata = {
   name: 'Firefly Network',
   description: 'A surveillance-resistant network for collective intelligence',
@@ -46,32 +59,23 @@ const metadata = {
   icons: ['/firefly-icon.png'],
 };
 
-// Create modal configuration
-const ethersConfig = defaultConfig({
+// Initialize AppKit
+// Type assertion needed due to exactOptionalPropertyTypes in tsconfig
+createAppKit({
+  adapters: [new EthersAdapter() as ChainAdapter],
+  networks: [polkadotAssetHub, westendAssetHub, polkadotTestnet],
   metadata,
-  enableEIP6963: true,
-  enableInjected: true,
-  enableCoinbase: true,
-  auth: {
-    email: false,
-    socials: [],
-    showWallets: false,
-    walletFeatures: false,
-  },
-  defaultChainId: 420420420, // Polkadot Asset Hub
-});
-
-// Initialize Web3Modal
-createWeb3Modal({
-  ethersConfig,
-  chains,
   projectId,
-  enableAnalytics: false,
-  enableOnramp: false,
-  enableSwaps: false,
   themeMode: 'dark',
   themeVariables: {
     '--w3m-z-index': 9999,
     '--w3m-accent': '#E8B931', // Firefly gold
+  },
+  features: {
+    analytics: false,
+    onramp: false,
+    swaps: false,
+    email: false,
+    socials: [],
   },
 });

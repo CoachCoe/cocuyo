@@ -8,12 +8,12 @@
  */
 
 import type { ReactElement } from 'react';
-import { useWeb3Modal, useWeb3ModalAccount, useDisconnect } from '@web3modal/ethers/react';
+import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 
 export function ConnectButton(): ReactElement {
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
   const { disconnect } = useDisconnect();
-  const { address, isConnected } = useWeb3ModalAccount();
+  const { address, isConnected } = useAppKitAccount();
 
   const handleConnect = (): void => {
     void open();

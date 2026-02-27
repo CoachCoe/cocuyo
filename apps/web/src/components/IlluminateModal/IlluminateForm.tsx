@@ -18,7 +18,7 @@ import {
   type ReactElement,
   type FormEvent,
 } from 'react';
-import { useWeb3ModalAccount } from '@web3modal/ethers/react';
+import { useAppKitAccount } from '@reown/appkit/react';
 import type { ChainId, BountyId, NewSignal } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { signalService } from '@/lib/services';
@@ -39,7 +39,7 @@ interface FormState {
 const MIN_CONTENT_LENGTH = 50;
 
 export function IlluminateForm(): ReactElement {
-  const { isConnected } = useWeb3ModalAccount();
+  const { isConnected } = useAppKitAccount();
   const { preSelectedChainId, preSelectedBountyId, closeModal } = useIlluminate();
 
   const [formState, setFormState] = useState<FormState>(() => ({
