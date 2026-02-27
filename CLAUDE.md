@@ -2,6 +2,14 @@
 
 > Lights in the Dark — A surveillance-resistant network for collective intelligence.
 
+## Agent Context
+
+**For AI Coding Agents**: Read `.claude/AGENTS.md` FIRST for critical instructions, safety boundaries, and domain terminology. AGENTS.md provides the operational context for working on this codebase.
+
+**Skill Files**: Domain-specific knowledge is in `.claude/skills/`. Load relevant skills before implementation work.
+
+---
+
 ## Project Overview
 
 The Firefly Network is a decentralized, surveillance-resistant platform where verified humans share, corroborate, and build collective understanding of what is happening in their communities — without exposing their identities to governments, corporations, or each other.
@@ -68,6 +76,18 @@ cocuyo/
 │           ├── corroboration.ts
 │           ├── bounty.ts
 │           └── index.ts
+├── .claude/                     # AI agent configuration
+│   ├── AGENTS.md                # Agent constraints & instructions (READ FIRST)
+│   ├── settings.local.json      # Permissions
+│   └── skills/                  # Domain knowledge skills
+│       ├── design-system.md     # Visual identity & components
+│       ├── polkadot-web3.md     # Polkadot integration patterns
+│       ├── security.md          # Surveillance resistance
+│       ├── personhood-lite.md   # DIM identity verification
+│       ├── dotns-integration.md # Name resolution & wallet
+│       ├── bulletin-chain.md    # Decentralized storage
+│       ├── code-quality.md      # Minimal code philosophy
+│       └── mutation-testing.md  # Stryker test quality
 ├── apps/
 │   ├── web/                     # Main Next.js web application
 │   │   ├── src/
@@ -84,10 +104,6 @@ cocuyo/
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   └── docs/                    # Documentation site (optional, future)
-└── skills/                      # Claude Code skill files
-    ├── design-system.md
-    ├── polkadot-web3.md
-    └── security.md
 ```
 
 ### Technology Stack
@@ -393,10 +409,26 @@ pnpm check                      # lint + typecheck + test + format:check
 
 ## Skill Files
 
-Development skill files are located in `skills/` and contain detailed guidance for specific development areas:
+Development skill files are located in `.claude/skills/` and contain detailed guidance for specific development areas:
 
-- `skills/design-system.md` — Detailed component patterns, animation guidelines, responsive behavior
-- `skills/polkadot-web3.md` — Polkadot integration patterns, Web3 development conventions
-- `skills/security.md` — Security implementation details, threat modeling, audit checklists
+| Skill | Purpose | Triggers |
+|-------|---------|----------|
+| `design-system.md` | Visual identity, components, animations | UI, design, styling, color |
+| `polkadot-web3.md` | Polkadot integration, Web3 patterns | polkadot, wallet, chain, crypto |
+| `security.md` | Surveillance resistance, privacy | security, CSP, validation, audit |
+| `personhood-lite.md` | DIM identity verification | DIM, personhood, credential |
+| `dotns-integration.md` | Name resolution, wallet permissions | dotns, name, domain, permission |
+| `dotns-cli.md` | Frontend deployment via CLI | deploy, bulletin, upload, register |
+| `bulletin-chain.md` | Decentralized signal storage | bulletin, storage, IPFS, hash |
+| `code-quality.md` | Minimal code philosophy | quality, refactor, YAGNI, bloat |
+| `mutation-testing.md` | Test quality with Stryker | mutation, stryker, test quality |
+| `monorepo.md` | pnpm workspace, Turborepo | workspace, turborepo, package, filter |
 
-Read the relevant skill file before implementing features in that domain.
+**Usage**: Load relevant skills before implementing features in that domain. Skills follow the atomic skill pattern with:
+- YAML frontmatter (name, description, triggers)
+- "When to Activate" section
+- Global invariants table
+- Contrastive exemplars (✅/❌ patterns)
+- Anti-patterns section
+
+For agent operational constraints, see `.claude/AGENTS.md`.
