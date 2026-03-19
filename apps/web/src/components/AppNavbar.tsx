@@ -5,6 +5,7 @@
  */
 
 import type { ReactElement } from 'react';
+import Link from 'next/link';
 import { Navbar } from '@cocuyo/ui';
 import { ConnectButton } from './ConnectButton';
 import { ThemeToggle } from './ThemeToggle';
@@ -23,6 +24,7 @@ export function AppNavbar({ currentPath = '/' }: AppNavbarProps): ReactElement {
       walletSlot={<ConnectButton />}
       actionsSlot={<ThemeToggle />}
       onIlluminate={() => openModal()}
+      LinkComponent={Link}
     />
   );
 }

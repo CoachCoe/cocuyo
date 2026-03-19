@@ -12,10 +12,29 @@
 
 'use client';
 
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode, ComponentType } from 'react';
 import { useState } from 'react';
 import { FireflySymbol } from '../FireflySymbol';
 import { Button } from '../Button';
+
+/** Props for the link component - compatible with Next.js Link */
+export interface NavLinkProps {
+  href: string;
+  className?: string;
+  children: ReactNode;
+  'aria-label'?: string;
+  'aria-current'?: 'page' | undefined;
+  onClick?: () => void;
+}
+
+/** Default link component using plain anchor tags */
+function DefaultLink({ href, className, children, onClick, ...props }: NavLinkProps): ReactElement {
+  return (
+    <a href={href} className={className} onClick={onClick} {...props}>
+      {children}
+    </a>
+  );
+}
 
 export interface NavbarProps {
   /** Current active path for highlighting */
@@ -26,6 +45,9 @@ export interface NavbarProps {
   walletSlot?: ReactNode;
   /** Optional slot for additional actions (e.g., theme toggle) */
   actionsSlot?: ReactNode;
+  /** Custom Link component (e.g., Next.js Link) for client-side navigation */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  LinkComponent?: ComponentType<any>;
 }
 
 interface NavLink {
@@ -46,8 +68,10 @@ export function Navbar({
   onIlluminate,
   walletSlot,
   actionsSlot,
+  LinkComponent = DefaultLink,
 }: NavbarProps): ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const Link = LinkComponent;
 
   const toggleMobileMenu = (): void => {
     setIsMobileMenuOpen((prev) => !prev);
@@ -69,7 +93,7 @@ export function Navbar({
         aria-label="Main navigation"
       >
         {/* Wordmark */}
-        <a
+        <Link
           href="/"
           className="flex items-center gap-2 text-[var(--fg-primary)] hover:text-[var(--fg-primary)]"
           aria-label="Firefly Network home"
@@ -78,14 +102,14 @@ export function Navbar({
           <span className="font-semibold text-lg tracking-tight">
             FIREFLY NETWORK
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           <ul className="flex items-center gap-6">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   className={`
                     font-medium text-sm transition-colors relative
@@ -104,7 +128,7 @@ export function Navbar({
                       aria-hidden="true"
                     />
                   )}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -171,7 +195,7 @@ export function Navbar({
             <ul className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     className={`
                       block py-2 font-medium text-lg
@@ -185,7 +209,7 @@ export function Navbar({
                     onClick={() => { setIsMobileMenuOpen(false); }}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
