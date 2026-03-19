@@ -8,8 +8,6 @@
 
 import type { ReactElement } from 'react';
 import Link from 'next/link';
-import { Footer } from '@cocuyo/ui';
-import { AppNavbar } from '@/components/AppNavbar';
 import { getOpenBounties, getBountyPreviews } from '@/lib/services/mock-data-bounties';
 
 /**
@@ -69,9 +67,7 @@ export default function BountiesPage(): ReactElement {
 
   return (
     <>
-      <AppNavbar currentPath="/bounties" />
-
-      <main className="pt-16">
+      <main>
         {/* Header */}
         <section className="py-12 border-b border-DEFAULT">
           <div className="container-wide">
@@ -309,8 +305,6 @@ export default function BountiesPage(): ReactElement {
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

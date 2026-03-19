@@ -11,8 +11,6 @@
 import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Footer } from '@cocuyo/ui';
-import { AppNavbar } from '@/components/AppNavbar';
 import { getBountyById, mockBounties } from '@/lib/services/mock-data-bounties';
 import { mockSignals } from '@/lib/services/mock-data';
 import { ContributeButton } from './ContributeButton';
@@ -111,9 +109,7 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
 
   return (
     <>
-      <AppNavbar currentPath="/bounties" />
-
-      <main className="pt-16">
+      <main>
         {/* Header */}
         <section className="py-12 border-b border-[var(--color-border-default)]">
           <div className="container-wide">
@@ -322,8 +318,6 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

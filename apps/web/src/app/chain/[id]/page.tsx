@@ -11,8 +11,6 @@
 
 import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
-import { Footer } from '@cocuyo/ui';
-import { AppNavbar } from '@/components/AppNavbar';
 import { chainService } from '@/lib/services';
 import { mockSignals, mockChains } from '@/lib/services/mock-data';
 import { ChainSignalList } from './ChainSignalList';
@@ -73,9 +71,7 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
 
   return (
     <>
-      <AppNavbar currentPath="/explore" />
-
-      <main className="pt-16">
+      <main>
         {/* Header */}
         <section className="py-12 border-b border-[var(--color-border-default)]">
           <div className="container-wide">
@@ -217,8 +213,6 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

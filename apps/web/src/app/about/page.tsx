@@ -12,15 +12,12 @@
  */
 
 import type { ReactElement } from 'react';
-import { Footer, FireflySymbol } from '@cocuyo/ui';
-import { AppNavbar } from '@/components/AppNavbar';
+import { FireflySymbol } from '@cocuyo/ui';
 
 export default function AboutPage(): ReactElement {
   return (
     <>
-      <AppNavbar currentPath="/about" />
-
-      <main className="pt-16">
+      <main>
         {/* Hero */}
         <section className="py-24 border-b border-[var(--color-border-default)]">
           <div className="container-narrow text-center">
@@ -297,8 +294,6 @@ export default function AboutPage(): ReactElement {
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

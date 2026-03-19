@@ -8,8 +8,6 @@
 import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Footer } from '@cocuyo/ui';
-import { AppNavbar } from '@/components/AppNavbar';
 import { getBountyById, mockBounties } from '@/lib/services/mock-data-bounties';
 import { ContributeForm } from './ContributeForm';
 
@@ -63,8 +61,7 @@ export default async function ContributePage({
   if (bounty.status !== 'open') {
     return (
       <>
-        <AppNavbar currentPath="/bounties" />
-        <main className="pt-16">
+        <main>
           <section className="py-24">
             <div className="container-narrow text-center">
               <h1 className="text-2xl font-bold mb-4">Bounty Not Available</h1>
@@ -80,16 +77,13 @@ export default async function ContributePage({
             </div>
           </section>
         </main>
-        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <AppNavbar currentPath="/bounties" />
-
-      <main className="pt-16">
+      <main>
         {/* Header */}
         <section className="py-8 border-b border-[var(--color-border-default)]">
           <div className="container-wide">
@@ -199,8 +193,6 @@ export default async function ContributePage({
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

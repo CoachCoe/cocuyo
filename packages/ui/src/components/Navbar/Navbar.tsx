@@ -61,6 +61,7 @@ const navLinks: NavLink[] = [
   { href: '/collectives', label: 'Collectives' },
   { href: '/verify', label: 'Verify' },
   { href: '/search', label: 'Search' },
+  { href: '/about', label: 'About' },
 ];
 
 export function Navbar({

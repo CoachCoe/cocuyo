@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
+import { Footer } from '@cocuyo/ui';
 import { TriangleProvider } from '@/components/TriangleProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
 import { IlluminateModal } from '@/components/IlluminateModal';
+import { AppNavbar } from '@/components/AppNavbar';
 
 export const metadata: Metadata = {
   title: 'Firefly Network — Lights in the Dark',
@@ -53,7 +55,11 @@ export default function RootLayout({
         <ThemeProvider>
           <TriangleProvider>
             <IlluminateProvider>
-              {children}
+              <AppNavbar />
+              <div className="pt-16 min-h-screen">
+                {children}
+              </div>
+              <Footer />
               <IlluminateModal />
             </IlluminateProvider>
           </TriangleProvider>

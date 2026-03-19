@@ -6,13 +6,11 @@
  */
 
 import type { ReactElement } from 'react';
-import { Footer } from '@cocuyo/ui';
 import { chainService } from '@/lib/services';
 import { signalService } from '@/lib/services';
 import { getChainTitle } from '@/lib/services/mock-data';
 import { SignalsList } from './SignalsList';
 import { ExploreView } from './ExploreView';
-import { AppNavbar } from '@/components/AppNavbar';
 
 /**
  * Format relative time for chain updates.
@@ -63,9 +61,7 @@ export default async function ExplorePage(): Promise<ReactElement> {
 
   return (
     <>
-      <AppNavbar currentPath="/explore" />
-
-      <main className="pt-16">
+      <main>
         {/* Header */}
         <section className="py-12 border-b border-DEFAULT">
           <div className="container-wide">
@@ -168,8 +164,6 @@ export default async function ExplorePage(): Promise<ReactElement> {
           </section>
         </ExploreView>
       </main>
-
-      <Footer />
     </>
   );
 }

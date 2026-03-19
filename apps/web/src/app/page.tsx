@@ -9,16 +9,13 @@
  */
 
 import type { ReactElement } from 'react';
-import { Footer, Button, FireflySymbol } from '@cocuyo/ui';
-import { AppNavbar } from '@/components/AppNavbar';
+import { Button, FireflySymbol } from '@cocuyo/ui';
 import { IlluminateButton } from '@/components/IlluminateButton';
 
 export default function HomePage(): ReactElement {
   return (
     <>
-      <AppNavbar currentPath="/" />
-
-      <main className="pt-16">
+      <main>
         {/* Hero Section */}
         <section className="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
           {/* Background glow effect */}
@@ -212,8 +209,6 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

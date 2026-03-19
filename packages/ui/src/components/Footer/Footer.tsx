@@ -130,7 +130,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
           </div>
 
           <p className="text-sm text-[var(--fg-tertiary)]">
-            &copy; {year} Firefly Network
+            &copy; {year} Parity Technologies
           </p>
         </div>
       </div>
