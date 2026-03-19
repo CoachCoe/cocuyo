@@ -20,16 +20,16 @@ import { ok, createSignalId } from '@cocuyo/types';
 import { mockSignals, getSignalsByChainId } from './mock-data';
 
 export class MockSignalService implements SignalService {
-  async getSignal(id: SignalId): Promise<Signal | null> {
+  getSignal(id: SignalId): Promise<Signal | null> {
     const signal = mockSignals.find((s) => s.id === id);
-    return signal ?? null;
+    return Promise.resolve(signal ?? null);
   }
 
-  async getChainSignals(chainId: ChainId): Promise<readonly Signal[]> {
-    return getSignalsByChainId(chainId);
+  getChainSignals(chainId: ChainId): Promise<readonly Signal[]> {
+    return Promise.resolve(getSignalsByChainId(chainId));
   }
 
-  async getRecentSignals(params: {
+  getRecentSignals(params: {
     topic?: string;
     location?: string;
     pagination: PaginationParams;
@@ -37,21 +37,20 @@ export class MockSignalService implements SignalService {
     let filtered = [...mockSignals];
 
     // Filter by topic if provided
-    if (params.topic != null) {
+    const topicFilter = params.topic;
+    if (topicFilter != null) {
+      const topicLower = topicFilter.toLowerCase();
       filtered = filtered.filter((s) =>
-        s.context.topics.some((t) =>
-          t.toLowerCase().includes(params.topic!.toLowerCase())
-        )
+        s.context.topics.some((t) => t.toLowerCase().includes(topicLower))
       );
     }
 
     // Filter by location if provided
-    if (params.location != null) {
+    const locationFilter = params.location;
+    if (locationFilter != null) {
+      const locationLower = locationFilter.toLowerCase();
       filtered = filtered.filter(
-        (s) =>
-          s.context.locationName
-            ?.toLowerCase()
-            .includes(params.location!.toLowerCase()) ?? false
+        (s) => s.context.locationName?.toLowerCase().includes(locationLower) ?? false
       );
     }
 
@@ -64,18 +63,17 @@ export class MockSignalService implements SignalService {
     const end = start + params.pagination.limit;
     const items = filtered.slice(start, end);
 
-    return {
+    return Promise.resolve({
       items,
       total,
       hasMore: end < total,
-    };
+    });
   }
 
-  async illuminate(_signal: NewSignal): Promise<Result<SignalId, string>> {
-    // In mock mode, just generate an ID
-    // In real implementation, this would submit to the chain
+  illuminate(_signal: NewSignal): Promise<Result<SignalId, string>> {
+    // In mock mode, generate an ID. Real implementation submits to chain.
     const id = createSignalId(`sig-${Date.now()}`);
-    return ok(id);
+    return Promise.resolve(ok(id));
   }
 }
 

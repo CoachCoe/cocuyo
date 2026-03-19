@@ -5,8 +5,10 @@
  * a witness account, or a data point contributed by a verified human.
  */
 
-import type { ChainId, ContentHash, DIMCredential, SignalId } from './brands';
+import type { ChainId, CollectiveId, ContentHash, DIMCredential, SignalId } from './brands';
 import type { CorroborationSummary } from './corroboration';
+import type { VerificationStatus } from './verification';
+import type { FireflyAuthor } from './identity';
 
 /** Geographic coordinate for location context */
 export interface GeoCoordinate {
@@ -59,17 +61,35 @@ export interface SignalContext {
 }
 
 /**
+ * Verification info attached to a signal.
+ */
+export interface SignalVerification {
+  /** Current verification status */
+  readonly status: VerificationStatus;
+  /** Collective that verified (if applicable) */
+  readonly verifiedBy?: CollectiveId;
+  /** CID of the verification verdict record */
+  readonly verdictCid?: string;
+  /** When verification was completed */
+  readonly verifiedAt?: number;
+}
+
+/**
  * A signal — the fundamental unit of information in the network.
  *
  * Every signal:
  * - Is created by a verified human (via DIM)
  * - Can be linked to story chains
  * - Carries a corroboration summary
- * - Has no visible author identity
+ * - Can be verified by collectives
  */
 export interface Signal {
   /** Unique identifier (deterministic hash of content + signature) */
   readonly id: SignalId;
+  /** CID on Bulletin Chain */
+  readonly cid?: string;
+  /** Author info (privacy-controlled) */
+  readonly author: FireflyAuthor;
   /** The content of this signal */
   readonly content: SignalContent;
   /** Contextual metadata */
@@ -80,6 +100,8 @@ export interface Signal {
   readonly chainLinks: readonly ChainId[];
   /** Summary of corroborations received */
   readonly corroborations: CorroborationSummary;
+  /** Verification status and info */
+  readonly verification: SignalVerification;
   /** When this signal was illuminated (Unix timestamp) */
   readonly createdAt: number;
 }

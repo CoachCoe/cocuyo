@@ -84,21 +84,22 @@ export function useDebouncedSuggestions(
 
       // Get open bounties and filter by topic/location match
       const allBounties = getOpenBounties();
-      const matchingBounties = allBounties.filter((bounty) => {
+      const trimmedLoc = location.trim().toLowerCase();
+      const matchingBounties = allBounties.filter((bounty): boolean => {
         const topicMatch = topics.some((t) =>
           bounty.topics.some((bt) =>
             bt.toLowerCase().includes(t.toLowerCase())
           )
         );
         const locationMatch =
-          location.trim().length > 0 &&
-          bounty.location?.toLowerCase().includes(location.trim().toLowerCase());
+          trimmedLoc.length > 0 &&
+          (bounty.location?.toLowerCase().includes(trimmedLoc) === true);
 
         return topicMatch || locationMatch;
       });
 
-      // Check if request was aborted
-      if (abortController.current?.signal.aborted) {
+      // Check if request was aborted (controller is set at line 38)
+      if (abortController.current.signal.aborted) {
         return;
       }
 
@@ -109,10 +110,9 @@ export function useDebouncedSuggestions(
       if (error instanceof Error && error.name === 'AbortError') {
         return;
       }
-      // Log other errors but don't crash
       console.error('Error fetching suggestions:', error);
     } finally {
-      if (!abortController.current?.signal.aborted) {
+      if (!abortController.current.signal.aborted) {
         setIsLoading(false);
       }
     }

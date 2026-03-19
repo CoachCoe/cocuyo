@@ -3,7 +3,8 @@
 /**
  * ThemeProvider — Manages light/dark theme state.
  *
- * Persists preference to localStorage and respects system preference on first visit.
+ * Persists preference using the storage adapter (HostAPI compliant).
+ * Respects system preference on first visit.
  */
 
 import {
@@ -15,6 +16,7 @@ import {
   type ReactNode,
   type ReactElement,
 } from 'react';
+import { storage } from '@/lib/host/storage';
 
 export type Theme = 'light' | 'dark';
 
@@ -26,7 +28,7 @@ export interface ThemeContextValue {
 
 export const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = 'firefly-theme';
+const STORAGE_KEY = 'theme';
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -36,24 +38,28 @@ export function ThemeProvider({ children }: ThemeProviderProps): ReactElement {
   const [theme, setThemeState] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
-  // Initialize theme from localStorage or system preference
+  // Initialize theme from storage or system preference
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    const loadTheme = async (): Promise<void> => {
+      const stored = await storage.read<Theme>(STORAGE_KEY);
 
-    if (stored === 'light' || stored === 'dark') {
-      setThemeState(stored);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      setThemeState('light');
-    }
+      if (stored === 'light' || stored === 'dark') {
+        setThemeState(stored);
+      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        setThemeState('light');
+      }
 
-    setMounted(true);
+      setMounted(true);
+    };
+
+    void loadTheme();
   }, []);
 
-  // Apply theme to document
+  // Apply theme to document and persist
   useEffect(() => {
     if (mounted) {
       document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem(STORAGE_KEY, theme);
+      void storage.write(STORAGE_KEY, theme);
     }
   }, [theme, mounted]);
 

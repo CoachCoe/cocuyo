@@ -34,9 +34,11 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
+  { href: '/feed', label: 'Feed' },
   { href: '/explore', label: 'Explore' },
-  { href: '/bounties', label: 'Bounties' },
-  { href: '/about', label: 'About' },
+  { href: '/collectives', label: 'Collectives' },
+  { href: '/verify', label: 'Verify' },
+  { href: '/search', label: 'Search' },
 ];
 
 export function Navbar({

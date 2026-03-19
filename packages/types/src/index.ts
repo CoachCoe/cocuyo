@@ -11,6 +11,9 @@ export type {
   ChainId,
   CorroborationId,
   BountyId,
+  FireflyId,
+  CollectiveId,
+  VerificationRequestId,
   DIMCredential,
   ContentHash,
 } from './brands';
@@ -20,6 +23,9 @@ export {
   createChainId,
   createCorroborationId,
   createBountyId,
+  createFireflyId,
+  createCollectiveId,
+  createVerificationRequestId,
   createDIMCredential,
   createContentHash,
 } from './brands';
@@ -31,9 +37,49 @@ export type {
   MediaAttachment,
   SignalContent,
   SignalContext,
+  SignalVerification,
   Signal,
   NewSignal,
 } from './signal';
+
+// Identity types
+export type {
+  DisclosureLevel,
+  PublicProfileInfo,
+  ReputationScore,
+  FireflyStats,
+  FireflyProfile,
+  FireflyAuthor,
+  NewFireflyProfile,
+} from './identity';
+
+// Collective types
+export type {
+  MemberRole,
+  MembershipApproval,
+  CollectiveMember,
+  CollectiveGovernance,
+  CollectiveReputation,
+  Collective,
+  CollectivePreview,
+  NewCollective,
+  JoinRequestStatus,
+  JoinRequest,
+} from './collective';
+
+// Verification types
+export type {
+  VerificationStatus,
+  VerificationRequestStatus,
+  VerificationEvidence,
+  VerificationVote,
+  VoteSummary,
+  VerificationVerdict,
+  VerificationRequest,
+  VerificationRequestPreview,
+  NewEvidence,
+  NewVote,
+} from './verification';
 
 // Chain types
 export type {

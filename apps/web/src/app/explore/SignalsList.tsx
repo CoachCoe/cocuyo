@@ -5,6 +5,7 @@
  */
 
 import type { ReactElement } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Signal, ChainId } from '@cocuyo/types';
 import { SignalCard } from '@cocuyo/ui';
 
@@ -19,6 +20,20 @@ export function SignalsList({
   chainTitles,
   hasMore,
 }: SignalsListProps): ReactElement {
+  const router = useRouter();
+
+  const handleSignalClick = (signal: Signal): void => {
+    router.push(`/signal/${signal.id}`);
+  };
+
+  const handleChainClick = (chainId: ChainId): void => {
+    router.push(`/chain/${chainId}`);
+  };
+
+  const handleAuthorClick = (credentialHash: string): void => {
+    router.push(`/profile/${credentialHash}`);
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">Recent Signals</h2>
@@ -34,10 +49,10 @@ export function SignalsList({
               <SignalCard
                 key={signal.id}
                 signal={signal}
-                {...(chainTitle != null && { chainTitle })}
-                onChainClick={(chainId: ChainId) => {
-                  window.location.href = `/chain/${chainId}`;
-                }}
+                {...(chainTitle !== undefined && { chainTitle })}
+                onClick={() => handleSignalClick(signal)}
+                onChainClick={handleChainClick}
+                onAuthorClick={handleAuthorClick}
               />
             );
           })}

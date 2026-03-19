@@ -17,6 +17,8 @@
     "deploy": "dotns bulletin upload ./dist --parallel --print-contenthash"
   },
   "dependencies": {
+    "@cocuyo/bulletin": "workspace:*",
+    "@cocuyo/identity": "workspace:*",
     "@cocuyo/types": "workspace:*",
     "@cocuyo/ui": "workspace:*",
     "@novasamatech/host-api": "0.6.6-1",

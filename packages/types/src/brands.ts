@@ -15,7 +15,16 @@ export type CorroborationId = string & { readonly __brand: 'CorroborationId' };
 /** Unique identifier for a bounty */
 export type BountyId = string & { readonly __brand: 'BountyId' };
 
-/** DIM credential — proves a verified human without revealing identity */
+/** Unique identifier for a firefly (verified human) */
+export type FireflyId = string & { readonly __brand: 'FireflyId' };
+
+/** Unique identifier for a fact-checking collective */
+export type CollectiveId = string & { readonly __brand: 'CollectiveId' };
+
+/** Unique identifier for a verification request */
+export type VerificationRequestId = string & { readonly __brand: 'VerificationRequestId' };
+
+/** DIM credential hash — proves a verified human without revealing identity */
 export type DIMCredential = string & { readonly __brand: 'DIMCredential' };
 
 /** Content hash — references content stored on Bulletin Chain */
@@ -39,6 +48,18 @@ export function createCorroborationId(id: string): CorroborationId {
 
 export function createBountyId(id: string): BountyId {
   return id as BountyId;
+}
+
+export function createFireflyId(id: string): FireflyId {
+  return id as FireflyId;
+}
+
+export function createCollectiveId(id: string): CollectiveId {
+  return id as CollectiveId;
+}
+
+export function createVerificationRequestId(id: string): VerificationRequestId {
+  return id as VerificationRequestId;
 }
 
 export function createDIMCredential(credential: string): DIMCredential {

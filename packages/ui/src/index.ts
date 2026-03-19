@@ -19,3 +19,6 @@ export type { FooterProps } from './components/Footer';
 
 export { SignalCard } from './components/SignalCard';
 export type { SignalCardProps } from './components/SignalCard';
+
+export { VerificationBadge } from './components/VerificationBadge';
+export type { VerificationBadgeProps } from './components/VerificationBadge';

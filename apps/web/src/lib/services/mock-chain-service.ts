@@ -13,12 +13,12 @@ import type {
 import { mockChains, getChainPreviews } from './mock-data';
 
 export class MockChainService implements ChainService {
-  async getChain(id: ChainId): Promise<StoryChain | null> {
+  getChain(id: ChainId): Promise<StoryChain | null> {
     const chain = mockChains.find((c) => c.id === id);
-    return chain ?? null;
+    return Promise.resolve(chain ?? null);
   }
 
-  async getChains(params: {
+  getChains(params: {
     topic?: string;
     location?: string;
     status?: StoryChain['status'];
@@ -27,20 +27,20 @@ export class MockChainService implements ChainService {
     let previews = getChainPreviews();
 
     // Filter by topic
-    if (params.topic != null) {
+    const topicFilter = params.topic;
+    if (topicFilter != null) {
+      const topicLower = topicFilter.toLowerCase();
       previews = previews.filter((p) =>
-        p.topics.some((t) =>
-          t.toLowerCase().includes(params.topic!.toLowerCase())
-        )
+        p.topics.some((t) => t.toLowerCase().includes(topicLower))
       );
     }
 
     // Filter by location
-    if (params.location != null) {
+    const locationFilter = params.location;
+    if (locationFilter != null) {
+      const locationLower = locationFilter.toLowerCase();
       previews = previews.filter(
-        (p) =>
-          p.location?.toLowerCase().includes(params.location!.toLowerCase()) ??
-          false
+        (p) => p.location?.toLowerCase().includes(locationLower) ?? false
       );
     }
 
@@ -58,19 +58,19 @@ export class MockChainService implements ChainService {
     const end = start + params.pagination.limit;
     const items = previews.slice(start, end);
 
-    return {
+    return Promise.resolve({
       items,
       total,
       hasMore: end < total,
-    };
+    });
   }
 
-  async getFeaturedChains(): Promise<readonly ChainPreview[]> {
-    // Return top chains by corroboration weight
+  getFeaturedChains(): Promise<readonly ChainPreview[]> {
     const previews = getChainPreviews();
-    return previews
+    const sorted = previews
       .sort((a, b) => b.totalCorroborations - a.totalCorroborations)
       .slice(0, 5);
+    return Promise.resolve(sorted);
   }
 }
 

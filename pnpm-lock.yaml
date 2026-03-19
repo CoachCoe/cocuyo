@@ -53,6 +53,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@cocuyo/bulletin':
+        specifier: workspace:*
+        version: link:../../packages/bulletin
+      '@cocuyo/identity':
+        specifier: workspace:*
+        version: link:../../packages/identity
       '@cocuyo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -135,6 +141,44 @@ importers:
       vitest:
         specifier: ^3.1.0
         version: 3.2.4(@types/node@20.19.33)(jsdom@24.1.3(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+
+  packages/bulletin:
+    dependencies:
+      '@cocuyo/types':
+        specifier: workspace:*
+        version: link:../types
+      '@novasamatech/product-sdk':
+        specifier: 0.6.6-1
+        version: 0.6.6-1(@polkadot/api@16.5.4(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util@14.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.33
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(jiti@1.21.7)(postcss@8.5.6)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
+  packages/identity:
+    dependencies:
+      '@cocuyo/types':
+        specifier: workspace:*
+        version: link:../types
+      '@novasamatech/product-sdk':
+        specifier: 0.6.6-1
+        version: 0.6.6-1(@polkadot/api@16.5.4(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util@14.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.0
+        version: 20.19.33
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(jiti@1.21.7)(postcss@8.5.6)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
 
   packages/types:
     devDependencies:
