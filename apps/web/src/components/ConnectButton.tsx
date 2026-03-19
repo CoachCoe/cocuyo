@@ -15,22 +15,10 @@ export function ConnectButton(): ReactNode {
   const { isConnected, isInHost } = useTriangleAccount();
   const { status, profile } = useIdentity();
 
-  // Not in Triangle host - show guidance
-  if (!isInHost) {
-    return (
-      <span className="px-4 py-2 text-sm text-[var(--fg-secondary)]">
-        Open in Triangle
-      </span>
-    );
-  }
-
-  // In host but not connected
-  if (!isConnected) {
-    return (
-      <span className="px-4 py-2 text-sm text-[var(--fg-secondary)]">
-        Sign in to Triangle
-      </span>
-    );
+  // Not in Triangle host - show nothing (standalone mode)
+  // In host but not connected - show nothing (Triangle handles sign-in UI)
+  if (!isInHost || !isConnected) {
+    return null;
   }
 
   // Loading state
