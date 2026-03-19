@@ -1,67 +1,146 @@
 /**
  * Firefly Network Design Tokens
  *
- * The visual identity is rooted in the Polkadot ecosystem's black-and-white
- * aesthetic, extended with a single warm accent color (firefly gold) that
- * represents moments of illumination.
+ * Based on polkadot-ui-paint design system with dark mode as default.
+ * Extended with firefly gold accent for illumination moments.
  *
- * The 90/8/2 rule: ~90% black/white/gray, ~8% subtle grays for depth,
- * ~2% accent color. If you're using gold on more than one or two elements
- * per screen, you're overusing it.
+ * Token naming follows polkadot-ui-paint conventions:
+ * - Primitive tokens: --neutral-{N} (15-stop grayscale)
+ * - Semantic tokens: --{role}-{variant} (fg, bg, border, etc.)
  */
 
 :root {
   /* ═══════════════════════════════════════════════════════════════════════════
-   * COLOR PALETTE
+   * PRIMITIVE COLORS - 15-stop neutral scale
+   * In dark mode, scale is inverted (higher = lighter)
    * ═══════════════════════════════════════════════════════════════════════════ */
 
-  /* Primary palette — black and white, Polkadot style */
-  --color-bg-primary: #000000;
-  --color-bg-secondary: #0a0a0a;
-  --color-bg-tertiary: #141414;
-  --color-bg-elevated: #1a1a1a;
+  --neutral-50: #0a0a0a;
+  --neutral-100: #171717;
+  --neutral-150: #1f1f1f;
+  --neutral-200: #262626;
+  --neutral-250: #2e2e2e;
+  --neutral-300: #363636;
+  --neutral-350: #404040;
+  --neutral-400: #525252;
+  --neutral-450: #5c5c5c;
+  --neutral-500: #737373;
+  --neutral-550: #858585;
+  --neutral-600: #a3a3a3;
+  --neutral-650: #b5b5b5;
+  --neutral-700: #d4d4d4;
+  --neutral-750: #e5e5e5;
+  --neutral-800: #f0f0f0;
+  --neutral-850: #f5f5f5;
+  --neutral-900: #fafafa;
+  --neutral-1000: #ffffff;
 
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a0a0a0;
-  --color-text-tertiary: #666666;
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * FIREFLY GOLD - Custom accent color
+   * ═══════════════════════════════════════════════════════════════════════════ */
 
-  --color-border-default: #222222;
-  --color-border-subtle: #1a1a1a;
-  --color-border-emphasis: #333333;
+  --color-firefly-gold: #e8b931;
+  --color-firefly-gold-dim: #c49a1c;
+  --color-firefly-gold-glow: rgba(232, 185, 49, 0.15);
 
-  /* Accent — firefly gold, used sparingly for illumination moments */
-  --color-accent: #e8b931;
-  --color-accent-dim: #c49a1c;
-  --color-accent-glow: rgba(232, 185, 49, 0.15);
-  --color-accent-hover: #f5c842;
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC TOKENS - Background
+   * ═══════════════════════════════════════════════════════════════════════════ */
 
-  /* Semantic colors */
-  --color-corroborated: #4ade80;
-  --color-challenged: #f87171;
-  --color-pending: #a0a0a0;
+  --bg-default: var(--neutral-50);
+  --bg-surface-main: var(--neutral-50);
+  --bg-surface-container: var(--neutral-100);
+  --bg-surface-nested: var(--neutral-150);
+  --bg-surface-muted: var(--neutral-200);
+  --bg-surface-hover: var(--neutral-250);
+  --bg-surface-inverse: var(--neutral-1000);
+  --bg-fill-primary: var(--neutral-200);
+  --bg-fill-primary-hover: var(--neutral-300);
+  --bg-fill-secondary: var(--neutral-150);
+  --bg-fill-secondary-hover: var(--neutral-250);
+  --bg-fill-muted: var(--neutral-100);
+  --bg-fill-tertiary: var(--neutral-100);
+  --bg-button-primary: var(--neutral-1000);
+  --bg-button-primary-hover: var(--neutral-900);
+  --bg-action-primary: var(--neutral-1000);
+  --bg-action-primary-hover: var(--neutral-850);
+  --bg-action-secondary: transparent;
+  --bg-action-secondary-hover: var(--neutral-200);
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+  --bg-accent-firefly: var(--color-firefly-gold);
+  --bg-success: #166534;
+  --bg-error: #991b1b;
 
-  /* Polkadot ecosystem — used ONLY for Polkadot branding/attribution */
-  --color-polkadot-pink: #e6007a;
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC TOKENS - Foreground (Text)
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --fg-default: var(--neutral-1000);
+  --fg-primary: var(--neutral-1000);
+  --fg-primary-inverted: var(--neutral-50);
+  --fg-secondary: var(--neutral-600);
+  --fg-tertiary: var(--neutral-500);
+  --fg-muted: var(--neutral-450);
+  --fg-disabled: var(--neutral-400);
+  --fg-inverse: var(--neutral-50);
+  --fg-accent: var(--color-firefly-gold);
+  --fg-accent-firefly: var(--color-firefly-gold);
+  --fg-success: #4ade80;
+  --fg-error: #f87171;
+  --fg-warning: #fbbf24;
+  --fg-info: #60a5fa;
+  --fg-polkadot-pink: #e6007a;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC TOKENS - Border
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --border-default: var(--neutral-200);
+  --border-subtle: var(--neutral-150);
+  --border-emphasis: var(--neutral-300);
+  --border-muted: var(--neutral-100);
+  --border-hover: var(--neutral-350);
+  --border-focus: var(--color-firefly-gold);
+  --border-inverse: var(--neutral-800);
+  --border-accent: var(--color-firefly-gold);
+  --border-error: var(--fg-error);
+  --border-success: var(--fg-success);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC TOKENS - Shadow
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-3: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-focus: 0 0 0 2px var(--color-firefly-gold);
+  --shadow-glow: 0 0 20px var(--color-firefly-gold-glow);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC TOKENS - Focus
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --focus-ring: var(--color-firefly-gold);
+  --focus-offset: 2px;
 
   /* ═══════════════════════════════════════════════════════════════════════════
    * TYPOGRAPHY
    * ═══════════════════════════════════════════════════════════════════════════ */
 
-  /* Font families */
-  --font-display: 'Unbounded', sans-serif;
+  --font-display: 'DM Serif Display', serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Font sizes */
-  --text-xs: 0.75rem; /* 12px — metadata, timestamps */
-  --text-sm: 0.875rem; /* 14px — secondary text */
-  --text-base: 1rem; /* 16px — body text */
-  --text-lg: 1.125rem; /* 18px — emphasis */
-  --text-xl: 1.25rem; /* 20px — section headers */
-  --text-2xl: 1.5rem; /* 24px — page headers */
-  --text-3xl: 2rem; /* 32px — hero text */
-  --text-4xl: 2.5rem; /* 40px — landing hero */
-  --text-5xl: 3rem; /* 48px — large hero */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
+  --text-5xl: 3rem;
 
   /* Line heights */
   --leading-tight: 1.25;
@@ -79,45 +158,41 @@
    * SPACING
    * ═══════════════════════════════════════════════════════════════════════════ */
 
-  --spacing-1: 0.25rem; /* 4px */
-  --spacing-2: 0.5rem; /* 8px */
-  --spacing-3: 0.75rem; /* 12px */
-  --spacing-4: 1rem; /* 16px */
-  --spacing-5: 1.25rem; /* 20px */
-  --spacing-6: 1.5rem; /* 24px */
-  --spacing-8: 2rem; /* 32px */
-  --spacing-10: 2.5rem; /* 40px */
-  --spacing-12: 3rem; /* 48px */
-  --spacing-16: 4rem; /* 64px */
-  --spacing-20: 5rem; /* 80px */
-  --spacing-24: 6rem; /* 96px */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * RADIUS (polkadot-ui-paint conventions)
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+  --radius-small: 8px;
+  --radius-nested: 12px;
+  --radius-container: 16px;
+  --radius-full: 9999px;
+
+  /* Legacy aliases */
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-nested);
+  --radius-lg: var(--radius-container);
 
   /* ═══════════════════════════════════════════════════════════════════════════
    * LAYOUT
    * ═══════════════════════════════════════════════════════════════════════════ */
 
-  /* Navbar */
   --navbar-height: 64px;
   --navbar-height-mobile: 56px;
-
-  /* Content */
   --content-max-width: 1280px;
   --content-max-width-narrow: 720px;
-
-  /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-full: 9999px;
-
-  /* ═══════════════════════════════════════════════════════════════════════════
-   * BREAKPOINTS (for reference — use Tailwind classes)
-   * ═══════════════════════════════════════════════════════════════════════════ */
-
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
 
   /* ═══════════════════════════════════════════════════════════════════════════
    * ANIMATION

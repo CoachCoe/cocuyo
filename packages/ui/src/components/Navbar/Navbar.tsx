@@ -58,7 +58,7 @@ export function Navbar({
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-16 bg-[var(--color-bg-primary)] border-b border-[var(--color-border-default)]"
+      className="fixed top-0 left-0 right-0 z-50 h-16 bg-[var(--bg-surface-main)] border-b border-[var(--border-default)]"
       role="banner"
     >
       <nav
@@ -69,11 +69,11 @@ export function Navbar({
         {/* Wordmark */}
         <a
           href="/"
-          className="flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-text-primary)]"
+          className="flex items-center gap-2 text-[var(--fg-primary)] hover:text-[var(--fg-primary)]"
           aria-label="Firefly Network home"
         >
           <FireflySymbol size={20} color="gold" />
-          <span className="font-display font-bold text-lg tracking-tight">
+          <span className="font-semibold text-lg tracking-tight">
             FIREFLY NETWORK
           </span>
         </a>
@@ -89,8 +89,8 @@ export function Navbar({
                     font-medium text-sm transition-colors relative
                     ${
                       isActive(link.href)
-                        ? 'text-[var(--color-text-primary)]'
-                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                        ? 'text-[var(--fg-primary)]'
+                        : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
                     }
                   `}
                   aria-current={isActive(link.href) ? 'page' : undefined}
@@ -98,7 +98,7 @@ export function Navbar({
                   {link.label}
                   {isActive(link.href) && (
                     <span
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[var(--color-accent)]"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[var(--fg-accent)]"
                       aria-hidden="true"
                     />
                   )}
@@ -108,7 +108,7 @@ export function Navbar({
           </ul>
 
           {walletSlot != null && (
-            <div className="border-l border-[var(--color-border-default)] pl-6">
+            <div className="border-l border-[var(--border-default)] pl-6">
               {walletSlot}
             </div>
           )}
@@ -127,7 +127,7 @@ export function Navbar({
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="md:hidden p-2 text-[var(--color-text-primary)]"
+          className="md:hidden p-2 text-[var(--fg-primary)]"
           onClick={toggleMobileMenu}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-menu"
@@ -163,7 +163,7 @@ export function Navbar({
       {isMobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="md:hidden fixed inset-0 top-16 bg-[var(--color-bg-primary)] border-t border-[var(--color-border-default)] z-40"
+          className="md:hidden fixed inset-0 top-16 bg-[var(--bg-surface-main)] border-t border-[var(--border-default)] z-40"
         >
           <div className="container-wide py-6">
             <ul className="flex flex-col gap-4">
@@ -175,8 +175,8 @@ export function Navbar({
                       block py-2 font-medium text-lg
                       ${
                         isActive(link.href)
-                          ? 'text-[var(--color-text-primary)]'
-                          : 'text-[var(--color-text-secondary)]'
+                          ? 'text-[var(--fg-primary)]'
+                          : 'text-[var(--fg-secondary)]'
                       }
                     `}
                     aria-current={isActive(link.href) ? 'page' : undefined}
@@ -188,7 +188,7 @@ export function Navbar({
               ))}
             </ul>
             {walletSlot != null && (
-              <div className="mt-6 pt-6 border-t border-[var(--color-border-default)]">
+              <div className="mt-6 pt-6 border-t border-[var(--border-default)]">
                 {walletSlot}
               </div>
             )}

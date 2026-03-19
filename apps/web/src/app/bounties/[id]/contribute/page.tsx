@@ -10,8 +10,19 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Footer } from '@cocuyo/ui';
 import { AppNavbar } from '@/components/AppNavbar';
-import { getBountyById } from '@/lib/services/mock-data-bounties';
+import { getBountyById, mockBounties } from '@/lib/services/mock-data-bounties';
 import { ContributeForm } from './ContributeForm';
+
+/**
+ * Generate static params for all known bounties that are open.
+ */
+export function generateStaticParams(): Array<{ id: string }> {
+  return mockBounties
+    .filter((bounty) => bounty.status === 'open')
+    .map((bounty) => ({
+      id: String(bounty.id),
+    }));
+}
 
 interface ContributePageProps {
   params: Promise<{ id: string }>;

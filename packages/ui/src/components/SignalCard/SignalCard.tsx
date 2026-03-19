@@ -78,9 +78,9 @@ export function SignalCard({
   return (
     <article
       className={`
-        bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)]
-        rounded-lg p-6 transition-colors
-        ${onClick != null ? 'cursor-pointer hover:border-[var(--color-border-emphasis)]' : ''}
+        bg-[var(--bg-surface-nested)] border border-[var(--border-default)]
+        rounded-container p-6 transition-colors
+        ${onClick != null ? 'cursor-pointer hover:border-[var(--border-emphasis)]' : ''}
       `}
       onClick={onClick}
       onKeyDown={onClick != null ? handleKeyDown : undefined}
@@ -88,7 +88,7 @@ export function SignalCard({
       role={onClick != null ? 'button' : undefined}
     >
       {/* Context tags */}
-      <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)] mb-3">
+      <div className="flex items-center gap-2 text-xs text-[var(--fg-tertiary)] mb-3">
         {context.topics.length > 0 && (
           <span className="capitalize">{context.topics[0]}</span>
         )}
@@ -105,18 +105,18 @@ export function SignalCard({
       </div>
 
       {/* Content */}
-      <p className="text-base text-white leading-relaxed mb-4">
+      <p className="text-base text-[var(--fg-primary)] leading-relaxed mb-4">
         {content.text}
       </p>
 
       {/* Corroboration summary */}
-      <div className="flex items-center gap-4 text-sm text-[var(--color-text-secondary)] mb-4">
+      <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)] mb-4">
         <span className="flex items-center gap-1">
-          <span className="text-[var(--color-corroborated)]" aria-hidden="true">
+          <span className="text-[var(--fg-success)]" aria-hidden="true">
             &#9673;
           </span>
           <span>
-            <span className="text-[var(--color-corroborated)]">
+            <span className="text-[var(--fg-success)]">
               {corroborations.witnessCount + corroborations.expertiseCount}
             </span>
             {' '}corroborations
@@ -130,11 +130,11 @@ export function SignalCard({
         )}
         {corroborations.challengeCount > 0 && (
           <span className="flex items-center gap-1">
-            <span className="text-[var(--color-challenged)]" aria-hidden="true">
+            <span className="text-[var(--fg-error)]" aria-hidden="true">
               &#9651;
             </span>
             <span>
-              <span className="text-[var(--color-challenged)]">
+              <span className="text-[var(--fg-error)]">
                 {corroborations.challengeCount}
               </span>
               {' '}challenge{corroborations.challengeCount !== 1 ? 's' : ''}
@@ -145,14 +145,14 @@ export function SignalCard({
 
       {/* Chain link */}
       {chainLinks.length > 0 && chainTitle != null && (
-        <div className="border-t border-[var(--color-border-subtle)] pt-4">
+        <div className="border-t border-[var(--border-subtle)] pt-4">
           <button
             type="button"
-            className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors flex items-center gap-2"
+            className="text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-accent)] transition-colors flex items-center gap-2"
             onClick={handleChainClick}
           >
             <span>Part of:</span>
-            <span className="text-white">{chainTitle}</span>
+            <span className="text-[var(--fg-primary)]">{chainTitle}</span>
             <span aria-hidden="true">&rarr;</span>
           </button>
         </div>

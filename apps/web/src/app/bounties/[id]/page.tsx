@@ -13,10 +13,19 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Footer } from '@cocuyo/ui';
 import { AppNavbar } from '@/components/AppNavbar';
-import { getBountyById } from '@/lib/services/mock-data-bounties';
+import { getBountyById, mockBounties } from '@/lib/services/mock-data-bounties';
 import { mockSignals } from '@/lib/services/mock-data';
 import { ContributeButton } from './ContributeButton';
 import { createBountyId } from '@cocuyo/types';
+
+/**
+ * Generate static params for all known bounties.
+ */
+export function generateStaticParams(): Array<{ id: string }> {
+  return mockBounties.map((bounty) => ({
+    id: String(bounty.id),
+  }));
+}
 
 interface BountyPageProps {
   params: Promise<{ id: string }>;

@@ -9,7 +9,7 @@ import type { ReactElement } from 'react';
 import { Footer } from '@cocuyo/ui';
 import { chainService } from '@/lib/services';
 import { signalService } from '@/lib/services';
-import { getChainTitle, mockChains } from '@/lib/services/mock-data';
+import { getChainTitle } from '@/lib/services/mock-data';
 import { SignalsList } from './SignalsList';
 import { ExploreView } from './ExploreView';
 import { AppNavbar } from '@/components/AppNavbar';
@@ -40,15 +40,15 @@ function formatRelativeTime(timestamp: number): string {
 function getStatusColor(status: string): string {
   switch (status) {
     case 'active':
-      return 'var(--color-corroborated)';
+      return 'var(--fg-success)';
     case 'established':
-      return 'var(--color-accent)';
+      return 'var(--fg-accent)';
     case 'emerging':
-      return 'var(--color-text-secondary)';
+      return 'var(--fg-secondary)';
     case 'contested':
-      return 'var(--color-challenged)';
+      return 'var(--fg-error)';
     default:
-      return 'var(--color-text-tertiary)';
+      return 'var(--fg-tertiary)';
   }
 }
 
@@ -61,26 +61,23 @@ export default async function ExplorePage(): Promise<ReactElement> {
     pagination: { limit: 5, offset: 0 },
   });
 
-  // Collect all signals for the map view
-  const allSignals = [...recentSignals.items];
-
   return (
     <>
       <AppNavbar currentPath="/explore" />
 
       <main className="pt-16">
         {/* Header */}
-        <section className="py-12 border-b border-[var(--color-border-default)]">
+        <section className="py-12 border-b border-DEFAULT">
           <div className="container-wide">
             <h1 className="text-3xl font-bold mb-4">Explore</h1>
-            <p className="text-[var(--color-text-secondary)] max-w-2xl">
+            <p className="text-secondary max-w-2xl">
               Browse active story chains and recent signals from the network.
               Information spreads through corroboration, not algorithms.
             </p>
           </div>
         </section>
 
-        <ExploreView signals={allSignals} chains={[...mockChains]}>
+        <ExploreView>
           {/* Active Story Chains */}
           <section className="py-12">
             <div className="container-wide">
@@ -91,14 +88,14 @@ export default async function ExplorePage(): Promise<ReactElement> {
                   <a
                     key={chain.id}
                     href={`/chain/${chain.id}`}
-                    className="block p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg hover:border-[var(--color-border-emphasis)] transition-colors"
+                    className="block p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-emphasis transition-colors"
                   >
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-1">
+                        <h3 className="text-lg font-semibold text-primary mb-1">
                           {chain.title}
                         </h3>
-                        <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)]">
+                        <div className="flex items-center gap-2 text-xs text-tertiary">
                           {chain.location != null && (
                             <>
                               <span>{chain.location}</span>
@@ -109,7 +106,7 @@ export default async function ExplorePage(): Promise<ReactElement> {
                         </div>
                       </div>
                       <span
-                        className="px-2 py-1 text-xs rounded capitalize"
+                        className="px-2 py-1 text-xs rounded-small capitalize"
                         style={{
                           color: getStatusColor(chain.status),
                           border: `1px solid ${getStatusColor(chain.status)}`,
@@ -124,7 +121,7 @@ export default async function ExplorePage(): Promise<ReactElement> {
                       {chain.topics.map((topic) => (
                         <span
                           key={topic}
-                          className="px-2 py-0.5 text-xs bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] rounded"
+                          className="px-2 py-0.5 text-xs bg-surface-muted text-secondary rounded-small"
                         >
                           {topic}
                         </span>
@@ -132,12 +129,12 @@ export default async function ExplorePage(): Promise<ReactElement> {
                     </div>
 
                     {/* Stats */}
-                    <div className="flex items-center gap-6 text-sm text-[var(--color-text-secondary)]">
+                    <div className="flex items-center gap-6 text-sm text-secondary">
                       <span>
-                        <span className="text-[var(--color-text-primary)]">{chain.signalCount}</span> signals
+                        <span className="text-primary">{chain.signalCount}</span> signals
                       </span>
                       <span>
-                        <span className="text-[var(--color-corroborated)]">
+                        <span className="text-corroborated">
                           {chain.totalCorroborations}
                         </span>{' '}
                         corroborations
@@ -148,7 +145,7 @@ export default async function ExplorePage(): Promise<ReactElement> {
               </div>
 
               {featuredChains.length === 0 && (
-                <p className="text-[var(--color-text-secondary)] text-center py-12">
+                <p className="text-secondary text-center py-12">
                   No active chains yet. Be the first to illuminate.
                 </p>
               )}
@@ -156,7 +153,7 @@ export default async function ExplorePage(): Promise<ReactElement> {
           </section>
 
           {/* Recent Signals */}
-          <section className="py-12 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-default)]">
+          <section className="py-12 bg-surface-container border-t border-DEFAULT">
             <div className="container-wide">
               <SignalsList
                 signals={[...recentSignals.items]}

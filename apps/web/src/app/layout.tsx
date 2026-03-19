@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
-import { Web3Provider } from '@/components/Web3Provider';
+import { TriangleProvider } from '@/components/TriangleProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
 import { IlluminateModal } from '@/components/IlluminateModal';
@@ -49,14 +49,14 @@ export default function RootLayout({
 }): ReactNode {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]">
+      <body className="min-h-screen bg-surface-main text-primary">
         <ThemeProvider>
-          <Web3Provider>
+          <TriangleProvider>
             <IlluminateProvider>
               {children}
               <IlluminateModal />
             </IlluminateProvider>
-          </Web3Provider>
+          </TriangleProvider>
         </ThemeProvider>
       </body>
     </html>

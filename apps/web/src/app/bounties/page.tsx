@@ -46,13 +46,13 @@ function formatExpiration(timestamp: number): string {
 function getStatusStyle(status: string): { color: string; bg: string } {
   switch (status) {
     case 'open':
-      return { color: 'var(--color-corroborated)', bg: 'rgba(74, 222, 128, 0.1)' };
+      return { color: 'var(--fg-success)', bg: 'rgba(74, 222, 128, 0.1)' };
     case 'fulfilled':
-      return { color: 'var(--color-accent)', bg: 'var(--color-accent-glow)' };
+      return { color: 'var(--fg-accent)', bg: 'var(--color-firefly-gold-glow)' };
     case 'expired':
-      return { color: 'var(--color-text-tertiary)', bg: 'var(--color-bg-elevated)' };
+      return { color: 'var(--fg-tertiary)', bg: 'var(--bg-surface-muted)' };
     default:
-      return { color: 'var(--color-text-secondary)', bg: 'var(--color-bg-elevated)' };
+      return { color: 'var(--fg-secondary)', bg: 'var(--bg-surface-muted)' };
   }
 }
 
@@ -73,22 +73,22 @@ export default function BountiesPage(): ReactElement {
 
       <main className="pt-16">
         {/* Header */}
-        <section className="py-12 border-b border-[var(--color-border-default)]">
+        <section className="py-12 border-b border-DEFAULT">
           <div className="container-wide">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div>
                 <h1 className="text-3xl font-bold mb-4">Information Bounties</h1>
-                <p className="text-[var(--color-text-secondary)] max-w-2xl">
+                <p className="text-secondary max-w-2xl">
                   Community-funded requests for specific information. Contribute
                   verified signals to earn compensation directly — no intermediaries,
                   no payment processors.
                 </p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-2">
-                <span className="text-sm text-[var(--color-text-secondary)]">
+                <span className="text-sm text-secondary">
                   Total funding available
                 </span>
-                <span className="text-2xl font-bold text-[var(--color-accent)]">
+                <span className="text-2xl font-bold text-firefly-gold">
                   {formatFunding(totalFunding)}
                 </span>
               </div>
@@ -97,24 +97,24 @@ export default function BountiesPage(): ReactElement {
         </section>
 
         {/* Stats bar */}
-        <section className="py-6 border-b border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]">
+        <section className="py-6 border-b border-DEFAULT bg-surface-container">
           <div className="container-wide">
             <div className="flex flex-wrap gap-8 text-sm">
               <div>
-                <span className="text-[var(--color-text-secondary)]">Open bounties: </span>
-                <span className="text-[var(--color-text-primary)] font-medium">{openBounties.length}</span>
+                <span className="text-secondary">Open bounties: </span>
+                <span className="text-primary font-medium">{openBounties.length}</span>
               </div>
               <div>
-                <span className="text-[var(--color-text-secondary)]">Fulfilled: </span>
-                <span className="text-[var(--color-accent)] font-medium">
+                <span className="text-secondary">Fulfilled: </span>
+                <span className="text-firefly-gold font-medium">
                   {fulfilledBounties.length}
                 </span>
               </div>
               <div>
-                <span className="text-[var(--color-text-secondary)]">
+                <span className="text-secondary">
                   Total distributed:{' '}
                 </span>
-                <span className="text-[var(--color-text-primary)] font-medium">
+                <span className="text-primary font-medium">
                   {formatFunding(
                     fulfilledBounties.reduce((sum, b) => sum + b.fundingAmount, BigInt(0))
                   )}
@@ -135,13 +135,13 @@ export default function BountiesPage(): ReactElement {
                 return (
                   <article
                     key={bounty.id}
-                    className="p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg hover:border-[var(--color-border-emphasis)] transition-colors"
+                    className="p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-emphasis transition-colors"
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <span
-                            className="px-2 py-0.5 text-xs rounded capitalize"
+                            className="px-2 py-0.5 text-xs rounded-small capitalize"
                             style={{
                               color: statusStyle.color,
                               backgroundColor: statusStyle.bg,
@@ -149,24 +149,24 @@ export default function BountiesPage(): ReactElement {
                           >
                             {bounty.status}
                           </span>
-                          <span className="text-xs text-[var(--color-text-tertiary)]">
+                          <span className="text-xs text-tertiary">
                             {formatExpiration(bounty.expiresAt)}
                           </span>
                         </div>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
+                        <h3 className="text-lg font-semibold text-primary mb-2">
                           {bounty.title}
                         </h3>
                         {bounty.location != null && (
-                          <p className="text-sm text-[var(--color-text-tertiary)] mb-3">
+                          <p className="text-sm text-tertiary mb-3">
                             {bounty.location}
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col items-start lg:items-end gap-2">
-                        <span className="text-2xl font-bold text-[var(--color-accent)]">
+                        <span className="text-2xl font-bold text-firefly-gold">
                           {formatFunding(bounty.fundingAmount)}
                         </span>
-                        <span className="text-xs text-[var(--color-text-tertiary)]">
+                        <span className="text-xs text-tertiary">
                           bounty reward
                         </span>
                       </div>
@@ -177,7 +177,7 @@ export default function BountiesPage(): ReactElement {
                       {bounty.topics.map((topic) => (
                         <span
                           key={topic}
-                          className="px-2 py-0.5 text-xs bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] rounded"
+                          className="px-2 py-0.5 text-xs bg-surface-muted text-secondary rounded-small"
                         >
                           {topic}
                         </span>
@@ -185,11 +185,11 @@ export default function BountiesPage(): ReactElement {
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-[var(--color-border-subtle)]">
-                      <span className="text-sm text-[var(--color-text-secondary)]">
+                    <div className="flex items-center justify-between pt-4 border-t border-subtle">
+                      <span className="text-sm text-secondary">
                         {bounty.contributionCount > 0 ? (
                           <>
-                            <span className="text-[var(--color-text-primary)]">{bounty.contributionCount}</span>
+                            <span className="text-primary">{bounty.contributionCount}</span>
                             {' '}contribution{bounty.contributionCount !== 1 ? 's' : ''} so far
                           </>
                         ) : (
@@ -198,7 +198,7 @@ export default function BountiesPage(): ReactElement {
                       </span>
                       <Link
                         href={`/bounties/${bounty.id}`}
-                        className="px-3 py-1.5 text-sm font-medium border border-[var(--color-text-primary)] rounded text-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)] hover:text-[var(--color-bg-primary)] transition-colors"
+                        className="px-3 py-1.5 text-sm font-medium border border-[var(--fg-primary)] rounded-small text-primary hover:bg-action-primary hover:text-[var(--fg-inverse)] transition-colors"
                       >
                         Contribute
                       </Link>
@@ -209,7 +209,7 @@ export default function BountiesPage(): ReactElement {
             </div>
 
             {openBounties.length === 0 && (
-              <p className="text-[var(--color-text-secondary)] text-center py-12">
+              <p className="text-secondary text-center py-12">
                 No open bounties at the moment. Check back soon.
               </p>
             )}
@@ -218,7 +218,7 @@ export default function BountiesPage(): ReactElement {
 
         {/* Recently Fulfilled */}
         {fulfilledBounties.length > 0 && (
-          <section className="py-12 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-default)]">
+          <section className="py-12 bg-surface-container border-t border-DEFAULT">
             <div className="container-wide">
               <h2 className="text-xl font-semibold mb-6">Recently Fulfilled</h2>
 
@@ -228,13 +228,13 @@ export default function BountiesPage(): ReactElement {
                   return (
                     <article
                       key={bounty.id}
-                      className="p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg opacity-80"
+                      className="p-6 bg-surface-nested border border-DEFAULT rounded-container opacity-80"
                     >
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-3 mb-2">
                             <span
-                              className="px-2 py-0.5 text-xs rounded capitalize"
+                              className="px-2 py-0.5 text-xs rounded-small capitalize"
                               style={{
                                 color: statusStyle.color,
                                 backgroundColor: statusStyle.bg,
@@ -243,16 +243,16 @@ export default function BountiesPage(): ReactElement {
                               {bounty.status}
                             </span>
                           </div>
-                          <h3 className="text-base font-medium text-[var(--color-text-primary)]">
+                          <h3 className="text-base font-medium text-primary">
                             {bounty.title}
                           </h3>
                         </div>
                         <div className="flex items-center gap-6">
-                          <span className="text-sm text-[var(--color-text-secondary)]">
-                            <span className="text-[var(--color-text-primary)]">{bounty.contributionCount}</span>
+                          <span className="text-sm text-secondary">
+                            <span className="text-primary">{bounty.contributionCount}</span>
                             {' '}contributions
                           </span>
-                          <span className="text-lg font-semibold text-[var(--color-accent)]">
+                          <span className="text-lg font-semibold text-firefly-gold">
                             {formatFunding(bounty.fundingAmount)}
                           </span>
                         </div>
@@ -266,7 +266,7 @@ export default function BountiesPage(): ReactElement {
         )}
 
         {/* How Bounties Work */}
-        <section className="py-16 border-t border-[var(--color-border-default)]">
+        <section className="py-16 border-t border-DEFAULT">
           <div className="container-narrow">
             <h2 className="text-2xl font-semibold mb-8 text-center">
               How Bounties Work
@@ -274,33 +274,33 @@ export default function BountiesPage(): ReactElement {
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] flex items-center justify-center text-[var(--color-accent)] font-bold">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-surface-nested border border-DEFAULT flex items-center justify-center text-firefly-gold font-bold">
                   1
                 </div>
                 <h3 className="font-semibold mb-2">Fund a Request</h3>
-                <p className="text-sm text-[var(--color-text-secondary)]">
+                <p className="text-sm text-secondary">
                   Anyone can post a bounty requesting specific information.
                   Fund it with stablecoin — no payment processor can block it.
                 </p>
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] flex items-center justify-center text-[var(--color-accent)] font-bold">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-surface-nested border border-DEFAULT flex items-center justify-center text-firefly-gold font-bold">
                   2
                 </div>
                 <h3 className="font-semibold mb-2">Contribute Signals</h3>
-                <p className="text-sm text-[var(--color-text-secondary)]">
+                <p className="text-sm text-secondary">
                   Fireflies contribute verified signals that address the bounty.
                   Each contribution is weighted by corroboration and reputation.
                 </p>
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] flex items-center justify-center text-[var(--color-accent)] font-bold">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-surface-nested border border-DEFAULT flex items-center justify-center text-firefly-gold font-bold">
                   3
                 </div>
                 <h3 className="font-semibold mb-2">Earn Directly</h3>
-                <p className="text-sm text-[var(--color-text-secondary)]">
+                <p className="text-sm text-secondary">
                   When the bounty is fulfilled, contributors receive compensation
                   proportional to their contribution — directly to their wallet.
                 </p>

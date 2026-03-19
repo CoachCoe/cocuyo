@@ -57,7 +57,7 @@ const footerColumns: FooterColumn[] = [
 export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactElement {
   return (
     <footer
-      className="bg-[var(--color-bg-primary)] border-t border-[var(--color-border-default)] pt-20 pb-10"
+      className="bg-[var(--bg-surface-main)] border-t border-[var(--border-default)] pt-20 pb-10"
       role="contentinfo"
     >
       <div className="container-wide">
@@ -67,14 +67,14 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
           <div className="md:col-span-1">
             <a
               href="/"
-              className="flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-text-primary)] mb-3"
+              className="flex items-center gap-2 text-[var(--fg-primary)] hover:text-[var(--fg-primary)] mb-3"
             >
               <FireflySymbol size={20} color="gold" />
-              <span className="font-display font-semibold text-lg tracking-tight">
+              <span className="font-semibold text-lg tracking-tight">
                 FIREFLY NETWORK
               </span>
             </a>
-            <p className="text-[var(--color-text-secondary)] text-sm italic">
+            <p className="text-[var(--fg-secondary)] text-sm italic">
               Lights in the dark.
             </p>
           </div>
@@ -82,7 +82,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
           {/* Navigation columns */}
           {footerColumns.map((column) => (
             <div key={column.title}>
-              <h3 className="font-display font-medium text-sm text-[var(--color-text-primary)] mb-4">
+              <h3 className="font-medium text-sm text-[var(--fg-primary)] mb-4">
                 {column.title}
               </h3>
               <ul className="flex flex-col gap-2">
@@ -90,7 +90,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
                   <li key={link.href}>
                     <a
                       href={link.href}
-                      className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                      className="text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
                       {...(link.external === true && {
                         target: '_blank',
                         rel: 'noopener noreferrer',
@@ -109,19 +109,19 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
         </div>
 
         {/* Bottom section */}
-        <div className="border-t border-[var(--color-border-default)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-sm text-[var(--color-text-secondary)]">
+        <div className="border-t border-[var(--border-default)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)]">
             {/* Built on Polkadot badge */}
             <a
               href="https://polkadot.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:text-[var(--color-text-primary)] transition-colors"
+              className="flex items-center gap-2 hover:text-[var(--fg-primary)] transition-colors"
             >
               Built on Polkadot
               <span
                 className="inline-block w-3 h-3 rounded-full"
-                style={{ backgroundColor: 'var(--color-polkadot-pink)' }}
+                style={{ backgroundColor: 'var(--fg-polkadot-pink)' }}
                 aria-hidden="true"
               />
             </a>
@@ -129,7 +129,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
             <span>Open Source</span>
           </div>
 
-          <p className="text-sm text-[var(--color-text-tertiary)]">
+          <p className="text-sm text-[var(--fg-tertiary)]">
             &copy; {year} Firefly Network
           </p>
         </div>

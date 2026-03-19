@@ -6,7 +6,7 @@
 
 import type { ReactElement } from 'react';
 import { useState } from 'react';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useTriangleAccount } from '@/hooks/useTriangleAccount';
 import { Button } from '@cocuyo/ui';
 
 interface ContributeFormProps {
@@ -18,17 +18,17 @@ export function ContributeForm({
   bountyId,
   bountyTitle,
 }: ContributeFormProps): ReactElement {
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected, isInHost } = useTriangleAccount();
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [links, setLinks] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
 
     if (!isConnected) {
-      alert('Please connect your wallet first');
+      alert(isInHost ? 'Please sign in to Triangle first' : 'Please open this app in Triangle');
       return;
     }
 
@@ -43,40 +43,56 @@ export function ContributeForm({
     // 1. Sign the signal with DIM credential
     // 2. Submit to the chain
     // 3. Link to the bounty
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setTimeout(() => {
+      const walletInfo = address !== null && address.length > 0
+        ? address.slice(0, 8) + '...' + address.slice(-6)
+        : 'Connected wallet';
 
-    alert(
-      `Signal submitted to bounty "${bountyTitle}"!\n\n` +
-        `In the production version, this would:\n` +
-        `- Sign with your DIM credential\n` +
-        `- Record on Polkadot\n` +
-        `- Make you eligible for bounty rewards\n\n` +
-        `Connected wallet: ${address?.slice(0, 8)}...${address?.slice(-6)}`
-    );
+      alert(
+        'Signal submitted to bounty "' + bountyTitle + '"!\n\n' +
+          'In the production version, this would:\n' +
+          '- Sign with your DIM credential\n' +
+          '- Record on Polkadot\n' +
+          '- Make you eligible for bounty rewards\n\n' +
+          walletInfo
+      );
 
-    setIsSubmitting(false);
-    setContent('');
-    setLocation('');
-    setLinks('');
+      setIsSubmitting(false);
+      setContent('');
+      setLocation('');
+      setLinks('');
+    }, 1500);
   };
+
+  const displayAddress = address !== null && address.length > 0
+    ? `${address.slice(0, 8)}...${address.slice(-6)}`
+    : '';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Wallet status */}
-      {!isConnected && (
-        <div className="p-4 bg-[rgba(248,113,113,0.1)] border border-[var(--color-challenged)] rounded-lg">
-          <p className="text-sm text-[var(--color-challenged)]">
-            <strong>Wallet not connected.</strong> You must connect your wallet
-            to submit a signal and be eligible for rewards.
+      {/* Connection status */}
+      {!isInHost && (
+        <div className="p-4 bg-error/10 border border-error rounded-nested">
+          <p className="text-sm text-[var(--fg-error)]">
+            <strong>Not in Triangle.</strong> Open this app in Triangle to submit
+            signals and be eligible for rewards.
           </p>
         </div>
       )}
 
-      {isConnected && (
-        <div className="p-4 bg-[var(--color-accent-glow)] border border-[var(--color-accent)] rounded-lg">
-          <p className="text-sm text-[var(--color-accent)]">
-            <strong>Wallet connected:</strong> {address?.slice(0, 8)}...
-            {address?.slice(-6)}
+      {isInHost && !isConnected && (
+        <div className="p-4 bg-error/10 border border-error rounded-nested">
+          <p className="text-sm text-[var(--fg-error)]">
+            <strong>Not signed in.</strong> Sign in to Triangle to submit a signal
+            and be eligible for rewards.
+          </p>
+        </div>
+      )}
+
+      {isConnected && displayAddress.length > 0 && (
+        <div className="p-4 bg-[var(--color-firefly-gold-glow)] border border-accent rounded-nested">
+          <p className="text-sm text-firefly-gold">
+            <strong>Connected:</strong> {displayAddress}
           </p>
         </div>
       )}
@@ -87,18 +103,18 @@ export function ContributeForm({
           htmlFor="signal-content"
           className="block text-sm font-medium mb-2"
         >
-          Your Signal <span className="text-[var(--color-challenged)]">*</span>
+          Your Signal <span className="text-[var(--fg-error)]">*</span>
         </label>
         <textarea
           id="signal-content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Describe your observation, evidence, or information. Be specific about what you witnessed, when, and where. Include relevant details that others could verify."
-          className="w-full p-4 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-white placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)] min-h-[160px]"
+          className="w-full p-4 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent min-h-[160px]"
           required
           minLength={50}
         />
-        <p className="mt-2 text-xs text-[var(--color-text-tertiary)]">
+        <p className="mt-2 text-xs text-tertiary">
           {content.length} characters (minimum 50)
         </p>
       </div>
@@ -114,9 +130,9 @@ export function ContributeForm({
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="e.g., Concord, NH or specific address"
-          className="w-full p-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-white placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
+          className="w-full p-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent"
         />
-        <p className="mt-2 text-xs text-[var(--color-text-tertiary)]">
+        <p className="mt-2 text-xs text-tertiary">
           Optional. Add if your observation is location-specific.
         </p>
       </div>
@@ -131,23 +147,23 @@ export function ContributeForm({
           value={links}
           onChange={(e) => setLinks(e.target.value)}
           placeholder="Add links to photos, documents, or other evidence (one per line)"
-          className="w-full p-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-white placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
+          className="w-full p-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent"
           rows={3}
         />
-        <p className="mt-2 text-xs text-[var(--color-text-tertiary)]">
+        <p className="mt-2 text-xs text-tertiary">
           Optional. External evidence strengthens your signal.
         </p>
       </div>
 
       {/* Acknowledgment */}
-      <div className="p-4 bg-[var(--color-bg-secondary)] border border-[var(--color-border-subtle)] rounded-lg">
+      <div className="p-4 bg-surface-container border border-subtle rounded-nested">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
             required
-            className="mt-1 w-4 h-4 accent-[var(--color-accent)]"
+            className="mt-1 w-4 h-4 accent-firefly-gold"
           />
-          <span className="text-sm text-[var(--color-text-secondary)]">
+          <span className="text-sm text-secondary">
             I affirm this signal represents my honest observation or evidence.
             I understand that my reputation is staked on this contribution, and
             that misleading information will negatively impact my standing in
@@ -168,14 +184,14 @@ export function ContributeForm({
         </Button>
         <a
           href={`/bounties/${bountyId}`}
-          className="px-6 py-2 text-center text-sm border border-[var(--color-border-default)] rounded-md text-[var(--color-text-secondary)] hover:text-white hover:border-[var(--color-border-emphasis)] transition-colors"
+          className="px-6 py-2 text-center text-sm border border-DEFAULT rounded-nested text-secondary hover:text-primary hover:border-emphasis transition-colors"
         >
           Cancel
         </a>
       </div>
 
       {/* Fine print */}
-      <p className="text-xs text-[var(--color-text-tertiary)] text-center">
+      <p className="text-xs text-tertiary text-center">
         Your signal will be signed with your DIM credential and recorded on
         Polkadot. You retain ownership and can reference it in other contexts.
       </p>

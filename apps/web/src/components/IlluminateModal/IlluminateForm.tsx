@@ -18,7 +18,7 @@ import {
   type ReactElement,
   type FormEvent,
 } from 'react';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useTriangleAccount } from '@/hooks/useTriangleAccount';
 import type { ChainId, BountyId, NewSignal } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { signalService } from '@/lib/services';
@@ -39,7 +39,7 @@ interface FormState {
 const MIN_CONTENT_LENGTH = 50;
 
 export function IlluminateForm(): ReactElement {
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, isInHost } = useTriangleAccount();
   const { preSelectedChainId, preSelectedBountyId, closeModal } = useIlluminate();
 
   const [formState, setFormState] = useState<FormState>(() => ({
@@ -173,9 +173,9 @@ export function IlluminateForm(): ReactElement {
   if (submitSuccess) {
     return (
       <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-[var(--color-accent-glow)]">
+        <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-[var(--color-firefly-gold-glow)]">
           <svg
-            className="w-8 h-8 text-[var(--color-accent)]"
+            className="w-8 h-8 text-firefly-gold"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -189,8 +189,8 @@ export function IlluminateForm(): ReactElement {
             />
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">Signal Illuminated</h3>
-        <p className="text-[var(--color-text-secondary)]">
+        <h3 className="text-xl font-semibold text-primary mb-2">Signal Illuminated</h3>
+        <p className="text-secondary">
           Your observation has been added to the network.
         </p>
       </div>
@@ -199,20 +199,21 @@ export function IlluminateForm(): ReactElement {
 
   return (
     <form onSubmit={(e) => void handleSubmit(e)} className="space-y-6">
-      {/* Wallet warning */}
+      {/* Connection warning */}
       {!isConnected && (
-        <div className="p-4 bg-[var(--color-challenged)]/10 border border-[var(--color-challenged)]/30 rounded-lg">
-          <p className="text-sm text-[var(--color-challenged)]">
-            Connect your wallet to illuminate a signal. Your identity remains anonymous
-            through DIM verification.
+        <div className="p-4 bg-error/10 border border-error/30 rounded-nested">
+          <p className="text-sm text-[var(--fg-error)]">
+            {isInHost
+              ? 'Sign in to Triangle to illuminate a signal. Your identity remains anonymous through DIM verification.'
+              : 'Open this app in Triangle to illuminate a signal. Your identity remains anonymous through DIM verification.'}
           </p>
         </div>
       )}
 
       {/* Signal content */}
       <div>
-        <label htmlFor="signal-content" className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
-          What did you observe? <span className="text-[var(--color-challenged)]">*</span>
+        <label htmlFor="signal-content" className="block text-sm font-medium text-primary mb-2">
+          What did you observe? <span className="text-[var(--fg-error)]">*</span>
         </label>
         <textarea
           id="signal-content"
@@ -220,22 +221,22 @@ export function IlluminateForm(): ReactElement {
           onChange={handleContentChange}
           placeholder="Describe what you witnessed, heard, or documented. Be specific and factual."
           rows={5}
-          className="w-full px-4 py-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)] transition-colors resize-none"
+          className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none"
           required
         />
         <div className="mt-1 flex justify-between text-xs">
           <span
             className={
               formState.content.length >= MIN_CONTENT_LENGTH
-                ? 'text-[var(--color-corroborated)]'
-                : 'text-[var(--color-text-tertiary)]'
+                ? 'text-corroborated'
+                : 'text-tertiary'
             }
           >
             {formState.content.length >= MIN_CONTENT_LENGTH
               ? 'Minimum length met'
               : `${MIN_CONTENT_LENGTH - formState.content.length} more characters required`}
           </span>
-          <span className="text-[var(--color-text-tertiary)]">
+          <span className="text-tertiary">
             {formState.content.length} characters
           </span>
         </div>
@@ -243,8 +244,8 @@ export function IlluminateForm(): ReactElement {
 
       {/* Topics */}
       <div>
-        <label htmlFor="signal-topics" className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
-          Topics <span className="text-[var(--color-challenged)]">*</span>
+        <label htmlFor="signal-topics" className="block text-sm font-medium text-primary mb-2">
+          Topics <span className="text-[var(--fg-error)]">*</span>
         </label>
         <TopicInput
           id="signal-topics"
@@ -252,14 +253,14 @@ export function IlluminateForm(): ReactElement {
           onChange={handleTopicsChange}
           placeholder="Add topics (press Enter or comma)"
         />
-        <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
+        <p className="mt-1 text-xs text-tertiary">
           Add at least one topic to categorize your signal.
         </p>
       </div>
 
       {/* Location */}
       <div>
-        <label htmlFor="signal-location" className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
+        <label htmlFor="signal-location" className="block text-sm font-medium text-primary mb-2">
           Location
         </label>
         <input
@@ -268,13 +269,13 @@ export function IlluminateForm(): ReactElement {
           value={formState.location}
           onChange={handleLocationChange}
           placeholder="City, region, or general area"
-          className="w-full px-4 py-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+          className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors"
         />
       </div>
 
       {/* Supporting links */}
       <div>
-        <label htmlFor="signal-links" className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
+        <label htmlFor="signal-links" className="block text-sm font-medium text-primary mb-2">
           Supporting Links
         </label>
         <textarea
@@ -283,7 +284,7 @@ export function IlluminateForm(): ReactElement {
           onChange={handleLinksChange}
           placeholder="Add URLs to supporting documents, images, or sources (one per line)"
           rows={3}
-          className="w-full px-4 py-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)] transition-colors resize-none font-mono text-sm"
+          className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none font-mono text-sm"
         />
       </div>
 
@@ -301,16 +302,16 @@ export function IlluminateForm(): ReactElement {
       />
 
       {/* Acknowledgment */}
-      <div className="p-4 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg">
+      <div className="p-4 bg-surface-muted border border-DEFAULT rounded-nested">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
             checked={formState.acknowledged}
             onChange={handleAcknowledgeChange}
-            className="mt-1 w-4 h-4 rounded border-[var(--color-border-emphasis)] bg-[var(--color-bg-tertiary)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] focus:ring-offset-0"
+            className="mt-1 w-4 h-4 rounded border-emphasis bg-surface-nested text-firefly-gold focus:ring-firefly-gold focus:ring-offset-0"
             required
           />
-          <span className="text-sm text-[var(--color-text-secondary)]">
+          <span className="text-sm text-secondary">
             I understand that illuminating this signal stakes my reputation. False or
             misleading information will affect my standing in the network. I affirm this
             is an honest observation to the best of my knowledge.
@@ -320,8 +321,8 @@ export function IlluminateForm(): ReactElement {
 
       {/* Error message */}
       {submitError != null && (
-        <div className="p-4 bg-[var(--color-challenged)]/10 border border-[var(--color-challenged)]/30 rounded-lg">
-          <p className="text-sm text-[var(--color-challenged)]">{submitError}</p>
+        <div className="p-4 bg-error/10 border border-error/30 rounded-nested">
+          <p className="text-sm text-[var(--fg-error)]">{submitError}</p>
         </div>
       )}
 
@@ -330,11 +331,11 @@ export function IlluminateForm(): ReactElement {
         type="submit"
         disabled={!canSubmit}
         className={`
-          w-full py-4 px-6 text-lg font-semibold rounded-lg transition-all
+          w-full py-4 px-6 text-lg font-semibold rounded-nested transition-all
           ${
             canSubmit
-              ? 'bg-[var(--color-accent)] text-black hover:bg-[var(--color-accent-dim)] cursor-pointer'
-              : 'bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] cursor-not-allowed'
+              ? 'bg-firefly-gold text-[var(--fg-inverse)] hover:brightness-110 cursor-pointer'
+              : 'bg-surface-muted text-tertiary cursor-not-allowed'
           }
         `}
       >
@@ -343,9 +344,9 @@ export function IlluminateForm(): ReactElement {
 
       {/* Requirements hint */}
       {!canSubmit && !isSubmitting && (
-        <p className="text-center text-xs text-[var(--color-text-tertiary)]">
+        <p className="text-center text-xs text-tertiary">
           {!isConnected
-            ? 'Connect your wallet to continue'
+            ? isInHost ? 'Sign in to Triangle to continue' : 'Open in Triangle to continue'
             : !contentValid
               ? 'Add more detail to your observation'
               : !topicsValid

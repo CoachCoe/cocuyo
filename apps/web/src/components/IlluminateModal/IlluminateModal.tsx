@@ -86,7 +86,7 @@ export function IlluminateModal(): ReactElement | null {
     >
       {/* Backdrop with blur */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-overlay backdrop-blur-sm"
         aria-hidden="true"
       />
 
@@ -94,20 +94,20 @@ export function IlluminateModal(): ReactElement | null {
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg shadow-xl"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface-nested border border-DEFAULT rounded-container shadow-3"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-6 bg-[var(--color-bg-tertiary)] border-b border-[var(--color-border-default)]">
+        <div className="sticky top-0 z-10 flex items-center justify-between p-6 bg-surface-nested border-b border-DEFAULT">
           <h2
             id="illuminate-title"
-            className="text-xl font-bold text-[var(--color-text-primary)]"
+            className="text-xl font-bold text-primary"
           >
             Illuminate
           </h2>
           <button
             type="button"
             onClick={closeModal}
-            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors rounded-md hover:bg-[var(--color-bg-elevated)]"
+            className="p-2 text-secondary hover:text-primary transition-colors rounded-nested hover:bg-surface-hover"
             aria-label="Close modal"
           >
             <svg

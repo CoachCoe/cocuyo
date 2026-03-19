@@ -14,11 +14,20 @@ import { notFound } from 'next/navigation';
 import { Footer } from '@cocuyo/ui';
 import { AppNavbar } from '@/components/AppNavbar';
 import { chainService } from '@/lib/services';
-import { mockSignals } from '@/lib/services/mock-data';
+import { mockSignals, mockChains } from '@/lib/services/mock-data';
 import { ChainSignalList } from './ChainSignalList';
 import { AddSignalButton } from './AddSignalButton';
 import type { ChainId } from '@cocuyo/types';
 import { createChainId } from '@cocuyo/types';
+
+/**
+ * Generate static params for all known chains.
+ */
+export function generateStaticParams(): Array<{ id: string }> {
+  return mockChains.map((chain) => ({
+    id: String(chain.id),
+  }));
+}
 
 interface ChainPageProps {
   params: Promise<{ id: string }>;
