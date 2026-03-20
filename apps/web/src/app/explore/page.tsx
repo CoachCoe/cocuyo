@@ -11,6 +11,7 @@ import { signalService } from '@/lib/services';
 import { getChainTitle } from '@/lib/services/mock-data';
 import { SignalsList } from './SignalsList';
 import { ExploreView } from './ExploreView';
+import type { MapMarker } from '@/components/map';
 
 /**
  * Format relative time for chain updates.
@@ -56,8 +57,29 @@ export default async function ExplorePage(): Promise<ReactElement> {
 
   // Fetch recent signals
   const recentSignals = await signalService.getRecentSignals({
-    pagination: { limit: 5, offset: 0 },
+    pagination: { limit: 20, offset: 0 },
   });
+
+  // Convert signals to map markers
+  const markers: MapMarker[] = recentSignals.items
+    .filter((signal) => signal.context.location != null)
+    .map((signal) => {
+      const location = signal.context.location;
+      const totalCorroborations = signal.corroborations.witnessCount +
+        signal.corroborations.evidenceCount +
+        signal.corroborations.expertiseCount;
+      return {
+        id: signal.id,
+        lat: location?.latitude ?? 0,
+        lon: location?.longitude ?? 0,
+        label: signal.context.locationName,
+        status: totalCorroborations >= 3
+          ? 'corroborated' as const
+          : signal.corroborations.challengeCount > 0
+            ? 'challenged' as const
+            : 'pending' as const,
+      };
+    });
 
   return (
     <>
@@ -73,7 +95,7 @@ export default async function ExplorePage(): Promise<ReactElement> {
           </div>
         </section>
 
-        <ExploreView>
+        <ExploreView markers={markers}>
           {/* Active Story Chains */}
           <section className="py-12">
             <div className="container-wide">
