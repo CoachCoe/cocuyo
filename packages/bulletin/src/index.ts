@@ -1,11 +1,8 @@
 /**
- * @cocuyo/bulletin
- *
- * Bulletin Chain storage client for F-Network.
- * Provides content-addressed storage and index management.
+ * @cocuyo/bulletin — Content-addressed storage for F-Network.
  */
 
-// CID calculation (works immediately - pure computation)
+// CID calculation
 export {
   calculateCID,
   calculateCIDFromString,
@@ -14,17 +11,32 @@ export {
   parseCID,
 } from './cid';
 
-// Client management
+// Client
 export {
   createBulletinClient,
   createRecord,
+  BULLETIN_ENDPOINTS,
+  IPFS_GATEWAYS,
   type BulletinClient,
   type BulletinRecord,
+  type BulletinEnvironment,
   type RecordType,
   type ReadOptions,
   type WriteOptions,
+  type ClientOptions,
 } from './client';
 
+// Upload
+export {
+  prepareBulletinUpload,
+  prepareBulletinJSONUpload,
+  uploadToBulletin,
+  uploadJSONToBulletin,
+  type UploadResult,
+  type UploadOptions,
+} from './upload';
+
+// Indexes
 export {
   createIndexManager,
   type IndexManager,
