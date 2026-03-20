@@ -4,6 +4,8 @@
  * This service abstracts data access so that components don't
  * import mock data directly. When we integrate with the chain,
  * we'll create a ChainSignalService that implements the same interface.
+ *
+ * Uses Bulletin CID calculation for content-addressed signal IDs.
  */
 
 import type {
@@ -17,6 +19,7 @@ import type {
   NewSignal,
 } from '@cocuyo/types';
 import { ok, createSignalId } from '@cocuyo/types';
+import { calculateCIDFromJSON, createRecord } from '@cocuyo/bulletin';
 import { mockSignals, getSignalsByChainId } from './mock-data';
 
 export class MockSignalService implements SignalService {
@@ -70,9 +73,14 @@ export class MockSignalService implements SignalService {
     });
   }
 
-  illuminate(_signal: NewSignal): Promise<Result<SignalId, string>> {
-    // In mock mode, generate an ID. Real implementation submits to chain.
-    const id = createSignalId(`sig-${Date.now()}`);
+  illuminate(signal: NewSignal): Promise<Result<SignalId, string>> {
+    // Calculate content-addressed ID using Bulletin CID
+    const record = createRecord('signal', {
+      ...signal,
+      createdAt: Date.now(),
+    });
+    const cid = calculateCIDFromJSON(record);
+    const id = createSignalId(cid);
     return Promise.resolve(ok(id));
   }
 }
