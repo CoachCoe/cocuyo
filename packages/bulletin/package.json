@@ -16,6 +16,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
@@ -23,7 +25,10 @@
   },
   "dependencies": {
     "@cocuyo/types": "workspace:*",
-    "@novasamatech/product-sdk": "0.6.6-1"
+    "@novasamatech/product-sdk": "0.6.6-1",
+    "@noble/hashes": "^1.7.2",
+    "multiformats": "^13.1.0",
+    "polkadot-api": "^1.23.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -5,6 +5,16 @@
  * Provides content-addressed storage and index management.
  */
 
+// CID calculation (works immediately - pure computation)
+export {
+  calculateCID,
+  calculateCIDFromString,
+  calculateCIDFromJSON,
+  isValidCID,
+  parseCID,
+} from './cid';
+
+// Client management
 export {
   createBulletinClient,
   createRecord,
