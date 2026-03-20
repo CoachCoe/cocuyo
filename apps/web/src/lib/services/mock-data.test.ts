@@ -113,21 +113,25 @@ describe('Mock Data', () => {
       const preview = previews[0];
       const chain = mockChains[0];
 
-      expect(preview.id).toBe(chain.id);
-      expect(preview.title).toBe(chain.title);
-      expect(preview.topics).toEqual(chain.topics);
-      expect(preview.status).toBe(chain.status);
-      expect(preview.signalCount).toBe(chain.stats.signalCount);
-      expect(preview.totalCorroborations).toBe(chain.stats.totalCorroborations);
+      expect(preview).toBeDefined();
+      expect(chain).toBeDefined();
+      if (preview && chain) {
+        expect(preview.id).toBe(chain.id);
+        expect(preview.title).toBe(chain.title);
+        expect(preview.topics).toEqual(chain.topics);
+        expect(preview.status).toBe(chain.status);
+        expect(preview.signalCount).toBe(chain.stats.signalCount);
+        expect(preview.totalCorroborations).toBe(chain.stats.totalCorroborations);
+      }
     });
 
     it('includes location only when present on chain', () => {
       const previews = getChainPreviews();
       previews.forEach((preview, index) => {
         const chain = mockChains[index];
-        if (chain.location != null) {
+        if (chain?.location != null) {
           expect(preview.location).toBe(chain.location);
-        } else {
+        } else if (chain) {
           expect(preview).not.toHaveProperty('location');
         }
       });

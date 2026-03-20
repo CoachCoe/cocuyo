@@ -85,9 +85,11 @@ describe('MockChainService', () => {
         pagination: { limit: 10, offset: 0 },
       });
       for (let i = 1; i < result.items.length; i++) {
-        expect(result.items[i - 1].updatedAt).toBeGreaterThanOrEqual(
-          result.items[i].updatedAt
-        );
+        const prev = result.items[i - 1];
+        const curr = result.items[i];
+        if (prev && curr) {
+          expect(prev.updatedAt).toBeGreaterThanOrEqual(curr.updatedAt);
+        }
       }
     });
 
@@ -98,8 +100,10 @@ describe('MockChainService', () => {
       const secondPage = await service.getChains({
         pagination: { limit: 1, offset: 1 },
       });
+      const firstItem = firstPage.items[0];
+      const secondItem = secondPage.items[0];
 
-      expect(firstPage.items[0].id).not.toBe(secondPage.items[0]?.id);
+      expect(firstItem?.id).not.toBe(secondItem?.id);
     });
 
     it('returns chain previews with expected fields', async () => {
@@ -133,9 +137,11 @@ describe('MockChainService', () => {
     it('returns chains sorted by total corroborations', async () => {
       const featured = await service.getFeaturedChains();
       for (let i = 1; i < featured.length; i++) {
-        expect(featured[i - 1].totalCorroborations).toBeGreaterThanOrEqual(
-          featured[i].totalCorroborations
-        );
+        const prev = featured[i - 1];
+        const curr = featured[i];
+        if (prev && curr) {
+          expect(prev.totalCorroborations).toBeGreaterThanOrEqual(curr.totalCorroborations);
+        }
       }
     });
 

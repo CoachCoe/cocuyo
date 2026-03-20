@@ -109,26 +109,7 @@ export function Footer({ year = new Date().getFullYear() }: FooterProps): ReactE
         </div>
 
         {/* Bottom section */}
-        <div className="border-t border-[var(--border-default)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)]">
-            {/* Built on Polkadot badge */}
-            <a
-              href="https://polkadot.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:text-[var(--fg-primary)] transition-colors"
-            >
-              Built on Polkadot
-              <span
-                className="inline-block w-3 h-3 rounded-full"
-                style={{ backgroundColor: 'var(--fg-polkadot-pink)' }}
-                aria-hidden="true"
-              />
-            </a>
-            <span className="hidden md:inline" aria-hidden="true">|</span>
-            <span>Open Source</span>
-          </div>
-
+        <div className="border-t border-[var(--border-default)] pt-8 flex justify-center">
           <p className="text-sm text-[var(--fg-tertiary)]">
             &copy; {year} Parity Technologies
           </p>

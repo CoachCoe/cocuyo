@@ -35,9 +35,10 @@ describe('MockSignalService', () => {
 
   describe('getChainSignals', () => {
     it('returns signals for a valid chain ID', async () => {
-      const signals = await service.getChainSignals(createChainId('chain-001'));
+      const chainId = createChainId('chain-001');
+      const signals = await service.getChainSignals(chainId);
       expect(signals.length).toBeGreaterThan(0);
-      expect(signals.every((s) => s.chainLinks.includes('chain-001'))).toBe(true);
+      expect(signals.every((s) => s.chainLinks.includes(chainId))).toBe(true);
     });
 
     it('returns empty array for non-existent chain ID', async () => {
@@ -88,9 +89,11 @@ describe('MockSignalService', () => {
         pagination: { limit: 10, offset: 0 },
       });
       for (let i = 1; i < result.items.length; i++) {
-        expect(result.items[i - 1].createdAt).toBeGreaterThanOrEqual(
-          result.items[i].createdAt
-        );
+        const prev = result.items[i - 1];
+        const curr = result.items[i];
+        if (prev && curr) {
+          expect(prev.createdAt).toBeGreaterThanOrEqual(curr.createdAt);
+        }
       }
     });
 
@@ -101,8 +104,10 @@ describe('MockSignalService', () => {
       const secondPage = await service.getRecentSignals({
         pagination: { limit: 2, offset: 2 },
       });
+      const firstItem = firstPage.items[0];
+      const secondItem = secondPage.items[0];
 
-      expect(firstPage.items[0].id).not.toBe(secondPage.items[0]?.id);
+      expect(firstItem?.id).not.toBe(secondItem?.id);
     });
 
     it('sets hasMore correctly', async () => {
