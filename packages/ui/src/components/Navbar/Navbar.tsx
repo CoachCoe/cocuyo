@@ -61,6 +61,8 @@ export interface NavbarProps {
   homeLabel?: string;
   /** Home link href (for locale prefix) */
   homeHref?: string;
+  /** Brand name displayed in navbar */
+  brandName?: string;
 }
 
 const defaultNavLinks: NavLink[] = [
@@ -82,6 +84,7 @@ export function Navbar({
   illuminateLabel = 'Illuminate',
   homeLabel = 'Firefly Network home',
   homeHref = '/',
+  brandName = 'FIREFLY NETWORK',
 }: NavbarProps): ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const Link = LinkComponent;
@@ -113,7 +116,7 @@ export function Navbar({
         >
           <FireflySymbol size={20} color="gold" />
           <span className="font-semibold text-lg tracking-tight">
-            FIREFLY NETWORK
+            {brandName}
           </span>
         </Link>
 

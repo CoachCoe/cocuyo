@@ -10,7 +10,8 @@
     "verify": "Verify",
     "search": "Search",
     "about": "About",
-    "home": "Firefly Network home"
+    "home": "Firefly Network home",
+    "brandName": "FIREFLY NETWORK"
   },
   "footer": {
     "tagline": "Lights in the dark.",

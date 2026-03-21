@@ -43,6 +43,7 @@ export function AppNavbar(): ReactElement {
       illuminateLabel={tActions('illuminate')}
       homeLabel={t('home')}
       homeHref={`/${locale}`}
+      brandName={t('brandName')}
     />
   );
 }
