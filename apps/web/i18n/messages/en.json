@@ -151,9 +151,14 @@
     "corroborations": "corroborations"
   },
   "feed": {
-    "title": "Feed",
+    "title": "Your Feed",
     "following": "Following",
-    "discover": "Discover"
+    "discover": "Discover",
+    "setupPrompt": "Complete your profile setup to see signals from topics you follow.",
+    "completeSetup": "Complete Setup",
+    "noMatchingSignals": "No signals match your followed topics yet.",
+    "tryFollowingMore": "Try following more topics in your profile settings.",
+    "noSignalsYet": "No signals yet. Be the first to illuminate."
   },
   "verify": {
     "title": "Verification Workbench",

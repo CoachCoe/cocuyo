@@ -151,9 +151,14 @@
     "corroborations": "corroboraciones"
   },
   "feed": {
-    "title": "Inicio",
+    "title": "Tu Feed",
     "following": "Siguiendo",
-    "discover": "Descubrir"
+    "discover": "Descubrir",
+    "setupPrompt": "Completa la configuración de tu perfil para ver señales de los temas que sigues.",
+    "completeSetup": "Completar Configuración",
+    "noMatchingSignals": "Aún no hay señales que coincidan con tus temas seguidos.",
+    "tryFollowingMore": "Intenta seguir más temas en la configuración de tu perfil.",
+    "noSignalsYet": "Aún no hay señales. Sé el primero en iluminar."
   },
   "verify": {
     "title": "Mesa de Verificación",

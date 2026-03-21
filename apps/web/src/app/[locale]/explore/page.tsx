@@ -12,7 +12,7 @@ import { getChainTitle } from '@/lib/services/mock-data';
 import { SignalsList } from './SignalsList';
 import { ExploreView } from './ExploreView';
 import type { MapMarker } from '@/components/map';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 interface ExplorePageProps {
   params: Promise<{ locale: string }>;
@@ -59,6 +59,7 @@ function getStatusColor(status: string): string {
 export default async function ExplorePage({ params }: ExplorePageProps): Promise<ReactElement> {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations('explore');
 
   // Fetch featured chains
   const featuredChains = await chainService.getFeaturedChains();
@@ -95,10 +96,9 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
         {/* Header */}
         <section className="py-12 border-b border-DEFAULT">
           <div className="container-wide">
-            <h1 className="text-3xl font-bold mb-4">Explore</h1>
+            <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
             <p className="text-secondary max-w-2xl">
-              Browse active story chains and recent signals from the network.
-              Information spreads through corroboration, not algorithms.
+              {t('description')}
             </p>
           </div>
         </section>
@@ -107,7 +107,7 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
           {/* Active Story Chains */}
           <section className="py-12">
             <div className="container-wide">
-              <h2 className="text-xl font-semibold mb-6">Active Story Chains</h2>
+              <h2 className="text-xl font-semibold mb-6">{t('activeChains')}</h2>
 
               <div className="grid gap-4">
                 {featuredChains.map((chain) => (
@@ -128,7 +128,7 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
                               <span aria-hidden="true">&middot;</span>
                             </>
                           )}
-                          <span>Updated {formatRelativeTime(chain.updatedAt)}</span>
+                          <span>{t('updated')} {formatRelativeTime(chain.updatedAt)}</span>
                         </div>
                       </div>
                       <span
@@ -157,13 +157,13 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
                     {/* Stats */}
                     <div className="flex items-center gap-6 text-sm text-secondary">
                       <span>
-                        <span className="text-primary">{chain.signalCount}</span> signals
+                        <span className="text-primary">{chain.signalCount}</span> {t('signals')}
                       </span>
                       <span>
                         <span className="text-corroborated">
                           {chain.totalCorroborations}
                         </span>{' '}
-                        corroborations
+                        {t('corroborations')}
                       </span>
                     </div>
                   </a>
@@ -172,7 +172,7 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
 
               {featuredChains.length === 0 && (
                 <p className="text-secondary text-center py-12">
-                  No active chains yet. Be the first to illuminate.
+                  {t('noChains')}
                 </p>
               )}
             </div>

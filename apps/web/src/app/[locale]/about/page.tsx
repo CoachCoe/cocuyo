@@ -13,7 +13,7 @@
 
 import type { ReactElement } from 'react';
 import { FireflySymbol } from '@cocuyo/ui';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 interface AboutPageProps {
   params: Promise<{ locale: string }>;
@@ -22,6 +22,7 @@ interface AboutPageProps {
 export default async function AboutPage({ params }: AboutPageProps): Promise<ReactElement> {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations('about');
   return (
     <>
       <main>
@@ -30,10 +31,10 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
           <div className="container-narrow text-center">
             <FireflySymbol size={40} color="gold" aria-hidden="true" />
             <h1 className="text-4xl md:text-5xl font-bold mt-6 mb-6">
-              About the Network
+              {t('hero.title')}
             </h1>
             <p className="text-xl text-[var(--color-text-secondary)]">
-              Millions of tiny sparks can illuminate an entire nation.
+              {t('hero.subtitle')}
             </p>
           </div>
         </section>
@@ -41,38 +42,21 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
         {/* The Firefly Principle */}
         <section className="py-20">
           <div className="container-narrow">
-            <h2 className="text-2xl font-semibold mb-6">The Firefly Principle</h2>
+            <h2 className="text-2xl font-semibold mb-6">{t('fireflyPrinciple.title')}</h2>
 
             <div className="space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
+              <p>{t('fireflyPrinciple.p1')}</p>
+              <p>{t('fireflyPrinciple.p2')}</p>
               <p>
-                In the Caribbean, indigenous peoples used <em className="text-[var(--color-text-primary)]">cocuyos</em> —
-                bioluminescent beetles — as natural lamps to guide them through the dark.
-                A single cocuyo casts barely enough light to see your own hand.
-                But gather them together, and they become something more.
-              </p>
-
-              <p>
-                This is the principle behind the Firefly Network: no single observer
-                sees the whole picture. But when verified humans share what they observe,
-                corroborate what others see, and connect their signals into chains of
-                evidence — the darkness begins to lift.
-              </p>
-
-              <p>
-                We are inspired by{' '}
+                {t('fireflyPrinciple.p3')}{' '}
                 <a
                   href="https://rebbit.notion.site/The-Efecto-Cocuyo-Experience-Independent-Media-Alliance-2fdee372c52c80c29adad1bcaa70da99"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--color-text-primary)] underline hover:text-[var(--color-accent)] transition-colors"
                 >
-                  Efecto Cocuyo
-                </a>,
-                a Venezuelan independent media platform founded in 2015 by journalists
-                who refused to let government censorship silence the truth. They proved
-                that community-driven journalism could survive and thrive even under
-                authoritarian conditions. The firefly image resonated because it speaks
-                to something universal: small lights that together illuminate the darkness.
+                  →
+                </a>
               </p>
             </div>
           </div>
@@ -82,45 +66,34 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
         <section className="py-20 bg-[var(--color-bg-secondary)] border-y border-[var(--color-border-default)]">
           <div className="container-wide">
             <h2 className="text-2xl font-semibold mb-12 text-center">
-              The Three Pillars
+              {t('threePillars.title')}
             </h2>
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-8 bg-[var(--color-bg-tertiary)] rounded-lg border border-[var(--color-border-default)]">
                 <h3 className="text-xl font-semibold mb-4 text-[var(--color-text-primary)]">
-                  Anonymous but Human
+                  {t('threePillars.anonymousButHuman.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Every firefly is a verified human being — proved through DIM
-                  (Decentralized Identity Mechanism), a proof-of-personhood system
-                  that confirms you&apos;re human without revealing who you are.
-                  No usernames, no profiles, no personal data. Just a cryptographic
-                  credential that says: &quot;A real human made this.&quot;
+                  {t('threePillars.anonymousButHuman.description')}
                 </p>
               </div>
 
               <div className="p-8 bg-[var(--color-bg-tertiary)] rounded-lg border border-[var(--color-border-default)]">
                 <h3 className="text-xl font-semibold mb-4 text-[var(--color-text-primary)]">
-                  Verified but Private
+                  {t('threePillars.verifiedButPrivate.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Every signal and corroboration carries cryptographic proof.
-                  Every chain has a transparent verification trail. But none of
-                  this requires exposing anyone&apos;s identity. The verification
-                  is public; the verifier is private. This is fact-checking
-                  without surveillance.
+                  {t('threePillars.verifiedButPrivate.description')}
                 </p>
               </div>
 
               <div className="p-8 bg-[var(--color-bg-tertiary)] rounded-lg border border-[var(--color-border-default)]">
                 <h3 className="text-xl font-semibold mb-4 text-[var(--color-text-primary)]">
-                  Distributed but Connected
+                  {t('threePillars.distributedButConnected.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Signals and chains are stored on decentralized infrastructure.
-                  No central server to seize, no company to subpoena, no single
-                  point of failure. If the founding team disappeared tomorrow,
-                  the network would continue. That&apos;s the point.
+                  {t('threePillars.distributedButConnected.description')}
                 </p>
               </div>
             </div>
@@ -130,64 +103,46 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
         {/* How It Works */}
         <section className="py-20">
           <div className="container-narrow">
-            <h2 className="text-2xl font-semibold mb-8">How It Works</h2>
+            <h2 className="text-2xl font-semibold mb-8">{t('howItWorks.title')}</h2>
 
             <div className="space-y-12">
               <div>
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
                   <span style={{ color: 'var(--color-accent)' }}>✦</span>
-                  Signals
+                  {t('howItWorks.signals.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  A signal is not a post. It&apos;s an observation, a piece of evidence,
-                  a witness account, a data point. When you illuminate a signal, you&apos;re
-                  contributing a discrete piece of information — signed by your anonymous
-                  credential, tagged with optional context (topic, location, timeframe),
-                  and ready to connect with other signals.
+                  {t('howItWorks.signals.description')}
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
                   <span style={{ color: 'var(--color-corroborated)' }}>◉</span>
-                  Corroboration
+                  {t('howItWorks.corroboration.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Corroboration is not a like. It&apos;s a reputation-staked act of verification.
-                  When you corroborate a signal, you&apos;re making a specific claim: &quot;I can
-                  independently confirm this,&quot; or &quot;I have additional evidence,&quot; or
-                  &quot;This is consistent with my expertise.&quot; Your corroboration is recorded
-                  permanently, weighted by your reputation in the relevant domain.
-                  If the signal is later debunked, your reputation diminishes.
+                  {t('howItWorks.corroboration.description')}
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
                   <span className="text-[var(--color-text-primary)]">⟁</span>
-                  Story Chains
+                  {t('howItWorks.storyChains.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Story chains are emergent structures. No one &quot;creates&quot; a chain — chains
-                  crystallize as fireflies link their signals to related observations.
-                  A chain about water quality might start with one person noticing a smell,
-                  grow as others corroborate and add photos, and strengthen as someone
-                  contributes public records about permits. The chain becomes more than
-                  the sum of its signals.
+                  {t('howItWorks.storyChains.description')}
                 </p>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
                   <span className="text-[var(--color-text-primary)]">◈</span>
-                  Verification Trails
+                  {t('howItWorks.verificationTrails.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  Every chain carries a transparent verification trail — the complete
-                  history of signals, corroborations, challenges, and evidence. You don&apos;t
-                  need to trust us to tell you something is verified. You can trace the
-                  trail yourself and see exactly how many independent humans, with what
-                  reputation, made what claims.
+                  {t('howItWorks.verificationTrails.description')}
                 </p>
               </div>
             </div>
@@ -197,31 +152,27 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
         {/* Surveillance Resistance */}
         <section className="py-20 bg-[var(--color-bg-secondary)] border-y border-[var(--color-border-default)]">
           <div className="container-narrow">
-            <h2 className="text-2xl font-semibold mb-8">Surveillance Resistance</h2>
+            <h2 className="text-2xl font-semibold mb-8">{t('surveillanceResistance.title')}</h2>
 
             <div className="space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
-              <p>
-                The network is designed so that no single point of compromise — no server
-                seizure, no subpoena, no insider threat — can expose the identity of any
-                firefly or remove any signal from the network.
-              </p>
+              <p>{t('surveillanceResistance.intro')}</p>
 
               <ul className="space-y-4 pl-6">
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">No user database.</strong> DIM credentials are generated through proof-of-personhood and held by you. There is no central registry of participants.</span>
+                  <span>{t('surveillanceResistance.noUserDatabase')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">No content server.</strong> Signals are stored on decentralized infrastructure. There is no single server to seize.</span>
+                  <span>{t('surveillanceResistance.noContentServer')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">No metadata collection.</strong> We don&apos;t log IP addresses, device fingerprints, or access patterns.</span>
+                  <span>{t('surveillanceResistance.noMetadata')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">No cookies.</strong> None. Zero. We don&apos;t collect what we can&apos;t be forced to reveal.</span>
+                  <span>{t('surveillanceResistance.noCookies')}</span>
                 </li>
               </ul>
             </div>
@@ -231,31 +182,25 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
         {/* Built on Polkadot */}
         <section className="py-20">
           <div className="container-narrow">
-            <h2 className="text-2xl font-semibold mb-8">Built on Polkadot</h2>
+            <h2 className="text-2xl font-semibold mb-8">{t('builtOnPolkadot.title')}</h2>
 
             <div className="space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
-              <p>
-                The Firefly Network is built on and for the Polkadot ecosystem.
-                We chose Polkadot because its values align with ours: decentralization,
-                interoperability, and user sovereignty.
-              </p>
+              <p>{t('builtOnPolkadot.intro')}</p>
 
-              <p>
-                Our infrastructure leverages:
-              </p>
+              <p>{t('builtOnPolkadot.infrastructure')}</p>
 
               <ul className="space-y-2 pl-6">
                 <li className="flex items-start gap-3">
                   <span style={{ color: 'var(--color-polkadot-pink)' }}>•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">DIM</strong> — Decentralized identity for proof-of-personhood</span>
+                  <span>{t('builtOnPolkadot.dim')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span style={{ color: 'var(--color-polkadot-pink)' }}>•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">Bulletin Chain</strong> — Censorship-resistant storage</span>
+                  <span>{t('builtOnPolkadot.bulletinChain')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span style={{ color: 'var(--color-polkadot-pink)' }}>•</span>
-                  <span><strong className="text-[var(--color-text-primary)]">Polkadot parachains</strong> — Verification and reputation logic</span>
+                  <span>{t('builtOnPolkadot.parachains')}</span>
                 </li>
               </ul>
 
@@ -289,12 +234,10 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
         {/* Open Source */}
         <section className="py-20 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-default)]">
           <div className="container-narrow text-center">
-            <h2 className="text-2xl font-semibold mb-6">Open Source</h2>
+            <h2 className="text-2xl font-semibold mb-6">{t('openSource.title')}</h2>
 
             <p className="text-[var(--color-text-secondary)] leading-relaxed mb-8">
-              All code is open source. All governance is public.
-              All verification trails are auditable. Transparency is not
-              optional — it&apos;s foundational.
+              {t('openSource.description')}
             </p>
 
             <a
@@ -303,7 +246,7 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors"
             >
-              <span>View on GitHub</span>
+              <span>{t('openSource.viewOnGitHub')}</span>
               <span aria-hidden="true">→</span>
             </a>
           </div>

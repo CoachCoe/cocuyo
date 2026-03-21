@@ -5,7 +5,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { getCollectivePreviews } from '@/lib/services/mock-data';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 interface CollectivesPageProps {
   params: Promise<{ locale: string }>;
@@ -14,6 +14,7 @@ interface CollectivesPageProps {
 export default async function CollectivesPage({ params }: CollectivesPageProps): Promise<ReactNode> {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations('collectives');
 
   const collectives = getCollectivePreviews();
 
@@ -22,14 +23,14 @@ export default async function CollectivesPage({ params }: CollectivesPageProps):
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--fg-primary)]">Collectives</h1>
+            <h1 className="text-2xl font-bold text-[var(--fg-primary)]">{t('title')}</h1>
             <p className="text-[var(--fg-secondary)] mt-1">
-              Fact-checking groups that verify signals collaboratively
+              {t('description')}
             </p>
           </div>
           <Link href="/collectives/create"
             className="px-4 py-2 bg-[var(--color-firefly-gold)] text-[var(--bg-surface-main)] font-semibold rounded-nested hover:brightness-110 transition-all">
-            Create Collective
+            {t('createCollective')}
           </Link>
         </div>
 
@@ -44,13 +45,13 @@ export default async function CollectivesPage({ params }: CollectivesPageProps):
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-[var(--color-firefly-gold)]">{collective.reputation}</div>
-                  <div className="text-xs text-[var(--fg-tertiary)]">reputation</div>
+                  <div className="text-xs text-[var(--fg-tertiary)]">{t('reputation')}</div>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm text-[var(--fg-tertiary)]">
-                <span>{collective.memberCount} members</span>
+                <span>{collective.memberCount} {t('members')}</span>
                 <span>&middot;</span>
-                <span>{collective.verificationsCompleted} verifications</span>
+                <span>{collective.verificationsCompleted} {t('verifications')}</span>
                 <span>&middot;</span>
                 <div className="flex gap-1">
                   {collective.topics.slice(0, 3).map((topic) => (

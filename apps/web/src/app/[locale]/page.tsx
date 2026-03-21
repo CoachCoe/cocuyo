@@ -12,7 +12,7 @@ import type { ReactElement } from 'react';
 import Link from 'next/link';
 import { Button, FireflySymbol } from '@cocuyo/ui';
 import { IlluminateButton } from '@/components/IlluminateButton';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -21,6 +21,7 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps): Promise<ReactElement> {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations('home');
   return (
     <>
       <main>
@@ -40,26 +41,24 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
 
             {/* Headline - uses DM Serif Display */}
             <h1 className="hero-heading text-4xl md:text-5xl lg:text-6xl mb-6 max-w-4xl mx-auto text-balance">
-              Lights in the Dark
+              {t('hero.title')}
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg md:text-xl text-secondary mb-8 max-w-2xl mx-auto leading-relaxed">
-              A surveillance-resistant network for collective intelligence.
-              Where verified humans share, corroborate, and build understanding —
-              without exposing their identities.
+              {t('hero.subtitle')}
             </p>
 
             {/* Pillars */}
             <div className="flex flex-wrap justify-center gap-4 text-sm text-secondary mb-12">
               <span className="px-4 py-2 border border-DEFAULT rounded-full">
-                Anonymous but Human
+                {t('pillars.anonymousButHuman')}
               </span>
               <span className="px-4 py-2 border border-DEFAULT rounded-full">
-                Verified but Private
+                {t('pillars.verifiedButPrivate')}
               </span>
               <span className="px-4 py-2 border border-DEFAULT rounded-full">
-                Distributed but Connected
+                {t('pillars.distributedButConnected')}
               </span>
             </div>
 
@@ -67,7 +66,7 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/explore">
                 <Button variant="primary" size="lg">
-                  Explore the Network
+                  {t('cta.explore')}
                 </Button>
               </Link>
               <IlluminateButton size="lg" />
@@ -79,29 +78,13 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
         <section className="py-24 border-t border-DEFAULT">
           <div className="container-narrow">
             <h2 className="text-3xl font-semibold mb-8 text-center">
-              What is the Firefly Network?
+              {t('whatIs.title')}
             </h2>
 
             <div className="space-y-6 text-secondary leading-relaxed">
-              <p>
-                In the Caribbean, indigenous peoples used <em>cocuyos</em> — bioluminescent
-                beetles — as natural lamps to guide them through the dark. No single cocuyo
-                illuminates a path. But millions of tiny sparks, together, can light an
-                entire nation.
-              </p>
-
-              <p>
-                The Firefly Network is <strong className="text-primary">not</strong> a social media
-                platform. It is a collective intelligence network where every participant is both
-                sensor and analyst, where information spreads through corroboration rather than
-                amplification, and where the value of a signal is determined by the cryptographic
-                weight of human verification — not algorithms or engagement metrics.
-              </p>
-
-              <p>
-                Here, you are not a user. You are a <strong className="text-primary">firefly</strong> —
-                a verified human being contributing light to the collective understanding.
-              </p>
+              <p>{t('whatIs.p1')}</p>
+              <p>{t('whatIs.p2')}</p>
+              <p>{t('whatIs.p3')}</p>
             </div>
           </div>
         </section>
@@ -110,7 +93,7 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
         <section className="py-24 border-t border-DEFAULT bg-surface-container">
           <div className="container-wide">
             <h2 className="text-3xl font-semibold mb-16 text-center">
-              How It Works
+              {t('howItWorks.title')}
             </h2>
 
             <div className="grid md:grid-cols-3 gap-12">
@@ -121,11 +104,9 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
                     ✦
                   </span>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Illuminate</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('howItWorks.illuminate.title')}</h3>
                 <p className="text-secondary leading-relaxed">
-                  Share what you observe. A signal is not a post — it&apos;s an observation,
-                  a piece of evidence, a data point. Each signal is signed by your anonymous
-                  credential, proving a verified human created it.
+                  {t('howItWorks.illuminate.description')}
                 </p>
               </div>
 
@@ -136,11 +117,9 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
                     ◉
                   </span>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Corroborate</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('howItWorks.corroborate.title')}</h3>
                 <p className="text-secondary leading-relaxed">
-                  Verify what others share. Corroboration is not a like — it&apos;s a
-                  reputation-staked act. When you corroborate, you&apos;re putting your
-                  accumulated reputation behind your assessment.
+                  {t('howItWorks.corroborate.description')}
                 </p>
               </div>
 
@@ -149,11 +128,9 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
                 <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-surface-nested border border-DEFAULT flex items-center justify-center">
                   <span className="text-2xl text-primary">⟁</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Connect</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('howItWorks.connect.title')}</h3>
                 <p className="text-secondary leading-relaxed">
-                  Signals link into story chains — emergent structures that form
-                  as fireflies connect their observations. The chain becomes stronger
-                  than any individual signal through distributed verification.
+                  {t('howItWorks.connect.description')}
                 </p>
               </div>
             </div>
@@ -164,25 +141,25 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
         <section className="py-24 border-t border-DEFAULT">
           <div className="container-narrow">
             <h2 className="text-3xl font-semibold mb-8 text-center">
-              What This Is Not
+              {t('whatIsNot.title')}
             </h2>
 
             <ul className="space-y-4 text-secondary">
               <li className="flex items-start gap-3">
                 <span className="text-challenged mt-1">✕</span>
-                <span>No follower counts. No profiles. No celebrities. Fireflies are anonymous.</span>
+                <span>{t('whatIsNot.noFollowers')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-challenged mt-1">✕</span>
-                <span>No infinite scroll. No algorithmic feed. No engagement optimization.</span>
+                <span>{t('whatIsNot.noScroll')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-challenged mt-1">✕</span>
-                <span>No likes, reactions, or shares. Information spreads through corroboration, not amplification.</span>
+                <span>{t('whatIsNot.noLikes')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-challenged mt-1">✕</span>
-                <span>No data collection. No tracking. No surveillance. We don&apos;t collect what we can&apos;t be forced to reveal.</span>
+                <span>{t('whatIsNot.noTracking')}</span>
               </li>
             </ul>
           </div>
@@ -192,14 +169,11 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
         <section className="py-24 border-t border-DEFAULT bg-surface-container">
           <div className="container-narrow text-center">
             <h2 className="text-3xl font-semibold mb-8">
-              Built on Polkadot
+              {t('polkadot.title')}
             </h2>
 
             <p className="text-secondary leading-relaxed mb-8">
-              The Firefly Network is built on and for the Polkadot ecosystem —
-              leveraging decentralized identity, censorship-resistant storage,
-              and cross-chain interoperability. No single point of failure.
-              No single point of control.
+              {t('polkadot.description')}
             </p>
 
             <a
@@ -208,7 +182,7 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors"
             >
-              <span>Learn more about Polkadot</span>
+              <span>{t('polkadot.learnMore')}</span>
               <span
                 className="inline-block w-3 h-3 rounded-full bg-polkadot-pink"
                 aria-hidden="true"

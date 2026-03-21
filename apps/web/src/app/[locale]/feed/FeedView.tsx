@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import type { Signal, ChainId } from '@cocuyo/types';
 import { SignalCard } from '@cocuyo/ui';
 import { useIdentity } from '@/hooks/useIdentity';
@@ -27,6 +28,7 @@ export function FeedView({
   chainTitles,
 }: FeedViewProps): ReactNode {
   const router = useRouter();
+  const t = useTranslations('feed');
   const { status, profile } = useIdentity();
   const [activeTab, setActiveTab] = useState<FeedTab>('discover');
 
@@ -61,7 +63,7 @@ export function FeedView({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[var(--fg-primary)]">
-          Your Feed
+          {t('title')}
         </h1>
 
         {/* Tabs */}
@@ -75,7 +77,7 @@ export function FeedView({
                 : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
             }`}
           >
-            Following
+            {t('following')}
           </button>
           <button
             type="button"
@@ -86,7 +88,7 @@ export function FeedView({
                 : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
             }`}
           >
-            Discover
+            {t('discover')}
           </button>
         </div>
       </div>
@@ -95,13 +97,13 @@ export function FeedView({
       {activeTab === 'following' && status !== 'ready' && (
         <div className="p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
           <p className="text-[var(--fg-secondary)] mb-4">
-            Complete your profile setup to see signals from topics you follow.
+            {t('setupPrompt')}
           </p>
           <Link
             href="/onboarding"
             className="inline-block px-4 py-2 bg-[var(--color-firefly-gold)] text-[var(--bg-surface-main)] font-semibold rounded-nested hover:brightness-110 transition-all"
           >
-            Complete Setup
+            {t('completeSetup')}
           </Link>
         </div>
       )}
@@ -110,10 +112,10 @@ export function FeedView({
       {activeTab === 'following' && status === 'ready' && sortedSignals.length === 0 && (
         <div className="p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
           <p className="text-[var(--fg-secondary)] mb-2">
-            No signals match your followed topics yet.
+            {t('noMatchingSignals')}
           </p>
           <p className="text-sm text-[var(--fg-tertiary)]">
-            Try following more topics in your profile settings.
+            {t('tryFollowingMore')}
           </p>
         </div>
       )}
@@ -144,7 +146,7 @@ export function FeedView({
       {activeTab === 'discover' && sortedSignals.length === 0 && (
         <div className="p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
           <p className="text-[var(--fg-secondary)]">
-            No signals yet. Be the first to illuminate.
+            {t('noSignalsYet')}
           </p>
         </div>
       )}

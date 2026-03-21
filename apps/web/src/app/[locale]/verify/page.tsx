@@ -5,7 +5,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { getPendingVerifications, getSignalById, getCollectiveById } from '@/lib/services/mock-data';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 interface VerifyPageProps {
   params: Promise<{ locale: string }>;
@@ -23,6 +23,7 @@ function formatRelativeTime(timestamp: number): string {
 export default async function VerifyPage({ params }: VerifyPageProps): Promise<ReactNode> {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations('verify');
 
   const requests = getPendingVerifications();
 
@@ -30,13 +31,13 @@ export default async function VerifyPage({ params }: VerifyPageProps): Promise<R
     <main className="min-h-screen bg-[var(--bg-default)]">
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[var(--fg-primary)]">Verification Workbench</h1>
-          <p className="text-[var(--fg-secondary)] mt-1">Signals awaiting collective verification</p>
+          <h1 className="text-2xl font-bold text-[var(--fg-primary)]">{t('title')}</h1>
+          <p className="text-[var(--fg-secondary)] mt-1">{t('description')}</p>
         </div>
 
         {requests.length === 0 ? (
           <div className="p-8 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
-            <p className="text-[var(--fg-secondary)]">No signals pending verification.</p>
+            <p className="text-[var(--fg-secondary)]">{t('noPending')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -67,9 +68,9 @@ export default async function VerifyPage({ params }: VerifyPageProps): Promise<R
                   <p className="text-[var(--fg-primary)] mb-3 line-clamp-2">{signal.content.text}</p>
 
                   <div className="flex items-center gap-4 text-sm text-[var(--fg-tertiary)]">
-                    <span>{request.evidence.length} evidence</span>
+                    <span>{request.evidence.length} {t('evidence')}</span>
                     <span>&middot;</span>
-                    <span>{request.votes.length} votes</span>
+                    <span>{request.votes.length} {t('votes')}</span>
                     <span>&middot;</span>
                     <span className="capitalize">{signal.context.topics[0]}</span>
                   </div>
