@@ -16,14 +16,23 @@ This is **not** a social media platform. It is a collective intelligence network
 - **Corroboration** is the core interaction — a reputation-staked act of verification, not a "like"
 - **Bounties** are community-funded requests for specific information
 
+## Demo
+
+**GitHub Pages**: [coachcoe.github.io/cocuyo](https://coachcoe.github.io/cocuyo/)
+
+The demo supports English and Latin American Spanish (es).
+
 ## Features
 
 - **Explore View** — Browse signals and story chains in list or map view
-- **Interactive Map** — Visualize signals (gold markers) and story chains (green rings) geographically using Leaflet
+- **Interactive Map** — Visualize signals (gold markers) and story chains (green rings) using D3
 - **Illuminate Modal** — Universal signal creation flow with smart suggestions for linking to chains and bounties
 - **Information Bounties** — Fund requests for specific information; contributors earn rewards
-- **Wallet Connection** — Connect via Web3Modal for identity verification
+- **Collectives** — Fact-checking groups that verify signals collaboratively
+- **Verification Workbench** — Queue of signals awaiting collective verification
+- **Wallet Connection** — Connect via Triangle SDK for identity verification
 - **Light/Dark Theme** — Toggle between light and dark modes
+- **Localization** — English and Latin American Spanish (next-intl)
 - **Responsive Design** — Works on desktop and mobile
 
 ## Quick Start
@@ -47,14 +56,17 @@ pnpm check
 ```
 cocuyo/
 ├── apps/
-│   └── web/              # Next.js 14+ web application
+│   └── web/              # Next.js 15+ web application
+│       ├── src/app/[locale]/  # Locale-based routing (en, es)
+│       └── i18n/         # Internationalization config
 ├── packages/
+│   ├── bulletin/         # Bulletin chain client
+│   ├── identity/         # DIM identity integration
 │   ├── types/            # Shared TypeScript types
 │   └── ui/               # Shared UI component library
-├── skills/               # Claude Code skill files
-│   ├── design-system.md
-│   ├── security.md
-│   └── polkadot-web3.md
+├── .claude/              # AI agent configuration
+│   ├── AGENTS.md         # Agent constraints & instructions
+│   └── skills/           # Domain knowledge skills
 └── docs/                 # Documentation
 ```
 
@@ -62,14 +74,35 @@ cocuyo/
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 14+ (App Router) |
+| Framework | Next.js 15+ (App Router) |
 | Language | TypeScript (strict mode) |
 | Styling | Tailwind CSS + CSS custom properties |
 | Fonts | Unbounded (Polkadot ecosystem) + Inter |
-| Maps | Leaflet + React-Leaflet |
-| Web3 | Web3Modal + Ethers.js |
+| Maps | D3 + TopoJSON |
+| Localization | next-intl |
+| Wallet | Triangle SDK |
 | Monorepo | pnpm workspaces + Turborepo |
 | Testing | Vitest + React Testing Library + Playwright |
+| CI/CD | GitHub Actions → GitHub Pages |
+
+## Localization
+
+The app supports multiple locales via next-intl:
+
+- **English** (`/en/`) — Default
+- **Spanish** (`/es/`) — Latin American Spanish
+
+Translation files are in `apps/web/i18n/messages/`.
+
+## Deployment
+
+### GitHub Pages (Demo)
+
+Pushes to `main` automatically deploy to GitHub Pages via the workflow in `.github/workflows/deploy-pages.yml`.
+
+### Triangle (Production)
+
+The app exports as static HTML (`output: 'export'`) and can be deployed to Triangle for decentralized hosting.
 
 ## Design System
 

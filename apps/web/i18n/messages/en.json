@@ -1,0 +1,195 @@
+{
+  "metadata": {
+    "title": "Firefly Network — Lights in the Dark",
+    "description": "A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected."
+  },
+  "nav": {
+    "feed": "Feed",
+    "explore": "Explore",
+    "collectives": "Collectives",
+    "verify": "Verify",
+    "search": "Search",
+    "about": "About",
+    "home": "Firefly Network home"
+  },
+  "footer": {
+    "tagline": "Lights in the dark.",
+    "network": "Network",
+    "resources": "Resources",
+    "community": "Community",
+    "explore": "Explore",
+    "bounties": "Bounties",
+    "storyChains": "Story Chains",
+    "inspiration": "Inspiration",
+    "about": "About",
+    "contributing": "Contributing",
+    "copyright": "Parity Technologies",
+    "opensInNewTab": "(opens in new tab)"
+  },
+  "home": {
+    "hero": {
+      "title": "Lights in the Dark",
+      "subtitle": "A surveillance-resistant network for collective intelligence. Where verified humans share, corroborate, and build understanding — without exposing their identities."
+    },
+    "pillars": {
+      "anonymousButHuman": "Anonymous but Human",
+      "verifiedButPrivate": "Verified but Private",
+      "distributedButConnected": "Distributed but Connected"
+    },
+    "cta": {
+      "explore": "Explore the Network"
+    },
+    "whatIs": {
+      "title": "What is the Firefly Network?",
+      "p1": "In the Caribbean, indigenous peoples used cocuyos — bioluminescent beetles — as natural lamps to guide them through the dark. No single cocuyo illuminates a path. But millions of tiny sparks, together, can light an entire nation.",
+      "p2": "The Firefly Network is not a social media platform. It is a collective intelligence network where every participant is both sensor and analyst, where information spreads through corroboration rather than amplification, and where the value of a signal is determined by the cryptographic weight of human verification — not algorithms or engagement metrics.",
+      "p3": "Here, you are not a user. You are a firefly — a verified human being contributing light to the collective understanding."
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "illuminate": {
+        "title": "Illuminate",
+        "description": "Share what you observe. A signal is not a post — it's an observation, a piece of evidence, a data point. Each signal is signed by your anonymous credential, proving a verified human created it."
+      },
+      "corroborate": {
+        "title": "Corroborate",
+        "description": "Verify what others share. Corroboration is not a like — it's a reputation-staked act. When you corroborate, you're putting your accumulated reputation behind your assessment."
+      },
+      "connect": {
+        "title": "Connect",
+        "description": "Signals link into story chains — emergent structures that form as fireflies connect their observations. The chain becomes stronger than any individual signal through distributed verification."
+      }
+    },
+    "whatIsNot": {
+      "title": "What This Is Not",
+      "noFollowers": "No follower counts. No profiles. No celebrities. Fireflies are anonymous.",
+      "noScroll": "No infinite scroll. No algorithmic feed. No engagement optimization.",
+      "noLikes": "No likes, reactions, or shares. Information spreads through corroboration, not amplification.",
+      "noTracking": "No data collection. No tracking. No surveillance. We don't collect what we can't be forced to reveal."
+    },
+    "polkadot": {
+      "title": "Built on Polkadot",
+      "description": "The Firefly Network is built on and for the Polkadot ecosystem — leveraging decentralized identity, censorship-resistant storage, and cross-chain interoperability. No single point of failure. No single point of control.",
+      "learnMore": "Learn more about Polkadot"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About the Network",
+      "subtitle": "Millions of tiny sparks can illuminate an entire nation."
+    },
+    "fireflyPrinciple": {
+      "title": "The Firefly Principle",
+      "p1": "In the Caribbean, indigenous peoples used cocuyos — bioluminescent beetles — as natural lamps to guide them through the dark. A single cocuyo casts barely enough light to see your own hand. But gather them together, and they become something more.",
+      "p2": "This is the principle behind the Firefly Network: no single observer sees the whole picture. But when verified humans share what they observe, corroborate what others see, and connect their signals into chains of evidence — the darkness begins to lift.",
+      "p3": "We are inspired by Efecto Cocuyo, a Venezuelan independent media platform founded in 2015 by journalists who refused to let government censorship silence the truth. They proved that community-driven journalism could survive and thrive even under authoritarian conditions. The firefly image resonated because it speaks to something universal: small lights that together illuminate the darkness."
+    },
+    "threePillars": {
+      "title": "The Three Pillars",
+      "anonymousButHuman": {
+        "title": "Anonymous but Human",
+        "description": "Every firefly is a verified human being — proved through DIM (Decentralized Identity Mechanism), a proof-of-personhood system that confirms you're human without revealing who you are. No usernames, no profiles, no personal data. Just a cryptographic credential that says: \"A real human made this.\""
+      },
+      "verifiedButPrivate": {
+        "title": "Verified but Private",
+        "description": "Every signal and corroboration carries cryptographic proof. Every chain has a transparent verification trail. But none of this requires exposing anyone's identity. The verification is public; the verifier is private. This is fact-checking without surveillance."
+      },
+      "distributedButConnected": {
+        "title": "Distributed but Connected",
+        "description": "Signals and chains are stored on decentralized infrastructure. No central server to seize, no company to subpoena, no single point of failure. If the founding team disappeared tomorrow, the network would continue. That's the point."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "signals": {
+        "title": "Signals",
+        "description": "A signal is not a post. It's an observation, a piece of evidence, a witness account, a data point. When you illuminate a signal, you're contributing a discrete piece of information — signed by your anonymous credential, tagged with optional context (topic, location, timeframe), and ready to connect with other signals."
+      },
+      "corroboration": {
+        "title": "Corroboration",
+        "description": "Corroboration is not a like. It's a reputation-staked act of verification. When you corroborate a signal, you're making a specific claim: \"I can independently confirm this,\" or \"I have additional evidence,\" or \"This is consistent with my expertise.\" Your corroboration is recorded permanently, weighted by your reputation in the relevant domain. If the signal is later debunked, your reputation diminishes."
+      },
+      "storyChains": {
+        "title": "Story Chains",
+        "description": "Story chains are emergent structures. No one \"creates\" a chain — chains crystallize as fireflies link their signals to related observations. A chain about water quality might start with one person noticing a smell, grow as others corroborate and add photos, and strengthen as someone contributes public records about permits. The chain becomes more than the sum of its signals."
+      },
+      "verificationTrails": {
+        "title": "Verification Trails",
+        "description": "Every chain carries a transparent verification trail — the complete history of signals, corroborations, challenges, and evidence. You don't need to trust us to tell you something is verified. You can trace the trail yourself and see exactly how many independent humans, with what reputation, made what claims."
+      }
+    },
+    "surveillanceResistance": {
+      "title": "Surveillance Resistance",
+      "intro": "The network is designed so that no single point of compromise — no server seizure, no subpoena, no insider threat — can expose the identity of any firefly or remove any signal from the network.",
+      "noUserDatabase": "No user database. DIM credentials are generated through proof-of-personhood and held by you. There is no central registry of participants.",
+      "noContentServer": "No content server. Signals are stored on decentralized infrastructure. There is no single server to seize.",
+      "noMetadata": "No metadata collection. We don't log IP addresses, device fingerprints, or access patterns.",
+      "noCookies": "No cookies. None. Zero. We don't collect what we can't be forced to reveal."
+    },
+    "builtOnPolkadot": {
+      "title": "Built on Polkadot",
+      "intro": "The Firefly Network is built on and for the Polkadot ecosystem. We chose Polkadot because its values align with ours: decentralization, interoperability, and user sovereignty.",
+      "infrastructure": "Our infrastructure leverages:",
+      "dim": "DIM — Decentralized identity for proof-of-personhood",
+      "bulletinChain": "Bulletin Chain — Censorship-resistant storage",
+      "parachains": "Polkadot parachains — Verification and reputation logic"
+    },
+    "openSource": {
+      "title": "Open Source",
+      "description": "All code is open source. All governance is public. All verification trails are auditable. Transparency is not optional — it's foundational.",
+      "viewOnGitHub": "View on GitHub"
+    }
+  },
+  "explore": {
+    "title": "Explore",
+    "description": "Browse active story chains and recent signals from the network. Information spreads through corroboration, not algorithms.",
+    "activeChains": "Active Story Chains",
+    "noChains": "No active chains yet. Be the first to illuminate.",
+    "recentSignals": "Recent Signals",
+    "updated": "Updated",
+    "signals": "signals",
+    "corroborations": "corroborations"
+  },
+  "feed": {
+    "title": "Feed",
+    "following": "Following",
+    "discover": "Discover"
+  },
+  "verify": {
+    "title": "Verification Workbench",
+    "description": "Signals awaiting collective verification",
+    "noPending": "No signals pending verification.",
+    "evidence": "evidence",
+    "votes": "votes"
+  },
+  "collectives": {
+    "title": "Collectives",
+    "description": "Fact-checking groups that verify signals collaboratively",
+    "createCollective": "Create Collective",
+    "members": "members",
+    "verifications": "verifications",
+    "reputation": "reputation"
+  },
+  "common": {
+    "loading": "Loading...",
+    "justNow": "just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "weeksAgo": "{count}w ago",
+    "comingSoon": "Coming Soon"
+  },
+  "actions": {
+    "illuminate": "Illuminate",
+    "corroborate": "Corroborate",
+    "challenge": "Challenge"
+  },
+  "status": {
+    "active": "active",
+    "established": "established",
+    "emerging": "emerging",
+    "contested": "contested",
+    "pending": "pending",
+    "inReview": "in review"
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "metadata": {
+    "title": "Red Luciérnaga — Luces en la Oscuridad",
+    "description": "Una red resistente a la vigilancia para la inteligencia colectiva. Anónimo pero humano. Verificado pero privado. Distribuido pero conectado."
+  },
+  "nav": {
+    "feed": "Inicio",
+    "explore": "Explorar",
+    "collectives": "Colectivos",
+    "verify": "Verificar",
+    "search": "Buscar",
+    "about": "Acerca de",
+    "home": "Inicio de Red Luciérnaga"
+  },
+  "footer": {
+    "tagline": "Luces en la oscuridad.",
+    "network": "Red",
+    "resources": "Recursos",
+    "community": "Comunidad",
+    "explore": "Explorar",
+    "bounties": "Recompensas",
+    "storyChains": "Cadenas de Historia",
+    "inspiration": "Inspiración",
+    "about": "Acerca de",
+    "contributing": "Contribuir",
+    "copyright": "Parity Technologies",
+    "opensInNewTab": "(abre en nueva pestaña)"
+  },
+  "home": {
+    "hero": {
+      "title": "Luces en la Oscuridad",
+      "subtitle": "Una red resistente a la vigilancia para la inteligencia colectiva. Donde humanos verificados comparten, corroboran y construyen entendimiento — sin exponer sus identidades."
+    },
+    "pillars": {
+      "anonymousButHuman": "Anónimo pero Humano",
+      "verifiedButPrivate": "Verificado pero Privado",
+      "distributedButConnected": "Distribuido pero Conectado"
+    },
+    "cta": {
+      "explore": "Explorar la Red"
+    },
+    "whatIs": {
+      "title": "¿Qué es la Red Luciérnaga?",
+      "p1": "En el Caribe, los pueblos indígenas usaban cocuyos — escarabajos bioluminiscentes — como lámparas naturales para guiarse en la oscuridad. Un solo cocuyo no ilumina un camino. Pero millones de pequeñas chispas, juntas, pueden iluminar una nación entera.",
+      "p2": "La Red Luciérnaga no es una plataforma de redes sociales. Es una red de inteligencia colectiva donde cada participante es sensor y analista, donde la información se propaga a través de la corroboración en lugar de la amplificación, y donde el valor de una señal está determinado por el peso criptográfico de la verificación humana — no por algoritmos o métricas de engagement.",
+      "p3": "Aquí, no eres un usuario. Eres una luciérnaga — un ser humano verificado que contribuye luz al entendimiento colectivo."
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "illuminate": {
+        "title": "Iluminar",
+        "description": "Comparte lo que observas. Una señal no es una publicación — es una observación, una pieza de evidencia, un dato. Cada señal está firmada por tu credencial anónima, demostrando que un humano verificado la creó."
+      },
+      "corroborate": {
+        "title": "Corroborar",
+        "description": "Verifica lo que otros comparten. La corroboración no es un \"me gusta\" — es un acto respaldado por tu reputación. Cuando corroboras, estás poniendo tu reputación acumulada detrás de tu evaluación."
+      },
+      "connect": {
+        "title": "Conectar",
+        "description": "Las señales se enlazan en cadenas de historia — estructuras emergentes que se forman cuando las luciérnagas conectan sus observaciones. La cadena se vuelve más fuerte que cualquier señal individual a través de la verificación distribuida."
+      }
+    },
+    "whatIsNot": {
+      "title": "Lo Que Esto No Es",
+      "noFollowers": "Sin conteo de seguidores. Sin perfiles. Sin celebridades. Las luciérnagas son anónimas.",
+      "noScroll": "Sin scroll infinito. Sin feed algorítmico. Sin optimización de engagement.",
+      "noLikes": "Sin likes, reacciones o compartidos. La información se propaga a través de la corroboración, no la amplificación.",
+      "noTracking": "Sin recolección de datos. Sin rastreo. Sin vigilancia. No recolectamos lo que no podemos ser forzados a revelar."
+    },
+    "polkadot": {
+      "title": "Construido en Polkadot",
+      "description": "La Red Luciérnaga está construida en y para el ecosistema Polkadot — aprovechando la identidad descentralizada, el almacenamiento resistente a la censura y la interoperabilidad entre cadenas. Sin punto único de fallo. Sin punto único de control.",
+      "learnMore": "Aprende más sobre Polkadot"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Acerca de la Red",
+      "subtitle": "Millones de pequeñas chispas pueden iluminar una nación entera."
+    },
+    "fireflyPrinciple": {
+      "title": "El Principio de la Luciérnaga",
+      "p1": "En el Caribe, los pueblos indígenas usaban cocuyos — escarabajos bioluminiscentes — como lámparas naturales para guiarse en la oscuridad. Un solo cocuyo apenas emite luz suficiente para ver tu propia mano. Pero reúnelos, y se convierten en algo más.",
+      "p2": "Este es el principio detrás de la Red Luciérnaga: ningún observador individual ve el panorama completo. Pero cuando humanos verificados comparten lo que observan, corroboran lo que otros ven, y conectan sus señales en cadenas de evidencia — la oscuridad comienza a disiparse.",
+      "p3": "Nos inspiramos en Efecto Cocuyo, una plataforma de medios independientes venezolana fundada en 2015 por periodistas que se negaron a dejar que la censura gubernamental silenciara la verdad. Demostraron que el periodismo comunitario podía sobrevivir y prosperar incluso bajo condiciones autoritarias. La imagen de la luciérnaga resonó porque habla de algo universal: pequeñas luces que juntas iluminan la oscuridad."
+    },
+    "threePillars": {
+      "title": "Los Tres Pilares",
+      "anonymousButHuman": {
+        "title": "Anónimo pero Humano",
+        "description": "Cada luciérnaga es un ser humano verificado — demostrado a través de DIM (Mecanismo de Identidad Descentralizada), un sistema de prueba de humanidad que confirma que eres humano sin revelar quién eres. Sin nombres de usuario, sin perfiles, sin datos personales. Solo una credencial criptográfica que dice: \"Un humano real hizo esto.\""
+      },
+      "verifiedButPrivate": {
+        "title": "Verificado pero Privado",
+        "description": "Cada señal y corroboración lleva prueba criptográfica. Cada cadena tiene un rastro de verificación transparente. Pero nada de esto requiere exponer la identidad de nadie. La verificación es pública; el verificador es privado. Esto es verificación de hechos sin vigilancia."
+      },
+      "distributedButConnected": {
+        "title": "Distribuido pero Conectado",
+        "description": "Las señales y cadenas se almacenan en infraestructura descentralizada. Sin servidor central que confiscar, sin empresa a la que citar, sin punto único de fallo. Si el equipo fundador desapareciera mañana, la red continuaría. Ese es el punto."
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "signals": {
+        "title": "Señales",
+        "description": "Una señal no es una publicación. Es una observación, una pieza de evidencia, un testimonio, un dato. Cuando iluminas una señal, estás contribuyendo una pieza discreta de información — firmada por tu credencial anónima, etiquetada con contexto opcional (tema, ubicación, período de tiempo), y lista para conectarse con otras señales."
+      },
+      "corroboration": {
+        "title": "Corroboración",
+        "description": "La corroboración no es un \"me gusta\". Es un acto de verificación respaldado por tu reputación. Cuando corroboras una señal, estás haciendo una afirmación específica: \"Puedo confirmar esto de manera independiente\", o \"Tengo evidencia adicional\", o \"Esto es consistente con mi experiencia\". Tu corroboración se registra permanentemente, ponderada por tu reputación en el dominio relevante. Si la señal es posteriormente desmentida, tu reputación disminuye."
+      },
+      "storyChains": {
+        "title": "Cadenas de Historia",
+        "description": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una cadena — las cadenas cristalizan cuando las luciérnagas enlazan sus señales a observaciones relacionadas. Una cadena sobre calidad del agua podría comenzar con una persona notando un olor, crecer cuando otros corroboran y añaden fotos, y fortalecerse cuando alguien contribuye registros públicos sobre permisos. La cadena se convierte en más que la suma de sus señales."
+      },
+      "verificationTrails": {
+        "title": "Rastros de Verificación",
+        "description": "Cada cadena lleva un rastro de verificación transparente — el historial completo de señales, corroboraciones, cuestionamientos y evidencia. No necesitas confiar en nosotros para saber que algo está verificado. Puedes rastrear el camino tú mismo y ver exactamente cuántos humanos independientes, con qué reputación, hicieron qué afirmaciones."
+      }
+    },
+    "surveillanceResistance": {
+      "title": "Resistencia a la Vigilancia",
+      "intro": "La red está diseñada para que ningún punto único de compromiso — ninguna confiscación de servidor, ninguna citación, ninguna amenaza interna — pueda exponer la identidad de cualquier luciérnaga o eliminar cualquier señal de la red.",
+      "noUserDatabase": "Sin base de datos de usuarios. Las credenciales DIM se generan a través de prueba de humanidad y las guardas tú. No hay un registro central de participantes.",
+      "noContentServer": "Sin servidor de contenido. Las señales se almacenan en infraestructura descentralizada. No hay un servidor único que confiscar.",
+      "noMetadata": "Sin recolección de metadatos. No registramos direcciones IP, huellas digitales de dispositivos, ni patrones de acceso.",
+      "noCookies": "Sin cookies. Ninguna. Cero. No recolectamos lo que no podemos ser forzados a revelar."
+    },
+    "builtOnPolkadot": {
+      "title": "Construido en Polkadot",
+      "intro": "La Red Luciérnaga está construida en y para el ecosistema Polkadot. Elegimos Polkadot porque sus valores se alinean con los nuestros: descentralización, interoperabilidad y soberanía del usuario.",
+      "infrastructure": "Nuestra infraestructura aprovecha:",
+      "dim": "DIM — Identidad descentralizada para prueba de humanidad",
+      "bulletinChain": "Bulletin Chain — Almacenamiento resistente a la censura",
+      "parachains": "Parachains de Polkadot — Lógica de verificación y reputación"
+    },
+    "openSource": {
+      "title": "Código Abierto",
+      "description": "Todo el código es de código abierto. Toda la gobernanza es pública. Todos los rastros de verificación son auditables. La transparencia no es opcional — es fundamental.",
+      "viewOnGitHub": "Ver en GitHub"
+    }
+  },
+  "explore": {
+    "title": "Explorar",
+    "description": "Explora cadenas de historia activas y señales recientes de la red. La información se propaga a través de la corroboración, no algoritmos.",
+    "activeChains": "Cadenas de Historia Activas",
+    "noChains": "No hay cadenas activas aún. Sé el primero en iluminar.",
+    "recentSignals": "Señales Recientes",
+    "updated": "Actualizado",
+    "signals": "señales",
+    "corroborations": "corroboraciones"
+  },
+  "feed": {
+    "title": "Inicio",
+    "following": "Siguiendo",
+    "discover": "Descubrir"
+  },
+  "verify": {
+    "title": "Mesa de Verificación",
+    "description": "Señales esperando verificación colectiva",
+    "noPending": "No hay señales pendientes de verificación.",
+    "evidence": "evidencia",
+    "votes": "votos"
+  },
+  "collectives": {
+    "title": "Colectivos",
+    "description": "Grupos de verificación de hechos que verifican señales colaborativamente",
+    "createCollective": "Crear Colectivo",
+    "members": "miembros",
+    "verifications": "verificaciones",
+    "reputation": "reputación"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "justNow": "ahora mismo",
+    "minutesAgo": "hace {count}m",
+    "hoursAgo": "hace {count}h",
+    "daysAgo": "hace {count}d",
+    "weeksAgo": "hace {count}sem",
+    "comingSoon": "Próximamente"
+  },
+  "actions": {
+    "illuminate": "Iluminar",
+    "corroborate": "Corroborar",
+    "challenge": "Cuestionar"
+  },
+  "status": {
+    "active": "activo",
+    "established": "establecido",
+    "emerging": "emergente",
+    "contested": "cuestionado",
+    "pending": "pendiente",
+    "inReview": "en revisión"
+  }
+}

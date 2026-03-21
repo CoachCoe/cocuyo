@@ -1,9 +1,16 @@
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Static export for Triangle deployment
   output: 'export',
   distDir: 'dist',
   trailingSlash: true,
+
+  // Base path for GitHub Pages deployment (https://coachcoe.github.io/cocuyo/)
+  basePath: process.env.GITHUB_PAGES ? '/cocuyo' : '',
 
   // Disable image optimization for static export
   images: {
@@ -23,4 +30,4 @@ const nextConfig = {
   // Security headers should be configured at the hosting layer
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);
