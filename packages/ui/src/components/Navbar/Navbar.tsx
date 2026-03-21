@@ -36,6 +36,11 @@ function DefaultLink({ href, className, children, onClick, ...props }: NavLinkPr
   );
 }
 
+export interface NavLink {
+  href: string;
+  label: string;
+}
+
 export interface NavbarProps {
   /** Current active path for highlighting */
   currentPath?: string;
@@ -48,14 +53,17 @@ export interface NavbarProps {
   /** Custom Link component (e.g., Next.js Link) for client-side navigation */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   LinkComponent?: ComponentType<any>;
+  /** Navigation links with translated labels */
+  navLinks?: NavLink[];
+  /** Translated label for Illuminate button */
+  illuminateLabel?: string;
+  /** Translated label for home link */
+  homeLabel?: string;
+  /** Home link href (for locale prefix) */
+  homeHref?: string;
 }
 
-interface NavLink {
-  href: string;
-  label: string;
-}
-
-const navLinks: NavLink[] = [
+const defaultNavLinks: NavLink[] = [
   { href: '/feed', label: 'Feed' },
   { href: '/explore', label: 'Explore' },
   { href: '/collectives', label: 'Collectives' },
@@ -70,6 +78,10 @@ export function Navbar({
   walletSlot,
   actionsSlot,
   LinkComponent = DefaultLink,
+  navLinks = defaultNavLinks,
+  illuminateLabel = 'Illuminate',
+  homeLabel = 'Firefly Network home',
+  homeHref = '/',
 }: NavbarProps): ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const Link = LinkComponent;
@@ -95,9 +107,9 @@ export function Navbar({
       >
         {/* Wordmark */}
         <Link
-          href="/"
+          href={homeHref}
           className="flex items-center gap-2 text-[var(--fg-primary)] hover:text-[var(--fg-primary)]"
-          aria-label="Firefly Network home"
+          aria-label={homeLabel}
         >
           <FireflySymbol size={20} color="gold" />
           <span className="font-semibold text-lg tracking-tight">
@@ -147,7 +159,7 @@ export function Navbar({
           )}
 
           <Button variant="illuminate" size="sm" onClick={onIlluminate}>
-            Illuminate
+            {illuminateLabel}
           </Button>
         </div>
 
@@ -234,7 +246,7 @@ export function Navbar({
                   onIlluminate?.();
                 }}
               >
-                Illuminate
+                {illuminateLabel}
               </Button>
             </div>
           </div>
