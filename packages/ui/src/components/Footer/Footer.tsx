@@ -39,7 +39,7 @@ const footerColumns: FooterColumn[] = [
   {
     title: 'Resources',
     links: [
-      { href: 'https://rebbit.notion.site/Efecto-Cocuyo-Independent-Media-2fdee372c52c80c29adad1bcaa70da99', label: 'Inspiration', external: true },
+      { href: 'https://rebbit.notion.site/The-Efecto-Cocuyo-Experience-Independent-Media-Alliance-2fdee372c52c80c29adad1bcaa70da99', label: 'Inspiration', external: true },
       { href: '/about', label: 'About' },
       { href: '/contributing', label: 'Contributing' },
     ],

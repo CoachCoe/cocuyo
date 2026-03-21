@@ -59,7 +59,15 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
               </p>
 
               <p>
-                We are inspired by <strong className="text-[var(--color-text-primary)]">Efecto Cocuyo</strong>,
+                We are inspired by{' '}
+                <a
+                  href="https://rebbit.notion.site/The-Efecto-Cocuyo-Experience-Independent-Media-Alliance-2fdee372c52c80c29adad1bcaa70da99"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--color-text-primary)] underline hover:text-[var(--color-accent)] transition-colors"
+                >
+                  Efecto Cocuyo
+                </a>,
                 a Venezuelan independent media platform founded in 2015 by journalists
                 who refused to let government censorship silence the truth. They proved
                 that community-driven journalism could survive and thrive even under
@@ -290,7 +298,7 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
             </p>
 
             <a
-              href="https://github.com/fireflynetwork"
+              href="https://github.com/CoachCoe/cocuyo"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors"

@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@cocuyo/ui';
 import { ConnectButton } from './ConnectButton';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { useIlluminate } from '@/hooks/useIlluminate';
 
 export function AppNavbar(): ReactElement {
@@ -21,6 +22,7 @@ export function AppNavbar(): ReactElement {
     <Navbar
       currentPath={pathname}
       walletSlot={<ConnectButton />}
+      actionsSlot={<LanguageSwitcher />}
       onIlluminate={() => openModal()}
       LinkComponent={Link}
     />
