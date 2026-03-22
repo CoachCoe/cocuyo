@@ -1,0 +1,54 @@
+name: Deploy to Bulletin
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: 'Domain name (without .dot)'
+        required: true
+        default: 'cocuyo'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: ./apps/web/dist
+          retention-days: 1
+
+  deploy:
+    needs: build
+    uses: paritytech/dotns-sdk/.github/workflows/deploy.yml@main
+    with:
+      basename: ${{ inputs.domain }}
+      artifact-name: web-dist
+      mode: production
+      register-base: true
+      parallel: true
+    secrets:
+      dotns-mnemonic: ${{ secrets.DOTNS_MNEMONIC }}
+      bulletin-mnemonic: ${{ secrets.BULLETIN_MNEMONIC }}
