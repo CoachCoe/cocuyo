@@ -1,54 +1,79 @@
 name: Deploy to Bulletin
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       domain:
-        description: 'Domain name (without .dot)'
+        description: 'Full domain (e.g. cucuyo.dot)'
         required: true
-        default: 'cocuyo'
+        default: 'cucuyo.dot'
 
 permissions:
   contents: read
+  pull-requests: write
+
+concurrency:
+  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '22'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - run: pnpm build
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+      - uses: ipfs/download-ipfs-distribution-action@v1
         with:
-          name: web-dist
-          path: ./apps/web/dist
-          retention-days: 1
+          name: kubo
+          version: v0.33.0
 
-  deploy:
-    needs: build
-    uses: paritytech/dotns-sdk/.github/workflows/deploy.yml@main
-    with:
-      basename: ${{ inputs.domain }}
-      artifact-name: web-dist
-      mode: production
-      register-base: true
-      parallel: true
-    secrets:
-      dotns-mnemonic: ${{ secrets.DOTNS_MNEMONIC }}
-      bulletin-mnemonic: ${{ secrets.BULLETIN_MNEMONIC }}
+      - run: ipfs init
+
+      - run: npm install -g github:paritytech/bulletin-deploy
+
+      - name: Deploy
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: |
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              DOMAIN="${{ inputs.domain }}"
+            elif [ "${{ github.event_name }}" = "pull_request" ]; then
+              DOMAIN="cucuyo-${{ github.head_ref }}.dot"
+            else
+              DOMAIN="cucuyo.dot"
+            fi
+            bulletin-deploy './apps/web/dist' "$DOMAIN"
+        env:
+          MNEMONIC: ${{ secrets.DOTNS_MNEMONIC }}
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const domain = 'cucuyo-${{ github.head_ref }}';
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🔥 **${domain}.dot**\n\nhttps://${domain}.dot.li\n\n[View logs](${runUrl})`
+            });
