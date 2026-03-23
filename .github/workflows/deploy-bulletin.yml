@@ -44,7 +44,7 @@ jobs:
 
       - run: ipfs init
 
-      - run: npm install -g github:paritytech/bulletin-deploy
+      - run: npm install -g bulletin-deploy
 
       - name: Deploy
         uses: nick-fields/retry@v3
