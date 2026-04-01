@@ -4,28 +4,16 @@
     "description": "A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected."
   },
   "nav": {
-    "feed": "Feed",
-    "explore": "Explore",
-    "collectives": "Collectives",
-    "verify": "Verify",
-    "search": "Search",
+    "signals": "Signals",
+    "verify": "Help Verify",
     "about": "About",
     "home": "Firefly Network home",
     "brandName": "FIREFLY NETWORK"
   },
   "footer": {
+    "builtOn": "Built on Polkadot",
     "tagline": "Lights in the dark.",
-    "network": "Network",
-    "resources": "Resources",
-    "community": "Community",
-    "explore": "Explore",
-    "bounties": "Bounties",
-    "storyChains": "Story Chains",
-    "inspiration": "Inspiration",
-    "about": "About",
-    "contributing": "Contributing",
-    "copyright": "Parity Technologies",
-    "opensInNewTab": "(opens in new tab)"
+    "copyright": "Parity Technologies"
   },
   "home": {
     "hero": {
@@ -38,7 +26,10 @@
       "distributedButConnected": "Distributed but Connected"
     },
     "cta": {
-      "explore": "Explore the Network"
+      "howItWorks": "How does this work?"
+    },
+    "preview": {
+      "title": "Recent Signals"
     },
     "whatIs": {
       "title": "What is the Firefly Network?",
@@ -143,11 +134,10 @@
   },
   "explore": {
     "title": "Explore",
-    "description": "Browse active story chains and recent signals from the network. Information spreads through corroboration, not algorithms.",
-    "activeChains": "Active Story Chains",
-    "noChains": "No active chains yet. Be the first to illuminate.",
+    "description": "Stories and signals from the network. Information spreads through corroboration, not algorithms.",
+    "stories": "Developing Stories",
+    "noStories": "No stories yet. Illuminate a signal to start one.",
     "recentSignals": "Recent Signals",
-    "updated": "Updated",
     "signals": "signals",
     "corroborations": "corroborations"
   },

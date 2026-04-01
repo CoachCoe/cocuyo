@@ -4,15 +4,7 @@
 
 import type { Bounty, BountyPreview } from '@cocuyo/types';
 import { createBountyId, createDIMCredential, createSignalId } from '@cocuyo/types';
-
-const hoursAgo = (hours: number): number =>
-  Math.floor((Date.now() - hours * 60 * 60 * 1000) / 1000);
-
-const daysAgo = (days: number): number =>
-  Math.floor((Date.now() - days * 24 * 60 * 60 * 1000) / 1000);
-
-const daysFromNow = (days: number): number =>
-  Math.floor((Date.now() + days * 24 * 60 * 60 * 1000) / 1000);
+import { hoursAgo, daysAgo, daysFromNow } from '@/lib/utils/time';
 
 /**
  * Mock bounties demonstrating community-funded information requests.

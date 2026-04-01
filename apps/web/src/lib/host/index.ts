@@ -5,8 +5,8 @@
 export {
   initHostDetection,
   isHosted,
+  isInContainer,
   getAccountsProvider,
-  getMetaProvider,
   type AccountConnectionStatus,
 } from './detect';
 

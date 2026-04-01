@@ -13,7 +13,7 @@ import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { chainService } from '@/lib/services';
-import { mockSignals, mockChains } from '@/lib/services/mock-data';
+import { getSignals, getAllChainIds, type Locale } from '@/lib/services/mock-data';
 import { ChainSignalList } from './ChainSignalList';
 import { AddSignalButton } from './AddSignalButton';
 import type { ChainId } from '@cocuyo/types';
@@ -25,10 +25,11 @@ import { setRequestLocale } from 'next-intl/server';
  * Generate static params for all known chains across all locales.
  */
 export function generateStaticParams(): Array<{ locale: string; id: string }> {
+  const chainIds = getAllChainIds();
   return routing.locales.flatMap((locale) =>
-    mockChains.map((chain) => ({
+    chainIds.map((id) => ({
       locale,
-      id: String(chain.id),
+      id,
     }))
   );
 }
@@ -69,8 +70,8 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
     notFound();
   }
 
-  // Get signals for this chain
-  const signals = mockSignals.filter((s) =>
+  // Get signals for this chain (locale-aware)
+  const signals = getSignals(locale as Locale).filter((s) =>
     s.chainLinks.some((link) => link === id)
   );
 

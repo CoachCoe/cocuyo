@@ -36,10 +36,12 @@ export function SignalsList({
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-6">Recent Signals</h2>
+      <h2 className="text-xs font-medium text-tertiary uppercase tracking-wider mb-4">
+        Recent Signals
+      </h2>
 
       {signals.length > 0 ? (
-        <AnimatedList className="grid gap-4 max-w-3xl" variant="fast">
+        <AnimatedList className="grid gap-4" variant="fast">
           {signals.map((signal) => {
             const chainTitle =
               signal.chainLinks.length > 0
@@ -64,10 +66,10 @@ export function SignalsList({
       )}
 
       {hasMore && (
-        <div className="mt-8 text-center">
+        <div className="mt-10 text-center">
           <button
             type="button"
-            className="px-6 py-2 text-sm border border-[var(--color-border-default)] rounded hover:border-[var(--color-border-emphasis)] transition-colors"
+            className="px-6 py-2.5 text-sm font-medium border border-[var(--color-border-default)] rounded-small hover:border-[var(--fg-accent)] hover:text-[var(--fg-accent)] transition-colors"
           >
             Load more signals
           </button>

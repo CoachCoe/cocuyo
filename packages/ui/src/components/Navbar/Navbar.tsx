@@ -66,11 +66,8 @@ export interface NavbarProps {
 }
 
 const defaultNavLinks: NavLink[] = [
-  { href: '/feed', label: 'Feed' },
-  { href: '/explore', label: 'Explore' },
-  { href: '/collectives', label: 'Collectives' },
+  { href: '/explore', label: 'Signals' },
   { href: '/verify', label: 'Verify' },
-  { href: '/search', label: 'Search' },
   { href: '/about', label: 'About' },
 ];
 
@@ -122,6 +119,7 @@ export function Navbar({
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
+          {/* Navigation links */}
           <ul className="flex items-center gap-6">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -160,10 +158,6 @@ export function Navbar({
               {actionsSlot}
             </div>
           )}
-
-          <Button variant="illuminate" size="sm" onClick={onIlluminate}>
-            {illuminateLabel}
-          </Button>
         </div>
 
         {/* Mobile Menu Button */}

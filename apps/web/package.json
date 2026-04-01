@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/flatten-default-locale.mjs",
+    "build:next": "next build",
     "start": "next start",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
@@ -23,7 +24,7 @@
     "@cocuyo/ui": "workspace:*",
     "@novasamatech/host-api": "0.6.6-1",
     "@novasamatech/product-sdk": "0.6.6-1",
-    "@polkadot-labs/hdkd-helpers": "^0.0.27",
+    "@polkadot/util-crypto": "^14.0.3",
     "d3": "^7.9.0",
     "d3-geo": "^3.1.1",
     "next": "^15.1.0",

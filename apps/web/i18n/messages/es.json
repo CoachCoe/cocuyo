@@ -4,28 +4,16 @@
     "description": "Una red resistente a la vigilancia para la inteligencia colectiva. Anónimo pero humano. Verificado pero privado. Distribuido pero conectado."
   },
   "nav": {
-    "feed": "Inicio",
-    "explore": "Explorar",
-    "collectives": "Colectivos",
-    "verify": "Verificar",
-    "search": "Buscar",
+    "signals": "Señales",
+    "verify": "Ayudar a Verificar",
     "about": "Acerca de",
     "home": "Inicio de Efecto Cocuyo",
     "brandName": "EFECTO COCUYO"
   },
   "footer": {
+    "builtOn": "Construido en Polkadot",
     "tagline": "Luces en la oscuridad.",
-    "network": "Red",
-    "resources": "Recursos",
-    "community": "Comunidad",
-    "explore": "Explorar",
-    "bounties": "Recompensas",
-    "storyChains": "Cadenas de Historia",
-    "inspiration": "Inspiración",
-    "about": "Acerca de",
-    "contributing": "Contribuir",
-    "copyright": "Parity Technologies",
-    "opensInNewTab": "(abre en nueva pestaña)"
+    "copyright": "Parity Technologies"
   },
   "home": {
     "hero": {
@@ -38,7 +26,10 @@
       "distributedButConnected": "Distribuido pero Conectado"
     },
     "cta": {
-      "explore": "Explorar la Red"
+      "howItWorks": "¿Cómo funciona?"
+    },
+    "preview": {
+      "title": "Señales Recientes"
     },
     "whatIs": {
       "title": "¿Qué es la Red Luciérnaga?",
@@ -143,11 +134,10 @@
   },
   "explore": {
     "title": "Explorar",
-    "description": "Explora cadenas de historia activas y señales recientes de la red. La información se propaga a través de la corroboración, no algoritmos.",
-    "activeChains": "Cadenas de Historia Activas",
-    "noChains": "No hay cadenas activas aún. Sé el primero en iluminar.",
+    "description": "Historias y señales de la red. La información se propaga a través de la corroboración, no algoritmos.",
+    "stories": "Historias en Desarrollo",
+    "noStories": "No hay historias aún. Ilumina una señal para comenzar una.",
     "recentSignals": "Señales Recientes",
-    "updated": "Actualizado",
     "signals": "señales",
     "corroborations": "corroboraciones"
   },

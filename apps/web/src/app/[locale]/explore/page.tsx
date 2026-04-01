@@ -8,10 +8,11 @@
 import type { ReactElement } from 'react';
 import { chainService } from '@/lib/services';
 import { signalService } from '@/lib/services';
-import { getChainTitle } from '@/lib/services/mock-data';
+import { getChainTitle, type Locale } from '@/lib/services/mock-data';
 import { SignalsList } from './SignalsList';
 import { ExploreView } from './ExploreView';
-import type { MapMarker } from '@/components/map';
+// Map view disabled for now - host API doesn't support it yet
+// import type { MapMarker } from '@/components/map';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 interface ExplorePageProps {
@@ -69,125 +70,87 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
     pagination: { limit: 20, offset: 0 },
   });
 
-  // Convert signals to map markers
-  const markers: MapMarker[] = recentSignals.items
-    .filter((signal) => signal.context.location != null)
-    .map((signal) => {
-      const location = signal.context.location;
-      const totalCorroborations = signal.corroborations.witnessCount +
-        signal.corroborations.evidenceCount +
-        signal.corroborations.expertiseCount;
-      return {
-        id: signal.id,
-        lat: location?.latitude ?? 0,
-        lon: location?.longitude ?? 0,
-        label: signal.context.locationName,
-        status: totalCorroborations >= 3
-          ? 'corroborated' as const
-          : signal.corroborations.challengeCount > 0
-            ? 'challenged' as const
-            : 'pending' as const,
-      };
-    });
+  // Map view disabled for now - host API doesn't support it yet
 
   return (
     <>
-      <main>
+      <main className="min-h-screen">
         {/* Header */}
-        <section className="py-12 border-b border-DEFAULT">
-          <div className="container-wide">
-            <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
-            <p className="text-secondary max-w-2xl">
+        <section className="pt-12 pb-6">
+          <div className="container-narrow">
+            <h1 className="text-2xl font-bold mb-2">{t('title')}</h1>
+            <p className="text-secondary text-sm">
               {t('description')}
             </p>
           </div>
         </section>
 
-        <ExploreView markers={markers}>
-          {/* Active Story Chains */}
-          <section className="py-12">
-            <div className="container-wide">
-              <h2 className="text-xl font-semibold mb-6">{t('activeChains')}</h2>
+        <ExploreView>
+          {/* Stories - Clean list */}
+          {featuredChains.length > 0 && (
+            <section className="pb-10">
+              <div className="container-narrow">
+                <h2 className="text-xs font-medium text-tertiary uppercase tracking-wider mb-4">
+                  {t('stories')}
+                </h2>
 
-              <div className="grid gap-4">
-                {featuredChains.map((chain, index) => (
-                  <a
-                    key={chain.id}
-                    href={`/chain/${chain.id}`}
-                    className={`block p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] hover:-translate-y-0.5 transition-all duration-200 ${index < 10 ? 'animate-stagger-item' : ''}`}
-                    style={{ '--stagger-index': index } as React.CSSProperties}
-                  >
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-primary mb-1">
-                          {chain.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-xs text-tertiary">
-                          {chain.location != null && (
-                            <>
-                              <span>{chain.location}</span>
-                              <span aria-hidden="true">&middot;</span>
-                            </>
-                          )}
-                          <span>{t('updated')} {formatRelativeTime(chain.updatedAt)}</span>
-                        </div>
-                      </div>
-                      <span
-                        className="px-2 py-1 text-xs rounded-small capitalize"
-                        style={{
-                          color: getStatusColor(chain.status),
-                          border: `1px solid ${getStatusColor(chain.status)}`,
-                        }}
-                      >
-                        {chain.status}
-                      </span>
-                    </div>
-
-                    {/* Topics */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {chain.topics.map((topic) => (
+                <div className="space-y-1">
+                  {featuredChains.map((chain) => (
+                    <a
+                      key={chain.id}
+                      href={`/chain/${chain.id}`}
+                      className="flex items-center justify-between py-3 px-4 -mx-4 rounded-small hover:bg-surface-nested transition-colors group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
                         <span
-                          key={topic}
-                          className="px-2 py-0.5 text-xs bg-surface-muted text-secondary rounded-small"
-                        >
-                          {topic}
+                          className="w-2 h-2 rounded-full shrink-0"
+                          style={{ backgroundColor: getStatusColor(chain.status) }}
+                          title={chain.status}
+                        />
+                        <span className="font-medium text-primary truncate group-hover:text-[var(--fg-accent)] transition-colors">
+                          {chain.title}
                         </span>
-                      ))}
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex items-center gap-6 text-sm text-secondary">
-                      <span>
-                        <span className="text-primary">{chain.signalCount}</span> {t('signals')}
-                      </span>
-                      <span>
-                        <span className="text-corroborated">
-                          {chain.totalCorroborations}
-                        </span>{' '}
-                        {t('corroborations')}
-                      </span>
-                    </div>
-                  </a>
-                ))}
+                        {chain.location != null && (
+                          <span className="text-xs text-tertiary hidden sm:inline">
+                            {chain.location}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-tertiary shrink-0 ml-4">
+                        <span><span className="text-secondary">{chain.signalCount}</span> {t('signals')}</span>
+                        <span className="hidden sm:inline">{formatRelativeTime(chain.updatedAt)}</span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
               </div>
+            </section>
+          )}
 
-              {featuredChains.length === 0 && (
-                <p className="text-secondary text-center py-12">
-                  {t('noChains')}
+          {featuredChains.length === 0 && (
+            <section className="pb-10">
+              <div className="container-narrow">
+                <p className="text-secondary text-center py-8 text-sm">
+                  {t('noStories')}
                 </p>
-              )}
-            </div>
-          </section>
+              </div>
+            </section>
+          )}
+
+          {/* Divider */}
+          <div className="container-narrow">
+            <hr className="border-DEFAULT" />
+          </div>
 
           {/* Recent Signals */}
-          <section className="py-12 bg-surface-container border-t border-DEFAULT">
-            <div className="container-wide">
+          <section className="py-10">
+            <div className="container-narrow">
               <SignalsList
                 signals={[...recentSignals.items]}
                 chainTitles={Object.fromEntries(
                   recentSignals.items
                     .flatMap((s) => s.chainLinks)
-                    .map((id) => [id, getChainTitle(id as string) ?? ''])
+                    .map((id) => [id, getChainTitle(id as string, locale as Locale) ?? ''])
                 )}
                 hasMore={recentSignals.hasMore}
               />
