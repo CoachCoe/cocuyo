@@ -10,25 +10,48 @@
  * - Responsive design
  */
 
-import {
-  useEffect,
-  useRef,
-  useCallback,
-  type ReactElement,
-} from 'react';
+import { useEffect, useRef, useCallback, type ReactElement } from 'react';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { IlluminateForm } from './IlluminateForm';
+
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function IlluminateModal(): ReactElement | null {
   const { isOpen, closeModal } = useIlluminate();
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
 
-  // Handle ESC key
+  // Handle keyboard events (ESC and Tab for focus trap)
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {
         closeModal();
+        return;
+      }
+
+      // Focus trap: handle Tab key
+      if (event.key === 'Tab' && modalRef.current !== null) {
+        const focusableElements =
+          modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (focusableElements.length === 0) return;
+
+        if (event.shiftKey) {
+          // Shift+Tab: if on first element, move to last
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          // Tab: if on last element, move to first
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement?.focus();
+          }
+        }
       }
     },
     [closeModal]
@@ -50,14 +73,20 @@ export function IlluminateModal(): ReactElement | null {
       // Store current active element for restoration
       previousActiveElement.current = document.activeElement;
 
-      // Add ESC key listener
+      // Add key listener
       document.addEventListener('keydown', handleKeyDown);
 
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
 
-      // Focus the modal
-      modalRef.current?.focus();
+      // Focus first focusable element in modal
+      const firstFocusable =
+        modalRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (firstFocusable !== null && firstFocusable !== undefined) {
+        firstFocusable.focus();
+      } else {
+        modalRef.current?.focus();
+      }
 
       return () => {
         document.removeEventListener('keydown', handleKeyDown);
@@ -86,7 +115,7 @@ export function IlluminateModal(): ReactElement | null {
     >
       {/* Backdrop with blur */}
       <div
-        className="absolute inset-0 bg-overlay backdrop-blur-sm"
+        className="absolute inset-0 bg-overlay backdrop-blur-sm animate-backdrop-in"
         aria-hidden="true"
       />
 
@@ -94,10 +123,10 @@ export function IlluminateModal(): ReactElement | null {
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface-nested border border-DEFAULT rounded-container shadow-3"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface-nested border border-DEFAULT rounded-container shadow-3 animate-scale-in"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-6 bg-surface-nested border-b border-DEFAULT">
+        <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-surface-nested border-b border-DEFAULT">
           <h2
             id="illuminate-title"
             className="text-xl font-bold text-primary"
@@ -128,7 +157,7 @@ export function IlluminateModal(): ReactElement | null {
         </div>
 
         {/* Form content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <IlluminateForm />
         </div>
       </div>

@@ -178,7 +178,7 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
               </div>
 
               {/* Funding card */}
-              <div className="lg:w-80 p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg">
+              <div className="lg:w-80 p-4 sm:p-6 bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg">
                 <div className="text-center mb-6">
                   <p className="text-sm text-[var(--color-text-secondary)] mb-2">
                     Bounty Reward

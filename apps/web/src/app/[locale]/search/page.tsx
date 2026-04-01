@@ -101,10 +101,10 @@ export default function SearchPage(): ReactNode {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search signals, authors, locations..."
-            className="w-full px-4 py-3 pl-11 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)] focus:outline-none focus:border-[var(--color-firefly-gold)]"
+            className="w-full px-3 py-2.5 pl-10 sm:px-4 sm:py-3 sm:pl-11 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)] focus:outline-none focus:border-[var(--color-firefly-gold)] text-base"
           />
           <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--fg-tertiary)]"
+            className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--fg-tertiary)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

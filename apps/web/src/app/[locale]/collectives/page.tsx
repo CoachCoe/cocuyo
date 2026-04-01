@@ -35,9 +35,10 @@ export default async function CollectivesPage({ params }: CollectivesPageProps):
         </div>
 
         <div className="grid gap-4">
-          {collectives.map((collective) => (
+          {collectives.map((collective, index) => (
             <Link key={collective.id} href={`/collectives/${collective.id}`}
-              className="block p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container hover:border-[var(--border-emphasis)] transition-colors">
+              className={`block p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container hover:border-[var(--border-emphasis)] transition-colors ${index < 10 ? 'animate-stagger-item' : ''}`}
+              style={{ '--stagger-index': index } as React.CSSProperties}>
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h2 className="text-lg font-semibold text-[var(--fg-primary)]">{collective.name}</h2>

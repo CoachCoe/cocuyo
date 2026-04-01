@@ -110,11 +110,12 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
               <h2 className="text-xl font-semibold mb-6">{t('activeChains')}</h2>
 
               <div className="grid gap-4">
-                {featuredChains.map((chain) => (
+                {featuredChains.map((chain, index) => (
                   <a
                     key={chain.id}
                     href={`/chain/${chain.id}`}
-                    className="block p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-emphasis transition-colors"
+                    className={`block p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] hover:-translate-y-0.5 transition-all duration-200 ${index < 10 ? 'animate-stagger-item' : ''}`}
+                    style={{ '--stagger-index': index } as React.CSSProperties}
                   >
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div>

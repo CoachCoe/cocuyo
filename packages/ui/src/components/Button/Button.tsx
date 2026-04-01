@@ -36,9 +36,10 @@ export function Button({
 
   const baseStyles = `
     inline-flex items-center justify-center gap-2
-    font-medium transition-all
+    font-medium transition-all duration-150 ease-out
     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
     disabled:cursor-not-allowed
+    active:scale-[0.98]
   `;
 
   const sizeStyles = {
@@ -63,11 +64,11 @@ export function Button({
     `,
     illuminate: `
       bg-transparent text-[var(--fg-accent)] border border-[var(--border-accent)]
-      hover:bg-[var(--bg-accent-firefly)] hover:text-black hover:shadow-glow
+      hover:bg-[var(--bg-accent-firefly)] hover:text-black hover:shadow-glow hover:scale-[1.02]
       active:brightness-110 active:shadow-[0_0_30px_rgba(232,185,49,0.25)]
       focus-visible:outline-[var(--fg-accent)]
       disabled:border-[var(--fg-tertiary)] disabled:text-[var(--fg-tertiary)]
-      disabled:hover:bg-transparent disabled:hover:text-[var(--fg-tertiary)] disabled:hover:shadow-none
+      disabled:hover:bg-transparent disabled:hover:text-[var(--fg-tertiary)] disabled:hover:shadow-none disabled:hover:scale-100
     `,
   };
 

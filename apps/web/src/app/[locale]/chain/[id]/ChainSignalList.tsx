@@ -188,7 +188,8 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
           {signals.map((signal, index) => (
             <article
               key={signal.id}
-              className="relative pl-12"
+              className={`relative pl-12 ${index < 10 ? 'animate-stagger-item' : ''}`}
+              style={{ '--stagger-index': index } as React.CSSProperties}
             >
               {/* Timeline dot */}
               <div

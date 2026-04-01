@@ -93,8 +93,8 @@ export function SignalCard({
     <article
       className={`
         bg-[var(--bg-surface-nested)] border border-[var(--border-default)]
-        rounded-container p-6 transition-colors
-        ${onClick !== undefined ? 'cursor-pointer hover:border-[var(--border-emphasis)]' : ''}
+        rounded-container p-6 transition-all duration-200 ease-out
+        ${onClick !== undefined ? 'cursor-pointer hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none' : ''}
       `}
       onClick={onClick}
       onKeyDown={onClick !== undefined ? handleKeyDown : undefined}
@@ -110,8 +110,8 @@ export function SignalCard({
               w-8 h-8 rounded-full bg-[var(--bg-surface-container)]
               border border-[var(--border-default)]
               flex items-center justify-center text-sm font-medium
-              text-[var(--fg-primary)]
-              ${onAuthorClick !== undefined ? 'cursor-pointer hover:border-[var(--border-emphasis)]' : ''}
+              text-[var(--fg-primary)] transition-all duration-150
+              ${onAuthorClick !== undefined ? 'cursor-pointer hover:border-[var(--color-firefly-gold)] hover:scale-105' : ''}
             `}
             onClick={onAuthorClick !== undefined ? handleAuthorClick : undefined}
             role={onAuthorClick !== undefined ? 'button' : undefined}

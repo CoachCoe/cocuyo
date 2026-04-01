@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import type { Signal, ChainId } from '@cocuyo/types';
-import { SignalCard } from '@cocuyo/ui';
+import { SignalCard, AnimatedList } from '@cocuyo/ui';
 import { useIdentity } from '@/hooks/useIdentity';
 
 interface FeedViewProps {
@@ -122,7 +122,7 @@ export function FeedView({
 
       {/* Signal list */}
       {sortedSignals.length > 0 && (
-        <div className="space-y-4">
+        <AnimatedList className="space-y-4" variant="fast">
           {sortedSignals.map((signal) => {
             const chainTitle =
               signal.chainLinks.length > 0
@@ -139,7 +139,7 @@ export function FeedView({
               />
             );
           })}
-        </div>
+        </AnimatedList>
       )}
 
       {/* Empty state for Discover tab */}

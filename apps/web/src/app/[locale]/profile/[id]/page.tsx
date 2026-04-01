@@ -85,9 +85,10 @@ export default async function PublicProfilePage({ params }: Props): Promise<Reac
             <p className="text-[var(--fg-tertiary)]">No signals yet.</p>
           ) : (
             <div className="space-y-4">
-              {signals.map((signal) => (
+              {signals.map((signal, index) => (
                 <Link key={signal.id} href={`/signal/${signal.id}`}
-                  className="block p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container hover:border-[var(--border-emphasis)] transition-colors">
+                  className={`block p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container hover:border-[var(--border-emphasis)] transition-colors ${index < 10 ? 'animate-stagger-item-fast' : ''}`}
+                  style={{ '--stagger-index': index } as React.CSSProperties}>
                   <div className="flex items-center justify-between mb-2">
                     <VerificationBadge status={signal.verification.status} size="sm" />
                     <span className="text-xs text-[var(--fg-tertiary)]">{formatRelativeTime(signal.createdAt)}</span>

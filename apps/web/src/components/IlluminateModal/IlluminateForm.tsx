@@ -198,7 +198,7 @@ export function IlluminateForm(): ReactElement {
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-6">
+    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 sm:space-y-6">
       {/* Connection warning */}
       {!isConnected && (
         <div className="p-4 bg-error/10 border border-error/30 rounded-nested">
@@ -220,8 +220,8 @@ export function IlluminateForm(): ReactElement {
           value={formState.content}
           onChange={handleContentChange}
           placeholder="Describe what you witnessed, heard, or documented. Be specific and factual."
-          rows={5}
-          className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none"
+          rows={4}
+          className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none text-base"
           required
         />
         <div className="mt-1 flex justify-between text-xs">
@@ -269,7 +269,7 @@ export function IlluminateForm(): ReactElement {
           value={formState.location}
           onChange={handleLocationChange}
           placeholder="City, region, or general area"
-          className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors"
+          className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors text-base"
         />
       </div>
 
@@ -283,8 +283,8 @@ export function IlluminateForm(): ReactElement {
           value={formState.links}
           onChange={handleLinksChange}
           placeholder="Add URLs to supporting documents, images, or sources (one per line)"
-          rows={3}
-          className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none font-mono text-sm"
+          rows={2}
+          className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none font-mono text-sm"
         />
       </div>
 
@@ -331,7 +331,7 @@ export function IlluminateForm(): ReactElement {
         type="submit"
         disabled={!canSubmit}
         className={`
-          w-full py-4 px-6 text-lg font-semibold rounded-nested transition-all
+          w-full py-3 sm:py-4 px-6 text-base sm:text-lg font-semibold rounded-nested transition-all
           ${
             canSubmit
               ? 'bg-firefly-gold text-[var(--fg-inverse)] hover:brightness-110 cursor-pointer'

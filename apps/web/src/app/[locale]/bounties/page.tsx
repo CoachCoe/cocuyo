@@ -134,12 +134,13 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
             <h2 className="text-xl font-semibold mb-6">Open Bounties</h2>
 
             <div className="grid gap-4">
-              {openBounties.map((bounty) => {
+              {openBounties.map((bounty, index) => {
                 const statusStyle = getStatusStyle(bounty.status);
                 return (
                   <article
                     key={bounty.id}
-                    className="p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-emphasis transition-colors"
+                    className={`p-6 bg-surface-nested border border-DEFAULT rounded-container hover:border-emphasis transition-colors ${index < 10 ? 'animate-stagger-item' : ''}`}
+                    style={{ '--stagger-index': index } as React.CSSProperties}
                   >
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
                       <div className="flex-1">
@@ -227,12 +228,13 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
               <h2 className="text-xl font-semibold mb-6">Recently Fulfilled</h2>
 
               <div className="grid gap-4">
-                {fulfilledBounties.map((bounty) => {
+                {fulfilledBounties.map((bounty, index) => {
                   const statusStyle = getStatusStyle(bounty.status);
                   return (
                     <article
                       key={bounty.id}
-                      className="p-6 bg-surface-nested border border-DEFAULT rounded-container opacity-80"
+                      className={`p-6 bg-surface-nested border border-DEFAULT rounded-container opacity-80 ${index < 10 ? 'animate-stagger-item-fast' : ''}`}
+                      style={{ '--stagger-index': index } as React.CSSProperties}
                     >
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>

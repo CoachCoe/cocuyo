@@ -7,7 +7,7 @@
 import type { ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Signal, ChainId } from '@cocuyo/types';
-import { SignalCard } from '@cocuyo/ui';
+import { SignalCard, AnimatedList } from '@cocuyo/ui';
 
 interface SignalsListProps {
   signals: Signal[];
@@ -39,7 +39,7 @@ export function SignalsList({
       <h2 className="text-xl font-semibold mb-6">Recent Signals</h2>
 
       {signals.length > 0 ? (
-        <div className="grid gap-4 max-w-3xl">
+        <AnimatedList className="grid gap-4 max-w-3xl" variant="fast">
           {signals.map((signal) => {
             const chainTitle =
               signal.chainLinks.length > 0
@@ -56,7 +56,7 @@ export function SignalsList({
               />
             );
           })}
-        </div>
+        </AnimatedList>
       ) : (
         <p className="text-[var(--color-text-secondary)] text-center py-12">
           No signals yet. Be the first to illuminate.
