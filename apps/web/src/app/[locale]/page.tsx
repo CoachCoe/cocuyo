@@ -9,7 +9,7 @@
  */
 
 import type { ReactElement } from 'react';
-import Link from 'next/link';
+import { Link } from '../../../i18n/navigation';
 import { Button, FireflySymbol } from '@cocuyo/ui';
 import { IlluminateButton } from '@/components/IlluminateButton';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
