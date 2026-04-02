@@ -24,12 +24,13 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
   setRequestLocale(locale);
   const t = await getTranslations('explore');
 
-  // Fetch featured chains
-  const featuredChains = await chainService.getFeaturedChains();
+  // Fetch featured chains (with locale for translated content)
+  const featuredChains = await chainService.getFeaturedChains(locale as Locale);
 
-  // Fetch recent signals
+  // Fetch recent signals (with locale for translated content)
   const recentSignals = await signalService.getRecentSignals({
     pagination: { limit: 20, offset: 0 },
+    locale: locale as Locale,
   });
 
   // Build chain titles map
