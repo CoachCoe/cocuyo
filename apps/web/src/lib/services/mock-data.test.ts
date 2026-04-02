@@ -1,11 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import {
-  mockSignals,
-  mockChains,
+  getSignals,
+  getChains,
   getChainPreviews,
   getSignalsByChainId,
   getChainTitle,
 } from './mock-data';
+
+// Use English locale for tests
+const mockSignals = getSignals('en');
+const mockChains = getChains('en');
 
 describe('Mock Data', () => {
   describe('mockSignals', () => {
@@ -173,7 +177,7 @@ describe('Mock Data', () => {
   describe('getChainTitle', () => {
     it('returns title for a valid chain ID', () => {
       const title = getChainTitle('chain-001');
-      expect(title).toBe('Water Quality — Concord River Basin');
+      expect(title).toBe('Economic Crisis: Currency & Food Security');
     });
 
     it('returns undefined for non-existent chain ID', () => {

@@ -12,7 +12,7 @@ import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getBountyById, mockBounties } from '@/lib/services/mock-data-bounties';
-import { mockSignals } from '@/lib/services/mock-data';
+import { getSignals, type Locale } from '@/lib/services/mock-data';
 import { ContributeButton } from './ContributeButton';
 import { createBountyId } from '@cocuyo/types';
 import { routing } from '../../../../../i18n/routing';
@@ -109,7 +109,7 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
   const statusStyle = getStatusStyle(bounty.status);
 
   // Get contributing signals
-  const contributingSignals = mockSignals.filter((s) =>
+  const contributingSignals = getSignals(locale as Locale).filter((s) =>
     bounty.contributingSignals.includes(s.id)
   );
 

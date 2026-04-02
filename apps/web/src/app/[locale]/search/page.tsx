@@ -8,7 +8,7 @@ import type { ReactNode } from 'react';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { VerificationBadge } from '@cocuyo/ui';
-import { mockSignals } from '@/lib/services/mock-data';
+import { getSignals } from '@/lib/services/mock-data';
 import type { Signal } from '@cocuyo/types';
 
 const ALL_TOPICS = [
@@ -50,8 +50,12 @@ export default function SearchPage(): ReactNode {
   const [query, setQuery] = useState('');
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
+  // Note: Search page is client-side, so we use 'en' locale for now
+  // A proper implementation would get locale from context/params
+  const allSignals = useMemo(() => getSignals('en'), []);
+
   const results = useMemo((): Signal[] => {
-    let filtered = mockSignals;
+    let filtered = allSignals;
 
     // Filter by query
     if (query.trim() !== '') {
@@ -71,7 +75,7 @@ export default function SearchPage(): ReactNode {
     }
 
     return filtered;
-  }, [query, selectedTopics]);
+  }, [query, selectedTopics, allSignals]);
 
   const toggleTopic = (topic: string): void => {
     setSelectedTopics((prev) => {

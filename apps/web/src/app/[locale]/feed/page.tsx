@@ -6,7 +6,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { mockSignals, mockChains } from '@/lib/services/mock-data';
+import { getSignals, getChains, type Locale } from '@/lib/services/mock-data';
 import { FeedView } from './FeedView';
 import { setRequestLocale } from 'next-intl/server';
 
@@ -19,15 +19,18 @@ export default async function FeedPage({ params }: FeedPageProps): Promise<React
   setRequestLocale(locale);
 
   // Get chain titles for display
+  const chains = getChains(locale as Locale);
   const chainTitles: Record<string, string> = {};
-  for (const chain of mockChains) {
+  for (const chain of chains) {
     chainTitles[chain.id] = chain.title;
   }
+
+  const signals = getSignals(locale as Locale);
 
   return (
     <main className="min-h-screen bg-[var(--bg-default)]">
       <div className="container max-w-3xl mx-auto px-4 py-8">
-        <FeedView signals={mockSignals} chainTitles={chainTitles} />
+        <FeedView signals={signals} chainTitles={chainTitles} />
       </div>
     </main>
   );

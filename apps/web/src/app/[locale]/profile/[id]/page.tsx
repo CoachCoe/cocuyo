@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { VerificationBadge } from '@cocuyo/ui';
-import { getAuthorById, getSignalsByAuthor, mockSignals } from '@/lib/services/mock-data';
+import { getAuthorById, getSignalsByAuthor, getSignals } from '@/lib/services/mock-data';
 import { routing } from '../../../../../i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
 
@@ -15,7 +15,8 @@ interface Props {
 }
 
 export function generateStaticParams(): Array<{ locale: string; id: string }> {
-  const authorIds = [...new Set(mockSignals.map((s) => s.author.id))];
+  const signals = getSignals('en');
+  const authorIds = [...new Set(signals.map((s) => s.author.id))];
   return routing.locales.flatMap((locale) =>
     authorIds.map((id) => ({ locale, id }))
   );
