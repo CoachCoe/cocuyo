@@ -18,9 +18,10 @@ export function AppNavbar(): ReactElement {
   const locale = useLocale();
   const t = useTranslations('nav');
 
-  // No nav links - About is accessible from landing page
-  // Main content is accessed via the Illuminate CTA
-  const navLinks: Array<{ href: string; label: string }> = [];
+  // Nav links for primary navigation
+  const navLinks: Array<{ href: string; label: string }> = [
+    { href: `/${locale}/bounties`, label: t('bounties') },
+  ];
 
   return (
     <Navbar

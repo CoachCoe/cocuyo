@@ -9,9 +9,10 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { SignalService, ChainService } from '@cocuyo/types';
+import type { SignalService, ChainService, BountyService } from '@cocuyo/types';
 import { MockSignalService } from './mock-signal-service';
 import { MockChainService } from './mock-chain-service';
+import { MockBountyService } from './mock-bounty-service';
 import { ChainSignalService } from './chain-signal-service';
 import { ChainChainService } from './chain-chain-service';
 
@@ -46,8 +47,20 @@ export const chainService: ChainService = USE_CHAIN_SERVICES
   ? new ChainChainService()
   : new MockChainService();
 
+/**
+ * Bounty service instance.
+ *
+ * Provides access to bounty data:
+ * - getBounty: Fetch a single bounty by ID
+ * - getOpenBounties: Paginated bounty listing with filters
+ * - createBounty: Create a new bounty (requires wallet)
+ * - contributeToToBounty: Link a signal to a bounty
+ */
+export const bountyService: BountyService = new MockBountyService();
+
 // Export classes for type checking and direct instantiation
 export { MockSignalService } from './mock-signal-service';
 export { MockChainService } from './mock-chain-service';
+export { MockBountyService } from './mock-bounty-service';
 export { ChainSignalService } from './chain-signal-service';
 export { ChainChainService } from './chain-chain-service';
