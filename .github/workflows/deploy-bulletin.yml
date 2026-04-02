@@ -3,8 +3,6 @@ name: Deploy to Polkadot Triangle
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
     inputs:
       skip-cache:
@@ -14,10 +12,9 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 concurrency:
-  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  group: deploy-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -56,49 +53,9 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 30
           command: |
-            if [ "${{ github.event_name }}" = "pull_request" ]; then
-              DOMAIN="pr${{ github.event.pull_request.number }}-fireflynetwork.dot"
-            else
-              DOMAIN="fireflynetwork.dot"
-            fi
-            echo "Deploying to: $DOMAIN"
-            bulletin-deploy './apps/web/dist' "$DOMAIN"
+            echo "Deploying to: fireflynetwork.dot"
+            bulletin-deploy './apps/web/dist' "fireflynetwork.dot"
         env:
           MNEMONIC: ${{ secrets.DOTNS_MNEMONIC }}
           NODE_OPTIONS: '--max-old-space-size=8192'
 
-      - name: Comment on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNum = context.payload.pull_request.number;
-            const domain = `pr${prNum}-fireflynetwork`;
-            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-            const body = `**${domain}.dot** · [logs](${runUrl})\n\nhttps://${domain}.dot.li`;
-            const marker = `<!-- bulletin-deploy-${domain} -->`;
-
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNum,
-            });
-
-            const existing = comments.find(c => c.body.includes(marker));
-            const fullBody = `${marker}\n${body}`;
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body: fullBody,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNum,
-                body: fullBody,
-              });
-            }
