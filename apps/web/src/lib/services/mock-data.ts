@@ -1,6 +1,11 @@
 /**
  * Mock data for development.
  *
+ * Stories inspired by Efecto Cocuyo (efectococuyo.com), a Venezuelan
+ * investigative journalism organization. Used with attribution to
+ * demonstrate the Firefly Network's purpose: surveillance-resistant
+ * collective intelligence for journalism in challenging environments.
+ *
  * This data mirrors the eventual on-chain data structures.
  * It should NOT be imported directly into components — use the
  * service abstractions instead.
@@ -17,6 +22,17 @@ import {
   createDIMCredential,
   createVerificationRequestId,
 } from '@cocuyo/types';
+import { hoursAgo, daysAgo } from '@/lib/utils/time';
+
+export type Locale = 'en' | 'es';
+
+/**
+ * Attribution for Efecto Cocuyo inspiration.
+ */
+export const ATTRIBUTION = {
+  en: 'Stories inspired by Efecto Cocuyo (efectococuyo.com)',
+  es: 'Historias inspiradas en Efecto Cocuyo (efectococuyo.com)',
+} as const;
 
 /**
  * Helper to create anonymous author info.
@@ -39,255 +55,475 @@ const unverified: SignalVerification = {
   status: 'unverified',
 };
 
-// Helper to create timestamps relative to now
-const hoursAgo = (hours: number): number =>
-  Math.floor((Date.now() - hours * 60 * 60 * 1000) / 1000);
+/**
+ * Locale-aware signal content.
+ */
+interface LocalizedSignalContent {
+  en: { text: string; links?: string[] };
+  es: { text: string; links?: string[] };
+}
 
-const daysAgo = (days: number): number =>
-  Math.floor((Date.now() - days * 24 * 60 * 60 * 1000) / 1000);
+interface LocalizedSignalData {
+  id: string;
+  author: FireflyAuthor;
+  content: LocalizedSignalContent;
+  context: {
+    topics: string[];
+    locationName?: string;
+    location?: { latitude: number; longitude: number };
+  };
+  chainLinks: string[];
+  corroborations: Signal['corroborations'];
+  verification: SignalVerification;
+  createdAt: number;
+}
 
 /**
- * Mock signals demonstrating the water quality story chain example
- * from the product concept document.
+ * Locale-aware chain content.
  */
-export const mockSignals: Signal[] = [
+interface LocalizedChainContent {
+  en: { title: string; description: string };
+  es: { title: string; description: string };
+}
+
+interface LocalizedChainData {
+  id: string;
+  content: LocalizedChainContent;
+  topics: string[];
+  location?: string;
+  status: StoryChain['status'];
+  signalIds: string[];
+  stats: StoryChain['stats'];
+  createdAt: number;
+  updatedAt: number;
+}
+
+/**
+ * Mock signals based on Efecto Cocuyo coverage themes.
+ */
+const localizedSignals: LocalizedSignalData[] = [
+  // Chain 1: Economic Crisis / Currency Devaluation
   {
-    id: createSignalId('sig-001'),
-    author: createMockAuthor('001', 'RiverWatcher', { location: 'Concord, NH', reputation: 42 }),
+    id: 'sig-001',
+    author: createMockAuthor('001', 'EconWatcher', { location: 'Caracas', reputation: 67 }),
     content: {
-      text: 'Chemical smell near the river, started three days ago. Strongest in the morning hours near the old mill site. First noticed it on my morning walk with my dog.',
+      en: {
+        text: 'The bolívar has lost 36.4% of its value against the dollar in the first quarter alone. At my local market, prices are now posted in dollars — vendors update bolívar prices daily because they change too fast.',
+      },
+      es: {
+        text: 'El bolívar ha perdido 36,4% de su valor frente al dólar solo en el primer trimestre. En mi mercado local, los precios ya se publican en dólares — los vendedores actualizan los precios en bolívares diariamente porque cambian muy rápido.',
+      },
     },
     context: {
-      topics: ['environmental', 'water-quality'],
-      locationName: 'Concord, NH',
-      location: { latitude: 43.2081, longitude: -71.5376 },
+      topics: ['economy', 'currency', 'inflation'],
+      locationName: 'Caracas, Venezuela',
+      location: { latitude: 10.4806, longitude: -66.9036 },
     },
-    dimSignature: createDIMCredential('dim-anon-001'),
-    chainLinks: [createChainId('chain-001')],
+    chainLinks: ['chain-001'],
     corroborations: {
-      witnessCount: 5,
-      evidenceCount: 2,
-      expertiseCount: 1,
+      witnessCount: 23,
+      evidenceCount: 8,
+      expertiseCount: 3,
       challengeCount: 0,
-      totalWeight: 8.5,
+      totalWeight: 34.5,
     },
-    verification: unverified,
+    verification: { status: 'verified', verifiedBy: createCollectiveId('econ-collective') },
     createdAt: hoursAgo(48),
   },
   {
-    id: createSignalId('sig-002'),
-    author: createMockAuthor('002', 'DownstreamDweller', { location: 'Concord, NH', reputation: 28 }),
+    id: 'sig-002',
+    author: createMockAuthor('002', 'MarketAnalyst', { location: 'Maracaibo', reputation: 78 }),
     content: {
-      text: 'I live two miles downstream. Same smell here too. My dog won\'t drink from the creek anymore — she always loved it before. Started noticing it about four days ago.',
+      en: {
+        text: 'The food basket for a family now exceeds $645 per month. The minimum wage covers only 0.05% of this — you would need 1,937 minimum salaries to afford basic food. I have the official CENDAS report.',
+        links: ['https://cendas.org.ve/canasta-alimentaria'],
+      },
+      es: {
+        text: 'La canasta alimentaria familiar supera los $645 mensuales. El salario mínimo cubre apenas el 0,05% — se necesitarían 1.937 salarios mínimos para cubrir la alimentación básica. Tengo el informe oficial de CENDAS.',
+        links: ['https://cendas.org.ve/canasta-alimentaria'],
+      },
     },
     context: {
-      topics: ['environmental', 'water-quality'],
-      locationName: 'Concord, NH',
-      location: { latitude: 43.1890, longitude: -71.5501 },
+      topics: ['economy', 'food-security', 'wages'],
+      locationName: 'Maracaibo, Venezuela',
+      location: { latitude: 10.6427, longitude: -71.6125 },
     },
-    dimSignature: createDIMCredential('dim-anon-002'),
-    chainLinks: [createChainId('chain-001')],
+    chainLinks: ['chain-001'],
     corroborations: {
-      witnessCount: 3,
-      evidenceCount: 0,
-      expertiseCount: 0,
+      witnessCount: 15,
+      evidenceCount: 12,
+      expertiseCount: 4,
       challengeCount: 0,
-      totalWeight: 3.2,
+      totalWeight: 41.2,
     },
-    verification: unverified,
+    verification: { status: 'verified', verifiedBy: createCollectiveId('econ-collective') },
     createdAt: hoursAgo(36),
   },
   {
-    id: createSignalId('sig-003'),
-    author: createMockAuthor('003', 'PhotoWitness', { location: 'Merrimack River', reputation: 56 }),
+    id: 'sig-003',
+    author: createMockAuthor('003', 'StreetReporter', { location: 'Valencia', reputation: 45 }),
     content: {
-      text: 'Photographed discolored water at the confluence point this morning. Distinct greenish tint that wasn\'t there last week. GPS coordinates included.',
-      links: ['https://example.com/photo-evidence'],
+      en: {
+        text: 'Witnessing long lines at exchange houses again. People waiting 3+ hours to convert bolívares to dollars before their savings lose more value. Elderly citizens particularly affected — some have been here since 5am.',
+      },
+      es: {
+        text: 'Observando largas colas en las casas de cambio otra vez. Personas esperando más de 3 horas para convertir bolívares a dólares antes de que sus ahorros pierdan más valor. Ciudadanos mayores particularmente afectados — algunos aquí desde las 5am.',
+      },
     },
     context: {
-      topics: ['environmental', 'water-quality'],
-      locationName: 'Merrimack River, NH',
-      location: { latitude: 43.2156, longitude: -71.5234 },
+      topics: ['economy', 'currency', 'daily-life'],
+      locationName: 'Valencia, Venezuela',
+      location: { latitude: 10.1579, longitude: -67.9972 },
     },
-    dimSignature: createDIMCredential('dim-anon-003'),
-    chainLinks: [createChainId('chain-001')],
+    chainLinks: ['chain-001'],
     corroborations: {
-      witnessCount: 2,
-      evidenceCount: 4,
-      expertiseCount: 1,
-      challengeCount: 0,
-      totalWeight: 7.8,
+      witnessCount: 18,
+      evidenceCount: 5,
+      expertiseCount: 0,
+      challengeCount: 1,
+      totalWeight: 22.3,
     },
-    verification: { status: 'verified', verifiedBy: createCollectiveId('enviro-collective') },
+    verification: unverified,
     createdAt: hoursAgo(24),
   },
+
+  // Chain 2: Political Transparency
   {
-    id: createSignalId('sig-004'),
-    author: createMockAuthor('004', 'RecordDigger', { reputation: 71 }),
+    id: 'sig-004',
+    author: createMockAuthor('004', 'TransparencyWatch', { location: 'Caracas', reputation: 82 }),
     content: {
-      text: 'Checked the public permit database. The facility upstream had their discharge permit expire 6 months ago. No renewal on file. Screenshot of the database record attached.',
+      en: {
+        text: 'Following the dismissal of a high-ranking official connected to powerful political families, Transparencia Venezuela is raising alarms about opacity in government appointments. No public explanation has been given for the removal.',
+      },
+      es: {
+        text: 'Tras la destitución de un funcionario de alto rango conectado a familias políticas poderosas, Transparencia Venezuela alerta sobre la opacidad en los nombramientos gubernamentales. No se ha dado explicación pública sobre la remoción.',
+      },
     },
     context: {
-      topics: ['environmental', 'public-records', 'water-quality'],
-      locationName: 'NH DES Database',
+      topics: ['politics', 'transparency', 'governance'],
+      locationName: 'Caracas, Venezuela',
+      location: { latitude: 10.4806, longitude: -66.9036 },
     },
-    dimSignature: createDIMCredential('dim-anon-004'),
-    chainLinks: [createChainId('chain-001')],
+    chainLinks: ['chain-002'],
     corroborations: {
-      witnessCount: 0,
-      evidenceCount: 6,
-      expertiseCount: 2,
-      challengeCount: 0,
-      totalWeight: 12.4,
+      witnessCount: 8,
+      evidenceCount: 15,
+      expertiseCount: 6,
+      challengeCount: 2,
+      totalWeight: 27.8,
     },
-    verification: { status: 'verified', verifiedBy: createCollectiveId('enviro-collective') },
-    createdAt: hoursAgo(18),
+    verification: { status: 'verified', verifiedBy: createCollectiveId('civic-collective') },
+    createdAt: hoursAgo(72),
   },
   {
-    id: createSignalId('sig-005'),
-    author: createMockAuthor('005', 'EnviroExpert', { location: 'UNH', reputation: 89 }),
+    id: 'sig-005',
+    author: createMockAuthor('005', 'DocHunter', { reputation: 71 }),
     content: {
-      text: 'Environmental scientist here. Based on the described smell (sulfurous, "rotten eggs") and the greenish discoloration, this is consistent with hydrogen sulfide from anaerobic decomposition. Often indicates organic waste discharge. The permit lapse is concerning.',
+      en: {
+        text: 'Cross-referenced public appointment records. Three family members of the dismissed official still hold positions in state enterprises. No conflict of interest disclosures on file. Screenshots of the registry attached.',
+      },
+      es: {
+        text: 'Crucé referencias de registros de nombramientos públicos. Tres familiares del funcionario destituido aún ocupan cargos en empresas estatales. No hay declaraciones de conflicto de interés archivadas. Capturas del registro adjuntas.',
+      },
     },
     context: {
-      topics: ['environmental', 'water-quality', 'expertise'],
-      locationName: 'UNH Environmental Lab',
-      location: { latitude: 43.1339, longitude: -70.9264 },
+      topics: ['politics', 'public-records', 'transparency'],
+      locationName: 'Public Records Database',
     },
-    dimSignature: createDIMCredential('dim-anon-005'),
-    chainLinks: [createChainId('chain-001')],
+    chainLinks: ['chain-002'],
     corroborations: {
-      witnessCount: 0,
-      evidenceCount: 0,
-      expertiseCount: 8,
+      witnessCount: 2,
+      evidenceCount: 18,
+      expertiseCount: 4,
       challengeCount: 0,
-      totalWeight: 15.2,
+      totalWeight: 35.6,
+    },
+    verification: { status: 'verified', verifiedBy: createCollectiveId('civic-collective') },
+    createdAt: hoursAgo(48),
+  },
+
+  // Chain 3: International Pressure / Political Prisoners
+  {
+    id: 'sig-006',
+    author: createMockAuthor('006', 'DiplomacyTracker', { location: 'Lisbon', reputation: 63 }),
+    content: {
+      en: {
+        text: 'Portugal\'s foreign ministry confirmed a meeting with Venezuelan officials regarding detained Portuguese citizens. Families have been waiting months for any news. The ministry is "cautiously optimistic" about progress.',
+      },
+      es: {
+        text: 'El Ministerio de Relaciones Exteriores de Portugal confirmó una reunión con funcionarios venezolanos sobre ciudadanos portugueses detenidos. Las familias han esperado meses por noticias. El ministerio está "cautelosamente optimista" sobre el progreso.',
+      },
+    },
+    context: {
+      topics: ['international', 'human-rights', 'diplomacy'],
+      locationName: 'Lisbon, Portugal',
+      location: { latitude: 38.7223, longitude: -9.1393 },
+    },
+    chainLinks: ['chain-003'],
+    corroborations: {
+      witnessCount: 5,
+      evidenceCount: 7,
+      expertiseCount: 2,
+      challengeCount: 0,
+      totalWeight: 18.4,
     },
     verification: unverified,
     createdAt: hoursAgo(12),
   },
   {
-    id: createSignalId('sig-006'),
-    author: createMockAuthor('006', 'CivicObserver', { location: 'Manchester, NH', reputation: 34 }),
+    id: 'sig-007',
+    author: createMockAuthor('007', 'FamilyVoice', { location: 'Porto', reputation: 38 }),
     content: {
-      text: 'City council meeting tonight discussed the new downtown development project. No mention of the traffic study that was supposedly completed. Third meeting in a row where it\'s been "tabled."',
+      en: {
+        text: 'My uncle has been detained for 14 months without formal charges. Today\'s news about the diplomatic meeting is the first hope we\'ve had. We just want to know he\'s safe. Sharing his case number for the record.',
+      },
+      es: {
+        text: 'Mi tío ha estado detenido por 14 meses sin cargos formales. Las noticias de hoy sobre la reunión diplomática son la primera esperanza que hemos tenido. Solo queremos saber que está bien. Comparto su número de caso para el registro.',
+      },
     },
     context: {
-      topics: ['local-government', 'development'],
-      locationName: 'Manchester, NH',
-      location: { latitude: 42.9956, longitude: -71.4548 },
+      topics: ['human-rights', 'personal-testimony', 'detention'],
+      locationName: 'Porto, Portugal',
+      location: { latitude: 41.1579, longitude: -8.6291 },
     },
-    dimSignature: createDIMCredential('dim-anon-006'),
-    chainLinks: [createChainId('chain-002')],
+    chainLinks: ['chain-003'],
     corroborations: {
-      witnessCount: 4,
-      evidenceCount: 1,
-      expertiseCount: 0,
-      challengeCount: 1,
-      totalWeight: 4.1,
-    },
-    verification: { status: 'disputed' },
-    createdAt: hoursAgo(6),
-  },
-  {
-    id: createSignalId('sig-007'),
-    author: createMockAuthor('007', 'FOIAFiler', { location: 'Manchester, NH', reputation: 45 }),
-    content: {
-      text: 'FOIA request for the traffic study came back with heavily redacted documents. 47 pages, 38 of them mostly blacked out. Filed an appeal.',
-    },
-    context: {
-      topics: ['local-government', 'public-records', 'development'],
-      locationName: 'Manchester City Hall, NH',
-      location: { latitude: 42.9914, longitude: -71.4628 },
-    },
-    dimSignature: createDIMCredential('dim-anon-007'),
-    chainLinks: [createChainId('chain-002')],
-    corroborations: {
-      witnessCount: 0,
+      witnessCount: 12,
       evidenceCount: 3,
       expertiseCount: 0,
       challengeCount: 0,
-      totalWeight: 5.6,
+      totalWeight: 14.2,
     },
     verification: unverified,
-    createdAt: hoursAgo(2),
+    createdAt: hoursAgo(6),
+  },
+
+  // Chain 4: Healthcare Crisis
+  {
+    id: 'sig-008',
+    author: createMockAuthor('008', 'HospitalWorker', { location: 'Barquisimeto', reputation: 54 }),
+    content: {
+      en: {
+        text: 'Third day without reliable electricity at the regional hospital. Backup generators running low on fuel. We\'re prioritizing only critical surgeries. Staff working double shifts unpaid. This is unsustainable.',
+      },
+      es: {
+        text: 'Tercer día sin electricidad confiable en el hospital regional. Los generadores de respaldo con poco combustible. Solo priorizamos cirugías críticas. Personal trabajando turnos dobles sin paga. Esto es insostenible.',
+      },
+    },
+    context: {
+      topics: ['health', 'infrastructure', 'crisis'],
+      locationName: 'Barquisimeto, Venezuela',
+      location: { latitude: 10.0678, longitude: -69.3467 },
+    },
+    chainLinks: ['chain-004'],
+    corroborations: {
+      witnessCount: 8,
+      evidenceCount: 4,
+      expertiseCount: 3,
+      challengeCount: 0,
+      totalWeight: 19.7,
+    },
+    verification: unverified,
+    createdAt: hoursAgo(18),
+  },
+  {
+    id: 'sig-009',
+    author: createMockAuthor('009', 'MedSupplyTracker', { reputation: 66 }),
+    content: {
+      en: {
+        text: 'Compiled medication availability data from 12 pharmacies across Lara state. 67% of essential medications unavailable. Insulin, blood pressure meds, and antibiotics most affected. Data spreadsheet linked.',
+        links: ['https://example.com/med-availability-data'],
+      },
+      es: {
+        text: 'Compilé datos de disponibilidad de medicamentos de 12 farmacias en el estado Lara. 67% de medicamentos esenciales no disponibles. Insulina, medicamentos para presión arterial y antibióticos los más afectados. Hoja de datos enlazada.',
+        links: ['https://example.com/med-availability-data'],
+      },
+    },
+    context: {
+      topics: ['health', 'medication', 'data'],
+      locationName: 'Lara State, Venezuela',
+    },
+    chainLinks: ['chain-004'],
+    corroborations: {
+      witnessCount: 5,
+      evidenceCount: 14,
+      expertiseCount: 2,
+      challengeCount: 1,
+      totalWeight: 24.3,
+    },
+    verification: { status: 'verified', verifiedBy: createCollectiveId('health-collective') },
+    createdAt: hoursAgo(30),
   },
 ];
 
 /**
- * Mock story chains.
+ * Locale-aware story chains.
  */
-export const mockChains: StoryChain[] = [
+const localizedChains: LocalizedChainData[] = [
   {
-    id: createChainId('chain-001'),
-    title: 'Water Quality — Concord River Basin',
-    description:
-      'Community observations of water quality issues in the Concord River area, including chemical smells, discoloration, and permit compliance concerns.',
-    topics: ['environmental', 'water-quality', 'public-records'],
-    location: 'Concord, NH',
-    status: 'active',
-    signalIds: [
-      createSignalId('sig-001'),
-      createSignalId('sig-002'),
-      createSignalId('sig-003'),
-      createSignalId('sig-004'),
-      createSignalId('sig-005'),
-    ],
-    stats: {
-      signalCount: 5,
-      totalCorroborations: 21,
-      totalChallenges: 0,
-      contributorCount: 5,
-      totalWeight: 47.1,
+    id: 'chain-001',
+    content: {
+      en: {
+        title: 'Economic Crisis: Currency & Food Security',
+        description: 'Documenting the ongoing economic situation including currency devaluation, food basket costs, and impact on daily life for Venezuelan families.',
+      },
+      es: {
+        title: 'Crisis Económica: Moneda y Seguridad Alimentaria',
+        description: 'Documentando la situación económica actual incluyendo la devaluación monetaria, costos de la canasta alimentaria e impacto en la vida diaria de las familias venezolanas.',
+      },
     },
-    createdAt: daysAgo(3),
-    updatedAt: hoursAgo(12),
+    topics: ['economy', 'currency', 'food-security', 'inflation'],
+    location: 'Venezuela',
+    status: 'active',
+    signalIds: ['sig-001', 'sig-002', 'sig-003'],
+    stats: {
+      signalCount: 3,
+      totalCorroborations: 56,
+      totalChallenges: 1,
+      contributorCount: 3,
+      totalWeight: 98.0,
+    },
+    createdAt: daysAgo(7),
+    updatedAt: hoursAgo(24),
   },
   {
-    id: createChainId('chain-002'),
-    title: 'Downtown Development Transparency',
-    description:
-      'Tracking city council proceedings and public records related to the proposed downtown development project.',
-    topics: ['local-government', 'development', 'public-records'],
-    location: 'Manchester, NH',
-    status: 'emerging',
-    signalIds: [createSignalId('sig-006'), createSignalId('sig-007')],
+    id: 'chain-002',
+    content: {
+      en: {
+        title: 'Government Transparency & Appointments',
+        description: 'Tracking official appointments, dismissals, and transparency concerns in Venezuelan government institutions.',
+      },
+      es: {
+        title: 'Transparencia Gubernamental y Nombramientos',
+        description: 'Seguimiento de nombramientos oficiales, destituciones y preocupaciones de transparencia en instituciones gubernamentales venezolanas.',
+      },
+    },
+    topics: ['politics', 'transparency', 'governance', 'public-records'],
+    location: 'Caracas, Venezuela',
+    status: 'active',
+    signalIds: ['sig-004', 'sig-005'],
     stats: {
       signalCount: 2,
-      totalCorroborations: 5,
-      totalChallenges: 1,
+      totalCorroborations: 31,
+      totalChallenges: 2,
       contributorCount: 2,
-      totalWeight: 9.7,
+      totalWeight: 63.4,
     },
-    createdAt: daysAgo(1),
-    updatedAt: hoursAgo(2),
+    createdAt: daysAgo(5),
+    updatedAt: hoursAgo(48),
   },
   {
-    id: createChainId('chain-003'),
-    title: 'School Board Budget Decisions',
-    description:
-      'Documentation of school board meetings and budget allocation decisions affecting local schools.',
-    topics: ['education', 'local-government', 'budget'],
-    location: 'Nashua, NH',
-    status: 'established',
-    signalIds: [],
+    id: 'chain-003',
+    content: {
+      en: {
+        title: 'International Diplomacy: Detained Citizens',
+        description: 'Following diplomatic efforts regarding detained foreign nationals and political prisoners, including family testimonies and official statements.',
+      },
+      es: {
+        title: 'Diplomacia Internacional: Ciudadanos Detenidos',
+        description: 'Siguiendo los esfuerzos diplomáticos relacionados con nacionales extranjeros detenidos y presos políticos, incluyendo testimonios familiares y declaraciones oficiales.',
+      },
+    },
+    topics: ['international', 'human-rights', 'diplomacy', 'detention'],
+    location: 'International',
+    status: 'emerging',
+    signalIds: ['sig-006', 'sig-007'],
     stats: {
-      signalCount: 12,
-      totalCorroborations: 45,
-      totalChallenges: 2,
-      contributorCount: 8,
-      totalWeight: 78.3,
+      signalCount: 2,
+      totalCorroborations: 17,
+      totalChallenges: 0,
+      contributorCount: 2,
+      totalWeight: 32.6,
+    },
+    createdAt: daysAgo(2),
+    updatedAt: hoursAgo(6),
+  },
+  {
+    id: 'chain-004',
+    content: {
+      en: {
+        title: 'Healthcare System Under Strain',
+        description: 'Documenting conditions in hospitals, medication availability, and healthcare worker testimonies across Venezuela.',
+      },
+      es: {
+        title: 'Sistema de Salud Bajo Presión',
+        description: 'Documentando las condiciones en hospitales, disponibilidad de medicamentos y testimonios de trabajadores de salud en toda Venezuela.',
+      },
+    },
+    topics: ['health', 'infrastructure', 'medication', 'crisis'],
+    location: 'Venezuela',
+    status: 'established',
+    signalIds: ['sig-008', 'sig-009'],
+    stats: {
+      signalCount: 2,
+      totalCorroborations: 17,
+      totalChallenges: 1,
+      contributorCount: 2,
+      totalWeight: 44.0,
     },
     createdAt: daysAgo(14),
-    updatedAt: daysAgo(2),
+    updatedAt: hoursAgo(18),
   },
 ];
+
+/**
+ * Convert localized signal data to Signal type for a given locale.
+ */
+function toSignal(data: LocalizedSignalData, locale: Locale): Signal {
+  return {
+    id: createSignalId(data.id),
+    author: data.author,
+    content: data.content[locale],
+    context: {
+      ...data.context,
+      ...(data.context.locationName != null ? { locationName: data.context.locationName } : {}),
+      ...(data.context.location != null ? { location: data.context.location } : {}),
+    },
+    dimSignature: data.author.credentialHash,
+    chainLinks: data.chainLinks.map(createChainId),
+    corroborations: data.corroborations,
+    verification: data.verification,
+    createdAt: data.createdAt,
+  };
+}
+
+/**
+ * Convert localized chain data to StoryChain type for a given locale.
+ */
+function toChain(data: LocalizedChainData, locale: Locale): StoryChain {
+  return {
+    id: createChainId(data.id),
+    title: data.content[locale].title,
+    description: data.content[locale].description,
+    topics: data.topics,
+    ...(data.location != null ? { location: data.location } : {}),
+    status: data.status,
+    signalIds: data.signalIds.map(createSignalId),
+    stats: data.stats,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+  };
+}
+
+/**
+ * Get signals for a given locale.
+ */
+export function getSignals(locale: Locale = 'en'): Signal[] {
+  return localizedSignals.map((s) => toSignal(s, locale));
+}
+
+/**
+ * Get chains for a given locale.
+ */
+export function getChains(locale: Locale = 'en'): StoryChain[] {
+  return localizedChains.map((c) => toChain(c, locale));
+}
 
 /**
  * Get chain previews for listing.
  */
-export function getChainPreviews(): ChainPreview[] {
-  return mockChains.map((chain) => ({
+export function getChainPreviews(locale: Locale = 'en'): ChainPreview[] {
+  return getChains(locale).map((chain) => ({
     id: chain.id,
     title: chain.title,
     topics: chain.topics,
@@ -302,82 +538,112 @@ export function getChainPreviews(): ChainPreview[] {
 /**
  * Get signals by chain ID.
  */
-export function getSignalsByChainId(chainId: string): Signal[] {
-  return mockSignals.filter((signal) =>
+export function getSignalsByChainId(chainId: string, locale: Locale = 'en'): Signal[] {
+  return getSignals(locale).filter((signal) =>
     signal.chainLinks.some((link) => link === chainId)
   );
 }
 
 /**
+ * Get chain by ID.
+ */
+export function getChainById(chainId: string, locale: Locale = 'en'): StoryChain | undefined {
+  return getChains(locale).find((c) => c.id === chainId);
+}
+
+/**
  * Get chain title by ID.
  */
-export function getChainTitle(chainId: string): string | undefined {
-  const chain = mockChains.find((c) => c.id === chainId);
+export function getChainTitle(chainId: string, locale: Locale = 'en'): string | undefined {
+  const chain = getChainById(chainId, locale);
   return chain?.title;
 }
 
 /**
  * Get a signal by ID.
  */
-export function getSignalById(signalId: string): Signal | undefined {
-  return mockSignals.find((s) => s.id === signalId);
+export function getSignalById(signalId: string, locale: Locale = 'en'): Signal | undefined {
+  return getSignals(locale).find((s) => s.id === signalId);
 }
 
 /**
  * Get all signal IDs for static generation.
  */
 export function getAllSignalIds(): string[] {
-  return mockSignals.map((s) => s.id);
+  return localizedSignals.map((s) => createSignalId(s.id));
 }
+
+/**
+ * Get all chain IDs for static generation.
+ */
+export function getAllChainIds(): string[] {
+  return localizedChains.map((c) => createChainId(c.id));
+}
+
+// ============================================================
+// Legacy exports for backward compatibility during migration
+// These will be removed once all consumers use locale-aware functions
+// ============================================================
+
+/** @deprecated Use getSignals(locale) instead */
+export const mockSignals: Signal[] = getSignals('en');
+
+/** @deprecated Use getChains(locale) instead */
+export const mockChains: StoryChain[] = getChains('en');
+
+// ============================================================
+// Collectives (not yet localized - future enhancement)
+// ============================================================
 
 /**
  * Mock collectives for fact-checking.
  */
 export const mockCollectives: Collective[] = [
   {
-    id: createCollectiveId('enviro-collective'),
-    name: 'NH Environmental Watch',
-    description: 'Verifying environmental and water quality reports across New Hampshire.',
-    mission: 'Protect our communities through verified environmental monitoring and transparent reporting.',
-    topics: ['environmental', 'water-quality', 'public-health'],
+    id: createCollectiveId('econ-collective'),
+    name: 'Economic Watch Venezuela',
+    description: 'Verifying economic data, currency reports, and cost-of-living information.',
+    mission: 'Provide accurate economic information to Venezuelan citizens through collaborative verification.',
+    topics: ['economy', 'currency', 'food-security', 'wages'],
     members: [
-      { credentialHash: createDIMCredential('dim-enviro-001'), pseudonym: 'EcoVerifier', role: 'founder', joinedAt: daysAgo(90), verificationsCompleted: 45 },
-      { credentialHash: createDIMCredential('dim-enviro-002'), pseudonym: 'WaterWatcher', role: 'moderator', joinedAt: daysAgo(60), verificationsCompleted: 32 },
-      { credentialHash: createDIMCredential('dim-enviro-003'), pseudonym: 'GreenChecker', role: 'member', joinedAt: daysAgo(30), verificationsCompleted: 18 },
+      { credentialHash: createDIMCredential('dim-econ-001'), pseudonym: 'EconVerifier', role: 'founder', joinedAt: daysAgo(90), verificationsCompleted: 52 },
+      { credentialHash: createDIMCredential('dim-econ-002'), pseudonym: 'DataChecker', role: 'moderator', joinedAt: daysAgo(60), verificationsCompleted: 38 },
+      { credentialHash: createDIMCredential('dim-econ-003'), pseudonym: 'MarketWatch', role: 'member', joinedAt: daysAgo(30), verificationsCompleted: 21 },
     ],
     governance: { minVotesForVerdict: 2, verdictThreshold: 66, membershipApproval: 'vote' },
-    reputation: { score: 92, verificationsCompleted: 67, accuracyRate: 0.95, avgResponseTime: 18 },
+    reputation: { score: 94, verificationsCompleted: 89, accuracyRate: 0.96, avgResponseTime: 14 },
     createdAt: daysAgo(90),
     updatedAt: daysAgo(1),
   },
   {
     id: createCollectiveId('civic-collective'),
     name: 'Civic Transparency Network',
-    description: 'Fact-checking local government proceedings and public records.',
-    mission: 'Hold local government accountable through verified documentation and collaborative fact-checking.',
-    topics: ['local-government', 'public-records', 'development'],
+    description: 'Fact-checking government proceedings, public records, and official statements.',
+    mission: 'Hold government accountable through verified documentation and collaborative fact-checking.',
+    topics: ['politics', 'transparency', 'governance', 'public-records'],
     members: [
       { credentialHash: createDIMCredential('dim-civic-001'), pseudonym: 'RecordsKeeper', role: 'founder', joinedAt: daysAgo(120), verificationsCompleted: 78 },
-      { credentialHash: createDIMCredential('dim-civic-002'), pseudonym: 'CouncilWatcher', role: 'member', joinedAt: daysAgo(45), verificationsCompleted: 23 },
+      { credentialHash: createDIMCredential('dim-civic-002'), pseudonym: 'GovWatcher', role: 'member', joinedAt: daysAgo(45), verificationsCompleted: 34 },
     ],
     governance: { minVotesForVerdict: 2, verdictThreshold: 75, membershipApproval: 'vote' },
-    reputation: { score: 88, verificationsCompleted: 89, accuracyRate: 0.91, avgResponseTime: 24 },
+    reputation: { score: 91, verificationsCompleted: 98, accuracyRate: 0.93, avgResponseTime: 20 },
     createdAt: daysAgo(120),
     updatedAt: daysAgo(2),
   },
   {
     id: createCollectiveId('health-collective'),
-    name: 'Community Health Verifiers',
-    description: 'Verifying health-related information and public health advisories.',
-    mission: 'Combat health misinformation with evidence-based verification.',
-    topics: ['health', 'public-health', 'medical'],
+    name: 'Health Crisis Verifiers',
+    description: 'Verifying health-related information, hospital conditions, and medication availability.',
+    mission: 'Document healthcare conditions accurately to support advocacy and aid efforts.',
+    topics: ['health', 'medication', 'infrastructure', 'crisis'],
     members: [
-      { credentialHash: createDIMCredential('dim-health-001'), pseudonym: 'HealthCheck', role: 'founder', joinedAt: daysAgo(60), verificationsCompleted: 34 },
+      { credentialHash: createDIMCredential('dim-health-001'), pseudonym: 'MedVerifier', role: 'founder', joinedAt: daysAgo(60), verificationsCompleted: 41 },
+      { credentialHash: createDIMCredential('dim-health-002'), pseudonym: 'HealthWatch', role: 'member', joinedAt: daysAgo(30), verificationsCompleted: 19 },
     ],
     governance: { minVotesForVerdict: 3, verdictThreshold: 80, membershipApproval: 'invite' },
-    reputation: { score: 95, verificationsCompleted: 34, accuracyRate: 0.97, avgResponseTime: 12 },
+    reputation: { score: 96, verificationsCompleted: 47, accuracyRate: 0.98, avgResponseTime: 10 },
     createdAt: daysAgo(60),
-    updatedAt: daysAgo(5),
+    updatedAt: daysAgo(3),
   },
 ];
 
@@ -416,28 +682,28 @@ export function getAllCollectiveIds(): string[] {
 export const mockVerificationRequests: VerificationRequest[] = [
   {
     id: createVerificationRequestId('vr-001'),
-    signalId: createSignalId('sig-003'),
+    signalId: createSignalId('sig-002'),
     signalCid: 'bafybeig...',
-    collectiveId: createCollectiveId('enviro-collective'),
+    collectiveId: createCollectiveId('econ-collective'),
     status: 'voting',
     evidence: [
-      { submittedBy: createDIMCredential('dim-enviro-001'), submitterPseudonym: 'EcoVerifier', content: 'Confirmed discoloration matches industrial runoff patterns. Similar cases documented in EPA database.', sources: ['https://epa.gov/runoff-cases'], supports: true, submittedAt: hoursAgo(20) },
-      { submittedBy: createDIMCredential('dim-enviro-002'), submitterPseudonym: 'WaterWatcher', content: 'Water sample analysis shows elevated phosphate levels consistent with description.', sources: ['https://lab-results.example'], supports: true, submittedAt: hoursAgo(18) },
+      { submittedBy: createDIMCredential('dim-econ-001'), submitterPseudonym: 'EconVerifier', content: 'Confirmed CENDAS report figures match official publication. Food basket methodology is standard.', sources: ['https://cendas.org.ve'], supports: true, submittedAt: hoursAgo(20) },
+      { submittedBy: createDIMCredential('dim-econ-002'), submitterPseudonym: 'DataChecker', content: 'Cross-referenced with BCV exchange rate data. 36.4% devaluation figure is accurate.', sources: ['https://bcv.org.ve'], supports: true, submittedAt: hoursAgo(18) },
     ],
     votes: [
-      { voter: createDIMCredential('dim-enviro-001'), voterPseudonym: 'EcoVerifier', verdict: 'verified', reasoning: 'Evidence strongly supports the claim.', votedAt: hoursAgo(12) },
+      { voter: createDIMCredential('dim-econ-001'), voterPseudonym: 'EconVerifier', verdict: 'verified', reasoning: 'Evidence strongly supports the economic data claims.', votedAt: hoursAgo(12) },
     ],
     createdAt: hoursAgo(24),
     updatedAt: hoursAgo(12),
   },
   {
     id: createVerificationRequestId('vr-002'),
-    signalId: createSignalId('sig-006'),
+    signalId: createSignalId('sig-004'),
     signalCid: 'bafybeih...',
     collectiveId: createCollectiveId('civic-collective'),
     status: 'in_review',
     evidence: [
-      { submittedBy: createDIMCredential('dim-civic-001'), submitterPseudonym: 'RecordsKeeper', content: 'Meeting minutes confirm traffic study was tabled. However, city claims study is still in progress.', sources: ['https://city-minutes.example'], supports: true, submittedAt: hoursAgo(4) },
+      { submittedBy: createDIMCredential('dim-civic-001'), submitterPseudonym: 'RecordsKeeper', content: 'Verified dismissal through official gazette. No public statement found explaining the removal.', sources: ['https://gaceta-oficial.example'], supports: true, submittedAt: hoursAgo(4) },
     ],
     votes: [],
     createdAt: hoursAgo(6),
@@ -445,9 +711,9 @@ export const mockVerificationRequests: VerificationRequest[] = [
   },
   {
     id: createVerificationRequestId('vr-003'),
-    signalId: createSignalId('sig-001'),
+    signalId: createSignalId('sig-008'),
     signalCid: 'bafybeij...',
-    collectiveId: createCollectiveId('enviro-collective'),
+    collectiveId: createCollectiveId('health-collective'),
     status: 'pending',
     evidence: [],
     votes: [],
@@ -480,14 +746,14 @@ export function getPendingVerifications(): VerificationRequest[] {
 /**
  * Get author by ID (extracted from signals).
  */
-export function getAuthorById(authorId: string): FireflyAuthor | undefined {
-  const signal = mockSignals.find((s) => s.author.id === authorId);
+export function getAuthorById(authorId: string, locale: Locale = 'en'): FireflyAuthor | undefined {
+  const signal = getSignals(locale).find((s) => s.author.id === authorId);
   return signal?.author;
 }
 
 /**
  * Get signals by author ID.
  */
-export function getSignalsByAuthor(authorId: string): Signal[] {
-  return mockSignals.filter((s) => s.author.id === authorId);
+export function getSignalsByAuthor(authorId: string, locale: Locale = 'en'): Signal[] {
+  return getSignals(locale).filter((s) => s.author.id === authorId);
 }

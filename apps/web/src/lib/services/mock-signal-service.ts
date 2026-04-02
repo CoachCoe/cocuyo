@@ -20,24 +20,26 @@ import type {
 } from '@cocuyo/types';
 import { ok, createSignalId } from '@cocuyo/types';
 import { calculateCIDFromJSON, createRecord } from '@cocuyo/bulletin';
-import { mockSignals, getSignalsByChainId } from './mock-data';
+import { getSignals, getSignalsByChainId, type Locale } from './mock-data';
 
 export class MockSignalService implements SignalService {
-  getSignal(id: SignalId): Promise<Signal | null> {
-    const signal = mockSignals.find((s) => s.id === id);
+  getSignal(id: SignalId, locale: Locale = 'en'): Promise<Signal | null> {
+    const signals = getSignals(locale);
+    const signal = signals.find((s) => s.id === id);
     return Promise.resolve(signal ?? null);
   }
 
-  getChainSignals(chainId: ChainId): Promise<readonly Signal[]> {
-    return Promise.resolve(getSignalsByChainId(chainId));
+  getChainSignals(chainId: ChainId, locale: Locale = 'en'): Promise<readonly Signal[]> {
+    return Promise.resolve(getSignalsByChainId(chainId, locale));
   }
 
   getRecentSignals(params: {
     topic?: string;
     location?: string;
     pagination: PaginationParams;
+    locale?: Locale;
   }): Promise<PaginatedResult<Signal>> {
-    let filtered = [...mockSignals];
+    let filtered = [...getSignals(params.locale ?? 'en')];
 
     // Filter by topic if provided
     const topicFilter = params.topic;

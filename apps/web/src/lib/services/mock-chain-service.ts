@@ -10,11 +10,12 @@ import type {
   PaginationParams,
   PaginatedResult,
 } from '@cocuyo/types';
-import { mockChains, getChainPreviews } from './mock-data';
+import { getChains, getChainPreviews, type Locale } from './mock-data';
 
 export class MockChainService implements ChainService {
-  getChain(id: ChainId): Promise<StoryChain | null> {
-    const chain = mockChains.find((c) => c.id === id);
+  getChain(id: ChainId, locale: Locale = 'en'): Promise<StoryChain | null> {
+    const chains = getChains(locale);
+    const chain = chains.find((c) => c.id === id);
     return Promise.resolve(chain ?? null);
   }
 
@@ -23,8 +24,9 @@ export class MockChainService implements ChainService {
     location?: string;
     status?: StoryChain['status'];
     pagination: PaginationParams;
+    locale?: Locale;
   }): Promise<PaginatedResult<ChainPreview>> {
-    let previews = getChainPreviews();
+    let previews = getChainPreviews(params.locale ?? 'en');
 
     // Filter by topic
     const topicFilter = params.topic;
@@ -65,8 +67,8 @@ export class MockChainService implements ChainService {
     });
   }
 
-  getFeaturedChains(): Promise<readonly ChainPreview[]> {
-    const previews = getChainPreviews();
+  getFeaturedChains(locale: Locale = 'en'): Promise<readonly ChainPreview[]> {
+    const previews = getChainPreviews(locale);
     const sorted = previews
       .sort((a, b) => b.totalCorroborations - a.totalCorroborations)
       .slice(0, 5);
