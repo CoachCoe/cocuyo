@@ -8,7 +8,7 @@
  */
 
 import type { ReactElement } from 'react';
-import { Button, FireflySymbol } from '@cocuyo/ui';
+import { FireflySymbol } from '@cocuyo/ui';
 import { useIlluminate } from '@/hooks/useIlluminate';
 
 export interface ExploreHeaderProps {
