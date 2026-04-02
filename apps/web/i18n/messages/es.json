@@ -135,11 +135,23 @@
   "explore": {
     "title": "Explorar",
     "description": "Historias y señales de la red. La información se propaga a través de la corroboración, no algoritmos.",
-    "stories": "Historias en Desarrollo",
+    "illuminateNew": "Iluminar",
+    "stories": "Cadenas de Historia",
+    "allSignals": "Todas las Señales",
     "noStories": "No hay historias aún. Ilumina una señal para comenzar una.",
     "recentSignals": "Señales Recientes",
     "signals": "señales",
-    "corroborations": "corroboraciones"
+    "corroborations": "corroboraciones",
+    "linkToStory": "Vincular a historia",
+    "startNewChain": "Iniciar nueva cadena",
+    "storiesInfo": {
+      "title": "¿Qué son las Historias?",
+      "body": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una historia — las historias cristalizan cuando las luciérnagas enlazan sus señales a observaciones relacionadas.\n\nUna historia sobre calidad del agua podría comenzar con una persona notando un olor, crecer cuando otros corroboran y añaden evidencia, y fortalecerse cuando alguien contribuye registros públicos.\n\nLa historia se convierte en más que la suma de sus señales."
+    },
+    "signalsInfo": {
+      "title": "¿Qué son las Señales?",
+      "body": "Una señal no es una publicación. Es una observación, una pieza de evidencia, un testimonio, un dato.\n\nCuando iluminas una señal, estás contribuyendo información firmada por tu credencial anónima — lista para conectarse con otras señales y formar cadenas de historia.\n\nLas señales ganan peso a través de la corroboración de otros humanos verificados."
+    }
   },
   "feed": {
     "title": "Tu Feed",

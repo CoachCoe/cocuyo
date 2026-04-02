@@ -196,6 +196,14 @@
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  .animate-pulse-subtle {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-firefly-pulse {
+    animation: firefly-pulse 2s ease-in-out infinite;
+  }
+
   .animate-scale-in {
     animation: scale-in var(--duration-normal) var(--ease-default);
   }
@@ -256,6 +264,28 @@
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(232, 185, 49, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(232, 185, 49, 0.6), 0 0 60px rgba(232, 185, 49, 0.3);
+  }
+}
+
+@keyframes firefly-pulse {
+  0%,
+  100% {
+    color: var(--fg-accent);
+    filter: drop-shadow(0 0 2px rgba(232, 185, 49, 0.5));
+  }
+  50% {
+    color: var(--fg-accent);
+    filter: drop-shadow(0 0 6px rgba(232, 185, 49, 0.8));
   }
 }
 

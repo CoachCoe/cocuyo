@@ -135,11 +135,23 @@
   "explore": {
     "title": "Explore",
     "description": "Stories and signals from the network. Information spreads through corroboration, not algorithms.",
-    "stories": "Developing Stories",
+    "illuminateNew": "Illuminate",
+    "stories": "Story Chains",
+    "allSignals": "All Signals",
     "noStories": "No stories yet. Illuminate a signal to start one.",
     "recentSignals": "Recent Signals",
     "signals": "signals",
-    "corroborations": "corroborations"
+    "corroborations": "corroborations",
+    "linkToStory": "Link to story",
+    "startNewChain": "Start new chain",
+    "storiesInfo": {
+      "title": "What are Stories?",
+      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their signals to related observations.\n\nA story about water quality might start with one person noticing a smell, grow as others corroborate and add evidence, and strengthen as someone contributes public records.\n\nThe story becomes more than the sum of its signals."
+    },
+    "signalsInfo": {
+      "title": "What are Signals?",
+      "body": "A signal is not a post. It's an observation, a piece of evidence, a witness account, a data point.\n\nWhen you illuminate a signal, you're contributing information signed by your anonymous credential — ready to connect with other signals and form story chains.\n\nSignals gain weight through corroboration from other verified humans."
+    }
   },
   "feed": {
     "title": "Your Feed",
