@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { Footer } from '@cocuyo/ui';
+import { ToastProvider, ErrorBoundary } from '@cocuyo/ui';
+import { AppFooter } from '@/components/AppFooter';
 import { TriangleProvider } from '@/components/TriangleProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
@@ -42,16 +43,18 @@ export default async function LocaleLayout({
       <body className="min-h-screen bg-surface-main text-primary">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
-            <TriangleProvider>
-              <IlluminateProvider>
-                <AppNavbar />
-                <div className="pt-16 min-h-screen">
-                  {children}
-                </div>
-                <Footer />
-                <IlluminateModal />
-              </IlluminateProvider>
-            </TriangleProvider>
+            <ErrorBoundary>
+              <ToastProvider>
+                <TriangleProvider>
+                  <IlluminateProvider>
+                    <AppNavbar />
+                    <div className="pt-16 min-h-screen">{children}</div>
+                    <AppFooter />
+                    <IlluminateModal />
+                  </IlluminateProvider>
+                </TriangleProvider>
+              </ToastProvider>
+            </ErrorBoundary>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

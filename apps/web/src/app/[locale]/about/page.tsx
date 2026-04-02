@@ -241,7 +241,7 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
             </p>
 
             <a
-              href="https://github.com/CoachCoe/cocuyo"
+              href="https://github.com/paritytech/cocuyo"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors"

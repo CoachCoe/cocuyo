@@ -10,11 +10,13 @@ import type {
   PaginationParams,
   PaginatedResult,
 } from '@cocuyo/types';
-import { mockChains, getChainPreviews } from './mock-data';
+import { getChains, getChainPreviews } from './mock-data';
 
 export class MockChainService implements ChainService {
   getChain(id: ChainId): Promise<StoryChain | null> {
-    const chain = mockChains.find((c) => c.id === id);
+    // Use English as default locale for mock service
+    const chains = getChains('en');
+    const chain = chains.find((c) => c.id === id);
     return Promise.resolve(chain ?? null);
   }
 

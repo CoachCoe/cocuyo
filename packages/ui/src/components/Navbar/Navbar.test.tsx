@@ -16,15 +16,13 @@ describe('Navbar', () => {
 
     it('renders firefly symbol', () => {
       render(<Navbar />);
-      // Multiple firefly symbols exist (desktop + illuminate button)
       expect(screen.getAllByLabelText('Firefly').length).toBeGreaterThan(0);
     });
 
     it('renders default navigation links', () => {
       render(<Navbar />);
-      expect(screen.getByRole('link', { name: 'Feed' })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'Explore' })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'Collectives' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Signals' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Verify' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
     });
 
@@ -36,16 +34,6 @@ describe('Navbar', () => {
       render(<Navbar navLinks={customLinks} />);
       expect(screen.getByRole('link', { name: 'Custom' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Other' })).toBeInTheDocument();
-    });
-
-    it('renders Illuminate button', () => {
-      render(<Navbar />);
-      expect(screen.getByRole('button', { name: /Illuminate/i })).toBeInTheDocument();
-    });
-
-    it('renders custom illuminate label', () => {
-      render(<Navbar illuminateLabel="Iluminar" />);
-      expect(screen.getByRole('button', { name: /Iluminar/i })).toBeInTheDocument();
     });
   });
 
@@ -63,30 +51,21 @@ describe('Navbar', () => {
 
   describe('active state', () => {
     it('marks current path as active', () => {
-      render(<Navbar currentPath="/feed" />);
-      const feedLink = screen.getByRole('link', { name: 'Feed' });
-      expect(feedLink).toHaveAttribute('aria-current', 'page');
+      render(<Navbar currentPath="/explore" />);
+      const signalsLink = screen.getByRole('link', { name: 'Signals' });
+      expect(signalsLink).toHaveAttribute('aria-current', 'page');
     });
 
     it('marks nested paths as active', () => {
       render(<Navbar currentPath="/explore/chain-001" />);
-      const exploreLink = screen.getByRole('link', { name: 'Explore' });
-      expect(exploreLink).toHaveAttribute('aria-current', 'page');
+      const signalsLink = screen.getByRole('link', { name: 'Signals' });
+      expect(signalsLink).toHaveAttribute('aria-current', 'page');
     });
 
     it('does not mark other paths as active', () => {
-      render(<Navbar currentPath="/feed" />);
+      render(<Navbar currentPath="/explore" />);
       const aboutLink = screen.getByRole('link', { name: 'About' });
       expect(aboutLink).not.toHaveAttribute('aria-current');
-    });
-  });
-
-  describe('interactions', () => {
-    it('calls onIlluminate when button is clicked', () => {
-      const handleIlluminate = vi.fn();
-      render(<Navbar onIlluminate={handleIlluminate} />);
-      fireEvent.click(screen.getByRole('button', { name: /Illuminate/i }));
-      expect(handleIlluminate).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -109,6 +88,26 @@ describe('Navbar', () => {
       fireEvent.click(screen.getByLabelText('Open menu'));
       const mobileMenu = document.getElementById('mobile-menu');
       expect(mobileMenu).toBeInTheDocument();
+    });
+
+    it('renders Illuminate button in mobile menu', () => {
+      render(<Navbar />);
+      fireEvent.click(screen.getByLabelText('Open menu'));
+      expect(screen.getByRole('button', { name: /Illuminate/i })).toBeInTheDocument();
+    });
+
+    it('calls onIlluminate when mobile Illuminate button is clicked', () => {
+      const handleIlluminate = vi.fn();
+      render(<Navbar onIlluminate={handleIlluminate} />);
+      fireEvent.click(screen.getByLabelText('Open menu'));
+      fireEvent.click(screen.getByRole('button', { name: /Illuminate/i }));
+      expect(handleIlluminate).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders custom illuminate label in mobile menu', () => {
+      render(<Navbar illuminateLabel="Iluminar" />);
+      fireEvent.click(screen.getByLabelText('Open menu'));
+      expect(screen.getByRole('button', { name: /Iluminar/i })).toBeInTheDocument();
     });
   });
 

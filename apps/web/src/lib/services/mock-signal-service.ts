@@ -20,11 +20,13 @@ import type {
 } from '@cocuyo/types';
 import { ok, createSignalId } from '@cocuyo/types';
 import { calculateCIDFromJSON, createRecord } from '@cocuyo/bulletin';
-import { mockSignals, getSignalsByChainId } from './mock-data';
+import { getSignals, getSignalsByChainId } from './mock-data';
 
 export class MockSignalService implements SignalService {
   getSignal(id: SignalId): Promise<Signal | null> {
-    const signal = mockSignals.find((s) => s.id === id);
+    // Use English as default locale for mock service
+    const signals = getSignals('en');
+    const signal = signals.find((s) => s.id === id);
     return Promise.resolve(signal ?? null);
   }
 
@@ -37,7 +39,8 @@ export class MockSignalService implements SignalService {
     location?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<Signal>> {
-    let filtered = [...mockSignals];
+    // Use English as default locale for mock service
+    let filtered = [...getSignals('en')];
 
     // Filter by topic if provided
     const topicFilter = params.topic;
