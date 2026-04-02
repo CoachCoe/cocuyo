@@ -59,7 +59,7 @@ export function ExploreHeader({
                   focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fg-accent)]
                 "
               >
-                <FireflySymbol size={18} color="currentColor" />
+                <FireflySymbol size={18} color="inherit" />
                 {illuminateLabel}
               </button>
             </div>
