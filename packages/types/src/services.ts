@@ -56,16 +56,17 @@ export interface PaginatedResult<T> {
  */
 export interface SignalService {
   /** Get a single signal by ID */
-  getSignal(id: SignalId): Promise<Signal | null>;
+  getSignal(id: SignalId, locale?: string): Promise<Signal | null>;
 
   /** Get all signals in a chain */
-  getChainSignals(chainId: ChainId): Promise<readonly Signal[]>;
+  getChainSignals(chainId: ChainId, locale?: string): Promise<readonly Signal[]>;
 
   /** Get recent signals, optionally filtered by topic or location */
   getRecentSignals(params: {
     topic?: string;
     location?: string;
     pagination: PaginationParams;
+    locale?: string;
   }): Promise<PaginatedResult<Signal>>;
 
   /** Illuminate a new signal */
@@ -77,7 +78,7 @@ export interface SignalService {
  */
 export interface ChainService {
   /** Get a single chain by ID */
-  getChain(id: ChainId): Promise<StoryChain | null>;
+  getChain(id: ChainId, locale?: string): Promise<StoryChain | null>;
 
   /** Get chain previews, optionally filtered */
   getChains(params: {
@@ -85,10 +86,11 @@ export interface ChainService {
     location?: string;
     status?: StoryChain['status'];
     pagination: PaginationParams;
+    locale?: string;
   }): Promise<PaginatedResult<ChainPreview>>;
 
   /** Get featured/active chains for the explore page */
-  getFeaturedChains(): Promise<readonly ChainPreview[]>;
+  getFeaturedChains(locale?: string): Promise<readonly ChainPreview[]>;
 }
 
 /**

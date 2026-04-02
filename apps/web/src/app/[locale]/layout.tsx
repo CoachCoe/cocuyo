@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ToastProvider, ErrorBoundary } from '@cocuyo/ui';
 import { AppFooter } from '@/components/AppFooter';
-import { TriangleProvider } from '@/components/TriangleProvider';
+import { SignerProvider } from '@/lib/context/SignerContext';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
 import { IlluminateModal } from '@/components/IlluminateModal';
@@ -45,14 +45,14 @@ export default async function LocaleLayout({
           <ThemeProvider>
             <ErrorBoundary>
               <ToastProvider>
-                <TriangleProvider>
+                <SignerProvider>
                   <IlluminateProvider>
                     <AppNavbar />
                     <div className="pt-16 min-h-screen">{children}</div>
                     <AppFooter />
                     <IlluminateModal />
                   </IlluminateProvider>
-                </TriangleProvider>
+                </SignerProvider>
               </ToastProvider>
             </ErrorBoundary>
           </ThemeProvider>

@@ -18,7 +18,7 @@ import {
   type ReactElement,
   type FormEvent,
 } from 'react';
-import { useTriangleAccount } from '@/hooks/useTriangleAccount';
+import { useSigner } from '@/lib/context/SignerContext';
 import type { ChainId, BountyId, NewSignal } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { signalService } from '@/lib/services';
@@ -39,7 +39,7 @@ interface FormState {
 const MIN_CONTENT_LENGTH = 50;
 
 export function IlluminateForm(): ReactElement {
-  const { isConnected, isInHost } = useTriangleAccount();
+  const { isConnected, isInHost } = useSigner();
   const { preSelectedChainId, preSelectedBountyId, closeModal } = useIlluminate();
 
   const [formState, setFormState] = useState<FormState>(() => ({

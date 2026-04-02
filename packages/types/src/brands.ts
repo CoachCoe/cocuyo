@@ -30,6 +30,12 @@ export type DIMCredential = string & { readonly __brand: 'DIMCredential' };
 /** Content hash — references content stored on Bulletin Chain */
 export type ContentHash = string & { readonly __brand: 'ContentHash' };
 
+/** SS58-encoded Polkadot address */
+export type PolkadotAddress = string & { readonly __brand: 'PolkadotAddress' };
+
+/** H160 (Ethereum-style) address */
+export type H160Address = string & { readonly __brand: 'H160Address' };
+
 /**
  * Type guard utilities for branded types.
  * These are used to create branded values from raw strings.
@@ -68,4 +74,12 @@ export function createDIMCredential(credential: string): DIMCredential {
 
 export function createContentHash(hash: string): ContentHash {
   return hash as ContentHash;
+}
+
+export function createPolkadotAddress(address: string): PolkadotAddress {
+  return address as PolkadotAddress;
+}
+
+export function createH160Address(address: string): H160Address {
+  return address as H160Address;
 }
