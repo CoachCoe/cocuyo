@@ -52,7 +52,7 @@ export function ExploreView({
   // Handle illuminate button click on a story chain
   const handleIlluminate = useCallback(
     (chainId: ChainId) => {
-      openModal({ chainId: chainId as string });
+      openModal({ chainId });
     },
     [openModal]
   );
