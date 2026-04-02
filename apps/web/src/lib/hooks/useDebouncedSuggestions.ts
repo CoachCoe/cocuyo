@@ -11,6 +11,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChainPreview, BountyPreview } from '@cocuyo/types';
 import { chainService } from '@/lib/services';
 import { getOpenBounties } from '@/lib/services/mock-data-bounties';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('useDebouncedSuggestions');
 
 const DEBOUNCE_MS = 300;
 
@@ -110,7 +113,7 @@ export function useDebouncedSuggestions(
       if (error instanceof Error && error.name === 'AbortError') {
         return;
       }
-      console.error('Error fetching suggestions:', error);
+      log.error('Failed to fetch suggestions', error, { topicCount: topics.length });
     } finally {
       if (!abortController.current.signal.aborted) {
         setIsLoading(false);

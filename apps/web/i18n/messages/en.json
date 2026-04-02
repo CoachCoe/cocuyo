@@ -4,28 +4,16 @@
     "description": "A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected."
   },
   "nav": {
-    "feed": "Feed",
-    "explore": "Explore",
-    "collectives": "Collectives",
-    "verify": "Verify",
-    "search": "Search",
+    "signals": "Signals",
+    "verify": "Help Verify",
     "about": "About",
     "home": "Firefly Network home",
     "brandName": "FIREFLY NETWORK"
   },
   "footer": {
+    "builtOn": "Built on Polkadot",
     "tagline": "Lights in the dark.",
-    "network": "Network",
-    "resources": "Resources",
-    "community": "Community",
-    "explore": "Explore",
-    "bounties": "Bounties",
-    "storyChains": "Story Chains",
-    "inspiration": "Inspiration",
-    "about": "About",
-    "contributing": "Contributing",
-    "copyright": "Parity Technologies",
-    "opensInNewTab": "(opens in new tab)"
+    "copyright": "Parity Technologies"
   },
   "home": {
     "hero": {
@@ -38,7 +26,10 @@
       "distributedButConnected": "Distributed but Connected"
     },
     "cta": {
-      "explore": "Explore the Network"
+      "howItWorks": "How does this work?"
+    },
+    "preview": {
+      "title": "Recent Signals"
     },
     "whatIs": {
       "title": "What is the Firefly Network?",
@@ -143,13 +134,24 @@
   },
   "explore": {
     "title": "Explore",
-    "description": "Browse active story chains and recent signals from the network. Information spreads through corroboration, not algorithms.",
-    "activeChains": "Active Story Chains",
-    "noChains": "No active chains yet. Be the first to illuminate.",
+    "description": "Stories and signals from the network. Information spreads through corroboration, not algorithms.",
+    "illuminateNew": "Illuminate",
+    "stories": "Story Chains",
+    "allSignals": "All Signals",
+    "noStories": "No stories yet. Illuminate a signal to start one.",
     "recentSignals": "Recent Signals",
-    "updated": "Updated",
     "signals": "signals",
-    "corroborations": "corroborations"
+    "corroborations": "corroborations",
+    "linkToStory": "Link to story",
+    "startNewChain": "Start new chain",
+    "storiesInfo": {
+      "title": "What are Stories?",
+      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their signals to related observations.\n\nA story about water quality might start with one person noticing a smell, grow as others corroborate and add evidence, and strengthen as someone contributes public records.\n\nThe story becomes more than the sum of its signals."
+    },
+    "signalsInfo": {
+      "title": "What are Signals?",
+      "body": "A signal is not a post. It's an observation, a piece of evidence, a witness account, a data point.\n\nWhen you illuminate a signal, you're contributing information signed by your anonymous credential — ready to connect with other signals and form story chains.\n\nSignals gain weight through corroboration from other verified humans."
+    }
   },
   "feed": {
     "title": "Your Feed",

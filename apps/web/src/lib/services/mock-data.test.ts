@@ -7,19 +7,16 @@ import {
   getChainTitle,
 } from './mock-data';
 
-// Use English locale for tests
-const mockSignals = getSignals('en');
-const mockChains = getChains('en');
-
 describe('Mock Data', () => {
-  describe('mockSignals', () => {
-    it('is a non-empty array', () => {
-      expect(Array.isArray(mockSignals)).toBe(true);
-      expect(mockSignals.length).toBeGreaterThan(0);
+  describe('getSignals', () => {
+    it('returns a non-empty array', () => {
+      const signals = getSignals('en');
+      expect(Array.isArray(signals)).toBe(true);
+      expect(signals.length).toBeGreaterThan(0);
     });
 
     it('contains signals with required fields', () => {
-      mockSignals.forEach((signal) => {
+      getSignals('en').forEach((signal) => {
         expect(signal).toHaveProperty('id');
         expect(signal).toHaveProperty('content');
         expect(signal).toHaveProperty('context');
@@ -31,21 +28,21 @@ describe('Mock Data', () => {
     });
 
     it('contains signals with valid content structure', () => {
-      mockSignals.forEach((signal) => {
+      getSignals('en').forEach((signal) => {
         expect(signal.content).toHaveProperty('text');
         expect(typeof signal.content.text).toBe('string');
       });
     });
 
     it('contains signals with valid context structure', () => {
-      mockSignals.forEach((signal) => {
+      getSignals('en').forEach((signal) => {
         expect(signal.context).toHaveProperty('topics');
         expect(Array.isArray(signal.context.topics)).toBe(true);
       });
     });
 
     it('contains signals with valid corroboration counts', () => {
-      mockSignals.forEach((signal) => {
+      getSignals('en').forEach((signal) => {
         expect(signal.corroborations.witnessCount).toBeGreaterThanOrEqual(0);
         expect(signal.corroborations.evidenceCount).toBeGreaterThanOrEqual(0);
         expect(signal.corroborations.expertiseCount).toBeGreaterThanOrEqual(0);
@@ -54,14 +51,15 @@ describe('Mock Data', () => {
     });
   });
 
-  describe('mockChains', () => {
-    it('is a non-empty array', () => {
-      expect(Array.isArray(mockChains)).toBe(true);
-      expect(mockChains.length).toBeGreaterThan(0);
+  describe('getChains', () => {
+    it('returns a non-empty array', () => {
+      const chains = getChains('en');
+      expect(Array.isArray(chains)).toBe(true);
+      expect(chains.length).toBeGreaterThan(0);
     });
 
     it('contains chains with required fields', () => {
-      mockChains.forEach((chain) => {
+      getChains('en').forEach((chain) => {
         expect(chain).toHaveProperty('id');
         expect(chain).toHaveProperty('title');
         expect(chain).toHaveProperty('description');
@@ -76,13 +74,13 @@ describe('Mock Data', () => {
 
     it('contains chains with valid status values', () => {
       const validStatuses = ['emerging', 'active', 'established', 'archived'];
-      mockChains.forEach((chain) => {
+      getChains('en').forEach((chain) => {
         expect(validStatuses).toContain(chain.status);
       });
     });
 
     it('contains chains with valid stats structure', () => {
-      mockChains.forEach((chain) => {
+      getChains('en').forEach((chain) => {
         expect(chain.stats).toHaveProperty('signalCount');
         expect(chain.stats).toHaveProperty('totalCorroborations');
         expect(chain.stats).toHaveProperty('totalChallenges');
@@ -94,9 +92,10 @@ describe('Mock Data', () => {
 
   describe('getChainPreviews', () => {
     it('returns an array of previews', () => {
+      const chains = getChains('en');
       const previews = getChainPreviews();
       expect(Array.isArray(previews)).toBe(true);
-      expect(previews.length).toBe(mockChains.length);
+      expect(previews.length).toBe(chains.length);
     });
 
     it('returns previews with expected fields', () => {
@@ -114,12 +113,13 @@ describe('Mock Data', () => {
 
     it('maps chain data correctly to preview', () => {
       const previews = getChainPreviews();
+      const chains = getChains('en');
       const preview = previews[0];
-      const chain = mockChains[0];
+      const chain = chains[0];
 
       expect(preview).toBeDefined();
       expect(chain).toBeDefined();
-      if (preview && chain) {
+      if (preview != null && chain != null) {
         expect(preview.id).toBe(chain.id);
         expect(preview.title).toBe(chain.title);
         expect(preview.topics).toEqual(chain.topics);
@@ -131,11 +131,12 @@ describe('Mock Data', () => {
 
     it('includes location only when present on chain', () => {
       const previews = getChainPreviews();
+      const chains = getChains('en');
       previews.forEach((preview, index) => {
-        const chain = mockChains[index];
+        const chain = chains[index];
         if (chain?.location != null) {
           expect(preview.location).toBe(chain.location);
-        } else if (chain) {
+        } else if (chain != null) {
           expect(preview).not.toHaveProperty('location');
         }
       });
@@ -185,8 +186,8 @@ describe('Mock Data', () => {
       expect(title).toBeUndefined();
     });
 
-    it('returns correct titles for all mock chains', () => {
-      mockChains.forEach((chain) => {
+    it('returns correct titles for all chains', () => {
+      getChains('en').forEach((chain) => {
         const title = getChainTitle(chain.id);
         expect(title).toBe(chain.title);
       });

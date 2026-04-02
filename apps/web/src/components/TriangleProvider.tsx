@@ -14,7 +14,7 @@ interface TriangleProviderProps {
 
 export function TriangleProvider({ children }: TriangleProviderProps): ReactNode {
   useEffect(() => {
-    initHostDetection();
+    void initHostDetection();
   }, []);
 
   return <>{children}</>;

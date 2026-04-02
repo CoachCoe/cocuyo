@@ -3,107 +3,118 @@
  *
  * Detects whether the app is running inside Triangle host environment
  * and provides access to host APIs when available.
+ *
+ * Based on get-local's implementation pattern.
  */
 
-import {
-  injectSpektrExtension,
-  createAccountsProvider,
-  createMetaProvider,
-} from '@novasamatech/product-sdk';
-import type { AccountConnectionStatus } from '@novasamatech/product-sdk';
+import type { AccountConnectionStatus as SDKAccountConnectionStatus } from '@novasamatech/product-sdk';
+
+// Re-export the connection status type
+export type AccountConnectionStatus = SDKAccountConnectionStatus;
 
 let initialized = false;
 let hosted = false;
+let initPromise: Promise<boolean> | null = null;
 
 // Type for the accounts provider returned by createAccountsProvider
-type AccountsProviderType = ReturnType<typeof createAccountsProvider>;
-type MetaProviderType = ReturnType<typeof createMetaProvider>;
+type AccountsProviderType = ReturnType<
+  typeof import('@novasamatech/product-sdk').createAccountsProvider
+>;
 
 let _accountsProvider: AccountsProviderType | null = null;
-let _metaProvider: MetaProviderType | null = null;
 
 /**
- * Check if we're running inside an iframe (Triangle host).
+ * Check if we're running inside a host environment (iframe or webview).
  */
-function detectHostEnvironment(): boolean {
+function isInsideContainer(): boolean {
   if (typeof window === 'undefined') return false;
 
   try {
-    // Triangle hosts the app in an iframe
-    // Check if we're in an iframe by comparing window to parent
+    // Check for Triangle iframe
     const inIframe = window.self !== window.top;
+    // Check for Polkadot Desktop webview
+    const inWebview = '__HOST_WEBVIEW_MARK__' in window;
+    // Check for host API port
+    const hasApiPort = '__HOST_API_PORT__' in window;
 
-    // Additional check: Triangle sets this in the iframe context
-    // The product-sdk communicates via postMessage with the parent
-    return inIframe;
+    return inIframe || inWebview || hasApiPort;
   } catch {
     // Cross-origin iframe access throws - this means we ARE in an iframe
-    // but can't access parent (which is expected for Triangle)
     return true;
   }
 }
 
 /**
- * Initialize host detection.
- * Must be called once at app startup.
+ * Initialize host detection with timeout.
+ * Returns true if successfully connected to host.
  */
-export function initHostDetection(): void {
-  if (initialized) return;
-  initialized = true;
+export async function initHostDetection(): Promise<boolean> {
+  if (initialized) return hosted;
+  if (initPromise) return initPromise;
 
-  // First check if we're actually in a host environment
-  hosted = detectHostEnvironment();
+  initPromise = (async () => {
+    // First check if we're actually in a host environment
+    if (!isInsideContainer()) {
+      initialized = true;
+      hosted = false;
+      return false;
+    }
 
-  if (!hosted) {
-    _accountsProvider = null;
-    _metaProvider = null;
-    return;
-  }
+    try {
+      // Lazy load SDK and race against timeout
+      const sdk = await Promise.race([
+        import('@novasamatech/product-sdk'),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Host detection timeout')), 5000)
+        ),
+      ]);
 
-  try {
-    // Inject the Spektr extension which enables host communication
-    void injectSpektrExtension();
+      // Skip Spektr injection on dot.li (causes reload loop)
+      const isDotLi = typeof window !== 'undefined' &&
+        window.location.hostname.endsWith('.dot.li');
 
-    // Create providers
-    _accountsProvider = createAccountsProvider();
-    _metaProvider = createMetaProvider();
-  } catch {
-    // If provider creation fails, mark as not hosted
-    hosted = false;
-    _accountsProvider = null;
-    _metaProvider = null;
-  }
+      if (!isDotLi) {
+        // Inject the Spektr extension which enables host communication
+        await sdk.injectSpektrExtension();
+      }
+
+      // Create accounts provider with sandbox transport
+      _accountsProvider = sdk.createAccountsProvider(sdk.sandboxTransport);
+
+      initialized = true;
+      hosted = true;
+      return true;
+    } catch {
+      // If initialization fails, mark as not hosted
+      initialized = true;
+      hosted = false;
+      _accountsProvider = null;
+      return false;
+    }
+  })();
+
+  return initPromise;
 }
 
 /**
- * Check if the app is running inside Triangle host.
+ * Synchronous check if the app is running inside Triangle host.
+ * Will return false if initialization hasn't completed yet.
  */
 export function isHosted(): boolean {
-  if (!initialized) {
-    initHostDetection();
-  }
   return hosted;
+}
+
+/**
+ * Check if we're inside a container (iframe/webview).
+ * This is synchronous and can be called before initialization.
+ */
+export function isInContainer(): boolean {
+  return isInsideContainer();
 }
 
 /**
  * Get the accounts provider (if available).
  */
 export function getAccountsProvider(): AccountsProviderType | null {
-  if (!initialized) {
-    initHostDetection();
-  }
   return _accountsProvider;
 }
-
-/**
- * Get the meta provider (if available).
- */
-export function getMetaProvider(): MetaProviderType | null {
-  if (!initialized) {
-    initHostDetection();
-  }
-  return _metaProvider;
-}
-
-// Re-export the connection status type
-export type { AccountConnectionStatus };

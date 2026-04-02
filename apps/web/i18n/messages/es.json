@@ -4,28 +4,16 @@
     "description": "Una red resistente a la vigilancia para la inteligencia colectiva. Anónimo pero humano. Verificado pero privado. Distribuido pero conectado."
   },
   "nav": {
-    "feed": "Inicio",
-    "explore": "Explorar",
-    "collectives": "Colectivos",
-    "verify": "Verificar",
-    "search": "Buscar",
+    "signals": "Señales",
+    "verify": "Ayudar a Verificar",
     "about": "Acerca de",
     "home": "Inicio de Efecto Cocuyo",
     "brandName": "EFECTO COCUYO"
   },
   "footer": {
+    "builtOn": "Construido en Polkadot",
     "tagline": "Luces en la oscuridad.",
-    "network": "Red",
-    "resources": "Recursos",
-    "community": "Comunidad",
-    "explore": "Explorar",
-    "bounties": "Recompensas",
-    "storyChains": "Cadenas de Historia",
-    "inspiration": "Inspiración",
-    "about": "Acerca de",
-    "contributing": "Contribuir",
-    "copyright": "Parity Technologies",
-    "opensInNewTab": "(abre en nueva pestaña)"
+    "copyright": "Parity Technologies"
   },
   "home": {
     "hero": {
@@ -38,7 +26,10 @@
       "distributedButConnected": "Distribuido pero Conectado"
     },
     "cta": {
-      "explore": "Explorar la Red"
+      "howItWorks": "¿Cómo funciona?"
+    },
+    "preview": {
+      "title": "Señales Recientes"
     },
     "whatIs": {
       "title": "¿Qué es la Red Luciérnaga?",
@@ -143,13 +134,24 @@
   },
   "explore": {
     "title": "Explorar",
-    "description": "Explora cadenas de historia activas y señales recientes de la red. La información se propaga a través de la corroboración, no algoritmos.",
-    "activeChains": "Cadenas de Historia Activas",
-    "noChains": "No hay cadenas activas aún. Sé el primero en iluminar.",
+    "description": "Historias y señales de la red. La información se propaga a través de la corroboración, no algoritmos.",
+    "illuminateNew": "Iluminar",
+    "stories": "Cadenas de Historia",
+    "allSignals": "Todas las Señales",
+    "noStories": "No hay historias aún. Ilumina una señal para comenzar una.",
     "recentSignals": "Señales Recientes",
-    "updated": "Actualizado",
     "signals": "señales",
-    "corroborations": "corroboraciones"
+    "corroborations": "corroboraciones",
+    "linkToStory": "Vincular a historia",
+    "startNewChain": "Iniciar nueva cadena",
+    "storiesInfo": {
+      "title": "¿Qué son las Historias?",
+      "body": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una historia — las historias cristalizan cuando las luciérnagas enlazan sus señales a observaciones relacionadas.\n\nUna historia sobre calidad del agua podría comenzar con una persona notando un olor, crecer cuando otros corroboran y añaden evidencia, y fortalecerse cuando alguien contribuye registros públicos.\n\nLa historia se convierte en más que la suma de sus señales."
+    },
+    "signalsInfo": {
+      "title": "¿Qué son las Señales?",
+      "body": "Una señal no es una publicación. Es una observación, una pieza de evidencia, un testimonio, un dato.\n\nCuando iluminas una señal, estás contribuyendo información firmada por tu credencial anónima — lista para conectarse con otras señales y formar cadenas de historia.\n\nLas señales ganan peso a través de la corroboración de otros humanos verificados."
+    }
   },
   "feed": {
     "title": "Tu Feed",

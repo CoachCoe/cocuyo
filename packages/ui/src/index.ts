@@ -53,5 +53,8 @@ export type { TruncatedTextProps } from './components/TruncatedText';
 export { AnimatedList } from './components/AnimatedList';
 export type { AnimatedListProps } from './components/AnimatedList';
 
+export { InfoPopover } from './components/InfoPopover';
+export type { InfoPopoverProps } from './components/InfoPopover';
+
 // Hooks
 export { useCopyToClipboard } from './hooks';

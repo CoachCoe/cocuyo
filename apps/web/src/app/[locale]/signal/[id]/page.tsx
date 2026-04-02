@@ -8,7 +8,7 @@
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getSignalById, getAllSignalIds, getChainTitle } from '@/lib/services/mock-data';
+import { getSignalById, getAllSignalIds, getChainTitle, type Locale } from '@/lib/services/mock-data';
 import { SignalDetailView } from './SignalDetailView';
 import { routing } from '../../../../../i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
@@ -26,16 +26,16 @@ export function generateStaticParams(): Array<{ locale: string; id: string }> {
 export default async function SignalPage({ params }: Props): Promise<ReactNode> {
   const { locale, id } = await params;
   setRequestLocale(locale);
-  const signal = getSignalById(id);
+  const signal = getSignalById(id, locale as Locale);
 
   if (signal === undefined) {
     notFound();
   }
 
-  // Get chain titles for display
+  // Get chain titles for display (locale-aware)
   const chainTitles: Record<string, string> = {};
   for (const chainId of signal.chainLinks) {
-    const title = getChainTitle(chainId);
+    const title = getChainTitle(chainId, locale as Locale);
     if (title !== undefined) {
       chainTitles[chainId] = title;
     }
