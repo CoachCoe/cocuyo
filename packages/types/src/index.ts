@@ -16,6 +16,11 @@ export type {
   VerificationRequestId,
   DIMCredential,
   ContentHash,
+  PolkadotAddress,
+  H160Address,
+  TransactionHash,
+  EscrowId,
+  CoinPublicKey,
 } from './brands';
 
 export {
@@ -28,6 +33,11 @@ export {
   createVerificationRequestId,
   createDIMCredential,
   createContentHash,
+  createPolkadotAddress,
+  createH160Address,
+  createTransactionHash,
+  createEscrowId,
+  createCoinPublicKey,
 } from './brands';
 
 // Signal types
@@ -114,6 +124,8 @@ export type {
   Bounty,
   BountyPreview,
   NewBounty,
+  BountyPayout,
+  PayoutDistribution,
 } from './bounty';
 
 // Service interfaces
@@ -125,6 +137,78 @@ export type {
   ChainService,
   CorroborationService,
   BountyService,
+  // Payment services
+  PaymentError,
+  PaymentService,
+  EscrowError,
+  EscrowState,
+  EscrowService,
+  CoinageError,
+  CoinageService,
+  PaymentRouter,
 } from './services';
 
 export { ok, err } from './services';
+
+// Currency types (pUSD)
+export type { PUSDAmount, PUSDBalance } from './currency';
+export {
+  PUSD,
+  createPUSDAmount,
+  parsePUSD,
+  parsePUSDCents,
+  toPUSDCents,
+  formatPUSD,
+  formatPUSDCompact,
+  addPUSD,
+  subtractPUSD,
+  multiplyPUSD,
+  comparePUSD,
+  meetsMinimumTransfer,
+  createPUSDBalance,
+  ZERO_PUSD,
+} from './currency';
+
+// Coinage types (private payments)
+export type {
+  CoinExponent,
+  Coin,
+  CoinWallet,
+  PendingTransfer,
+  TransferPackage,
+  RecyclerVoucher,
+  RecyclerClaimToken,
+  ClaimTokenAllocation,
+  CoinHoldingsSummary,
+} from './coinage';
+export {
+  COIN_VALUES_CENTS,
+  COINAGE_CONFIG,
+  getCoinValueCents,
+  getCoinValueDollars,
+  formatCoinValue,
+  canTransfer,
+  canRecycle,
+  mustRecycle,
+  decomposeAmountCents,
+  totalCoinValueCents,
+  validateSplit,
+  createEmptyCoinWallet,
+  calculateHoldingsSummary,
+} from './coinage';
+
+// Payment mode types
+export type {
+  PaymentMode,
+  PaymentUseCase,
+  PaymentModeContext,
+} from './payment-mode';
+export {
+  DEFAULT_MODES,
+  HIGH_SENSITIVITY_CASES,
+  PUBLIC_REQUIRED_CASES,
+  selectPaymentMode,
+  supportsBothModes,
+  describePaymentMode,
+  getRecommendation,
+} from './payment-mode';

@@ -3,7 +3,14 @@
  */
 
 import type { Bounty, BountyPreview } from '@cocuyo/types';
-import { createBountyId, createDIMCredential, createSignalId } from '@cocuyo/types';
+import {
+  createBountyId,
+  createDIMCredential,
+  createSignalId,
+  createEscrowId,
+  createTransactionHash,
+  createPUSDAmount,
+} from '@cocuyo/types';
 import { hoursAgo, daysAgo, daysFromNow } from '@/lib/utils/time';
 
 /**
@@ -18,8 +25,11 @@ export const mockBounties: Bounty[] = [
     topics: ['environmental', 'water-quality', 'documentation'],
     location: 'Concord, NH',
     status: 'open',
-    fundingAmount: BigInt(500_000_000), // 500 USDC (6 decimals)
+    fundingAmount: createPUSDAmount(500_000_000n), // $500 pUSD
     funderCredential: createDIMCredential('dim-funder-001'),
+    escrowId: createEscrowId('escrow-001'),
+    fundingTxHash: createTransactionHash('0x001...abc'),
+    payoutMode: 'private',
     contributingSignals: [createSignalId('sig-003')],
     createdAt: daysAgo(5),
     expiresAt: daysFromNow(25),
@@ -32,8 +42,11 @@ export const mockBounties: Bounty[] = [
     topics: ['local-government', 'public-services'],
     location: 'Manchester, NH',
     status: 'open',
-    fundingAmount: BigInt(150_000_000), // 150 USDC
+    fundingAmount: createPUSDAmount(150_000_000n), // $150 pUSD
     funderCredential: createDIMCredential('dim-funder-002'),
+    escrowId: createEscrowId('escrow-002'),
+    fundingTxHash: createTransactionHash('0x002...def'),
+    payoutMode: 'private',
     contributingSignals: [],
     createdAt: daysAgo(3),
     expiresAt: daysFromNow(27),
@@ -46,8 +59,11 @@ export const mockBounties: Bounty[] = [
     topics: ['education', 'public-health', 'local-government'],
     location: 'Nashua, NH',
     status: 'open',
-    fundingAmount: BigInt(300_000_000), // 300 USDC
+    fundingAmount: createPUSDAmount(300_000_000n), // $300 pUSD
     funderCredential: createDIMCredential('dim-funder-003'),
+    escrowId: createEscrowId('escrow-003'),
+    fundingTxHash: createTransactionHash('0x003...ghi'),
+    payoutMode: 'private',
     contributingSignals: [createSignalId('sig-010'), createSignalId('sig-011')],
     createdAt: daysAgo(7),
     expiresAt: daysFromNow(23),
@@ -60,8 +76,11 @@ export const mockBounties: Bounty[] = [
     topics: ['local-government', 'development', 'public-records'],
     location: 'Manchester, NH',
     status: 'open',
-    fundingAmount: BigInt(750_000_000), // 750 USDC
+    fundingAmount: createPUSDAmount(750_000_000n), // $750 pUSD
     funderCredential: createDIMCredential('dim-funder-004'),
+    escrowId: createEscrowId('escrow-004'),
+    fundingTxHash: createTransactionHash('0x004...jkl'),
+    payoutMode: 'private',
     contributingSignals: [createSignalId('sig-007')],
     createdAt: daysAgo(10),
     expiresAt: daysFromNow(20),
@@ -74,8 +93,11 @@ export const mockBounties: Bounty[] = [
     topics: ['housing', 'local-government', 'public-services'],
     location: 'Concord, NH',
     status: 'open',
-    fundingAmount: BigInt(400_000_000), // 400 USDC
+    fundingAmount: createPUSDAmount(400_000_000n), // $400 pUSD
     funderCredential: createDIMCredential('dim-funder-005'),
+    escrowId: createEscrowId('escrow-005'),
+    fundingTxHash: createTransactionHash('0x005...mno'),
+    payoutMode: 'private',
     contributingSignals: [],
     createdAt: daysAgo(2),
     expiresAt: daysFromNow(28),
@@ -88,8 +110,11 @@ export const mockBounties: Bounty[] = [
     topics: ['safety', 'development', 'labor'],
     location: 'Manchester, NH',
     status: 'open',
-    fundingAmount: BigInt(250_000_000), // 250 USDC
+    fundingAmount: createPUSDAmount(250_000_000n), // $250 pUSD
     funderCredential: createDIMCredential('dim-funder-006'),
+    escrowId: createEscrowId('escrow-006'),
+    fundingTxHash: createTransactionHash('0x006...pqr'),
+    payoutMode: 'private',
     contributingSignals: [],
     createdAt: hoursAgo(18),
     expiresAt: daysFromNow(30),
@@ -102,8 +127,11 @@ export const mockBounties: Bounty[] = [
     topics: ['public-safety', 'local-government', 'equity'],
     location: 'Manchester, NH',
     status: 'fulfilled',
-    fundingAmount: BigInt(600_000_000), // 600 USDC
+    fundingAmount: createPUSDAmount(600_000_000n), // $600 pUSD
     funderCredential: createDIMCredential('dim-funder-007'),
+    escrowId: createEscrowId('escrow-007'),
+    fundingTxHash: createTransactionHash('0x007...stu'),
+    payoutMode: 'private',
     contributingSignals: [
       createSignalId('sig-020'),
       createSignalId('sig-021'),
@@ -127,6 +155,7 @@ export function getBountyPreviews(): BountyPreview[] {
     status: bounty.status,
     fundingAmount: bounty.fundingAmount,
     contributionCount: bounty.contributingSignals.length,
+    payoutMode: bounty.payoutMode,
     expiresAt: bounty.expiresAt,
   }));
 }

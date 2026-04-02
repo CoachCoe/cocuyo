@@ -6,7 +6,17 @@
  * no payment processor can block the transaction.
  */
 
-import type { BountyId, ChainId, DIMCredential, SignalId } from './brands';
+import type {
+  BountyId,
+  ChainId,
+  DIMCredential,
+  EscrowId,
+  PolkadotAddress,
+  SignalId,
+  TransactionHash,
+} from './brands';
+import type { PUSDAmount } from './currency';
+import type { PaymentMode } from './payment-mode';
 
 /** Status of a bounty */
 export type BountyStatus =
@@ -36,10 +46,16 @@ export interface Bounty {
   readonly location?: string;
   /** Current status */
   readonly status: BountyStatus;
-  /** Total funding in stablecoin (smallest unit) */
-  readonly fundingAmount: bigint;
+  /** Total funding in pUSD */
+  readonly fundingAmount: PUSDAmount;
   /** DIM credential of the funder (anonymous) */
   readonly funderCredential: DIMCredential;
+  /** Escrow ID holding the funds */
+  readonly escrowId: EscrowId;
+  /** Transaction hash of the funding deposit */
+  readonly fundingTxHash: TransactionHash;
+  /** Payment mode for payout (public pUSD or private Coinage) */
+  readonly payoutMode: PaymentMode;
   /** Signals that have contributed to this bounty */
   readonly contributingSignals: readonly SignalId[];
   /** Story chain that may have formed around this bounty */
@@ -59,8 +75,9 @@ export interface BountyPreview {
   readonly topics: readonly string[];
   readonly location?: string;
   readonly status: BountyStatus;
-  readonly fundingAmount: bigint;
+  readonly fundingAmount: PUSDAmount;
   readonly contributionCount: number;
+  readonly payoutMode: PaymentMode;
   readonly expiresAt: number;
 }
 
@@ -72,7 +89,43 @@ export interface NewBounty {
   readonly description: string;
   readonly topics: readonly string[];
   readonly location?: string;
-  readonly fundingAmount: bigint;
+  readonly fundingAmount: PUSDAmount;
   /** Duration in seconds */
   readonly duration: number;
+  /** Preferred payout mode (default: private) */
+  readonly payoutMode?: PaymentMode;
+}
+
+/**
+ * Payout record for a fulfilled bounty.
+ */
+export interface BountyPayout {
+  /** Bounty that was fulfilled */
+  readonly bountyId: BountyId;
+  /** Total payout amount */
+  readonly totalAmount: PUSDAmount;
+  /** Distribution to contributors */
+  readonly distributions: readonly PayoutDistribution[];
+  /** Payment mode used */
+  readonly payoutMode: PaymentMode;
+  /** Transaction hash (for public mode) */
+  readonly txHash?: TransactionHash;
+  /** When payout was executed */
+  readonly executedAt: number;
+}
+
+/**
+ * Individual payout to a bounty contributor.
+ */
+export interface PayoutDistribution {
+  /** Signal that contributed to fulfillment */
+  readonly signalId: SignalId;
+  /** Recipient's wallet address (for public mode) */
+  readonly recipientAddress?: PolkadotAddress;
+  /** Recipient's DIM credential (for attribution) */
+  readonly recipientCredential: DIMCredential;
+  /** Amount paid */
+  readonly amount: PUSDAmount;
+  /** Percentage of total bounty (0-100) */
+  readonly percentage: number;
 }

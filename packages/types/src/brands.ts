@@ -33,6 +33,15 @@ export type ContentHash = string & { readonly __brand: 'ContentHash' };
 /** SS58-encoded Polkadot address */
 export type PolkadotAddress = string & { readonly __brand: 'PolkadotAddress' };
 
+/** Transaction hash for on-chain transactions */
+export type TransactionHash = string & { readonly __brand: 'TransactionHash' };
+
+/** Unique identifier for a bounty escrow */
+export type EscrowId = string & { readonly __brand: 'EscrowId' };
+
+/** Public key for a Coinage coin (single-use, never reused) */
+export type CoinPublicKey = string & { readonly __brand: 'CoinPublicKey' };
+
 /** H160 (Ethereum-style) address */
 export type H160Address = string & { readonly __brand: 'H160Address' };
 
@@ -82,4 +91,16 @@ export function createPolkadotAddress(address: string): PolkadotAddress {
 
 export function createH160Address(address: string): H160Address {
   return address as H160Address;
+}
+
+export function createTransactionHash(hash: string): TransactionHash {
+  return hash as TransactionHash;
+}
+
+export function createEscrowId(id: string): EscrowId {
+  return id as EscrowId;
+}
+
+export function createCoinPublicKey(key: string): CoinPublicKey {
+  return key as CoinPublicKey;
 }
