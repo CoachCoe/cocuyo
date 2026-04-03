@@ -3,7 +3,7 @@
 /**
  * BountiesHeader — Hero section for the bounties page.
  *
- * Clean, impactful header with title, description, and subtle visual flair.
+ * Centered, impactful header with large title and description.
  */
 
 import type { ReactElement } from 'react';
@@ -21,30 +21,32 @@ export function BountiesHeader({
   description,
 }: BountiesHeaderProps): ReactElement {
   return (
-    <section className="pt-12 pb-8">
+    <section className="pt-16 pb-8">
       <div className="container-wide">
-        <div className="flex items-start gap-4">
+        <div className="text-center max-w-2xl mx-auto">
           {/* Icon */}
-          <div
-            className="
-              shrink-0 w-12 h-12 rounded-xl
-              flex items-center justify-center
-              bg-gradient-to-br from-[var(--color-firefly-gold)]/20 to-[var(--color-firefly-gold)]/5
-              border border-[var(--color-firefly-gold)]/30
-            "
-          >
-            <FireflySymbol size={24} color="gold" />
+          <div className="flex justify-center mb-6">
+            <div
+              className="
+                w-14 h-14 rounded-2xl
+                flex items-center justify-center
+                bg-gradient-to-br from-[var(--color-firefly-gold)]/20 to-[var(--color-firefly-gold)]/5
+                border border-[var(--color-firefly-gold)]/30
+              "
+            >
+              <FireflySymbol size={28} color="gold" />
+            </div>
           </div>
 
-          {/* Text */}
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-display font-bold text-primary">
-              {title}
-            </h1>
-            <p className="text-secondary max-w-2xl leading-relaxed">
-              {description}
-            </p>
-          </div>
+          {/* Title */}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-primary mb-4">
+            {title}
+          </h1>
+
+          {/* Description */}
+          <p className="text-lg text-secondary leading-relaxed">
+            {description}
+          </p>
         </div>
       </div>
     </section>
