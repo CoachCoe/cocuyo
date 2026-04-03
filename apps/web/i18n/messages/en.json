@@ -217,10 +217,18 @@
   "bounties": {
     "title": "Bounties",
     "description": "Community-funded requests for information. Contribute signals to earn rewards.",
-    "allBounties": "All Bounties",
+    "allBounties": "All",
     "filters": "Filters",
     "status": "Status",
     "topics": "Topics",
+    "statusOpen": "Open",
+    "statusFulfilled": "Fulfilled",
+    "statusExpired": "Expired",
+    "statusCancelled": "Cancelled",
+    "countSingular": "{count} bounty",
+    "countPlural": "{count} bounties",
+    "countFiltered": "{filtered} of {total} bounties",
+    "clearFilters": "Clear filters",
     "info": {
       "title": "What are Bounties?",
       "body": "Bounties are community-funded requests for specific information. When you have knowledge that fulfills a bounty, illuminate a signal and link it to the bounty.\n\nIf your signal contributes valuable information, you earn a share of the bounty reward. Payments can be made publicly via pUSD or privately via Coinage.\n\nBounties create a functioning market for investigative information — funded by the people who need it."
@@ -235,13 +243,21 @@
     "payoutMode": "Payout Mode",
     "expires": "Expires",
     "expired": "Expired",
+    "expiresSoon": "Expires soon",
+    "hoursLeft": "{count}h left",
+    "dayLeft": "1 day left",
+    "daysLeft": "{count} days left",
     "contributingSignals": "Contributing Signals",
     "noSignalsYet": "No signals have contributed to this bounty yet.",
+    "signalCount": "{count, plural, one {# signal} other {# signals}}",
     "illuminate": "Illuminate",
     "fulfilled": "This bounty has been fulfilled",
     "cancelled": "This bounty was cancelled",
     "topics": "Topics",
     "location": "Location",
-    "description": "What we're looking for"
+    "description": "What we're looking for",
+    "paymentPublic": "Public pUSD",
+    "paymentPrivate": "Private",
+    "whatsThis": "What's this?"
   }
 }

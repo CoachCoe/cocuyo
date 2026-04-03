@@ -18,7 +18,8 @@ interface BountiesPageProps {
 export default async function BountiesPage({ params }: BountiesPageProps): Promise<ReactElement> {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('bounties');
+  const tBounties = await getTranslations('bounties');
+  const tBounty = await getTranslations('bounty');
 
   // Get all bounties (use extended service method for all statuses)
   const mockService = bountyService as MockBountyService;
@@ -32,7 +33,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
   ).sort();
 
   // Parse info popover content
-  const infoBody = t('info.body')
+  const infoBody = tBounties('info.body')
     .split('\n\n')
     .map((paragraph, index) => (
       <p key={index} className={index > 0 ? 'mt-3' : ''}>
@@ -44,8 +45,8 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
     <main className="min-h-screen">
       {/* Header */}
       <BountiesHeader
-        title={t('title')}
-        description={t('description')}
+        title={tBounties('title')}
+        description={tBounties('description')}
       />
 
       {/* Main content */}
@@ -56,10 +57,26 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
             topics={allTopics}
             hasMore={bountiesResult.hasMore}
             translations={{
-              allLabel: t('allBounties'),
-              statusLabel: t('status'),
-              topicsLabel: t('topics'),
-              infoTitle: t('info.title'),
+              all: tBounties('allBounties'),
+              statusOpen: tBounties('statusOpen'),
+              statusFulfilled: tBounties('statusFulfilled'),
+              statusExpired: tBounties('statusExpired'),
+              statusCancelled: tBounties('statusCancelled'),
+              countText: tBounties('countPlural'),
+              countFilteredText: tBounties('countFiltered'),
+              clearFilters: tBounties('clearFilters'),
+              whatsThis: tBounty('whatsThis'),
+              infoTitle: tBounties('info.title'),
+              // BountyCard translations
+              expired: tBounty('expired'),
+              expiresSoon: tBounty('expiresSoon'),
+              hoursLeft: tBounty('hoursLeft'),
+              dayLeft: tBounty('dayLeft'),
+              daysLeft: tBounty('daysLeft'),
+              signalCount: tBounty('signalCount'),
+              illuminate: tBounty('illuminate'),
+              paymentPublic: tBounty('paymentPublic'),
+              paymentPrivate: tBounty('paymentPrivate'),
             }}
             infoBody={infoBody}
           />

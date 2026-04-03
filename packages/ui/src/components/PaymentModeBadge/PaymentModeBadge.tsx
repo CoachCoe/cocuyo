@@ -10,11 +10,18 @@
 import type { ReactElement } from 'react';
 import type { PaymentMode } from '@cocuyo/types';
 
+export interface PaymentModeTranslations {
+  public: string;
+  private: string;
+}
+
 export interface PaymentModeBadgeProps {
   /** The payment mode to display */
   mode: PaymentMode;
   /** Size variant */
   size?: 'sm' | 'md';
+  /** Translation strings */
+  translations?: PaymentModeTranslations | undefined;
 }
 
 interface BadgeConfig {
@@ -24,19 +31,26 @@ interface BadgeConfig {
   bgClass: string;
 }
 
-function getBadgeConfig(mode: PaymentMode): BadgeConfig {
+const defaultLabels: Record<PaymentMode, string> = {
+  public: 'Public pUSD',
+  private: 'Private',
+};
+
+function getBadgeConfig(mode: PaymentMode, translations?: PaymentModeTranslations): BadgeConfig {
+  const label = translations?.[mode] ?? defaultLabels[mode];
+
   switch (mode) {
     case 'public':
       return {
         icon: '$',
-        label: 'Public pUSD',
+        label,
         colorClass: 'text-[var(--fg-secondary)]',
         bgClass: 'bg-[var(--bg-surface-nested)]',
       };
     case 'private':
       return {
         icon: '⛨',
-        label: 'Private',
+        label,
         colorClass: 'text-[var(--fg-info)]',
         bgClass: 'bg-[var(--fg-info)]/10',
       };
@@ -46,8 +60,9 @@ function getBadgeConfig(mode: PaymentMode): BadgeConfig {
 export function PaymentModeBadge({
   mode,
   size = 'sm',
+  translations,
 }: PaymentModeBadgeProps): ReactElement {
-  const config = getBadgeConfig(mode);
+  const config = getBadgeConfig(mode, translations);
 
   const sizeClasses = size === 'sm'
     ? 'text-xs px-1.5 py-0.5'
@@ -59,7 +74,7 @@ export function PaymentModeBadge({
         inline-flex items-center gap-1 rounded-full font-medium
         ${config.bgClass} ${config.colorClass} ${sizeClasses}
       `}
-      title={mode === 'private' ? 'Payment via private Coinage' : 'Payment via public pUSD'}
+      title={config.label}
       aria-label={`Payment mode: ${config.label}`}
     >
       <span aria-hidden="true">{config.icon}</span>

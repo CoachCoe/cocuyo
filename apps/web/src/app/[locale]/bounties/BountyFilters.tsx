@@ -21,29 +21,27 @@ export interface BountyFiltersProps {
   onStatusChange: (status: BountyStatus | null) => void;
   /** Callback when topic filter changes */
   onTopicChange: (topic: string | null) => void;
-  /** Label for "All" status */
-  allLabel: string;
-  /** Label for status filter */
-  statusLabel: string;
-  /** Label for topics filter */
-  topicsLabel: string;
   /** Total bounty count */
   totalCount: number;
   /** Filtered bounty count */
   filteredCount: number;
+  /** Translation strings */
+  translations: {
+    all: string;
+    statusOpen: string;
+    statusFulfilled: string;
+    statusExpired: string;
+    statusCancelled: string;
+    countText: string;
+    countFilteredText: string;
+    clearFilters: string;
+    whatsThis: string;
+  };
   /** Info popover title */
   infoTitle?: string | undefined;
   /** Info popover content */
   infoBody?: ReactNode | undefined;
 }
-
-const STATUS_OPTIONS: { value: BountyStatus | null; label: string; color?: string }[] = [
-  { value: null, label: 'All' },
-  { value: 'open', label: 'Open', color: 'var(--fg-success)' },
-  { value: 'fulfilled', label: 'Fulfilled', color: 'var(--color-firefly-gold)' },
-  { value: 'expired', label: 'Expired', color: 'var(--fg-tertiary)' },
-  { value: 'cancelled', label: 'Cancelled', color: 'var(--fg-error)' },
-];
 
 export function BountyFilters({
   topics,
@@ -51,21 +49,22 @@ export function BountyFilters({
   activeTopic,
   onStatusChange,
   onTopicChange,
-  allLabel,
-  statusLabel: _statusLabel,
-  topicsLabel: _topicsLabel,
   totalCount,
   filteredCount,
+  translations: t,
   infoTitle,
   infoBody,
 }: BountyFiltersProps): ReactElement {
   const showInfo = infoTitle !== undefined && infoBody !== undefined;
   const isFiltered = activeStatus !== null || activeTopic !== null;
 
-  // Update "All" label with the provided translation
-  const statusOptions = STATUS_OPTIONS.map((opt) =>
-    opt.value === null ? { ...opt, label: allLabel } : opt
-  );
+  const statusOptions: { value: BountyStatus | null; label: string; color?: string }[] = [
+    { value: null, label: t.all },
+    { value: 'open', label: t.statusOpen, color: 'var(--fg-success)' },
+    { value: 'fulfilled', label: t.statusFulfilled, color: 'var(--color-firefly-gold)' },
+    { value: 'expired', label: t.statusExpired, color: 'var(--fg-tertiary)' },
+    { value: 'cancelled', label: t.statusCancelled, color: 'var(--fg-error)' },
+  ];
 
   return (
     <div className="space-y-4">
@@ -142,7 +141,7 @@ export function BountyFilters({
         {/* Info button */}
         {showInfo && (
           <div className="hidden sm:block ml-auto">
-            <InfoPopover title={infoTitle} position="bottom">
+            <InfoPopover title={infoTitle} position="bottom" triggerLabel={t.whatsThis}>
               {infoBody}
             </InfoPopover>
           </div>
@@ -153,17 +152,16 @@ export function BountyFilters({
       <div className="flex items-center justify-between text-sm">
         <p className="text-secondary">
           {isFiltered ? (
-            <>
-              <span className="text-primary font-medium">{filteredCount}</span>
-              {' of '}
-              <span>{totalCount}</span>
-              {' bounties'}
-            </>
+            <span dangerouslySetInnerHTML={{
+              __html: t.countFilteredText
+                .replace('{filtered}', `<span class="text-primary font-medium">${filteredCount}</span>`)
+                .replace('{total}', String(totalCount))
+            }} />
           ) : (
-            <>
-              <span className="text-primary font-medium">{totalCount}</span>
-              {' bounties'}
-            </>
+            <span dangerouslySetInnerHTML={{
+              __html: t.countText
+                .replace('{count}', `<span class="text-primary font-medium">${totalCount}</span>`)
+            }} />
           )}
         </p>
         {isFiltered && (
@@ -175,7 +173,7 @@ export function BountyFilters({
             }}
             className="text-[var(--color-firefly-gold)] hover:underline font-medium"
           >
-            Clear filters
+            {t.clearFilters}
           </button>
         )}
       </div>

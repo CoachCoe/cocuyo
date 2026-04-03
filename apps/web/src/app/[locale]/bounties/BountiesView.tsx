@@ -23,10 +23,26 @@ export interface BountiesViewProps {
   hasMore: boolean;
   /** Translation strings */
   translations: {
-    allLabel: string;
-    statusLabel: string;
-    topicsLabel: string;
+    all: string;
+    statusOpen: string;
+    statusFulfilled: string;
+    statusExpired: string;
+    statusCancelled: string;
+    countText: string;
+    countFilteredText: string;
+    clearFilters: string;
+    whatsThis: string;
     infoTitle: string;
+    // BountyCard translations
+    expired: string;
+    expiresSoon: string;
+    hoursLeft: string;
+    dayLeft: string;
+    daysLeft: string;
+    signalCount: string;
+    illuminate: string;
+    paymentPublic: string;
+    paymentPrivate: string;
   };
   /** Info popover content */
   infoBody?: ReactNode | undefined;
@@ -36,7 +52,7 @@ export function BountiesView({
   bounties,
   topics,
   hasMore,
-  translations,
+  translations: t,
   infoBody,
 }: BountiesViewProps): ReactElement {
   const router = useRouter();
@@ -73,7 +89,7 @@ export function BountiesView({
 
     if (topicFilter !== null) {
       result = result.filter((b) =>
-        b.topics.some((t) => t.toLowerCase() === topicFilter.toLowerCase())
+        b.topics.some((topic) => topic.toLowerCase() === topicFilter.toLowerCase())
       );
     }
 
@@ -89,12 +105,20 @@ export function BountiesView({
         activeTopic={topicFilter}
         onStatusChange={setStatusFilter}
         onTopicChange={setTopicFilter}
-        allLabel={translations.allLabel}
-        statusLabel={translations.statusLabel}
-        topicsLabel={translations.topicsLabel}
         totalCount={bounties.length}
         filteredCount={filteredBounties.length}
-        infoTitle={translations.infoTitle}
+        translations={{
+          all: t.all,
+          statusOpen: t.statusOpen,
+          statusFulfilled: t.statusFulfilled,
+          statusExpired: t.statusExpired,
+          statusCancelled: t.statusCancelled,
+          countText: t.countText,
+          countFilteredText: t.countFilteredText,
+          clearFilters: t.clearFilters,
+          whatsThis: t.whatsThis,
+        }}
+        infoTitle={t.infoTitle}
         infoBody={infoBody}
       />
 
@@ -105,6 +129,21 @@ export function BountiesView({
         isFiltered={statusFilter !== null || topicFilter !== null}
         onBountyClick={handleBountyClick}
         onIlluminate={handleIlluminate}
+        translations={{
+          expired: t.expired,
+          expiresSoon: t.expiresSoon,
+          hoursLeft: t.hoursLeft,
+          dayLeft: t.dayLeft,
+          daysLeft: t.daysLeft,
+          signalCount: t.signalCount,
+          illuminate: t.illuminate,
+          paymentPublic: t.paymentPublic,
+          paymentPrivate: t.paymentPrivate,
+          statusOpen: t.statusOpen,
+          statusFulfilled: t.statusFulfilled,
+          statusExpired: t.statusExpired,
+          statusCancelled: t.statusCancelled,
+        }}
       />
     </div>
   );

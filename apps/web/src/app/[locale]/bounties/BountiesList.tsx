@@ -21,6 +21,22 @@ export interface BountiesListProps {
   onBountyClick: (bountyId: BountyId) => void;
   /** Callback when illuminate is clicked on a bounty */
   onIlluminate: (bountyId: BountyId) => void;
+  /** Translation strings */
+  translations: {
+    expired: string;
+    expiresSoon: string;
+    hoursLeft: string;
+    dayLeft: string;
+    daysLeft: string;
+    signalCount: string;
+    illuminate: string;
+    paymentPublic: string;
+    paymentPrivate: string;
+    statusOpen: string;
+    statusFulfilled: string;
+    statusExpired: string;
+    statusCancelled: string;
+  };
 }
 
 export function BountiesList({
@@ -29,6 +45,7 @@ export function BountiesList({
   isFiltered,
   onBountyClick,
   onIlluminate,
+  translations: t,
 }: BountiesListProps): ReactElement {
   const isEmpty = bounties.length === 0;
 
@@ -57,6 +74,7 @@ export function BountiesList({
           bounty={bounty}
           onClick={onBountyClick}
           onIlluminate={onIlluminate}
+          translations={t}
         />
       ))}
     </div>

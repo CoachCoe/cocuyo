@@ -16,6 +16,22 @@ import { formatPUSDCompact } from '@cocuyo/types';
 import { BountyStatusBadge } from '../BountyStatusBadge';
 import { PaymentModeBadge } from '../PaymentModeBadge';
 
+export interface BountyCardTranslations {
+  expired: string;
+  expiresSoon: string;
+  hoursLeft: string;
+  dayLeft: string;
+  daysLeft: string;
+  signalCount: string;
+  illuminate: string;
+  paymentPublic: string;
+  paymentPrivate: string;
+  statusOpen: string;
+  statusFulfilled: string;
+  statusExpired: string;
+  statusCancelled: string;
+}
+
 export interface BountyCardProps {
   /** The bounty preview to display */
   bounty: BountyPreview;
@@ -23,39 +39,56 @@ export interface BountyCardProps {
   onClick?: (bountyId: BountyId) => void;
   /** Callback when illuminate button is clicked */
   onIlluminate?: (bountyId: BountyId) => void;
+  /** Translation strings */
+  translations?: BountyCardTranslations;
 }
 
 /**
  * Format expiry time as relative days.
  */
-function formatExpiry(expiresAt: number): string {
+function formatExpiry(expiresAt: number, t?: BountyCardTranslations): string {
   const now = Date.now();
   // Handle both millisecond and second timestamps
   const ts = expiresAt > 1e12 ? expiresAt : expiresAt * 1000;
   const diff = ts - now;
 
   if (diff <= 0) {
-    return 'Expired';
+    return t?.expired ?? 'Expired';
   }
 
   const days = Math.floor(diff / (24 * 60 * 60 * 1000));
   if (days === 0) {
     const hours = Math.floor(diff / (60 * 60 * 1000));
     if (hours === 0) {
-      return 'Expires soon';
+      return t?.expiresSoon ?? 'Expires soon';
     }
-    return `${String(hours)}h left`;
+    return t?.hoursLeft?.replace('{count}', String(hours)) ?? `${String(hours)}h left`;
   }
   if (days === 1) {
-    return '1 day left';
+    return t?.dayLeft ?? '1 day left';
   }
-  return `${String(days)} days left`;
+  return t?.daysLeft?.replace('{count}', String(days)) ?? `${String(days)} days left`;
+}
+
+/**
+ * Format signal count with proper pluralization.
+ */
+function formatSignalCount(count: number, t?: BountyCardTranslations): string {
+  if (t?.signalCount !== undefined) {
+    // Simple replacement - assumes format like "{count} signal(s)" or ICU format
+    return t.signalCount
+      .replace('{count}', String(count))
+      .replace('# signal', `${count} signal`)
+      .replace('# señal', `${count} señal`);
+  }
+  return `${count} signal${count !== 1 ? 's' : ''}`;
 }
 
 export function BountyCard({
   bounty,
   onClick,
   onIlluminate,
+  translations: t,
 }: BountyCardProps): ReactElement {
   const { id, title, topics, location, status, fundingAmount, contributionCount, payoutMode, expiresAt } = bounty;
 
@@ -79,6 +112,18 @@ export function BountyCard({
   const isFulfilled = status === 'fulfilled';
   const isActive = status === 'open';
 
+  const statusTranslations = t !== undefined ? {
+    open: t.statusOpen,
+    fulfilled: t.statusFulfilled,
+    expired: t.statusExpired,
+    cancelled: t.statusCancelled,
+  } : undefined;
+
+  const paymentTranslations = t !== undefined ? {
+    public: t.paymentPublic,
+    private: t.paymentPrivate,
+  } : undefined;
+
   return (
     <article
       className={`
@@ -95,8 +140,8 @@ export function BountyCard({
     >
       {/* Status and payment mode badges row */}
       <div className="flex items-center justify-between mb-3">
-        <BountyStatusBadge status={status} />
-        <PaymentModeBadge mode={payoutMode} />
+        <BountyStatusBadge status={status} translations={statusTranslations} />
+        <PaymentModeBadge mode={payoutMode} translations={paymentTranslations} />
       </div>
 
       {/* Title - 2 line truncate */}
@@ -128,13 +173,13 @@ export function BountyCard({
             {formatPUSDCompact(fundingAmount)}
           </span>
           <span>
-            {contributionCount} signal{contributionCount !== 1 ? 's' : ''}
+            {formatSignalCount(contributionCount, t)}
           </span>
         </div>
         <div className="flex items-center gap-3">
           {!isFulfilled && !isExpired && (
             <span className={`text-xs ${isActive ? 'text-[var(--fg-secondary)]' : 'text-[var(--fg-tertiary)]'}`}>
-              {formatExpiry(expiresAt)}
+              {formatExpiry(expiresAt, t)}
             </span>
           )}
           {isActive && onIlluminate !== undefined && (
@@ -144,7 +189,7 @@ export function BountyCard({
               className="text-xs px-3 py-1.5 rounded-full bg-[var(--color-firefly-gold)] text-[var(--bg-primary)] font-medium hover:opacity-90 transition-opacity"
               aria-label={`Illuminate signal for: ${title}`}
             >
-              Illuminate
+              {t?.illuminate ?? 'Illuminate'}
             </button>
           )}
         </div>

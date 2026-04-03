@@ -217,10 +217,18 @@
   "bounties": {
     "title": "Recompensas",
     "description": "Solicitudes de información financiadas por la comunidad. Contribuye señales para ganar recompensas.",
-    "allBounties": "Todas las Recompensas",
+    "allBounties": "Todas",
     "filters": "Filtros",
     "status": "Estado",
     "topics": "Temas",
+    "statusOpen": "Abierta",
+    "statusFulfilled": "Cumplida",
+    "statusExpired": "Expirada",
+    "statusCancelled": "Cancelada",
+    "countSingular": "{count} recompensa",
+    "countPlural": "{count} recompensas",
+    "countFiltered": "{filtered} de {total} recompensas",
+    "clearFilters": "Limpiar filtros",
     "info": {
       "title": "¿Qué son las Recompensas?",
       "body": "Las recompensas son solicitudes de información específica financiadas por la comunidad. Cuando tienes conocimiento que cumple con una recompensa, ilumina una señal y vincúlala a la recompensa.\n\nSi tu señal contribuye información valiosa, ganas una parte de la recompensa. Los pagos pueden hacerse públicamente vía pUSD o privadamente vía Coinage.\n\nLas recompensas crean un mercado funcional para información investigativa — financiado por las personas que la necesitan."
@@ -235,13 +243,21 @@
     "payoutMode": "Modo de Pago",
     "expires": "Expira",
     "expired": "Expirada",
+    "expiresSoon": "Expira pronto",
+    "hoursLeft": "{count}h restantes",
+    "dayLeft": "1 día restante",
+    "daysLeft": "{count} días restantes",
     "contributingSignals": "Señales Contribuyentes",
     "noSignalsYet": "Ninguna señal ha contribuido a esta recompensa aún.",
+    "signalCount": "{count, plural, one {# señal} other {# señales}}",
     "illuminate": "Iluminar",
     "fulfilled": "Esta recompensa ha sido cumplida",
     "cancelled": "Esta recompensa fue cancelada",
     "topics": "Temas",
     "location": "Ubicación",
-    "description": "Qué estamos buscando"
+    "description": "Qué estamos buscando",
+    "paymentPublic": "pUSD Público",
+    "paymentPrivate": "Privado",
+    "whatsThis": "¿Qué es esto?"
   }
 }
