@@ -20,7 +20,9 @@ export function AppNavbar(): ReactElement {
 
   // Nav links for primary navigation
   const navLinks: Array<{ href: string; label: string }> = [
-    { href: `/${locale}/bounties`, label: t('bounties') },
+    { href: `/${locale}/explore`, label: t('explore') },
+    { href: `/${locale}/bounties`, label: t('earn') },
+    { href: `/${locale}/about`, label: t('about') },
   ];
 
   return (

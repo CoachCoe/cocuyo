@@ -4,6 +4,8 @@
     "description": "A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected."
   },
   "nav": {
+    "explore": "Explore",
+    "earn": "Earn",
     "signals": "Signals",
     "bounties": "Bounties",
     "verify": "Help Verify",
@@ -147,12 +149,22 @@
     "startNewChain": "Start new chain",
     "storiesInfo": {
       "title": "What are Stories?",
-      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their signals to related observations.\n\nA story about water quality might start with one person noticing a smell, grow as others corroborate and add evidence, and strengthen as someone contributes public records.\n\nThe story becomes more than the sum of its signals."
+      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their signals to related observations.\n\nSome stories have bounties attached (marked with \"Earn $X\"). These are funded investigations — contribute valuable signals and earn a share of the reward.\n\nThe story becomes more than the sum of its signals."
     },
     "signalsInfo": {
       "title": "What are Signals?",
       "body": "A signal is not a post. It's an observation, a piece of evidence, a witness account, a data point.\n\nWhen you illuminate a signal, you're contributing information signed by your anonymous credential — ready to connect with other signals and form story chains.\n\nSignals gain weight through corroboration from other verified humans."
-    }
+    },
+    "storiesLabel": "Stories",
+    "openBountiesLabel": "Open Bounties",
+    "openBountiesInfo": {
+      "title": "What are Open Bounties?",
+      "body": "Bounties are funded by community members who need specific information — journalists, NGOs, diaspora communities, or anyone seeking ground truth.\n\nThe funds are held in escrow until the bounty is fulfilled. When you contribute valuable signals, you earn a share of the reward.\n\nPayments can be public (pUSD) or private (Coinage) to protect your identity. Open bounties are waiting for their first signals — be the first to illuminate."
+    },
+    "noMatchingBountySignals": "No signals have contributed to this bounty yet.",
+    "daysRemaining": "{count} days remaining",
+    "hoursRemaining": "{count} hours remaining",
+    "expiresSoon": "Expires soon"
   },
   "feed": {
     "title": "Your Feed",
@@ -191,7 +203,8 @@
   "actions": {
     "illuminate": "Illuminate",
     "corroborate": "Corroborate",
-    "challenge": "Challenge"
+    "challenge": "Challenge",
+    "earn": "Earn"
   },
   "status": {
     "active": "active",
