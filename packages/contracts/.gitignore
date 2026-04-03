@@ -13,3 +13,9 @@ coverage.json
 
 # Build
 dist/
+
+# Deployments (environment-specific)
+deployments/
+
+# OpenZeppelin upgrades
+.openzeppelin/
