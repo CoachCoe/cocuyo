@@ -1,2 +1,2 @@
 export { SignalCard } from './SignalCard';
-export type { SignalCardProps } from './SignalCard';
+export type { SignalCardProps, SignalBountyInfo } from './SignalCard';
