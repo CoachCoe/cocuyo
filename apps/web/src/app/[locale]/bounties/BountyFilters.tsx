@@ -91,12 +91,12 @@ export function BountyFilters({
         {allBountiesLabel}
       </button>
 
-      {/* Status filter */}
+      {/* Status filter - compact horizontal chips */}
       <div className="space-y-2">
         <h3 className="text-xs font-medium text-tertiary uppercase tracking-wide px-1">
           {statusLabel}
         </h3>
-        <div className="space-y-1">
+        <div className="flex flex-wrap gap-1.5">
           {STATUS_OPTIONS.map((option) => {
             const isActive = activeStatus === option.value;
             return (
@@ -105,17 +105,17 @@ export function BountyFilters({
                 type="button"
                 onClick={() => onStatusChange(isActive ? null : option.value)}
                 className={`
-                  w-full text-left px-3 py-2 rounded-nested
-                  text-sm transition-colors flex items-center gap-2
+                  inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full
+                  text-xs font-medium transition-colors
                   ${
                     isActive
                       ? 'bg-[var(--bg-surface-nested)] text-primary border border-[var(--border-emphasis)]'
-                      : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
+                      : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)] border border-transparent'
                   }
                 `}
               >
                 <span
-                  className="w-2 h-2 rounded-full shrink-0"
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
                   style={{ backgroundColor: option.color }}
                 />
                 {option.label}
