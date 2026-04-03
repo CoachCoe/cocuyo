@@ -25,10 +25,11 @@ export interface BountiesListProps {
   translations: {
     expired: string;
     expiresSoon: string;
-    hoursLeft: string;
+    hoursLeftSuffix: string;
     dayLeft: string;
-    daysLeft: string;
-    signalCount: string;
+    daysLeftSuffix: string;
+    signalWord: string;
+    signalsWord: string;
     illuminate: string;
     paymentPublic: string;
     paymentPrivate: string;

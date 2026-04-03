@@ -32,8 +32,9 @@ export interface BountyFiltersProps {
     statusFulfilled: string;
     statusExpired: string;
     statusCancelled: string;
-    countText: string;
-    countFilteredText: string;
+    bountyWord: string;
+    bountiesWord: string;
+    ofWord: string;
     clearFilters: string;
     whatsThis: string;
   };
@@ -152,16 +153,15 @@ export function BountyFilters({
       <div className="flex items-center justify-between text-sm">
         <p className="text-secondary">
           {isFiltered ? (
-            <span dangerouslySetInnerHTML={{
-              __html: t.countFilteredText
-                .replace('{filtered}', `<span class="text-primary font-medium">${filteredCount}</span>`)
-                .replace('{total}', String(totalCount))
-            }} />
+            <>
+              <span className="text-primary font-medium">{filteredCount}</span>
+              {' '}{t.ofWord}{' '}{totalCount}{' '}{totalCount === 1 ? t.bountyWord : t.bountiesWord}
+            </>
           ) : (
-            <span dangerouslySetInnerHTML={{
-              __html: t.countText
-                .replace('{count}', `<span class="text-primary font-medium">${totalCount}</span>`)
-            }} />
+            <>
+              <span className="text-primary font-medium">{totalCount}</span>
+              {' '}{totalCount === 1 ? t.bountyWord : t.bountiesWord}
+            </>
           )}
         </p>
         {isFiltered && (

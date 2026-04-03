@@ -19,10 +19,11 @@ import { PaymentModeBadge } from '../PaymentModeBadge';
 export interface BountyCardTranslations {
   expired: string;
   expiresSoon: string;
-  hoursLeft: string;
+  hoursLeftSuffix: string;
   dayLeft: string;
-  daysLeft: string;
-  signalCount: string;
+  daysLeftSuffix: string;
+  signalWord: string;
+  signalsWord: string;
   illuminate: string;
   paymentPublic: string;
   paymentPrivate: string;
@@ -62,26 +63,22 @@ function formatExpiry(expiresAt: number, t?: BountyCardTranslations): string {
     if (hours === 0) {
       return t?.expiresSoon ?? 'Expires soon';
     }
-    return t?.hoursLeft?.replace('{count}', String(hours)) ?? `${String(hours)}h left`;
+    return `${hours}${t?.hoursLeftSuffix ?? 'h left'}`;
   }
   if (days === 1) {
     return t?.dayLeft ?? '1 day left';
   }
-  return t?.daysLeft?.replace('{count}', String(days)) ?? `${String(days)} days left`;
+  return `${days} ${t?.daysLeftSuffix ?? 'days left'}`;
 }
 
 /**
  * Format signal count with proper pluralization.
  */
 function formatSignalCount(count: number, t?: BountyCardTranslations): string {
-  if (t?.signalCount !== undefined) {
-    // Simple replacement - assumes format like "{count} signal(s)" or ICU format
-    return t.signalCount
-      .replace('{count}', String(count))
-      .replace('# signal', `${count} signal`)
-      .replace('# señal', `${count} señal`);
-  }
-  return `${count} signal${count !== 1 ? 's' : ''}`;
+  const word = count === 1
+    ? (t?.signalWord ?? 'signal')
+    : (t?.signalsWord ?? 'signals');
+  return `${count} ${word}`;
 }
 
 export function BountyCard({

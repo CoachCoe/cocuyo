@@ -28,18 +28,20 @@ export interface BountiesViewProps {
     statusFulfilled: string;
     statusExpired: string;
     statusCancelled: string;
-    countText: string;
-    countFilteredText: string;
+    bountyWord: string;
+    bountiesWord: string;
+    ofWord: string;
     clearFilters: string;
     whatsThis: string;
     infoTitle: string;
     // BountyCard translations
     expired: string;
     expiresSoon: string;
-    hoursLeft: string;
+    hoursLeftSuffix: string;
     dayLeft: string;
-    daysLeft: string;
-    signalCount: string;
+    daysLeftSuffix: string;
+    signalWord: string;
+    signalsWord: string;
     illuminate: string;
     paymentPublic: string;
     paymentPrivate: string;
@@ -113,8 +115,9 @@ export function BountiesView({
           statusFulfilled: t.statusFulfilled,
           statusExpired: t.statusExpired,
           statusCancelled: t.statusCancelled,
-          countText: t.countText,
-          countFilteredText: t.countFilteredText,
+          bountyWord: t.bountyWord,
+          bountiesWord: t.bountiesWord,
+          ofWord: t.ofWord,
           clearFilters: t.clearFilters,
           whatsThis: t.whatsThis,
         }}
@@ -132,10 +135,11 @@ export function BountiesView({
         translations={{
           expired: t.expired,
           expiresSoon: t.expiresSoon,
-          hoursLeft: t.hoursLeft,
+          hoursLeftSuffix: t.hoursLeftSuffix,
           dayLeft: t.dayLeft,
-          daysLeft: t.daysLeft,
-          signalCount: t.signalCount,
+          daysLeftSuffix: t.daysLeftSuffix,
+          signalWord: t.signalWord,
+          signalsWord: t.signalsWord,
           illuminate: t.illuminate,
           paymentPublic: t.paymentPublic,
           paymentPrivate: t.paymentPrivate,
