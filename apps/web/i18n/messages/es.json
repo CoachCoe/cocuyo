@@ -230,6 +230,7 @@
     "ofWord": "de",
     "clearFilters": "Limpiar filtros",
     "topics": {
+      "label": "Temas",
       "crisis": "Crisis",
       "detention": "Detención",
       "documentation": "Documentación",

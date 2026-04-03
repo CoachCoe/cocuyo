@@ -3,10 +3,10 @@
 /**
  * BountyFilters — Horizontal filter bar for the bounties page.
  *
- * Clean, compact design with status chips and topic pills.
+ * Compact design with status chips and topic dropdown.
  */
 
-import type { ReactElement, ReactNode } from 'react';
+import { useState, useRef, useEffect, type ReactElement, type ReactNode } from 'react';
 import type { BountyStatus } from '@cocuyo/types';
 import { InfoPopover } from '@cocuyo/ui';
 
@@ -39,6 +39,7 @@ export interface BountyFiltersProps {
     ofWord: string;
     clearFilters: string;
     whatsThis: string;
+    topicsLabel: string;
   };
   /** Info popover title */
   infoTitle?: string | undefined;
@@ -59,6 +60,9 @@ export function BountyFilters({
   infoTitle,
   infoBody,
 }: BountyFiltersProps): ReactElement {
+  const [isTopicDropdownOpen, setIsTopicDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const showInfo = infoTitle !== undefined && infoBody !== undefined;
   const isFiltered = activeStatus !== null || activeTopic !== null;
 
@@ -70,18 +74,51 @@ export function BountyFilters({
     { value: 'cancelled', label: t.statusCancelled, color: 'var(--fg-error)' },
   ];
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isTopicDropdownOpen) return;
+
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsTopicDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isTopicDropdownOpen]);
+
+  // Close on escape
+  useEffect(() => {
+    if (!isTopicDropdownOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        setIsTopicDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isTopicDropdownOpen]);
+
+  const handleTopicSelect = (topic: string): void => {
+    onTopicChange(activeTopic === topic ? null : topic);
+    setIsTopicDropdownOpen(false);
+  };
+
   return (
     <div className="space-y-4">
       {/* Filter bar */}
       <div
         className="
-          flex flex-col sm:flex-row sm:items-center gap-4
-          p-4 rounded-lg
+          flex flex-wrap items-center gap-3
+          p-3 rounded-lg
           bg-[var(--bg-surface-raised)] border border-[var(--border-subtle)]
         "
       >
         {/* Status filters */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5 flex-wrap">
           {statusOptions.map((option) => {
             const isActive = activeStatus === option.value;
             return (
@@ -113,42 +150,103 @@ export function BountyFilters({
 
         {/* Divider */}
         {topics.length > 0 && (
-          <div className="hidden sm:block w-px h-6 bg-[var(--border-default)]" />
+          <div className="w-px h-6 bg-[var(--border-default)]" />
         )}
 
-        {/* Topic filters */}
+        {/* Topic dropdown */}
         {topics.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap flex-1">
-            {topics.map((topic) => {
-              const isActive = activeTopic === topic;
-              return (
-                <button
-                  key={topic}
-                  type="button"
-                  onClick={() => onTopicChange(isActive ? null : topic)}
-                  className={`
-                    px-3 py-1.5 rounded-full text-sm transition-all duration-150 capitalize
-                    ${
-                      isActive
-                        ? 'bg-[var(--color-firefly-gold)] text-[var(--bg-base)] font-medium shadow-sm'
-                        : 'text-secondary hover:text-primary bg-[var(--bg-surface-nested)] hover:bg-[var(--bg-surface-hover)]'
-                    }
-                  `}
-                >
-                  {topicTranslations[topic] ?? topic.replace(/-/g, ' ')}
-                </button>
-              );
-            })}
+          <div ref={dropdownRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setIsTopicDropdownOpen(!isTopicDropdownOpen)}
+              className={`
+                inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+                text-sm font-medium transition-all duration-150
+                ${
+                  activeTopic !== null
+                    ? 'bg-[var(--color-firefly-gold)] text-[var(--bg-base)] shadow-sm'
+                    : 'text-secondary hover:text-primary bg-[var(--bg-surface-nested)] hover:bg-[var(--bg-surface-hover)]'
+                }
+              `}
+              aria-expanded={isTopicDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              <span>
+                {activeTopic !== null
+                  ? topicTranslations[activeTopic] ?? activeTopic
+                  : t.topicsLabel}
+              </span>
+              <svg
+                className={`w-4 h-4 transition-transform ${isTopicDropdownOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Dropdown menu */}
+            {isTopicDropdownOpen && (
+              <div
+                className="
+                  absolute top-full left-0 mt-2 z-50
+                  min-w-[200px] max-h-[300px] overflow-y-auto
+                  bg-[var(--bg-surface-container)] border border-[var(--border-default)]
+                  rounded-lg shadow-3
+                "
+                role="listbox"
+              >
+                {topics.map((topic) => {
+                  const isSelected = activeTopic === topic;
+                  return (
+                    <button
+                      key={topic}
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() => handleTopicSelect(topic)}
+                      className={`
+                        w-full text-left px-4 py-2.5 text-sm
+                        transition-colors
+                        ${
+                          isSelected
+                            ? 'bg-[var(--color-firefly-gold)]/10 text-[var(--color-firefly-gold)] font-medium'
+                            : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
+                        }
+                      `}
+                    >
+                      {topicTranslations[topic] ?? topic}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
+
+        {/* Clear topic button (when topic is selected) */}
+        {activeTopic !== null && (
+          <button
+            type="button"
+            onClick={() => onTopicChange(null)}
+            className="p-1.5 rounded-full text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)] transition-colors"
+            aria-label="Clear topic filter"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+
+        {/* Spacer */}
+        <div className="flex-1" />
 
         {/* Info button */}
         {showInfo && (
-          <div className="hidden sm:block ml-auto">
-            <InfoPopover title={infoTitle} position="bottom" triggerLabel={t.whatsThis}>
-              {infoBody}
-            </InfoPopover>
-          </div>
+          <InfoPopover title={infoTitle} position="bottom" triggerLabel={t.whatsThis}>
+            {infoBody}
+          </InfoPopover>
         )}
       </div>
 

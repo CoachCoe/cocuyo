@@ -79,6 +79,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
               ofWord: tBounties('ofWord'),
               clearFilters: tBounties('clearFilters'),
               whatsThis: tBounty('whatsThis'),
+              topicsLabel: tBounties('topics.label'),
               infoTitle: tBounties('info.title'),
               // BountyCard translations
               expired: tBounty('expired'),

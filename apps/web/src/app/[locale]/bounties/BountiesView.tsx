@@ -35,6 +35,7 @@ export interface BountiesViewProps {
     ofWord: string;
     clearFilters: string;
     whatsThis: string;
+    topicsLabel: string;
     infoTitle: string;
     // BountyCard translations
     expired: string;
@@ -124,6 +125,7 @@ export function BountiesView({
           ofWord: t.ofWord,
           clearFilters: t.clearFilters,
           whatsThis: t.whatsThis,
+          topicsLabel: t.topicsLabel,
         }}
         infoTitle={t.infoTitle}
         infoBody={infoBody}
