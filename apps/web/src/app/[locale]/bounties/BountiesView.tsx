@@ -3,7 +3,8 @@
 /**
  * BountiesView — Main client component for the bounties page.
  *
- * Clean single-column layout with horizontal filter bar above bounty cards.
+ * Clean single-column layout with filter bar above bounty cards.
+ * Defaults to showing "Open" bounties.
  */
 
 import { useState, useMemo, useCallback, type ReactElement, type ReactNode } from 'react';
@@ -26,6 +27,7 @@ export interface BountiesViewProps {
   /** Translation strings */
   translations: {
     all: string;
+    statusLabel: string;
     statusOpen: string;
     statusFulfilled: string;
     statusExpired: string;
@@ -35,7 +37,9 @@ export interface BountiesViewProps {
     ofWord: string;
     clearFilters: string;
     whatsThis: string;
-    topicsLabel: string;
+    filterByTopic: string;
+    searchPlaceholder: string;
+    topicsSelected: string;
     infoTitle: string;
     // BountyCard translations
     expired: string;
@@ -65,9 +69,10 @@ export function BountiesView({
   const locale = useLocale();
   const { openModal } = useIlluminate();
 
-  // Filter state
-  const [statusFilter, setStatusFilter] = useState<BountyStatus | null>(null);
-  const [topicFilter, setTopicFilter] = useState<string | null>(null);
+  // Filter state - default to "open" status
+  const [statusFilter, setStatusFilter] = useState<BountyStatus | null>('open');
+  const [topicFilters, setTopicFilters] = useState<readonly string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Handle bounty card click - navigate to detail page
   const handleBountyClick = useCallback(
@@ -89,33 +94,53 @@ export function BountiesView({
   const filteredBounties = useMemo(() => {
     let result = bounties;
 
+    // Status filter
     if (statusFilter !== null) {
       result = result.filter((b) => b.status === statusFilter);
     }
 
-    if (topicFilter !== null) {
+    // Topic filters (OR logic - matches any selected topic)
+    if (topicFilters.length > 0) {
       result = result.filter((b) =>
-        b.topics.some((topic) => topic.toLowerCase() === topicFilter.toLowerCase())
+        b.topics.some((topic) =>
+          topicFilters.some((filter) => topic.toLowerCase() === filter.toLowerCase())
+        )
+      );
+    }
+
+    // Search filter
+    if (searchQuery.trim().length > 0) {
+      const query = searchQuery.trim().toLowerCase();
+      result = result.filter(
+        (b) =>
+          b.title.toLowerCase().includes(query) ||
+          b.topics.some((topic) => topic.toLowerCase().includes(query)) ||
+          (b.location?.toLowerCase().includes(query) ?? false)
       );
     }
 
     return result;
-  }, [bounties, statusFilter, topicFilter]);
+  }, [bounties, statusFilter, topicFilters, searchQuery]);
+
+  const isFiltered = statusFilter !== null || topicFilters.length > 0 || searchQuery.length > 0;
 
   return (
     <div className="space-y-6">
-      {/* Horizontal filter bar */}
+      {/* Filter bar */}
       <BountyFilters
         topics={topics}
         topicTranslations={topicTranslations}
         activeStatus={statusFilter}
-        activeTopic={topicFilter}
+        activeTopics={topicFilters}
+        searchQuery={searchQuery}
         onStatusChange={setStatusFilter}
-        onTopicChange={setTopicFilter}
+        onTopicsChange={setTopicFilters}
+        onSearchChange={setSearchQuery}
         totalCount={bounties.length}
         filteredCount={filteredBounties.length}
         translations={{
           all: t.all,
+          statusLabel: t.statusLabel,
           statusOpen: t.statusOpen,
           statusFulfilled: t.statusFulfilled,
           statusExpired: t.statusExpired,
@@ -125,7 +150,9 @@ export function BountiesView({
           ofWord: t.ofWord,
           clearFilters: t.clearFilters,
           whatsThis: t.whatsThis,
-          topicsLabel: t.topicsLabel,
+          filterByTopic: t.filterByTopic,
+          searchPlaceholder: t.searchPlaceholder,
+          topicsSelected: t.topicsSelected,
         }}
         infoTitle={t.infoTitle}
         infoBody={infoBody}
@@ -135,8 +162,8 @@ export function BountiesView({
       <BountiesList
         bounties={filteredBounties}
         topicTranslations={topicTranslations}
-        hasMore={hasMore && statusFilter === null && topicFilter === null}
-        isFiltered={statusFilter !== null || topicFilter !== null}
+        hasMore={hasMore && !isFiltered}
+        isFiltered={isFiltered}
         onBountyClick={handleBountyClick}
         onIlluminate={handleIlluminate}
         translations={{

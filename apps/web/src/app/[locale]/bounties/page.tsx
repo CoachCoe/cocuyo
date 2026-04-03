@@ -70,6 +70,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
             hasMore={bountiesResult.hasMore}
             translations={{
               all: tBounties('allBounties'),
+              statusLabel: tBounties('statusLabel'),
               statusOpen: tBounties('statusOpen'),
               statusFulfilled: tBounties('statusFulfilled'),
               statusExpired: tBounties('statusExpired'),
@@ -79,7 +80,9 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
               ofWord: tBounties('ofWord'),
               clearFilters: tBounties('clearFilters'),
               whatsThis: tBounty('whatsThis'),
-              topicsLabel: tBounties('topics.label'),
+              filterByTopic: tBounties('filterByTopic'),
+              searchPlaceholder: tBounties('searchPlaceholder'),
+              topicsSelected: tBounties('topicsSelected'),
               infoTitle: tBounties('info.title'),
               // BountyCard translations
               expired: tBounty('expired'),

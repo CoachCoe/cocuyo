@@ -228,6 +228,10 @@
     "bountiesWord": "bounties",
     "ofWord": "of",
     "clearFilters": "Clear filters",
+    "statusLabel": "Status",
+    "filterByTopic": "Filter by Topic",
+    "searchPlaceholder": "Search bounties...",
+    "topicsSelected": "{count} topics",
     "topics": {
       "label": "Topics",
       "crisis": "Crisis",

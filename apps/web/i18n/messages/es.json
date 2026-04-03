@@ -228,6 +228,10 @@
     "bountiesWord": "recompensas",
     "ofWord": "de",
     "clearFilters": "Limpiar filtros",
+    "statusLabel": "Estado",
+    "filterByTopic": "Filtrar por Tema",
+    "searchPlaceholder": "Buscar recompensas...",
+    "topicsSelected": "{count} temas",
     "topics": {
       "label": "Temas",
       "crisis": "Crisis",
