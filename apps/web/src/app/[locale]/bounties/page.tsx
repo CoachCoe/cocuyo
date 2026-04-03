@@ -1,9 +1,7 @@
 /**
  * Bounties page — Browse community-funded information requests.
  *
- * Two-column layout:
- * - Left: Filters (status, topics)
- * - Right: Bounty cards
+ * Clean layout with horizontal filter bar above bounty card grid.
  */
 
 import type { ReactElement } from 'react';
@@ -58,8 +56,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
             topics={allTopics}
             hasMore={bountiesResult.hasMore}
             translations={{
-              allBounties: t('allBounties'),
-              filtersLabel: t('filters'),
+              allLabel: t('allBounties'),
               statusLabel: t('status'),
               topicsLabel: t('topics'),
               infoTitle: t('info.title'),

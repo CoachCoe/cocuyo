@@ -3,9 +3,7 @@
 /**
  * BountiesView — Main client component for the bounties page.
  *
- * Manages filter state and renders two-column layout:
- * - Left: Filters (status, topics)
- * - Right: Bounty cards
+ * Clean single-column layout with horizontal filter bar above bounty cards.
  */
 
 import { useState, useMemo, useCallback, type ReactElement, type ReactNode } from 'react';
@@ -25,8 +23,7 @@ export interface BountiesViewProps {
   hasMore: boolean;
   /** Translation strings */
   translations: {
-    allBounties: string;
-    filtersLabel: string;
+    allLabel: string;
     statusLabel: string;
     topicsLabel: string;
     infoTitle: string;
@@ -83,53 +80,32 @@ export function BountiesView({
     return result;
   }, [bounties, statusFilter, topicFilter]);
 
-  // Determine section title based on filters
-  const sectionTitle = useMemo(() => {
-    if (statusFilter === null && topicFilter === null) {
-      return translations.allBounties;
-    }
-    const parts: string[] = [];
-    if (statusFilter !== null) {
-      parts.push(statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1));
-    }
-    if (topicFilter !== null) {
-      parts.push(topicFilter.replace(/-/g, ' '));
-    }
-    return parts.join(' - ') + ' Bounties';
-  }, [statusFilter, topicFilter, translations.allBounties]);
-
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      {/* Sidebar - Filters */}
-      <aside className="md:w-72 lg:w-80 shrink-0">
-        <div className="md:sticky md:top-24">
-          <BountyFilters
-            topics={topics}
-            activeStatus={statusFilter}
-            activeTopic={topicFilter}
-            onStatusChange={setStatusFilter}
-            onTopicChange={setTopicFilter}
-            allBountiesLabel={translations.allBounties}
-            filtersLabel={translations.filtersLabel}
-            statusLabel={translations.statusLabel}
-            topicsLabel={translations.topicsLabel}
-            infoTitle={translations.infoTitle}
-            infoBody={infoBody}
-          />
-        </div>
-      </aside>
+    <div className="space-y-6">
+      {/* Horizontal filter bar */}
+      <BountyFilters
+        topics={topics}
+        activeStatus={statusFilter}
+        activeTopic={topicFilter}
+        onStatusChange={setStatusFilter}
+        onTopicChange={setTopicFilter}
+        allLabel={translations.allLabel}
+        statusLabel={translations.statusLabel}
+        topicsLabel={translations.topicsLabel}
+        totalCount={bounties.length}
+        filteredCount={filteredBounties.length}
+        infoTitle={translations.infoTitle}
+        infoBody={infoBody}
+      />
 
-      {/* Main content - Bounty Cards */}
-      <main className="flex-1 min-w-0">
-        <BountiesList
-          bounties={filteredBounties}
-          hasMore={hasMore && statusFilter === null && topicFilter === null}
-          title={sectionTitle}
-          isFiltered={statusFilter !== null || topicFilter !== null}
-          onBountyClick={handleBountyClick}
-          onIlluminate={handleIlluminate}
-        />
-      </main>
+      {/* Bounty cards */}
+      <BountiesList
+        bounties={filteredBounties}
+        hasMore={hasMore && statusFilter === null && topicFilter === null}
+        isFiltered={statusFilter !== null || topicFilter !== null}
+        onBountyClick={handleBountyClick}
+        onIlluminate={handleIlluminate}
+      />
     </div>
   );
 }

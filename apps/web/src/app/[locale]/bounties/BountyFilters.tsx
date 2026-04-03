@@ -1,9 +1,9 @@
 'use client';
 
 /**
- * BountyFilters — Sidebar component for filtering bounties.
+ * BountyFilters — Horizontal filter bar for the bounties page.
  *
- * Provides status and topic filters.
+ * Clean, compact design with status chips and topic pills.
  */
 
 import type { ReactElement, ReactNode } from 'react';
@@ -21,21 +21,24 @@ export interface BountyFiltersProps {
   onStatusChange: (status: BountyStatus | null) => void;
   /** Callback when topic filter changes */
   onTopicChange: (topic: string | null) => void;
-  /** Label for "All Bounties" */
-  allBountiesLabel: string;
-  /** Label for filters section */
-  filtersLabel: string;
+  /** Label for "All" status */
+  allLabel: string;
   /** Label for status filter */
   statusLabel: string;
   /** Label for topics filter */
   topicsLabel: string;
+  /** Total bounty count */
+  totalCount: number;
+  /** Filtered bounty count */
+  filteredCount: number;
   /** Info popover title */
   infoTitle?: string | undefined;
   /** Info popover content */
   infoBody?: ReactNode | undefined;
 }
 
-const STATUS_OPTIONS: { value: BountyStatus; label: string; color: string }[] = [
+const STATUS_OPTIONS: { value: BountyStatus | null; label: string; color?: string }[] = [
+  { value: null, label: 'All' },
   { value: 'open', label: 'Open', color: 'var(--fg-success)' },
   { value: 'fulfilled', label: 'Fulfilled', color: 'var(--color-firefly-gold)' },
   { value: 'expired', label: 'Expired', color: 'var(--fg-tertiary)' },
@@ -48,90 +51,71 @@ export function BountyFilters({
   activeTopic,
   onStatusChange,
   onTopicChange,
-  allBountiesLabel,
-  filtersLabel,
-  statusLabel,
-  topicsLabel,
+  allLabel,
+  statusLabel: _statusLabel,
+  topicsLabel: _topicsLabel,
+  totalCount,
+  filteredCount,
   infoTitle,
   infoBody,
 }: BountyFiltersProps): ReactElement {
   const showInfo = infoTitle !== undefined && infoBody !== undefined;
+  const isFiltered = activeStatus !== null || activeTopic !== null;
+
+  // Update "All" label with the provided translation
+  const statusOptions = STATUS_OPTIONS.map((opt) =>
+    opt.value === null ? { ...opt, label: allLabel } : opt
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Header with info */}
-      <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-secondary uppercase tracking-wide">
-          {filtersLabel}
-        </h2>
-        {showInfo && (
-          <InfoPopover title={infoTitle} position="bottom">
-            {infoBody}
-          </InfoPopover>
-        )}
-      </div>
-
-      {/* All bounties option */}
-      <button
-        type="button"
-        onClick={() => {
-          onStatusChange(null);
-          onTopicChange(null);
-        }}
-        className={`
-          w-full text-left px-3 py-2 rounded-nested
-          text-sm font-medium transition-colors
-          ${
-            activeStatus === null && activeTopic === null
-              ? 'bg-[var(--bg-surface-nested)] text-primary border border-[var(--border-emphasis)]'
-              : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
-          }
-        `}
+    <div className="space-y-4">
+      {/* Filter bar */}
+      <div
+        className="
+          flex flex-col sm:flex-row sm:items-center gap-4
+          p-4 rounded-lg
+          bg-[var(--bg-surface-raised)] border border-[var(--border-subtle)]
+        "
       >
-        {allBountiesLabel}
-      </button>
-
-      {/* Status filter - compact horizontal chips */}
-      <div className="space-y-2">
-        <h3 className="text-xs font-medium text-tertiary uppercase tracking-wide px-1">
-          {statusLabel}
-        </h3>
-        <div className="flex flex-wrap gap-1.5">
-          {STATUS_OPTIONS.map((option) => {
+        {/* Status filters */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {statusOptions.map((option) => {
             const isActive = activeStatus === option.value;
             return (
               <button
-                key={option.value}
+                key={option.value ?? 'all'}
                 type="button"
-                onClick={() => onStatusChange(isActive ? null : option.value)}
+                onClick={() => onStatusChange(option.value)}
                 className={`
-                  inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full
-                  text-xs font-medium transition-colors
+                  inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                  text-sm font-medium transition-all duration-150
                   ${
                     isActive
-                      ? 'bg-[var(--bg-surface-nested)] text-primary border border-[var(--border-emphasis)]'
-                      : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)] border border-transparent'
+                      ? 'bg-[var(--bg-surface-inverse)] text-[var(--fg-inverse)] shadow-sm'
+                      : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
                   }
                 `}
               >
-                <span
-                  className="w-1.5 h-1.5 rounded-full shrink-0"
-                  style={{ backgroundColor: option.color }}
-                />
+                {option.color !== undefined && (
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: option.color }}
+                  />
+                )}
                 {option.label}
               </button>
             );
           })}
         </div>
-      </div>
 
-      {/* Topic filter */}
-      {topics.length > 0 && (
-        <div className="space-y-2">
-          <h3 className="text-xs font-medium text-tertiary uppercase tracking-wide px-1">
-            {topicsLabel}
-          </h3>
-          <div className="space-y-1">
+        {/* Divider */}
+        {topics.length > 0 && (
+          <div className="hidden sm:block w-px h-6 bg-[var(--border-default)]" />
+        )}
+
+        {/* Topic filters */}
+        {topics.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap flex-1">
             {topics.map((topic) => {
               const isActive = activeTopic === topic;
               return (
@@ -140,12 +124,11 @@ export function BountyFilters({
                   type="button"
                   onClick={() => onTopicChange(isActive ? null : topic)}
                   className={`
-                    w-full text-left px-3 py-2 rounded-nested
-                    text-sm transition-colors capitalize
+                    px-3 py-1.5 rounded-full text-sm transition-all duration-150 capitalize
                     ${
                       isActive
-                        ? 'bg-[var(--bg-surface-nested)] text-primary border border-[var(--border-emphasis)]'
-                        : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
+                        ? 'bg-[var(--color-firefly-gold)] text-[var(--bg-base)] font-medium shadow-sm'
+                        : 'text-secondary hover:text-primary bg-[var(--bg-surface-nested)] hover:bg-[var(--bg-surface-hover)]'
                     }
                   `}
                 >
@@ -154,8 +137,48 @@ export function BountyFilters({
               );
             })}
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Info button */}
+        {showInfo && (
+          <div className="hidden sm:block ml-auto">
+            <InfoPopover title={infoTitle} position="bottom">
+              {infoBody}
+            </InfoPopover>
+          </div>
+        )}
+      </div>
+
+      {/* Results summary */}
+      <div className="flex items-center justify-between text-sm">
+        <p className="text-secondary">
+          {isFiltered ? (
+            <>
+              <span className="text-primary font-medium">{filteredCount}</span>
+              {' of '}
+              <span>{totalCount}</span>
+              {' bounties'}
+            </>
+          ) : (
+            <>
+              <span className="text-primary font-medium">{totalCount}</span>
+              {' bounties'}
+            </>
+          )}
+        </p>
+        {isFiltered && (
+          <button
+            type="button"
+            onClick={() => {
+              onStatusChange(null);
+              onTopicChange(null);
+            }}
+            className="text-[var(--color-firefly-gold)] hover:underline font-medium"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
     </div>
   );
 }
