@@ -10,12 +10,14 @@
     "./typechain-types/*": "./typechain-types/*.ts"
   },
   "scripts": {
+    "download:binaries": "bash scripts/download-binaries.sh",
     "build": "hardhat compile",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
     "deploy:paseo": "hardhat run scripts/deploy.ts --network paseo",
     "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "verify": "hardhat verify",
     "clean": "hardhat clean && rm -rf typechain-types",
     "lint": "solhint 'contracts/**/*.sol'",
     "lint:fix": "solhint 'contracts/**/*.sol' --fix --noPrompt",
@@ -27,6 +29,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@openzeppelin/contracts": "5.4.0",

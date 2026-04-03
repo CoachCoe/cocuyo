@@ -1,4 +1,5 @@
 import '@nomicfoundation/hardhat-toolbox';
+import '@nomicfoundation/hardhat-verify';
 import '@openzeppelin/hardhat-upgrades';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
@@ -6,15 +7,7 @@ import '@parity/hardhat-polkadot';
 import { HardhatUserConfig } from 'hardhat/config';
 import 'dotenv/config';
 
-// Extended config type for hardhat-polkadot plugin
-interface ExtendedHardhatUserConfig extends HardhatUserConfig {
-  polkadot?: {
-    buildType?: string;
-    outputDir?: string;
-  };
-}
-
-const config: ExtendedHardhatUserConfig = {
+const config: HardhatUserConfig = {
   solidity: {
     version: '0.8.28',
     settings: {
@@ -22,7 +15,17 @@ const config: ExtendedHardhatUserConfig = {
         enabled: true,
         runs: 200,
       },
-      evmVersion: 'cancun',
+      viaIR: true,
+    },
+  },
+  resolc: {
+    compilerSource: 'binary',
+    settings: {
+      resolcPath: './bin/resolc',
+      memoryConfig: {
+        heapSize: 128000,
+        stackSize: 128000,
+      },
     },
   },
   defaultNetwork: 'hardhat',
@@ -30,29 +33,40 @@ const config: ExtendedHardhatUserConfig = {
     hardhat: {
       allowUnlimitedContractSize: true,
       chainId: 31337,
+      blockGasLimit: 16777216,
     },
     localhost: {
       url: 'http://127.0.0.1:8545',
       chainId: 31337,
     },
+    // Paseo testnet - PRIVATE_KEY must be set in .env
     paseo: {
-      url: process.env.PASEO_RPC_URL || 'https://services.polkadothub-rpc.com/testnet',
+      url: process.env.PASEO_RPC_URL || 'https://eth-rpc-testnet.polkadot.io',
       chainId: 420420417,
-      accounts: process.env.PRIVATE_KEY
-        ? [process.env.PRIVATE_KEY]
-        : ['ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'],
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       polkadot: {
         target: 'pvm',
       },
     },
   },
-  polkadot: {
-    buildType: 'revive',
-    outputDir: './artifacts-revive',
-  },
   gasReporter: {
     enabled: process.env.REPORT_GAS === 'true',
     currency: 'USD',
+  },
+  etherscan: {
+    apiKey: {
+      paseo: 'dummy',
+    },
+    customChains: [
+      {
+        network: 'paseo',
+        chainId: 420420417,
+        urls: {
+          apiURL: 'https://blockscout-testnet.polkadot.io/api',
+          browserURL: 'https://blockscout-testnet.polkadot.io',
+        },
+      },
+    ],
   },
   paths: {
     sources: './contracts',
