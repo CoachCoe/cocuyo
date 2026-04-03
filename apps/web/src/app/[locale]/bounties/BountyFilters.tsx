@@ -145,7 +145,7 @@ export function BountyFilters({
         "
       >
         {/* Search input */}
-        <div className="relative flex-1 min-w-0 max-w-md">
+        <div className="relative flex-1 min-w-0">
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tertiary pointer-events-none"
             fill="none"

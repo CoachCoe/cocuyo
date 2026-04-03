@@ -2,7 +2,7 @@ name: Deploy to Polkadot Triangle
 
 on:
   push:
-    branches: [main]
+    branches: [shawn]
   workflow_dispatch:
     inputs:
       skip-cache:
