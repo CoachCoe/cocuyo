@@ -58,6 +58,9 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
       <BountiesHeader
         title={tBounties('title')}
         description={tBounties('description')}
+        infoTitle={tBounties('info.title')}
+        infoBody={infoBody}
+        infoTriggerLabel={tBounty('whatsThis')}
       />
 
       {/* Main content */}
@@ -79,11 +82,10 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
               bountiesWord: tBounties('bountiesWord'),
               ofWord: tBounties('ofWord'),
               clearFilters: tBounties('clearFilters'),
-              whatsThis: tBounty('whatsThis'),
               filterByTopic: tBounties('filterByTopic'),
               searchPlaceholder: tBounties('searchPlaceholder'),
+              topicSelected: tBounties('topicSelected'),
               topicsSelected: tBounties('topicsSelected'),
-              infoTitle: tBounties('info.title'),
               // BountyCard translations
               expired: tBounty('expired'),
               expiresSoon: tBounty('expiresSoon'),
@@ -96,7 +98,6 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
               paymentPublic: tBounty('paymentPublic'),
               paymentPrivate: tBounty('paymentPrivate'),
             }}
-            infoBody={infoBody}
           />
         </div>
       </section>

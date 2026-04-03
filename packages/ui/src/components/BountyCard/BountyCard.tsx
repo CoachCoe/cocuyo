@@ -15,6 +15,7 @@ import type { BountyPreview, BountyId } from '@cocuyo/types';
 import { formatPUSDCompact } from '@cocuyo/types';
 import { BountyStatusBadge } from '../BountyStatusBadge';
 import { PaymentModeBadge } from '../PaymentModeBadge';
+import { FireflySymbol } from '../FireflySymbol';
 
 export interface BountyCardTranslations {
   expired: string;
@@ -186,9 +187,10 @@ export function BountyCard({
             <button
               type="button"
               onClick={handleIlluminateClick}
-              className="text-xs px-3 py-1.5 rounded-full bg-[var(--color-firefly-gold)] text-[var(--bg-primary)] font-medium hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full bg-[var(--color-firefly-gold)] text-[var(--bg-primary)] font-medium animate-pulse-subtle hover:opacity-90 transition-opacity"
               aria-label={`Illuminate signal for: ${title}`}
             >
+              <FireflySymbol size={10} color="inherit" aria-hidden="true" />
               {t?.illuminate ?? 'Illuminate'}
             </button>
           )}

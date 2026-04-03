@@ -231,7 +231,8 @@
     "statusLabel": "Estado",
     "filterByTopic": "Filtrar por Tema",
     "searchPlaceholder": "Buscar recompensas...",
-    "topicsSelected": "{count} temas",
+    "topicSelected": "tema",
+    "topicsSelected": "temas",
     "topics": {
       "label": "Temas",
       "crisis": "Crisis",

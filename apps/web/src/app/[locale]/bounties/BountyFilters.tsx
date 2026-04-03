@@ -9,9 +9,8 @@
  * - Topic dropdown with multi-select
  */
 
-import { useState, useRef, useEffect, type ReactElement, type ReactNode } from 'react';
+import { useState, useRef, useEffect, type ReactElement } from 'react';
 import type { BountyStatus } from '@cocuyo/types';
-import { InfoPopover } from '@cocuyo/ui';
 
 export interface BountyFiltersProps {
   /** Available topics */
@@ -46,15 +45,11 @@ export interface BountyFiltersProps {
     bountiesWord: string;
     ofWord: string;
     clearFilters: string;
-    whatsThis: string;
     filterByTopic: string;
     searchPlaceholder: string;
+    topicSelected: string;
     topicsSelected: string;
   };
-  /** Info popover title */
-  infoTitle?: string | undefined;
-  /** Info popover content */
-  infoBody?: ReactNode | undefined;
 }
 
 export function BountyFilters({
@@ -69,15 +64,11 @@ export function BountyFilters({
   totalCount,
   filteredCount,
   translations: t,
-  infoTitle,
-  infoBody,
 }: BountyFiltersProps): ReactElement {
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isTopicDropdownOpen, setIsTopicDropdownOpen] = useState(false);
   const statusDropdownRef = useRef<HTMLDivElement>(null);
   const topicDropdownRef = useRef<HTMLDivElement>(null);
-
-  const showInfo = infoTitle !== undefined && infoBody !== undefined;
   const isFiltered = activeStatus !== null || activeTopics.length > 0 || searchQuery.length > 0;
 
   const statusOptions: { value: BountyStatus | null; label: string; color?: string }[] = [
@@ -140,7 +131,7 @@ export function BountyFilters({
       const topic = activeTopics[0];
       return topic !== undefined ? (topicTranslations[topic] ?? topic) : t.filterByTopic;
     }
-    return t.topicsSelected.replace('{count}', String(activeTopics.length));
+    return `${activeTopics.length} ${t.topicsSelected}`;
   };
 
   return (
@@ -154,7 +145,7 @@ export function BountyFilters({
         "
       >
         {/* Search input */}
-        <div className="relative flex-1 min-w-0 max-w-xs">
+        <div className="relative flex-1 min-w-0 max-w-md">
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tertiary pointer-events-none"
             fill="none"
@@ -192,82 +183,6 @@ export function BountyFilters({
         {/* Divider */}
         <div className="hidden sm:block w-px h-8 bg-[var(--border-default)]" />
 
-        {/* Status dropdown */}
-        <div ref={statusDropdownRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-            className={`
-              inline-flex items-center gap-2 px-3 py-2 rounded-lg
-              text-sm font-medium transition-all duration-150
-              bg-[var(--bg-surface-nested)] border border-[var(--border-subtle)]
-              hover:border-[var(--border-emphasis)]
-              ${activeStatus !== null ? 'text-primary' : 'text-secondary'}
-            `}
-            aria-expanded={isStatusDropdownOpen}
-            aria-haspopup="listbox"
-          >
-            {currentStatusOption.color !== undefined && (
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ backgroundColor: currentStatusOption.color }}
-              />
-            )}
-            <span>{currentStatusOption.label}</span>
-            <svg
-              className={`w-4 h-4 text-tertiary transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {/* Status dropdown menu */}
-          {isStatusDropdownOpen && (
-            <div
-              className="
-                absolute top-full left-0 mt-1 z-50
-                min-w-[160px]
-                bg-[var(--bg-surface-container)] border border-[var(--border-default)]
-                rounded-lg shadow-3 overflow-hidden
-              "
-              role="listbox"
-            >
-              {statusOptions.map((option) => {
-                const isSelected = activeStatus === option.value;
-                return (
-                  <button
-                    key={option.value ?? 'all'}
-                    type="button"
-                    role="option"
-                    aria-selected={isSelected}
-                    onClick={() => handleStatusSelect(option.value)}
-                    className={`
-                      w-full text-left px-3 py-2.5 text-sm
-                      flex items-center gap-2 transition-colors
-                      ${
-                        isSelected
-                          ? 'bg-[var(--bg-surface-hover)] text-primary font-medium'
-                          : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
-                      }
-                    `}
-                  >
-                    {option.color !== undefined && (
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: option.color }}
-                      />
-                    )}
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         {/* Topic dropdown */}
         {topics.length > 0 && (
           <div ref={topicDropdownRef} className="relative">
@@ -277,7 +192,7 @@ export function BountyFilters({
               className={`
                 inline-flex items-center gap-2 px-3 py-2 rounded-lg
                 text-sm font-medium transition-all duration-150
-                border
+                border min-w-[160px]
                 ${
                   activeTopics.length > 0
                     ? 'bg-[var(--color-firefly-gold)]/10 border-[var(--color-firefly-gold)]/30 text-[var(--color-firefly-gold)]'
@@ -365,15 +280,81 @@ export function BountyFilters({
           </div>
         )}
 
-        {/* Spacer */}
-        <div className="flex-1" />
+        {/* Status dropdown */}
+        <div ref={statusDropdownRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+            className={`
+              inline-flex items-center gap-2 px-3 py-2 rounded-lg
+              text-sm font-medium transition-all duration-150
+              bg-[var(--bg-surface-nested)] border border-[var(--border-subtle)]
+              hover:border-[var(--border-emphasis)]
+              ${activeStatus !== null ? 'text-primary' : 'text-secondary'}
+            `}
+            aria-expanded={isStatusDropdownOpen}
+            aria-haspopup="listbox"
+          >
+            {currentStatusOption.color !== undefined && (
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{ backgroundColor: currentStatusOption.color }}
+              />
+            )}
+            <span>{currentStatusOption.label}</span>
+            <svg
+              className={`w-4 h-4 text-tertiary transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
 
-        {/* Info button */}
-        {showInfo && (
-          <InfoPopover title={infoTitle} position="bottom" triggerLabel={t.whatsThis}>
-            {infoBody}
-          </InfoPopover>
-        )}
+          {/* Status dropdown menu */}
+          {isStatusDropdownOpen && (
+            <div
+              className="
+                absolute top-full left-0 mt-1 z-50
+                min-w-[160px]
+                bg-[var(--bg-surface-container)] border border-[var(--border-default)]
+                rounded-lg shadow-3 overflow-hidden
+              "
+              role="listbox"
+            >
+              {statusOptions.map((option) => {
+                const isSelected = activeStatus === option.value;
+                return (
+                  <button
+                    key={option.value ?? 'all'}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => handleStatusSelect(option.value)}
+                    className={`
+                      w-full text-left px-3 py-2.5 text-sm
+                      flex items-center gap-2 transition-colors
+                      ${
+                        isSelected
+                          ? 'bg-[var(--bg-surface-hover)] text-primary font-medium'
+                          : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
+                      }
+                    `}
+                  >
+                    {option.color !== undefined && (
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: option.color }}
+                      />
+                    )}
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Results summary */}

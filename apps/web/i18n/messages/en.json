@@ -231,7 +231,8 @@
     "statusLabel": "Status",
     "filterByTopic": "Filter by Topic",
     "searchPlaceholder": "Search bounties...",
-    "topicsSelected": "{count} topics",
+    "topicSelected": "topic",
+    "topicsSelected": "topics",
     "topics": {
       "label": "Topics",
       "crisis": "Crisis",

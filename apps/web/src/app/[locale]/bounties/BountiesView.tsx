@@ -7,7 +7,7 @@
  * Defaults to showing "Open" bounties.
  */
 
-import { useState, useMemo, useCallback, type ReactElement, type ReactNode } from 'react';
+import { useState, useMemo, useCallback, type ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { BountyPreview, BountyId, BountyStatus } from '@cocuyo/types';
@@ -36,11 +36,10 @@ export interface BountiesViewProps {
     bountiesWord: string;
     ofWord: string;
     clearFilters: string;
-    whatsThis: string;
     filterByTopic: string;
     searchPlaceholder: string;
+    topicSelected: string;
     topicsSelected: string;
-    infoTitle: string;
     // BountyCard translations
     expired: string;
     expiresSoon: string;
@@ -53,8 +52,6 @@ export interface BountiesViewProps {
     paymentPublic: string;
     paymentPrivate: string;
   };
-  /** Info popover content */
-  infoBody?: ReactNode | undefined;
 }
 
 export function BountiesView({
@@ -63,7 +60,6 @@ export function BountiesView({
   topicTranslations,
   hasMore,
   translations: t,
-  infoBody,
 }: BountiesViewProps): ReactElement {
   const router = useRouter();
   const locale = useLocale();
@@ -149,13 +145,11 @@ export function BountiesView({
           bountiesWord: t.bountiesWord,
           ofWord: t.ofWord,
           clearFilters: t.clearFilters,
-          whatsThis: t.whatsThis,
           filterByTopic: t.filterByTopic,
           searchPlaceholder: t.searchPlaceholder,
+          topicSelected: t.topicSelected,
           topicsSelected: t.topicsSelected,
         }}
-        infoTitle={t.infoTitle}
-        infoBody={infoBody}
       />
 
       {/* Bounty cards */}

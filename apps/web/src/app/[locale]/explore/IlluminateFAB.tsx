@@ -34,7 +34,7 @@ export function IlluminateFAB({
         flex items-center justify-center
         w-14 h-14 rounded-full
         bg-[var(--bg-accent-firefly)] text-black
-        shadow-glow
+        shadow-glow animate-pulse-subtle
         hover:scale-105 hover:brightness-110
         active:scale-95
         transition-all duration-150
