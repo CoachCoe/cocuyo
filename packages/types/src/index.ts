@@ -126,7 +126,34 @@ export type {
   NewBounty,
   BountyPayout,
   PayoutDistribution,
+  BountyContribution,
+  AllocationShare,
+  AllocationInput,
+  AllocationResult,
 } from './bounty';
+
+// Personhood types
+export type {
+  PersonhoodLevel,
+  PersonhoodCapabilities,
+} from './personhood';
+export {
+  PERSONHOOD_CAPABILITIES,
+  getCapabilities,
+  canPerform,
+  canFundAmount,
+  canClaimAmount,
+} from './personhood';
+
+// Reputation topic types
+export type { ReputationTopic, TopicMetadata } from './reputation-topics';
+export {
+  REPUTATION_TOPICS,
+  TOPIC_METADATA,
+  isReputationTopic,
+  getTopicMetadata,
+  classifyTopics,
+} from './reputation-topics';
 
 // Service interfaces
 export type {
@@ -137,6 +164,15 @@ export type {
   ChainService,
   CorroborationService,
   BountyService,
+  // Reputation services
+  ReputationError,
+  TopicReputationScore,
+  ReputationProfile,
+  ReputationService,
+  // Personhood services
+  PersonhoodError,
+  PersonhoodState,
+  PersonhoodService,
   // Payment services
   PaymentError,
   PaymentService,

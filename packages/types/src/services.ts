@@ -30,6 +30,8 @@ import type {
 import type { Corroboration, NewCorroboration } from './corroboration';
 import type { PUSDAmount, PUSDBalance } from './currency';
 import type { PaymentMode } from './payment-mode';
+import type { PersonhoodLevel, PersonhoodCapabilities } from './personhood';
+import type { ReputationTopic } from './reputation-topics';
 import type { Signal, NewSignal } from './signal';
 
 /**
@@ -148,6 +150,167 @@ export interface BountyService {
     bountyId: BountyId,
     signalId: SignalId
   ): Promise<Result<void, string>>;
+}
+
+// ============================================================================
+// Reputation Service
+// ============================================================================
+
+/**
+ * Error types for reputation operations.
+ */
+export type ReputationError =
+  | { readonly type: 'CREDENTIAL_NOT_FOUND'; readonly credential: DIMCredential }
+  | { readonly type: 'INVALID_TOPIC'; readonly topic: string }
+  | { readonly type: 'UPDATE_FAILED'; readonly reason: string };
+
+/**
+ * Topic-specific reputation score (0-1000 scale).
+ */
+export interface TopicReputationScore {
+  /** The topic domain */
+  readonly topic: ReputationTopic;
+  /** Score from 0 to 1000 (500 = neutral starting point) */
+  readonly score: number;
+  /** Number of corroborations given in this topic */
+  readonly corroborationsGiven: number;
+  /** Number of corroborations received in this topic */
+  readonly corroborationsReceived: number;
+  /** Number of successful challenges in this topic */
+  readonly challengesWon: number;
+  /** Number of times challenged and lost */
+  readonly challengesLost: number;
+}
+
+/**
+ * Complete reputation profile for a firefly.
+ */
+export interface ReputationProfile {
+  /** DIM credential */
+  readonly credential: DIMCredential;
+  /** Reputation scores by topic */
+  readonly scores: Readonly<Record<ReputationTopic, TopicReputationScore>>;
+  /** Overall reputation (weighted average across topics) */
+  readonly overallScore: number;
+  /** Total corroborations across all topics */
+  readonly totalCorroborations: number;
+  /** When reputation was last updated */
+  readonly lastUpdated: number;
+}
+
+/**
+ * Reputation service interface.
+ *
+ * Manages topic-weighted reputation for fireflies. Reputation is earned
+ * through corroborated contributions and lost through failed challenges.
+ */
+export interface ReputationService {
+  /** Get full reputation profile for a credential */
+  getReputation(credential: DIMCredential): Promise<ReputationProfile | null>;
+
+  /** Get reputation score for a specific topic */
+  getTopicScore(
+    credential: DIMCredential,
+    topic: ReputationTopic
+  ): Promise<number>;
+
+  /** Get average reputation across specified topics */
+  getAverageScore(
+    credential: DIMCredential,
+    topics: readonly ReputationTopic[]
+  ): Promise<number>;
+
+  /**
+   * Record a corroboration event.
+   * Increases reputation for both the corroborator and signal author.
+   */
+  recordCorroboration(params: {
+    corroboratorCredential: DIMCredential;
+    signalAuthorCredential: DIMCredential;
+    signalId: SignalId;
+    topics: readonly ReputationTopic[];
+  }): Promise<Result<void, ReputationError>>;
+
+  /**
+   * Record a successful challenge.
+   * Decreases reputation for the signal author.
+   */
+  recordChallenge(params: {
+    challengedCredential: DIMCredential;
+    signalId: SignalId;
+    topics: readonly ReputationTopic[];
+  }): Promise<Result<void, ReputationError>>;
+}
+
+// ============================================================================
+// Personhood Service
+// ============================================================================
+
+/**
+ * Error types for personhood operations.
+ */
+export type PersonhoodError =
+  | { readonly type: 'CREDENTIAL_NOT_FOUND'; readonly credential: DIMCredential }
+  | { readonly type: 'VERIFICATION_FAILED'; readonly reason: string }
+  | { readonly type: 'ALREADY_VERIFIED'; readonly level: PersonhoodLevel };
+
+/**
+ * Personhood verification state.
+ */
+export interface PersonhoodState {
+  /** DIM credential */
+  readonly credential: DIMCredential;
+  /** Current verification level */
+  readonly level: PersonhoodLevel;
+  /** When verification was completed */
+  readonly verifiedAt: number | null;
+  /** Verification method used (for audit) */
+  readonly verificationMethod?: string;
+}
+
+/**
+ * Personhood service interface.
+ *
+ * Manages DIM verification levels and capability checks.
+ */
+export interface PersonhoodService {
+  /** Get personhood state for a credential */
+  getPersonhood(credential: DIMCredential): Promise<PersonhoodState | null>;
+
+  /** Get personhood level (convenience method) */
+  getLevel(credential: DIMCredential): Promise<PersonhoodLevel>;
+
+  /** Get capabilities for a credential */
+  getCapabilities(credential: DIMCredential): Promise<PersonhoodCapabilities>;
+
+  /** Check if a specific action is allowed */
+  canPerform(
+    credential: DIMCredential,
+    action: keyof Omit<PersonhoodCapabilities, 'maxBountyFunding' | 'maxBountyClaim'>
+  ): Promise<boolean>;
+
+  /** Check if a funding amount is within limits */
+  canFundAmount(credential: DIMCredential, amount: PUSDAmount): Promise<boolean>;
+
+  /** Check if a claim amount is within limits */
+  canClaimAmount(credential: DIMCredential, amount: PUSDAmount): Promise<boolean>;
+
+  /**
+   * Initiate verification process.
+   * Returns a verification URL or session ID.
+   */
+  startVerification(params: {
+    credential: DIMCredential;
+    targetLevel: PersonhoodLevel;
+  }): Promise<Result<{ verificationUrl: string }, PersonhoodError>>;
+
+  /**
+   * Complete verification (called after external verification succeeds).
+   */
+  completeVerification(params: {
+    credential: DIMCredential;
+    verificationToken: string;
+  }): Promise<Result<PersonhoodState, PersonhoodError>>;
 }
 
 // ============================================================================

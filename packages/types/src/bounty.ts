@@ -17,6 +17,7 @@ import type {
 } from './brands';
 import type { PUSDAmount } from './currency';
 import type { PaymentMode } from './payment-mode';
+import type { ReputationTopic } from './reputation-topics';
 
 /** Status of a bounty */
 export type BountyStatus =
@@ -128,4 +129,80 @@ export interface PayoutDistribution {
   readonly amount: PUSDAmount;
   /** Percentage of total bounty (0-100) */
   readonly percentage: number;
+}
+
+// ============================================================================
+// Contribution Tracking (for allocation engine)
+// ============================================================================
+
+/**
+ * A tracked contribution to a bounty.
+ *
+ * When a signal is linked to a bounty, a BountyContribution record is created.
+ * The corroborationWeight is updated as the signal receives corroborations.
+ */
+export interface BountyContribution {
+  /** The signal that contributed */
+  readonly signalId: SignalId;
+  /** The bounty being contributed to */
+  readonly bountyId: BountyId;
+  /** DIM credential of the contributor */
+  readonly contributorCredential: DIMCredential;
+  /** Topics relevant to this contribution (for reputation weighting) */
+  readonly topics: readonly ReputationTopic[];
+  /**
+   * Corroboration weight — sum of corroborator reputation scores.
+   * Updated each time the signal receives a corroboration.
+   * Higher weight = more valuable contribution.
+   */
+  readonly corroborationWeight: number;
+  /** Number of corroborations received */
+  readonly corroborationCount: number;
+  /** When this contribution was made */
+  readonly createdAt: number;
+}
+
+/**
+ * A computed allocation share for a bounty contributor.
+ *
+ * Produced by the allocation engine when a bounty closes.
+ * Each contributor's share is proportional to their weighted contributions.
+ */
+export interface AllocationShare {
+  /** DIM credential of the contributor */
+  readonly contributorCredential: DIMCredential;
+  /** Wallet address for payout (resolved from credential) */
+  readonly recipientAddress: PolkadotAddress;
+  /** Signals that contributed to this share */
+  readonly signalIds: readonly SignalId[];
+  /** Total corroboration weight across all contributed signals */
+  readonly totalWeight: number;
+  /** Percentage of bounty (0-100, two decimal precision) */
+  readonly sharePercent: number;
+  /** Computed payout amount */
+  readonly amount: PUSDAmount;
+}
+
+/**
+ * Input for computing bounty allocation.
+ */
+export interface AllocationInput {
+  /** All contributions to the bounty */
+  readonly contributions: readonly BountyContribution[];
+  /** Topics for reputation lookup */
+  readonly bountyTopics: readonly ReputationTopic[];
+  /** Total bounty funding */
+  readonly totalFunding: PUSDAmount;
+}
+
+/**
+ * Result of allocation computation.
+ */
+export interface AllocationResult {
+  /** Computed shares for each contributor */
+  readonly shares: readonly AllocationShare[];
+  /** Total weight used in computation */
+  readonly totalWeight: number;
+  /** Number of unique contributors */
+  readonly contributorCount: number;
 }
