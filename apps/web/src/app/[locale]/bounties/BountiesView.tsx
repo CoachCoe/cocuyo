@@ -19,6 +19,8 @@ export interface BountiesViewProps {
   bounties: BountyPreview[];
   /** Available topics for filtering */
   topics: readonly string[];
+  /** Topic slug to translated name map */
+  topicTranslations: Record<string, string>;
   /** Whether there are more bounties to load */
   hasMore: boolean;
   /** Translation strings */
@@ -53,6 +55,7 @@ export interface BountiesViewProps {
 export function BountiesView({
   bounties,
   topics,
+  topicTranslations,
   hasMore,
   translations: t,
   infoBody,
@@ -103,6 +106,7 @@ export function BountiesView({
       {/* Horizontal filter bar */}
       <BountyFilters
         topics={topics}
+        topicTranslations={topicTranslations}
         activeStatus={statusFilter}
         activeTopic={topicFilter}
         onStatusChange={setStatusFilter}
@@ -128,6 +132,7 @@ export function BountiesView({
       {/* Bounty cards */}
       <BountiesList
         bounties={filteredBounties}
+        topicTranslations={topicTranslations}
         hasMore={hasMore && statusFilter === null && topicFilter === null}
         isFiltered={statusFilter !== null || topicFilter !== null}
         onBountyClick={handleBountyClick}

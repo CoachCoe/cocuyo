@@ -229,6 +229,23 @@
     "bountiesWord": "bounties",
     "ofWord": "of",
     "clearFilters": "Clear filters",
+    "topics": {
+      "crisis": "Crisis",
+      "detention": "Detention",
+      "documentation": "Documentation",
+      "economy": "Economy",
+      "food-security": "Food Security",
+      "governance": "Governance",
+      "health": "Health",
+      "human-rights": "Human Rights",
+      "inflation": "Inflation",
+      "infrastructure": "Infrastructure",
+      "politics": "Politics",
+      "press-freedom": "Press Freedom",
+      "public-records": "Public Records",
+      "public-services": "Public Services",
+      "transparency": "Transparency"
+    },
     "info": {
       "title": "What are Bounties?",
       "body": "Bounties are community-funded requests for specific information. When you have knowledge that fulfills a bounty, illuminate a signal and link it to the bounty.\n\nIf your signal contributes valuable information, you earn a share of the bounty reward. Payments can be made publicly via pUSD or privately via Coinage.\n\nBounties create a functioning market for investigative information — funded by the people who need it."

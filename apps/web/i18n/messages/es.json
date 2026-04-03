@@ -229,6 +229,23 @@
     "bountiesWord": "recompensas",
     "ofWord": "de",
     "clearFilters": "Limpiar filtros",
+    "topics": {
+      "crisis": "Crisis",
+      "detention": "Detención",
+      "documentation": "Documentación",
+      "economy": "Economía",
+      "food-security": "Seguridad Alimentaria",
+      "governance": "Gobernanza",
+      "health": "Salud",
+      "human-rights": "Derechos Humanos",
+      "inflation": "Inflación",
+      "infrastructure": "Infraestructura",
+      "politics": "Política",
+      "press-freedom": "Libertad de Prensa",
+      "public-records": "Registros Públicos",
+      "public-services": "Servicios Públicos",
+      "transparency": "Transparencia"
+    },
     "info": {
       "title": "¿Qué son las Recompensas?",
       "body": "Las recompensas son solicitudes de información específica financiadas por la comunidad. Cuando tienes conocimiento que cumple con una recompensa, ilumina una señal y vincúlala a la recompensa.\n\nSi tu señal contribuye información valiosa, ganas una parte de la recompensa. Los pagos pueden hacerse públicamente vía pUSD o privadamente vía Coinage.\n\nLas recompensas crean un mercado funcional para información investigativa — financiado por las personas que la necesitan."

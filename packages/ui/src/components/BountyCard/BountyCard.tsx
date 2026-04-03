@@ -42,6 +42,8 @@ export interface BountyCardProps {
   onIlluminate?: (bountyId: BountyId) => void;
   /** Translation strings */
   translations?: BountyCardTranslations;
+  /** Topic slug to translated name map */
+  topicTranslations?: Record<string, string>;
 }
 
 /**
@@ -86,6 +88,7 @@ export function BountyCard({
   onClick,
   onIlluminate,
   translations: t,
+  topicTranslations,
 }: BountyCardProps): ReactElement {
   const { id, title, topics, location, status, fundingAmount, contributionCount, payoutMode, expiresAt } = bounty;
 
@@ -151,9 +154,9 @@ export function BountyCard({
         {topics.slice(0, 2).map((topic) => (
           <span
             key={topic}
-            className="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-surface-container)] text-[var(--fg-secondary)] capitalize"
+            className="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-surface-container)] text-[var(--fg-secondary)]"
           >
-            {topic.replace(/-/g, ' ')}
+            {topicTranslations?.[topic] ?? topic.replace(/-/g, ' ')}
           </span>
         ))}
         {location !== undefined && (

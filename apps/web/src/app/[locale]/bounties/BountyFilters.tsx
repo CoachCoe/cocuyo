@@ -13,6 +13,8 @@ import { InfoPopover } from '@cocuyo/ui';
 export interface BountyFiltersProps {
   /** Available topics */
   topics: readonly string[];
+  /** Topic slug to translated name map */
+  topicTranslations: Record<string, string>;
   /** Currently active status filter */
   activeStatus: BountyStatus | null;
   /** Currently active topic filter */
@@ -46,6 +48,7 @@ export interface BountyFiltersProps {
 
 export function BountyFilters({
   topics,
+  topicTranslations,
   activeStatus,
   activeTopic,
   onStatusChange,
@@ -132,7 +135,7 @@ export function BountyFilters({
                     }
                   `}
                 >
-                  {topic.replace(/-/g, ' ')}
+                  {topicTranslations[topic] ?? topic.replace(/-/g, ' ')}
                 </button>
               );
             })}

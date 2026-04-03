@@ -32,6 +32,17 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
     new Set(bountiesResult.items.flatMap((b) => [...b.topics]))
   ).sort();
 
+  // Build topic translation map
+  const topicTranslations: Record<string, string> = {};
+  for (const topic of allTopics) {
+    try {
+      topicTranslations[topic] = tBounties(`topics.${topic}`);
+    } catch {
+      // Fallback to formatted slug if translation missing
+      topicTranslations[topic] = topic.replace(/-/g, ' ');
+    }
+  }
+
   // Parse info popover content
   const infoBody = tBounties('info.body')
     .split('\n\n')
@@ -55,6 +66,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
           <BountiesView
             bounties={[...bountiesResult.items]}
             topics={allTopics}
+            topicTranslations={topicTranslations}
             hasMore={bountiesResult.hasMore}
             translations={{
               all: tBounties('allBounties'),

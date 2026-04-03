@@ -13,6 +13,8 @@ import { BountyCard, EmptyState } from '@cocuyo/ui';
 export interface BountiesListProps {
   /** Bounties to display */
   bounties: readonly BountyPreview[];
+  /** Topic slug to translated name map */
+  topicTranslations: Record<string, string>;
   /** Whether there are more bounties to load */
   hasMore: boolean;
   /** Whether filters are active */
@@ -42,6 +44,7 @@ export interface BountiesListProps {
 
 export function BountiesList({
   bounties,
+  topicTranslations,
   hasMore: _hasMore,
   isFiltered,
   onBountyClick,
@@ -76,6 +79,7 @@ export function BountiesList({
           onClick={onBountyClick}
           onIlluminate={onIlluminate}
           translations={t}
+          topicTranslations={topicTranslations}
         />
       ))}
     </div>
