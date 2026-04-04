@@ -4,12 +4,8 @@
     "description": "A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected."
   },
   "nav": {
-    "explore": "Explore",
-    "posts": "Posts",
-    "earn": "Earn",
-    "signals": "Signals",
-    "bounties": "Bounties",
-    "verify": "Help Verify",
+    "stories": "Stories",
+    "helpNeeded": "Help Needed",
     "about": "About",
     "home": "Firefly Network home",
     "brandName": "FIREFLY NETWORK"
@@ -137,8 +133,8 @@
     }
   },
   "explore": {
-    "title": "Explore",
-    "description": "Stories and signals from the network. Information spreads through corroboration, not algorithms.",
+    "title": "Stories",
+    "description": "Browse ongoing investigations and ground-truth from the network.",
     "illuminateNew": "Illuminate",
     "stories": "Story Chains",
     "allSignals": "All Signals",
@@ -166,6 +162,42 @@
     "daysRemaining": "{count} days remaining",
     "hoursRemaining": "{count} hours remaining",
     "expiresSoon": "Expires soon"
+  },
+  "chain": {
+    "backToStories": "Stories",
+    "storyChain": "Story",
+    "verificationSummary": "Verification Summary",
+    "signals": "Signals",
+    "corroborations": "Corroborations",
+    "challenges": "Challenges",
+    "contributors": "Contributors",
+    "weight": "Weight",
+    "chainStarted": "Story started",
+    "addSignalCta": "Have information to add to this story?",
+    "verificationTrail": "Verification Trail",
+    "noSignals": "No signals in this story yet.",
+    "beFirstToIlluminate": "Be the First to Illuminate",
+    "tabs": {
+      "whatsHappening": "What's Happening",
+      "deepDives": "Deep Dives",
+      "helpNeeded": "Help Needed"
+    },
+    "whatsHappening": {
+      "title": "Latest Signals",
+      "description": "Ground-truth observations from the network",
+      "noSignals": "No signals yet. Be the first to illuminate."
+    },
+    "deepDives": {
+      "title": "Analysis & Reports",
+      "description": "In-depth investigations and context",
+      "noPosts": "No analysis posts yet for this story."
+    },
+    "helpNeeded": {
+      "title": "Open Bounties",
+      "description": "Funded requests for information",
+      "noBounties": "No open bounties for this story.",
+      "createBounty": "Fund a Bounty"
+    }
   },
   "feed": {
     "title": "Your Feed",

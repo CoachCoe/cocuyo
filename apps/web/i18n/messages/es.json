@@ -4,12 +4,8 @@
     "description": "Una red resistente a la vigilancia para la inteligencia colectiva. Anónimo pero humano. Verificado pero privado. Distribuido pero conectado."
   },
   "nav": {
-    "explore": "Explorar",
-    "earn": "Ganar",
-    "signals": "Señales",
-    "posts": "Publicaciones",
-    "bounties": "Recompensas",
-    "verify": "Ayudar a Verificar",
+    "stories": "Historias",
+    "helpNeeded": "Ayuda",
     "about": "Acerca de",
     "home": "Inicio de Efecto Cocuyo",
     "brandName": "EFECTO COCUYO"
@@ -137,8 +133,8 @@
     }
   },
   "explore": {
-    "title": "Explorar",
-    "description": "Historias y señales de la red. La información se propaga a través de la corroboración, no algoritmos.",
+    "title": "Historias",
+    "description": "Investigaciones y verdades desde la red.",
     "illuminateNew": "Iluminar",
     "stories": "Cadenas de Historia",
     "allSignals": "Todas las Señales",
@@ -166,6 +162,42 @@
     "daysRemaining": "{count} días restantes",
     "hoursRemaining": "{count} horas restantes",
     "expiresSoon": "Expira pronto"
+  },
+  "chain": {
+    "backToStories": "Historias",
+    "storyChain": "Historia",
+    "verificationSummary": "Resumen de Verificación",
+    "signals": "Señales",
+    "corroborations": "Corroboraciones",
+    "challenges": "Desafíos",
+    "contributors": "Contribuidores",
+    "weight": "Peso",
+    "chainStarted": "Historia iniciada",
+    "addSignalCta": "¿Tienes información para agregar a esta historia?",
+    "verificationTrail": "Rastro de Verificación",
+    "noSignals": "No hay señales en esta historia aún.",
+    "beFirstToIlluminate": "Sé el Primero en Iluminar",
+    "tabs": {
+      "whatsHappening": "Qué Pasa",
+      "deepDives": "Análisis",
+      "helpNeeded": "Ayuda"
+    },
+    "whatsHappening": {
+      "title": "Señales Recientes",
+      "description": "Observaciones desde la red",
+      "noSignals": "No hay señales aún. Sé el primero en iluminar."
+    },
+    "deepDives": {
+      "title": "Análisis e Informes",
+      "description": "Investigaciones y contexto a profundidad",
+      "noPosts": "No hay publicaciones de análisis para esta historia aún."
+    },
+    "helpNeeded": {
+      "title": "Recompensas Abiertas",
+      "description": "Solicitudes financiadas de información",
+      "noBounties": "No hay recompensas abiertas para esta historia.",
+      "createBounty": "Financiar Recompensa"
+    }
   },
   "feed": {
     "title": "Tu Feed",
