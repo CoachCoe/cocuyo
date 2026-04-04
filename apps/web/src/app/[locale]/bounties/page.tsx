@@ -61,6 +61,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
         infoTitle={tBounties('info.title')}
         infoBody={infoBody}
         infoTriggerLabel={tBounty('whatsThis')}
+        createButtonLabel={tBounties('createButton')}
       />
 
       {/* Main content */}

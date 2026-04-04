@@ -191,6 +191,38 @@ export function SignalCard({
         {content.text}
       </p>
 
+      {/* Media preview */}
+      {content.media !== undefined && content.media.length > 0 && (
+        <div className="mb-4">
+          {content.media.length === 1 && content.media[0] !== undefined && (
+            <div className="rounded-nested overflow-hidden">
+              <div
+                className="w-full h-48 bg-[var(--bg-surface-container)] flex items-center justify-center text-[var(--fg-tertiary)]"
+                aria-label={content.media[0].altText ?? 'Attached image'}
+              >
+                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          )}
+          {content.media.length > 1 && (
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-24 rounded-nested bg-[var(--bg-surface-container)] flex items-center justify-center text-[var(--fg-tertiary)]">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              {content.media.length > 1 && (
+                <span className="text-sm text-[var(--fg-tertiary)]">
+                  +{content.media.length - 1} more
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Corroboration summary */}
       <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)] mb-4">
         <span className="flex items-center gap-1">

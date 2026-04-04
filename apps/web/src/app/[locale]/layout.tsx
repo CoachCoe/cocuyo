@@ -8,6 +8,8 @@ import { SignerProvider } from '@/lib/context/SignerContext';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
 import { IlluminateModal } from '@/components/IlluminateModal';
+import { CreateBountyProvider } from '@/components/CreateBountyProvider';
+import { CreateBountyModal } from '@/components/CreateBountyModal';
 import { AppNavbar } from '@/components/AppNavbar';
 import { routing } from '../../../i18n/routing';
 
@@ -47,10 +49,13 @@ export default async function LocaleLayout({
               <ToastProvider>
                 <SignerProvider>
                   <IlluminateProvider>
-                    <AppNavbar />
-                    <div className="pt-16 min-h-screen">{children}</div>
-                    <AppFooter />
-                    <IlluminateModal />
+                    <CreateBountyProvider>
+                      <AppNavbar />
+                      <div className="pt-16 min-h-screen">{children}</div>
+                      <AppFooter />
+                      <IlluminateModal />
+                      <CreateBountyModal />
+                    </CreateBountyProvider>
                   </IlluminateProvider>
                 </SignerProvider>
               </ToastProvider>

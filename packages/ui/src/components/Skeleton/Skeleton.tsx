@@ -100,3 +100,60 @@ export function SkeletonCard({
     </div>
   );
 }
+
+/** Skeleton for PostCard */
+export function SkeletonPostCard({
+  className = '',
+}: {
+  className?: string;
+}): ReactElement {
+  return (
+    <div
+      className={`p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container space-y-4 ${className}`}
+    >
+      {/* Title */}
+      <Skeleton variant="text" width="75%" height={20} />
+      {/* Excerpt */}
+      <SkeletonText lines={2} />
+      {/* Meta row */}
+      <div className="flex items-center gap-3">
+        <Skeleton variant="rectangular" width={60} height={20} />
+        <Skeleton variant="rectangular" width={60} height={20} />
+        <Skeleton variant="rectangular" width={80} height={20} />
+      </div>
+      {/* Stats */}
+      <div className="flex gap-4">
+        <Skeleton variant="text" width={80} height={14} />
+        <Skeleton variant="text" width={80} height={14} />
+      </div>
+    </div>
+  );
+}
+
+/** Skeleton for ClaimCard */
+export function SkeletonClaimCard({
+  className = '',
+}: {
+  className?: string;
+}): ReactElement {
+  return (
+    <div
+      className={`p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container space-y-3 ${className}`}
+    >
+      {/* Status badge */}
+      <Skeleton variant="rectangular" width={80} height={22} className="rounded-full" />
+      {/* Statement */}
+      <SkeletonText lines={2} />
+      {/* Topics */}
+      <div className="flex gap-2">
+        <Skeleton variant="rectangular" width={60} height={20} className="rounded-full" />
+        <Skeleton variant="rectangular" width={70} height={20} className="rounded-full" />
+      </div>
+      {/* Evidence stats */}
+      <div className="flex gap-4">
+        <Skeleton variant="text" width={100} height={14} />
+        <Skeleton variant="text" width={100} height={14} />
+      </div>
+    </div>
+  );
+}

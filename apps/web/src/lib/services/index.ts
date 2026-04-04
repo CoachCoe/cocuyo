@@ -9,10 +9,13 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { SignalService, ChainService, BountyService } from '@cocuyo/types';
+import type { SignalService, ChainService, BountyService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
 import { MockSignalService } from './mock-signal-service';
 import { MockChainService } from './mock-chain-service';
 import { MockBountyService } from './mock-bounty-service';
+import { MockPostService } from './mock-post-service';
+import { MockClaimService } from './mock-claim-service';
+import { MockCorroborationService } from './mock-corroboration-service';
 import { ChainSignalService } from './chain-signal-service';
 import { ChainChainService } from './chain-chain-service';
 
@@ -58,9 +61,45 @@ export const chainService: ChainService = USE_CHAIN_SERVICES
  */
 export const bountyService: BountyService = new MockBountyService();
 
+/**
+ * Post service instance.
+ *
+ * Provides access to post data:
+ * - getPost: Fetch a single post by ID
+ * - getRecentPosts: Paginated post listing with filters
+ * - getPostsByChain: Get posts in a story chain
+ * - createPost: Create a new post
+ */
+export const postService: PostService = new MockPostService();
+
+/**
+ * Claim service instance.
+ *
+ * Provides access to claim data:
+ * - getClaim: Fetch a single claim by ID
+ * - getClaimsByPost: Get claims extracted from a post
+ * - getClaimsByStatus: Filter claims by status
+ * - getPendingClaims: Get claims awaiting verification
+ * - extractClaim: Extract a claim from a post
+ * - submitEvidence: Submit evidence for a claim
+ */
+export const claimService: ClaimService = new MockClaimService();
+
+/**
+ * Corroboration service instance.
+ *
+ * Provides corroboration functionality:
+ * - getSignalCorroborations: Get all corroborations for a signal
+ * - corroborate: Submit a corroboration
+ */
+export const corroborationService: CorroborationService = new MockCorroborationService();
+
 // Export classes for type checking and direct instantiation
 export { MockSignalService } from './mock-signal-service';
 export { MockChainService } from './mock-chain-service';
 export { MockBountyService } from './mock-bounty-service';
+export { MockPostService } from './mock-post-service';
+export { MockClaimService } from './mock-claim-service';
+export { MockCorroborationService } from './mock-corroboration-service';
 export { ChainSignalService } from './chain-signal-service';
 export { ChainChainService } from './chain-chain-service';

@@ -93,7 +93,7 @@ export function selectPaymentMode(context: PaymentModeContext): {
   warning?: string;
 } {
   // Compliance always requires public
-  if (context.complianceRequired) {
+  if (context.complianceRequired === true) {
     return {
       mode: 'public',
       reason: 'Compliance requirements mandate auditable transactions',

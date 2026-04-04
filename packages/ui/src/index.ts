@@ -32,6 +32,15 @@ export type { PaymentModeBadgeProps } from './components/PaymentModeBadge';
 export { BountyCard } from './components/BountyCard';
 export type { BountyCardProps } from './components/BountyCard';
 
+export { PostCard } from './components/PostCard';
+export type { PostCardProps, PostCardTranslations } from './components/PostCard';
+
+export { ClaimCard } from './components/ClaimCard';
+export type { ClaimCardProps, ClaimCardTranslations } from './components/ClaimCard';
+
+export { ClaimStatusBadge } from './components/ClaimStatusBadge';
+export type { ClaimStatusBadgeProps, ClaimStatusTranslations } from './components/ClaimStatusBadge';
+
 export { Spinner } from './components/Spinner';
 export type { SpinnerProps } from './components/Spinner';
 
@@ -44,7 +53,7 @@ export type { ToastProviderProps, ToastData, ToastVariant } from './components/T
 export { ErrorBoundary } from './components/ErrorBoundary';
 export type { ErrorBoundaryProps } from './components/ErrorBoundary';
 
-export { Skeleton, SkeletonText, SkeletonCard } from './components/Skeleton';
+export { Skeleton, SkeletonText, SkeletonCard, SkeletonPostCard, SkeletonClaimCard } from './components/Skeleton';
 export type { SkeletonProps } from './components/Skeleton';
 
 export { Breadcrumb } from './components/Breadcrumb';

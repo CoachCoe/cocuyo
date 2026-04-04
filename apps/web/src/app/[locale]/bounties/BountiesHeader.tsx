@@ -8,6 +8,8 @@
 
 import type { ReactElement, ReactNode } from 'react';
 import { InfoPopover } from '@cocuyo/ui';
+import { useSigner } from '@/lib/context/SignerContext';
+import { useCreateBounty } from '@/hooks/useCreateBounty';
 
 export interface BountiesHeaderProps {
   /** Page title */
@@ -20,6 +22,8 @@ export interface BountiesHeaderProps {
   infoBody?: ReactNode | undefined;
   /** Info trigger label */
   infoTriggerLabel?: string | undefined;
+  /** Create button label */
+  createButtonLabel?: string | undefined;
 }
 
 export function BountiesHeader({
@@ -28,8 +32,11 @@ export function BountiesHeader({
   infoTitle,
   infoBody,
   infoTriggerLabel,
+  createButtonLabel,
 }: BountiesHeaderProps): ReactElement {
   const showInfo = infoTitle !== undefined && infoBody !== undefined;
+  const { isConnected } = useSigner();
+  const { openModal } = useCreateBounty();
 
   return (
     <section className="pt-16 pb-8">
@@ -45,9 +52,21 @@ export function BountiesHeader({
             {description}
           </p>
 
-          {/* Info popover */}
-          {showInfo && (
-            <div className="mt-4 flex justify-center">
+          {/* Actions row */}
+          <div className="mt-6 flex items-center justify-center gap-4">
+            {/* Create Bounty button - only shown when connected */}
+            {isConnected && createButtonLabel !== undefined && (
+              <button
+                type="button"
+                onClick={openModal}
+                className="px-6 py-3 bg-accent text-black font-semibold rounded-nested hover:bg-accent-hover transition-colors"
+              >
+                {createButtonLabel}
+              </button>
+            )}
+
+            {/* Info popover */}
+            {showInfo && (
               <InfoPopover
                 title={infoTitle}
                 position="bottom"
@@ -55,8 +74,8 @@ export function BountiesHeader({
               >
                 {infoBody}
               </InfoPopover>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </section>

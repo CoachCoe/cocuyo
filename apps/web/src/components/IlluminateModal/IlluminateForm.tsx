@@ -19,18 +19,22 @@ import {
   type FormEvent,
 } from 'react';
 import { useSigner } from '@/lib/context/SignerContext';
-import type { ChainId, BountyId, NewSignal } from '@cocuyo/types';
+import type { ChainId, BountyId, NewSignal, MediaAttachment } from '@cocuyo/types';
+import { createContentHash } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { signalService } from '@/lib/services';
+import { getBulletinClient } from '@/lib/chain/client';
 import { TopicInput } from './TopicInput';
 import { SuggestionsList } from './SuggestionsList';
 import { useDebouncedSuggestions } from '@/lib/hooks/useDebouncedSuggestions';
+import { PhotoUpload } from '@/components/PhotoUpload';
 
 interface FormState {
   content: string;
   topics: string[];
   location: string;
   links: string;
+  photos: File[];
   selectedChains: ChainId[];
   selectedBounties: BountyId[];
   acknowledged: boolean;
@@ -47,6 +51,7 @@ export function IlluminateForm(): ReactElement {
     topics: [],
     location: '',
     links: '',
+    photos: [],
     selectedChains: preSelectedChainId != null ? [preSelectedChainId] : [],
     selectedBounties: preSelectedBountyId != null ? [preSelectedBountyId] : [],
     acknowledged: false,
@@ -95,6 +100,10 @@ export function IlluminateForm(): ReactElement {
     []
   );
 
+  const handlePhotosChange = useCallback((photos: File[]): void => {
+    setFormState((prev) => ({ ...prev, photos }));
+  }, []);
+
   const handleChainToggle = useCallback((chainId: ChainId): void => {
     setFormState((prev) => ({
       ...prev,
@@ -136,10 +145,30 @@ export function IlluminateForm(): ReactElement {
           .map((l) => l.trim())
           .filter((l) => l.length > 0);
 
+        // Upload photos to Bulletin Chain and create media attachments
+        let mediaAttachments: MediaAttachment[] = [];
+        if (formState.photos.length > 0) {
+          const bulletin = await getBulletinClient();
+          mediaAttachments = await Promise.all(
+            formState.photos.map(async (photo): Promise<MediaAttachment> => {
+              const arrayBuffer = await photo.arrayBuffer();
+              const data = new Uint8Array(arrayBuffer);
+              const result = await bulletin.upload(data);
+              return {
+                hash: createContentHash(result.cid),
+                mimeType: photo.type,
+                size: photo.size,
+                ...(photo.name && { altText: photo.name }),
+              };
+            })
+          );
+        }
+
         const newSignal: NewSignal = {
           content: {
             text: formState.content,
             ...(linksArray.length > 0 && { links: linksArray }),
+            ...(mediaAttachments.length > 0 && { media: mediaAttachments }),
           },
           context: {
             topics: formState.topics,
@@ -270,6 +299,18 @@ export function IlluminateForm(): ReactElement {
           onChange={handleLocationChange}
           placeholder="City, region, or general area"
           className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors text-base"
+        />
+      </div>
+
+      {/* Photos */}
+      <div>
+        <label className="block text-sm font-medium text-primary mb-2">
+          Photos
+        </label>
+        <PhotoUpload
+          photos={formState.photos}
+          onChange={handlePhotosChange}
+          disabled={!isConnected}
         />
       </div>
 

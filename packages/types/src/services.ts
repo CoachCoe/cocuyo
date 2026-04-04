@@ -9,15 +9,19 @@
 import type {
   BountyId,
   ChainId,
+  ClaimId,
   CorroborationId,
   DIMCredential,
   EscrowId,
   PolkadotAddress,
+  PostId,
   SignalId,
   TransactionHash,
 } from './brands';
 import type { Bounty, BountyPayout, BountyPreview, NewBounty } from './bounty';
 import type { ChainPreview, StoryChain } from './chain';
+import type { Claim, ClaimPreview, ClaimStatus, NewClaim, NewClaimEvidence } from './claim';
+import type { NewPost, Post, PostPreview, PostStatus } from './post';
 import type {
   Coin,
   CoinExponent,
@@ -149,6 +153,71 @@ export interface BountyService {
   contributeToToBounty(
     bountyId: BountyId,
     signalId: SignalId
+  ): Promise<Result<void, string>>;
+}
+
+// ============================================================================
+// Post Service
+// ============================================================================
+
+/**
+ * Post service interface.
+ */
+export interface PostService {
+  /** Get a single post by ID */
+  getPost(id: PostId, locale?: string): Promise<Post | null>;
+
+  /** Get recent posts, optionally filtered */
+  getRecentPosts(params: {
+    topic?: string;
+    status?: PostStatus;
+    pagination: PaginationParams;
+    locale?: string;
+  }): Promise<PaginatedResult<PostPreview>>;
+
+  /** Get posts by chain ID */
+  getPostsByChain(chainId: ChainId, locale?: string): Promise<readonly Post[]>;
+
+  /** Create a new post */
+  createPost(post: NewPost): Promise<Result<PostId, string>>;
+}
+
+// ============================================================================
+// Claim Service
+// ============================================================================
+
+/**
+ * Claim service interface.
+ */
+export interface ClaimService {
+  /** Get a single claim by ID */
+  getClaim(id: ClaimId, locale?: string): Promise<Claim | null>;
+
+  /** Get claims by post ID */
+  getClaimsByPost(postId: PostId, locale?: string): Promise<readonly Claim[]>;
+
+  /** Get claims by status (for workbench) */
+  getClaimsByStatus(params: {
+    status?: ClaimStatus;
+    topic?: string;
+    pagination: PaginationParams;
+    locale?: string;
+  }): Promise<PaginatedResult<ClaimPreview>>;
+
+  /** Get pending claims for workbench */
+  getPendingClaims(params: {
+    topic?: string;
+    pagination: PaginationParams;
+    locale?: string;
+  }): Promise<PaginatedResult<ClaimPreview>>;
+
+  /** Extract a claim from a post */
+  extractClaim(claim: NewClaim): Promise<Result<ClaimId, string>>;
+
+  /** Submit evidence to a claim */
+  submitEvidence(
+    claimId: ClaimId,
+    evidence: NewClaimEvidence
   ): Promise<Result<void, string>>;
 }
 

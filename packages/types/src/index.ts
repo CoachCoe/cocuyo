@@ -21,6 +21,8 @@ export type {
   TransactionHash,
   EscrowId,
   CoinPublicKey,
+  PostId,
+  ClaimId,
 } from './brands';
 
 export {
@@ -38,6 +40,8 @@ export {
   createTransactionHash,
   createEscrowId,
   createCoinPublicKey,
+  createPostId,
+  createClaimId,
 } from './brands';
 
 // Signal types
@@ -51,6 +55,29 @@ export type {
   Signal,
   NewSignal,
 } from './signal';
+
+export { MAX_SIGNAL_PHOTOS } from './signal';
+
+// Post types
+export type {
+  PostStatus,
+  PostContent,
+  PostContext,
+  Post,
+  PostPreview,
+  NewPost,
+} from './post';
+
+// Claim types
+export type {
+  ClaimStatus,
+  ClaimEvidence,
+  ClaimVerdict,
+  Claim,
+  ClaimPreview,
+  NewClaim,
+  NewClaimEvidence,
+} from './claim';
 
 // Identity types
 export type {
@@ -164,6 +191,8 @@ export type {
   ChainService,
   CorroborationService,
   BountyService,
+  PostService,
+  ClaimService,
   // Reputation services
   ReputationError,
   TopicReputationScore,

@@ -12,6 +12,7 @@ cocuyo/
 │   └── web/                 # Next.js web application
 ├── packages/
 │   ├── bulletin/            # Bulletin Chain client
+│   ├── contracts/           # Smart contract ABIs (BountyEscrow, FireflyReputation)
 │   ├── identity/            # DIM identity integration
 │   ├── types/               # Shared TypeScript types
 │   └── ui/                  # Shared UI component library
@@ -27,11 +28,12 @@ Shared TypeScript type definitions and branded type utilities.
 **Key exports:**
 
 - `Signal`, `StoryChain`, `ChainPreview` — Core data structures
+- `Post`, `PostPreview`, `Claim`, `ClaimPreview` — Content and verification types
 - `FireflyProfile`, `FireflyAuthor` — Identity types
 - `Corroboration`, `VerificationRequest` — Verification system types
 - `Bounty`, `BountyPreview` — Bounty system types
 - `Collective`, `CollectivePreview` — Collective types
-- Brand creators: `createSignalId()`, `createChainId()`, etc.
+- Brand creators: `createSignalId()`, `createChainId()`, `createPostId()`, `createClaimId()`, etc.
 
 **Design decisions:**
 
@@ -110,8 +112,13 @@ src/app/
 │   ├── chain/[id]/page.tsx   # Story chain detail
 │   ├── signal/[id]/page.tsx  # Signal detail
 │   ├── bounties/page.tsx     # Bounty listing
+│   ├── bounty/[id]/page.tsx  # Bounty detail
+│   ├── posts/page.tsx        # Posts listing
+│   ├── post/[id]/page.tsx    # Post detail
+│   ├── claim/[id]/page.tsx   # Claim detail with evidence
+│   ├── workbench/page.tsx    # Verification workbench (collective members)
+│   ├── profile/page.tsx      # Private reputation dashboard
 │   ├── collectives/page.tsx  # Collective listing
-│   ├── verify/page.tsx       # Verification queue
 │   └── settings/page.tsx     # User settings
 ├── layout.tsx
 └── not-found.tsx
@@ -142,16 +149,25 @@ All data access goes through service abstractions:
 
 ```
 src/lib/services/
-├── index.ts                   # Service exports
-├── mock-signal-service.ts     # Signal operations
-├── mock-chain-service.ts      # Chain operations
-├── mock-data.ts               # Mock data for development
-└── mock-data-bounties.ts      # Mock bounty data
+├── index.ts                       # Service exports with environment switching
+├── mock-signal-service.ts         # Signal CRUD operations
+├── mock-chain-service.ts          # Story chain operations
+├── mock-bounty-service.ts         # Bounty operations
+├── mock-post-service.ts           # Post operations
+├── mock-claim-service.ts          # Claim operations
+├── mock-corroboration-service.ts  # Corroboration operations
+├── chain-signal-service.ts        # Chain-backed signal service
+├── chain-chain-service.ts         # Chain-backed chain service
+├── mock-data.ts                   # Mock signals, chains, collectives
+├── mock-data-bounties.ts          # Mock bounty data
+└── mock-data-posts.ts             # Mock posts and claims data
 ```
 
-**Current state:** Mock services with in-memory data
+**Environment switching:** Set `NEXT_PUBLIC_USE_CHAIN=true` to use chain-backed services.
 
-**Future state:** Services will swap to chain-backed implementations when DIM and Bulletin Chain integration is complete.
+**Current state:** Mock services with session caching for demo.
+
+**Future state:** Services will swap to full chain-backed implementations.
 
 ### Host Integration
 

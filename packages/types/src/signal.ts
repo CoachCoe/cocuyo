@@ -10,6 +10,9 @@ import type { CorroborationSummary } from './corroboration';
 import type { VerificationStatus } from './verification';
 import type { FireflyAuthor } from './identity';
 
+/** Maximum number of photos allowed per signal */
+export const MAX_SIGNAL_PHOTOS = 3;
+
 /** Geographic coordinate for location context */
 export interface GeoCoordinate {
   readonly latitude: number;

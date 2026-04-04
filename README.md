@@ -24,12 +24,22 @@ The demo supports English and Latin American Spanish (es).
 
 ## Features
 
-- **Explore View** — Browse signals and story chains in list or map view
-- **Interactive Map** — Visualize signals (gold markers) and story chains (green rings) using D3
-- **Illuminate Modal** — Universal signal creation flow with smart suggestions for linking to chains and bounties
-- **Information Bounties** — Fund requests for specific information; contributors earn rewards
+### Core Features
+- **Signals** — Illuminate observations with photos (up to 3), topics, and location
+- **Story Chains** — Emergent structures formed when signals connect around topics
+- **Corroboration** — Reputation-staked verification (witness, evidence, expertise, challenge)
+- **Information Bounties** — Community-funded requests for information with rewards
+
+### Content & Verification
+- **Posts** — Longer-form analysis and investigations from the network
+- **Claims** — Verifiable truth targets extracted from posts with evidence bundles
+- **Verification Workbench** — Review queue for collective fact-checking (requires membership)
 - **Collectives** — Fact-checking groups that verify signals collaboratively
-- **Verification Workbench** — Queue of signals awaiting collective verification
+
+### User Experience
+- **Explore View** — Browse signals and story chains in list or map view
+- **Illuminate Modal** — Universal signal creation with smart chain/bounty suggestions
+- **Profile Dashboard** — Private view of your topic-weighted reputation
 - **Wallet Connection** — Connect via Triangle SDK for identity verification
 - **Light/Dark Theme** — Toggle between light and dark modes
 - **Localization** — English and Latin American Spanish (next-intl)

@@ -10,9 +10,10 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
-import type { Signal, ChainId, CorroborationType } from '@cocuyo/types';
-import { VerificationBadge } from '@cocuyo/ui';
-import { useIdentity } from '@/hooks/useIdentity';
+import type { Signal, ChainId, CorroborationType, NewCorroboration } from '@cocuyo/types';
+import { VerificationBadge, useToast } from '@cocuyo/ui';
+import { corroborationService } from '@/lib/services';
+import { useSigner } from '@/lib/context/SignerContext';
 
 interface SignalDetailViewProps {
   signal: Signal;
@@ -64,24 +65,49 @@ export function SignalDetailView({
   chainTitles,
 }: SignalDetailViewProps): ReactNode {
   const { author, content, context, corroborations, verification, chainLinks, createdAt } = signal;
-  const { status } = useIdentity();
+  const { isConnected } = useSigner();
+  const { addToast } = useToast();
 
   const [showForm, setShowForm] = useState<'corroborate' | 'challenge' | null>(null);
   const [corroborationType, setCorroborationType] = useState<CorroborationType>('witness');
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isReady = status === 'ready';
+  const isReady = isConnected;
 
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     if (!isReady) return;
     setIsSubmitting(true);
-    // TODO: Submit to service
-    setTimeout(() => {
+
+    try {
+      const newCorroboration: NewCorroboration = {
+        signalId: signal.id,
+        type: showForm === 'challenge' ? 'challenge' : corroborationType,
+        ...(note.trim().length > 0 && { note: note.trim() }),
+      };
+
+      const result = await corroborationService.corroborate(newCorroboration);
+
+      if (result.ok) {
+        addToast(
+          showForm === 'challenge'
+            ? 'Challenge submitted successfully'
+            : 'Corroboration submitted successfully',
+          'success'
+        );
+        setShowForm(null);
+        setNote('');
+      } else {
+        addToast(result.error, 'error');
+      }
+    } catch (error) {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to submit',
+        'error'
+      );
+    } finally {
       setIsSubmitting(false);
-      setShowForm(null);
-      setNote('');
-    }, 1000);
+    }
   };
 
   return (
@@ -261,7 +287,7 @@ export function SignalDetailView({
               />
             </div>
 
-            <button type="button" onClick={handleSubmit}
+            <button type="button" onClick={() => { void handleSubmit(); }}
               disabled={!isReady || isSubmitting || (showForm === 'challenge' && note.trim() === '')}
               className="w-full px-4 py-3 bg-[var(--color-firefly-gold)] text-[var(--bg-surface-main)] font-semibold rounded-nested hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? 'Submitting...' : showForm === 'corroborate' ? 'Submit Corroboration' : 'Submit Challenge'}

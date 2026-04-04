@@ -45,6 +45,12 @@ export type CoinPublicKey = string & { readonly __brand: 'CoinPublicKey' };
 /** H160 (Ethereum-style) address */
 export type H160Address = string & { readonly __brand: 'H160Address' };
 
+/** Unique identifier for a post */
+export type PostId = string & { readonly __brand: 'PostId' };
+
+/** Unique identifier for a claim (truth target extracted from a post) */
+export type ClaimId = string & { readonly __brand: 'ClaimId' };
+
 /**
  * Type guard utilities for branded types.
  * These are used to create branded values from raw strings.
@@ -103,4 +109,12 @@ export function createEscrowId(id: string): EscrowId {
 
 export function createCoinPublicKey(key: string): CoinPublicKey {
   return key as CoinPublicKey;
+}
+
+export function createPostId(id: string): PostId {
+  return id as PostId;
+}
+
+export function createClaimId(id: string): ClaimId {
+  return id as ClaimId;
 }
