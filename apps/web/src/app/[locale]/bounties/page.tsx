@@ -24,6 +24,7 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
   // Get all bounties (use extended service method for all statuses)
   const mockService = bountyService as MockBountyService;
   const bountiesResult = await mockService.getAllBounties({
+    locale,
     pagination: { limit: 50, offset: 0 },
   });
 

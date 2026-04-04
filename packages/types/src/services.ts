@@ -137,12 +137,13 @@ export interface CorroborationService {
  */
 export interface BountyService {
   /** Get a single bounty by ID */
-  getBounty(id: BountyId): Promise<Bounty | null>;
+  getBounty(id: BountyId, locale?: string): Promise<Bounty | null>;
 
   /** Get open bounties, optionally filtered */
   getOpenBounties(params: {
     topic?: string;
     location?: string;
+    locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>>;
 

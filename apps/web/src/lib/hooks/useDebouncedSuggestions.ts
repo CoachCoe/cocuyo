@@ -8,9 +8,10 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useLocale } from 'next-intl';
 import type { ChainPreview, BountyPreview } from '@cocuyo/types';
 import { chainService } from '@/lib/services';
-import { getOpenBounties } from '@/lib/services/mock-data-bounties';
+import { getOpenBounties, type Locale } from '@/lib/services/mock-data-bounties';
 import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('useDebouncedSuggestions');
@@ -27,6 +28,7 @@ export function useDebouncedSuggestions(
   topics: string[],
   location: string
 ): SuggestionsResult {
+  const locale = useLocale() as Locale;
   const [chains, setChains] = useState<ChainPreview[]>([]);
   const [bounties, setBounties] = useState<BountyPreview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +88,7 @@ export function useDebouncedSuggestions(
       });
 
       // Get open bounties and filter by topic/location match
-      const allBounties = getOpenBounties();
+      const allBounties = getOpenBounties(locale);
       const trimmedLoc = location.trim().toLowerCase();
       const matchingBounties = allBounties.filter((bounty): boolean => {
         const topicMatch = topics.some((t) =>
@@ -119,7 +121,7 @@ export function useDebouncedSuggestions(
         setIsLoading(false);
       }
     }
-  }, [topics, location]);
+  }, [topics, location, locale]);
 
   // Debounce the fetch
   useEffect(() => {

@@ -83,6 +83,7 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
 
   // Get bounties for this chain
   const allBounties = await bountyService.getOpenBounties({
+    locale,
     pagination: { limit: 50, offset: 0 },
   });
   const chainBounties = allBounties.items.filter((b) =>

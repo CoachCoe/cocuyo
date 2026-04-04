@@ -29,6 +29,7 @@ import {
   getBountyById,
   getBountyPreviews,
   getOpenBounties,
+  type Locale,
 } from './mock-data-bounties';
 
 // Session cache for user-created bounties
@@ -65,14 +66,14 @@ export class MockBountyService implements BountyService {
   /**
    * Get a single bounty by ID.
    */
-  async getBounty(id: BountyId): Promise<Bounty | null> {
+  async getBounty(id: BountyId, locale?: string): Promise<Bounty | null> {
     // Check user bounties first
     const userBounty = userBounties.find((b) => b.id === id);
     if (userBounty) return userBounty;
 
     // Simulate network delay
     await this.delay(50);
-    return getBountyById(id) ?? null;
+    return getBountyById(id, (locale ?? 'en') as Locale) ?? null;
   }
 
   /**
@@ -81,16 +82,19 @@ export class MockBountyService implements BountyService {
   async getOpenBounties(params: {
     topic?: string;
     location?: string;
+    locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>> {
     // Simulate network delay
     await this.delay(100);
 
+    const locale = (params.locale ?? 'en') as Locale;
+
     // Combine user bounties with mock bounties
     const userOpenPreviews = userBounties
       .filter((b) => b.status === 'open')
       .map(bountyToPreview);
-    let bounties = [...userOpenPreviews, ...getOpenBounties()];
+    let bounties = [...userOpenPreviews, ...getOpenBounties(locale)];
 
     // Filter by topic if specified
     if (params.topic !== undefined) {
@@ -126,14 +130,17 @@ export class MockBountyService implements BountyService {
     topic?: string;
     location?: string;
     status?: string;
+    locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>> {
     // Simulate network delay
     await this.delay(100);
 
+    const locale = (params.locale ?? 'en') as Locale;
+
     // Combine user bounties with mock bounties
     const userPreviews = userBounties.map(bountyToPreview);
-    let bounties = [...userPreviews, ...getBountyPreviews()];
+    let bounties = [...userPreviews, ...getBountyPreviews(locale)];
 
     // Filter by status if specified
     if (params.status !== undefined) {
