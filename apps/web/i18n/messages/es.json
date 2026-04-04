@@ -332,7 +332,52 @@
     "description": "Qué estamos buscando",
     "paymentPublic": "pUSD Público",
     "paymentPrivate": "Privado",
-    "whatsThis": "¿Qué es esto?"
+    "whatsThis": "¿Qué es esto?",
+    "posted": "Publicado"
+  },
+  "corroboration": {
+    "modal": {
+      "title": "Corroborar Señal",
+      "stakingWarning": "Estás apostando tu reputación en esta corroboración.",
+      "noteLabel": "Agregar una nota (opcional)",
+      "notePlaceholder": "Explica tu corroboración...",
+      "cancel": "Cancelar",
+      "submitChallenge": "Enviar Objeción",
+      "corroborate": "Corroborar"
+    },
+    "types": {
+      "witness": "Testigo",
+      "witnessDesc": "Puedo confirmar independientemente esta observación.",
+      "evidence": "Evidencia",
+      "evidenceDesc": "Tengo documentación adicional que apoya esto.",
+      "expertise": "Experiencia",
+      "expertiseDesc": "Esto es consistente con mi conocimiento en este dominio.",
+      "challenge": "Objeción",
+      "challengeDesc": "Tengo razones para creer que esto es inexacto."
+    },
+    "referencedLinks": "Enlaces referenciados:",
+    "source": "Fuente",
+    "weight": "Peso"
+  },
+  "signal": {
+    "topics": "Temas:",
+    "location": "Ubicación:",
+    "illuminated": "Iluminado:",
+    "corroborations": "Corroboraciones",
+    "witnesses": "Testigos",
+    "evidence": "Evidencia",
+    "expert": "Experto",
+    "challenges": "Objeciones",
+    "totalWeight": "Peso total:",
+    "partOfChains": "Parte de Cadenas de Historias",
+    "addCorroboration": "Agregar Corroboración",
+    "submitChallenge": "Enviar Objeción",
+    "typeLabel": "Tipo",
+    "noteOptional": "Nota (opcional)",
+    "reasonForChallenge": "Razón de la objeción",
+    "notePlaceholder": "Agrega contexto o detalles...",
+    "challengePlaceholder": "Explica por qué esto es inexacto...",
+    "setupRequired": "Completa la configuración de tu perfil para {action} señales."
   },
   "posts": {
     "title": "Publicaciones",

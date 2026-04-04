@@ -7,62 +7,61 @@
 
 import type { ReactElement } from 'react';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { Signal, CorroborationType } from '@cocuyo/types';
+import { useFormatters } from '@/lib/hooks/useFormatters';
 
 interface ChainSignalListProps {
   signals: Signal[];
-}
-
-function formatRelativeTime(timestamp: number): string {
-  const now = Date.now();
-  const diff = now - timestamp * 1000;
-
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-
-  return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 interface CorroborationModalProps {
   signal: Signal;
   onClose: () => void;
   onSubmit: (type: CorroborationType, note: string) => void;
+  translations: {
+    title: string;
+    stakingWarning: string;
+    witness: string;
+    witnessDesc: string;
+    evidence: string;
+    evidenceDesc: string;
+    expertise: string;
+    expertiseDesc: string;
+    challenge: string;
+    challengeDesc: string;
+    noteLabel: string;
+    notePlaceholder: string;
+    cancel: string;
+    submitChallenge: string;
+    corroborate: string;
+  };
 }
 
-function CorroborationModal({ signal: _signal, onClose, onSubmit }: CorroborationModalProps): ReactElement {
+function CorroborationModal({ signal: _signal, onClose, onSubmit, translations: t }: CorroborationModalProps): ReactElement {
   const [selectedType, setSelectedType] = useState<CorroborationType | null>(null);
   const [note, setNote] = useState('');
 
   const corroborationTypes: { type: CorroborationType; label: string; description: string }[] = [
     {
       type: 'witness',
-      label: 'Witness',
-      description: 'I can independently confirm this observation.',
+      label: t.witness,
+      description: t.witnessDesc,
     },
     {
       type: 'evidence',
-      label: 'Evidence',
-      description: 'I have additional documentation that supports this.',
+      label: t.evidence,
+      description: t.evidenceDesc,
     },
     {
       type: 'expertise',
-      label: 'Expertise',
-      description: 'This is consistent with my knowledge in this domain.',
+      label: t.expertise,
+      description: t.expertiseDesc,
     },
     {
       type: 'challenge',
-      label: 'Challenge',
-      description: 'I have reason to believe this is inaccurate.',
+      label: t.challenge,
+      description: t.challengeDesc,
     },
   ];
 
@@ -75,9 +74,9 @@ function CorroborationModal({ signal: _signal, onClose, onSubmit }: Corroboratio
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
       <div className="w-full max-w-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg p-6">
-        <h3 className="text-xl font-semibold mb-2">Corroborate Signal</h3>
+        <h3 className="text-xl font-semibold mb-2">{t.title}</h3>
         <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-          You are staking your reputation on this corroboration.
+          {t.stakingWarning}
         </p>
 
         <div className="space-y-3 mb-6">
@@ -125,13 +124,13 @@ function CorroborationModal({ signal: _signal, onClose, onSubmit }: Corroboratio
             htmlFor="corroboration-note"
             className="block text-sm text-[var(--color-text-secondary)] mb-2"
           >
-            Add a note (optional)
+            {t.noteLabel}
           </label>
           <textarea
             id="corroboration-note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Explain your corroboration..."
+            placeholder={t.notePlaceholder}
             className="w-full p-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
             rows={3}
           />
@@ -143,7 +142,7 @@ function CorroborationModal({ signal: _signal, onClose, onSubmit }: Corroboratio
             onClick={onClose}
             className="flex-1 px-4 py-2 text-sm border border-[var(--color-border-default)] rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-emphasis)] transition-colors"
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             type="button"
@@ -157,7 +156,7 @@ function CorroborationModal({ signal: _signal, onClose, onSubmit }: Corroboratio
                 : 'bg-[var(--color-accent)] text-black hover:opacity-90'
             }`}
           >
-            {selectedType === 'challenge' ? 'Submit Challenge' : 'Corroborate'}
+            {selectedType === 'challenge' ? t.submitChallenge : t.corroborate}
           </button>
         </div>
       </div>
@@ -167,11 +166,31 @@ function CorroborationModal({ signal: _signal, onClose, onSubmit }: Corroboratio
 
 export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement {
   const [corroboratingSignal, setCorroboratingSignal] = useState<Signal | null>(null);
+  const { formatRelativeTime } = useFormatters();
+  const t = useTranslations('corroboration');
 
   const handleCorroborate = (type: CorroborationType, note: string): void => {
     // In real implementation, this would submit to the chain
     alert(`Corroboration submitted: ${type}${note ? ` - "${note}"` : ''}`);
     setCorroboratingSignal(null);
+  };
+
+  const modalTranslations = {
+    title: t('modal.title'),
+    stakingWarning: t('modal.stakingWarning'),
+    witness: t('types.witness'),
+    witnessDesc: t('types.witnessDesc'),
+    evidence: t('types.evidence'),
+    evidenceDesc: t('types.evidenceDesc'),
+    expertise: t('types.expertise'),
+    expertiseDesc: t('types.expertiseDesc'),
+    challenge: t('types.challenge'),
+    challengeDesc: t('types.challengeDesc'),
+    noteLabel: t('modal.noteLabel'),
+    notePlaceholder: t('modal.notePlaceholder'),
+    cancel: t('modal.cancel'),
+    submitChallenge: t('modal.submitChallenge'),
+    corroborate: t('modal.corroborate'),
   };
 
   return (
@@ -218,7 +237,7 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                   )}
                   <span aria-hidden="true">&middot;</span>
                   <time dateTime={new Date(signal.createdAt * 1000).toISOString()}>
-                    {formatRelativeTime(signal.createdAt)}
+                    {formatRelativeTime(signal.createdAt * 1000)}
                   </time>
                 </div>
 
@@ -231,7 +250,7 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                 {signal.content.links != null && signal.content.links.length > 0 && (
                   <div className="mb-4">
                     <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
-                      Referenced links:
+                      {t('referencedLinks')}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {signal.content.links.map((link, i) => (
@@ -242,7 +261,7 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                           rel="noopener noreferrer"
                           className="text-sm text-[var(--color-accent)] hover:underline"
                         >
-                          Source {i + 1}
+                          {t('source')} {i + 1}
                         </a>
                       ))}
                     </div>
@@ -275,7 +294,7 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                       </span>
                     )}
                     <span className="text-[var(--color-text-tertiary)]">
-                      Weight: {signal.corroborations.totalWeight.toFixed(1)}
+                      {t('weight')}: {signal.corroborations.totalWeight.toFixed(1)}
                     </span>
                   </div>
 
@@ -284,7 +303,7 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                     onClick={() => setCorroboratingSignal(signal)}
                     className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
                   >
-                    Corroborate
+                    {t('modal.corroborate')}
                   </button>
                 </div>
               </div>
@@ -299,6 +318,7 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
           signal={corroboratingSignal}
           onClose={() => setCorroboratingSignal(null)}
           onSubmit={handleCorroborate}
+          translations={modalTranslations}
         />
       )}
     </>

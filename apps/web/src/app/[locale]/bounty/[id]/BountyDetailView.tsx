@@ -11,6 +11,7 @@ import type { Bounty, Signal } from '@cocuyo/types';
 import { formatPUSD } from '@cocuyo/types';
 import { BountyStatusBadge, PaymentModeBadge, SignalCard } from '@cocuyo/ui';
 import { useIlluminate } from '@/hooks/useIlluminate';
+import { useFormatters } from '@/lib/hooks/useFormatters';
 
 export interface BountyDetailViewProps {
   /** The bounty to display */
@@ -31,45 +32,8 @@ export interface BountyDetailViewProps {
     topicsLabel: string;
     locationLabel: string;
     descriptionLabel: string;
+    postedLabel: string;
   };
-}
-
-/**
- * Format timestamp as readable date.
- */
-function formatDate(timestamp: number): string {
-  const ts = timestamp > 1e12 ? timestamp : timestamp * 1000;
-  return new Date(ts).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-/**
- * Format expiry as days remaining.
- */
-function formatExpiry(expiresAt: number): string {
-  const now = Date.now();
-  const ts = expiresAt > 1e12 ? expiresAt : expiresAt * 1000;
-  const diff = ts - now;
-
-  if (diff <= 0) {
-    return 'Expired';
-  }
-
-  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-  if (days === 0) {
-    const hours = Math.floor(diff / (60 * 60 * 1000));
-    if (hours === 0) {
-      return 'Expires soon';
-    }
-    return `${String(hours)} hours remaining`;
-  }
-  if (days === 1) {
-    return '1 day remaining';
-  }
-  return `${String(days)} days remaining`;
 }
 
 export function BountyDetailView({
@@ -78,6 +42,7 @@ export function BountyDetailView({
   translations: t,
 }: BountyDetailViewProps): ReactElement {
   const { openModal } = useIlluminate();
+  const { formatDate, formatExpiry } = useFormatters();
 
   const isOpen = bounty.status === 'open';
   const isFulfilled = bounty.status === 'fulfilled';
@@ -177,7 +142,7 @@ export function BountyDetailView({
 
                 {/* Posted date */}
                 <div className="pt-3 border-t border-[var(--border-subtle)]">
-                  <dt className="text-[var(--fg-tertiary)] mb-1">Posted</dt>
+                  <dt className="text-[var(--fg-tertiary)] mb-1">{t.postedLabel}</dt>
                   <dd className="text-[var(--fg-secondary)]">{formatDate(bounty.createdAt)}</dd>
                 </div>
               </dl>

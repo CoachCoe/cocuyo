@@ -332,7 +332,52 @@
     "description": "What we're looking for",
     "paymentPublic": "Public pUSD",
     "paymentPrivate": "Private",
-    "whatsThis": "What's this?"
+    "whatsThis": "What's this?",
+    "posted": "Posted"
+  },
+  "corroboration": {
+    "modal": {
+      "title": "Corroborate Signal",
+      "stakingWarning": "You are staking your reputation on this corroboration.",
+      "noteLabel": "Add a note (optional)",
+      "notePlaceholder": "Explain your corroboration...",
+      "cancel": "Cancel",
+      "submitChallenge": "Submit Challenge",
+      "corroborate": "Corroborate"
+    },
+    "types": {
+      "witness": "Witness",
+      "witnessDesc": "I can independently confirm this observation.",
+      "evidence": "Evidence",
+      "evidenceDesc": "I have additional documentation that supports this.",
+      "expertise": "Expertise",
+      "expertiseDesc": "This is consistent with my knowledge in this domain.",
+      "challenge": "Challenge",
+      "challengeDesc": "I have reason to believe this is inaccurate."
+    },
+    "referencedLinks": "Referenced links:",
+    "source": "Source",
+    "weight": "Weight"
+  },
+  "signal": {
+    "topics": "Topics:",
+    "location": "Location:",
+    "illuminated": "Illuminated:",
+    "corroborations": "Corroborations",
+    "witnesses": "Witnesses",
+    "evidence": "Evidence",
+    "expert": "Expert",
+    "challenges": "Challenges",
+    "totalWeight": "Total weight:",
+    "partOfChains": "Part of Story Chains",
+    "addCorroboration": "Add Corroboration",
+    "submitChallenge": "Submit Challenge",
+    "typeLabel": "Type",
+    "noteOptional": "Note (optional)",
+    "reasonForChallenge": "Reason for challenge",
+    "notePlaceholder": "Add context or details...",
+    "challengePlaceholder": "Explain why this is inaccurate...",
+    "setupRequired": "Complete your profile setup to {action} signals."
   },
   "posts": {
     "title": "Posts",

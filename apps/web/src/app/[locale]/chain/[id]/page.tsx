@@ -22,6 +22,7 @@ import type { ChainId } from '@cocuyo/types';
 import { createChainId, formatPUSDCompact } from '@cocuyo/types';
 import { routing } from '../../../../../i18n/routing';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { createServerFormatters } from '@/lib/hooks/useFormatters';
 
 /**
  * Generate static params for all known chains across all locales.
@@ -55,18 +56,12 @@ function getStatusColor(status: string): string {
   }
 }
 
-function formatDate(timestamp: number): string {
-  return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
 
 export default async function ChainPage({ params }: ChainPageProps): Promise<ReactElement> {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('chain');
+  const { formatDate } = createServerFormatters(locale);
   const chain = await chainService.getChain(id as ChainId);
 
   if (chain == null) {

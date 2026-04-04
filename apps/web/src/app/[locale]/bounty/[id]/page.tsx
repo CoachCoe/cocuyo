@@ -90,6 +90,7 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
           topicsLabel: t('topics'),
           locationLabel: t('location'),
           descriptionLabel: t('description'),
+          postedLabel: t('posted'),
         }}
       />
     </main>
