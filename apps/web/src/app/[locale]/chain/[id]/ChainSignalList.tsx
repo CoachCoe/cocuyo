@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Signal, CorroborationType } from '@cocuyo/types';
 import { useFormatters } from '@/lib/hooks/useFormatters';
+import { ExternalLink } from '@/components/ExternalLink';
 
 interface ChainSignalListProps {
   signals: Signal[];
@@ -254,15 +255,13 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {signal.content.links.map((link, i) => (
-                        <a
+                        <ExternalLink
                           key={i}
                           href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className="text-sm text-[var(--color-accent)] hover:underline"
                         >
                           {t('source')} {i + 1}
-                        </a>
+                        </ExternalLink>
                       ))}
                     </div>
                   </div>

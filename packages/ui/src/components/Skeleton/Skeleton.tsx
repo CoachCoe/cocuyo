@@ -157,3 +157,41 @@ export function SkeletonClaimCard({
     </div>
   );
 }
+
+/** Skeleton for SignalCard */
+export function SkeletonSignalCard({
+  className = '',
+}: {
+  className?: string;
+}): ReactElement {
+  return (
+    <div
+      className={`p-5 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container space-y-4 ${className}`}
+    >
+      {/* Author row */}
+      <div className="flex items-center gap-3">
+        <Skeleton variant="circular" width={36} height={36} />
+        <div className="flex-1 space-y-1">
+          <Skeleton variant="text" width="35%" height={14} />
+          <Skeleton variant="text" width="20%" height={12} />
+        </div>
+        <Skeleton variant="rectangular" width={70} height={22} className="rounded-full" />
+      </div>
+      {/* Content */}
+      <SkeletonText lines={3} />
+      {/* Topics */}
+      <div className="flex gap-2">
+        <Skeleton variant="rectangular" width={60} height={20} className="rounded-full" />
+        <Skeleton variant="rectangular" width={80} height={20} className="rounded-full" />
+      </div>
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)]">
+        <div className="flex gap-4">
+          <Skeleton variant="text" width={50} height={14} />
+          <Skeleton variant="text" width={50} height={14} />
+        </div>
+        <Skeleton variant="text" width={80} height={14} />
+      </div>
+    </div>
+  );
+}

@@ -11,6 +11,7 @@ import { ClaimCard } from '@cocuyo/ui';
 import { routing } from '../../../../../i18n/routing';
 import { type Locale, getAllPostIds } from '@/lib/services/mock-data-posts';
 import { PostActions } from './PostActions';
+import { ExternalLink } from '@/components/ExternalLink';
 
 export function generateStaticParams(): Array<{ locale: string; id: string }> {
   const postIds = getAllPostIds();
@@ -123,14 +124,12 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
               <ul className="space-y-1">
                 {post.content.links.map((link, index) => (
                   <li key={index}>
-                    <a
+                    <ExternalLink
                       href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="text-sm text-[var(--color-firefly-gold)] hover:underline break-all"
                     >
                       {link}
-                    </a>
+                    </ExternalLink>
                   </li>
                 ))}
               </ul>
@@ -143,7 +142,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
             postTitle={post.content.title}
             translations={{
               extractClaim: tClaims('extractClaim'),
-              connectToExtract: tClaims('connectToExtract'),
+              signInToExtract: tClaims('signInToExtract'),
               claimExtracted: tClaims('claimExtracted'),
             }}
           />

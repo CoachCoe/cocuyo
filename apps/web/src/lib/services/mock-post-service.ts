@@ -19,38 +19,21 @@ import type {
   Result,
   NewPost,
 } from '@cocuyo/types';
-import { ok, err, createPostId, createDIMCredential } from '@cocuyo/types';
-import { calculateCIDFromJSON } from '@cocuyo/bulletin';
+import { ok, err, createPostId } from '@cocuyo/types';
 import { getPosts, getPostPreviews, getPostById } from './mock-data-posts';
 import type { Locale } from './mock-data-posts';
-import { getBulletinClient } from '../chain/client';
+import {
+  getConnectedWallet,
+  getConnectedCredential,
+  generatePseudonym,
+  paginate,
+  filterByTopic,
+  uploadToBulletin,
+  fetchFromBulletin,
+} from './mock-service-utils';
 
 // Session cache for user-created posts
 const userPosts: Post[] = [];
-
-// Connected wallet (imported from signal service for consistency)
-let connectedAddress: string | null = null;
-
-export function setPostWallet(address: string | null): void {
-  connectedAddress = address;
-}
-
-function generatePseudonym(address: string): string {
-  const adjectives = [
-    'Swift', 'Bright', 'Silent', 'Golden', 'Crystal',
-    'Shadow', 'Thunder', 'Cosmic', 'Ember', 'Frost',
-  ];
-  const nouns = [
-    'Firefly', 'Phoenix', 'Condor', 'Jaguar', 'Quetzal',
-    'Orchid', 'Ceiba', 'Cacao', 'Ocelot', 'Toucan',
-  ];
-
-  const addrBytes = address.slice(2, 10);
-  const adjIdx = parseInt(addrBytes.slice(0, 4), 16) % adjectives.length;
-  const nounIdx = parseInt(addrBytes.slice(4, 8), 16) % nouns.length;
-
-  return `${adjectives[adjIdx]} ${nouns[nounIdx]}`;
-}
 
 function postToPreview(post: Post): PostPreview {
   return {
@@ -77,12 +60,7 @@ export class MockPostService implements PostService {
     if (mockPost) return mockPost;
 
     // Try Bulletin Chain
-    try {
-      const bulletin = await getBulletinClient();
-      return await bulletin.fetchJson<Post>(id);
-    } catch {
-      return null;
-    }
+    return fetchFromBulletin<Post>(id);
   }
 
   getRecentPosts(params: {
@@ -96,13 +74,8 @@ export class MockPostService implements PostService {
     const mockPreviews = getPostPreviews(params.locale ?? 'en');
     let filtered = [...userPreviews, ...mockPreviews];
 
-    // Filter by topic
-    if (params.topic !== undefined) {
-      const topicLower = params.topic.toLowerCase();
-      filtered = filtered.filter((p) =>
-        p.topics.some((t) => t.toLowerCase().includes(topicLower))
-      );
-    }
+    // Filter by topic using shared utility
+    filtered = filterByTopic(filtered, (p) => p.topics, params.topic);
 
     // Filter by status
     if (params.status) {
@@ -112,13 +85,8 @@ export class MockPostService implements PostService {
     // Sort by creation time (newest first)
     filtered.sort((a, b) => b.createdAt - a.createdAt);
 
-    // Paginate
-    const total = filtered.length;
-    const start = params.pagination.offset;
-    const end = start + params.pagination.limit;
-    const items = filtered.slice(start, end);
-
-    return Promise.resolve({ items, total, hasMore: end < total });
+    // Paginate using shared utility
+    return Promise.resolve(paginate(filtered, params.pagination));
   }
 
   getPostsByChain(chainId: ChainId, locale: Locale = 'en'): Promise<readonly Post[]> {
@@ -132,12 +100,14 @@ export class MockPostService implements PostService {
   }
 
   async createPost(newPost: NewPost): Promise<Result<PostId, string>> {
-    if (connectedAddress === null) {
+    const connectedAddress = getConnectedWallet();
+    const dimCredential = getConnectedCredential();
+
+    if (connectedAddress === null || dimCredential === null) {
       return err('Wallet not connected. Please connect to create a post.');
     }
 
     const now = Date.now();
-    const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
     const post: Post = {
       id: '' as PostId,
       author: {
@@ -164,22 +134,15 @@ export class MockPostService implements PostService {
       updatedAt: now,
     };
 
-    try {
-      const bulletin = await getBulletinClient();
-      const encoder = new TextEncoder();
-      const data = encoder.encode(JSON.stringify(post));
-      const result = await bulletin.upload(data);
-
-      const postWithId: Post = { ...post, id: createPostId(result.cid) };
-      userPosts.unshift(postWithId);
-      return ok(postWithId.id);
-    } catch {
-      // Fallback to local CID
-      const cid = calculateCIDFromJSON(post);
-      const postWithId: Post = { ...post, id: createPostId(cid) };
-      userPosts.unshift(postWithId);
-      return ok(postWithId.id);
+    // Upload to Bulletin Chain (with local fallback)
+    const uploadResult = await uploadToBulletin(post);
+    if (!uploadResult.ok) {
+      return err(uploadResult.error);
     }
+
+    const postWithId: Post = { ...post, id: createPostId(uploadResult.value.cid) };
+    userPosts.unshift(postWithId);
+    return ok(postWithId.id);
   }
 
   getAllPosts(params: {

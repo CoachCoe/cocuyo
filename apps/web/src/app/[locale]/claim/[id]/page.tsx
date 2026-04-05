@@ -135,7 +135,7 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
             claimStatement={claim.statement}
             translations={{
               submitEvidence: tClaims('submitEvidence'),
-              connectToSubmit: tClaims('connectToSubmit'),
+              signInToSubmit: tClaims('signInToSubmit'),
               evidenceSubmitted: tClaims('evidenceSubmitted'),
               supportThisClaim: tClaims('supportThisClaim'),
               contradictThisClaim: tClaims('contradictThisClaim'),

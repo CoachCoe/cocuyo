@@ -93,7 +93,7 @@ export function CreateBountyForm(): ReactElement {
   if (!isConnected) {
     return (
       <div className="text-center py-8">
-        <p className="text-secondary mb-4">{t('connectWallet')}</p>
+        <p className="text-secondary mb-4">{t('signInRequired')}</p>
       </div>
     );
   }

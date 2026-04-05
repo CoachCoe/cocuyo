@@ -13,8 +13,8 @@ import { EmptyState } from '@cocuyo/ui';
 import { ReputationRadar } from './ReputationRadar';
 
 export interface ProfileViewTranslations {
-  connectRequired: string;
-  connectDescription: string;
+  signInRequired: string;
+  signInDescription: string;
   reputation: string;
   overallScore: string;
   topicScores: string;
@@ -60,8 +60,8 @@ export function ProfileView({
     return (
       <div className="py-16">
         <EmptyState
-          title={t.connectRequired}
-          description={t.connectDescription}
+          title={t.signInRequired}
+          description={t.signInDescription}
         />
       </div>
     );

@@ -8,7 +8,7 @@ import { useMemo, type ReactElement, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Signal, ChainId, BountyId } from '@cocuyo/types';
-import { SignalCard, AnimatedList, EmptyState, type SignalBountyInfo } from '@cocuyo/ui';
+import { SignalCard, AnimatedList, EmptyState, SkeletonSignalCard, type SignalBountyInfo } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
 import { getBountiesForSignal } from '@/lib/services/mock-data-bounties';
 
@@ -24,6 +24,8 @@ interface SignalsListProps {
   infoBody?: ReactNode | undefined;
   /** Whether the list is currently filtered */
   isFiltered?: boolean | undefined;
+  /** Whether loading */
+  isLoading?: boolean | undefined;
   /** Custom empty state message */
   emptyStateMessage?: string | undefined;
 }
@@ -36,6 +38,7 @@ export function SignalsList({
   infoTitle,
   infoBody,
   isFiltered = false,
+  isLoading = false,
   emptyStateMessage,
 }: SignalsListProps): ReactElement {
   const router = useRouter();
@@ -74,6 +77,20 @@ export function SignalsList({
     }
     return map;
   }, [signals]);
+
+  // Show loading skeletons
+  if (isLoading) {
+    return (
+      <div>
+        <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} />
+        <div className="grid gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonSignalCard key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

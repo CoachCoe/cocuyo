@@ -303,7 +303,7 @@
       "durationLabel": "Duración",
       "submit": "Crear Recompensa",
       "creating": "Creando...",
-      "connectWallet": "Conecta tu billetera para crear una recompensa."
+      "signInRequired": "Inicia sesión para crear una recompensa."
     },
     "createButton": "Crear Recompensa"
   },
@@ -438,10 +438,10 @@
     "noSupportingEvidence": "Aún no se ha presentado evidencia de apoyo.",
     "noContradictingEvidence": "No se ha presentado evidencia contradictoria.",
     "extractClaim": "Extraer una Afirmación",
-    "connectToExtract": "Conecta tu billetera para extraer afirmaciones",
+    "signInToExtract": "Inicia sesión para extraer afirmaciones",
     "claimExtracted": "¡Afirmación extraída exitosamente!",
     "submitEvidence": "Presentar Evidencia",
-    "connectToSubmit": "Conecta tu billetera para presentar evidencia",
+    "signInToSubmit": "Inicia sesión para presentar evidencia",
     "evidenceSubmitted": "¡Evidencia presentada exitosamente!",
     "supportThisClaim": "Apoyar esta afirmación",
     "contradictThisClaim": "Contradecir esta afirmación"
@@ -461,14 +461,14 @@
     "clearFilters": "Limpiar filtros",
     "noClaims": "Sin afirmaciones pendientes",
     "noClaimsDescription": "Todas las afirmaciones han sido revisadas. Vuelve más tarde para nuevas presentaciones.",
-    "accessRequired": "Se Requiere Conexión",
-    "accessDescription": "Conecta tu billetera para acceder a la mesa de verificación. Se requiere membresía en colectivo para enviar veredictos."
+    "accessRequired": "Se Requiere Inicio de Sesión",
+    "accessDescription": "Inicia sesión para acceder a la mesa de verificación. Se requiere membresía en colectivo para enviar veredictos."
   },
   "profile": {
     "title": "Tu Perfil",
     "description": "Tu panel de reputación privado y contribuciones.",
-    "connectRequired": "Se Requiere Conexión de Billetera",
-    "connectDescription": "Conecta tu billetera para ver tu perfil y reputación.",
+    "signInRequired": "Se Requiere Inicio de Sesión",
+    "signInDescription": "Inicia sesión para ver tu perfil y reputación.",
     "reputation": "Reputación",
     "overallScore": "Puntuación General",
     "topicScores": "Reputación por Tema",

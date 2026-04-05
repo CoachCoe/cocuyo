@@ -16,6 +16,7 @@ import { VerificationBadge, useToast } from '@cocuyo/ui';
 import { corroborationService } from '@/lib/services';
 import { useSigner } from '@/lib/context/SignerContext';
 import { useFormatters } from '@/lib/hooks/useFormatters';
+import { ExternalLink } from '@/components/ExternalLink';
 
 interface SignalDetailViewProps {
   signal: Signal;
@@ -120,10 +121,13 @@ export function SignalDetailView({
             <h3 className="text-sm font-medium text-[var(--fg-secondary)]">Referenced Links</h3>
             <div className="space-y-1">
               {content.links.map((link, i) => (
-                <a key={i} href={link} target="_blank" rel="noopener noreferrer"
-                  className="block text-sm text-[var(--color-firefly-gold)] hover:underline truncate">
+                <ExternalLink
+                  key={i}
+                  href={link}
+                  className="block text-sm text-[var(--color-firefly-gold)] hover:underline truncate"
+                >
                   {link}
-                </a>
+                </ExternalLink>
               ))}
             </div>
           </div>

@@ -50,8 +50,8 @@ export default async function ProfilePage({ params }: ProfilePageProps): Promise
           <ProfileView
             topicTranslations={topicTranslations}
             translations={{
-              connectRequired: tProfile('connectRequired'),
-              connectDescription: tProfile('connectDescription'),
+              signInRequired: tProfile('signInRequired'),
+              signInDescription: tProfile('signInDescription'),
               reputation: tProfile('reputation'),
               overallScore: tProfile('overallScore'),
               topicScores: tProfile('topicScores'),

@@ -75,6 +75,7 @@ export function useFireflyReputation(
         const contract = getReadContract();
         const credHash = toCredentialHash(credential);
         const topicHash = toTopicHash(topic);
+        // Type assertion: getScore returns uint16 per ABI, ethers returns bigint
         const score = (await contract.getFunction('getScore')(
           credHash,
           topicHash
@@ -95,6 +96,7 @@ export function useFireflyReputation(
         const contract = getReadContract();
         const credHash = toCredentialHash(credential);
         const topicHash = toTopicHash(topic);
+        // Type assertion: getTopicScore returns TopicScore struct per ABI
         const result = (await contract.getFunction('getTopicScore')(
           credHash,
           topicHash
@@ -137,6 +139,7 @@ export function useFireflyReputation(
         const contract = getReadContract();
         const credHash = toCredentialHash(credential);
         const topicHashes = topics.map(toTopicHash);
+        // Type assertion: getScores returns uint16[] per ABI, ethers returns bigint[]
         const scores = (await contract.getFunction('getScores')(
           credHash,
           topicHashes
@@ -161,6 +164,7 @@ export function useFireflyReputation(
   const getAllDefaultScores = useCallback(
     async (credential: string): Promise<Map<DefaultTopic, number>> => {
       const scores = await getScores(credential, [...DEFAULT_TOPICS]);
+      // Type assertion: Map keys are narrowed from string to DefaultTopic since we passed DEFAULT_TOPICS
       return scores as Map<DefaultTopic, number>;
     },
     [getScores]
@@ -170,6 +174,7 @@ export function useFireflyReputation(
   const getTopics = useCallback(async (): Promise<string[]> => {
     try {
       const contract = getReadContract();
+      // Type assertion: getTopics returns bytes32[] per ABI as hex strings
       const topics = (await contract.getFunction('getTopics')()) as string[];
       return topics;
     } catch (err) {
@@ -182,6 +187,7 @@ export function useFireflyReputation(
   const getTopicCount = useCallback(async (): Promise<number> => {
     try {
       const contract = getReadContract();
+      // Type assertion: topicCount returns uint256 per ABI, ethers returns bigint
       const count = (await contract.getFunction('topicCount')()) as bigint;
       return Number(count);
     } catch (err) {
@@ -196,6 +202,7 @@ export function useFireflyReputation(
       try {
         const contract = getReadContract();
         const topicHash = toTopicHash(topic);
+        // Type assertion: isRegisteredTopic returns bool per ABI
         const result = (await contract.getFunction('isRegisteredTopic')(
           topicHash
         )) as boolean;
@@ -212,6 +219,7 @@ export function useFireflyReputation(
     async (address: string): Promise<boolean> => {
       try {
         const contract = getReadContract();
+        // Type assertion: updaters mapping returns bool per ABI
         const result = (await contract.getFunction('updaters')(address)) as boolean;
         return result;
       } catch {
@@ -229,6 +237,7 @@ export function useFireflyReputation(
   }> => {
     try {
       const contract = getReadContract();
+      // Type assertion: These constants are uint16 per ABI, ethers returns bigint
       const [defaultScore, minScore, maxScore] = (await Promise.all([
         contract.getFunction('DEFAULT_SCORE')(),
         contract.getFunction('MIN_SCORE')(),

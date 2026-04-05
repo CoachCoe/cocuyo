@@ -21,8 +21,7 @@ import type {
   NewClaim,
   NewClaimEvidence,
 } from '@cocuyo/types';
-import { ok, err, createClaimId, createDIMCredential } from '@cocuyo/types';
-import { calculateCIDFromJSON } from '@cocuyo/bulletin';
+import { ok, err, createClaimId } from '@cocuyo/types';
 import {
   getClaimPreviews,
   getClaimById,
@@ -30,17 +29,17 @@ import {
   getPendingClaims as getMockPendingClaims,
 } from './mock-data-posts';
 import type { Locale } from './mock-data-posts';
-import { getBulletinClient } from '../chain/client';
+import {
+  getConnectedWallet,
+  getConnectedCredential,
+  paginate,
+  filterByTopic,
+  uploadToBulletin,
+  fetchFromBulletin,
+} from './mock-service-utils';
 
 // Session cache for user-created claims
 const userClaims: Claim[] = [];
-
-// Connected wallet
-let connectedAddress: string | null = null;
-
-export function setClaimWallet(address: string | null): void {
-  connectedAddress = address;
-}
 
 function claimToPreview(claim: Claim): ClaimPreview {
   return {
@@ -67,12 +66,7 @@ export class MockClaimService implements ClaimService {
     if (mockClaim) return mockClaim;
 
     // Try Bulletin Chain
-    try {
-      const bulletin = await getBulletinClient();
-      return await bulletin.fetchJson<Claim>(id);
-    } catch {
-      return null;
-    }
+    return fetchFromBulletin<Claim>(id);
   }
 
   getClaimsByPost(postId: PostId, locale: Locale = 'en'): Promise<readonly Claim[]> {
@@ -97,24 +91,14 @@ export class MockClaimService implements ClaimService {
       filtered = filtered.filter((c) => c.status === params.status);
     }
 
-    // Filter by topic
-    if (params.topic !== undefined) {
-      const topicLower = params.topic.toLowerCase();
-      filtered = filtered.filter((c) =>
-        c.topics.some((t) => t.toLowerCase().includes(topicLower))
-      );
-    }
+    // Filter by topic using shared utility
+    filtered = filterByTopic(filtered, (c) => c.topics, params.topic);
 
     // Sort by creation time (newest first)
     filtered.sort((a, b) => b.createdAt - a.createdAt);
 
-    // Paginate
-    const total = filtered.length;
-    const start = params.pagination.offset;
-    const end = start + params.pagination.limit;
-    const items = filtered.slice(start, end);
-
-    return Promise.resolve({ items, total, hasMore: end < total });
+    // Paginate using shared utility
+    return Promise.resolve(paginate(filtered, params.pagination));
   }
 
   getPendingClaims(params: {
@@ -130,33 +114,25 @@ export class MockClaimService implements ClaimService {
 
     let filtered = [...userPending, ...mockPending];
 
-    // Filter by topic
-    if (params.topic !== undefined) {
-      const topicLower = params.topic.toLowerCase();
-      filtered = filtered.filter((c) =>
-        c.topics.some((t) => t.toLowerCase().includes(topicLower))
-      );
-    }
+    // Filter by topic using shared utility
+    filtered = filterByTopic(filtered, (c) => c.topics, params.topic);
 
     // Sort oldest first for workbench
     filtered.sort((a, b) => a.createdAt - b.createdAt);
 
-    // Paginate
-    const total = filtered.length;
-    const start = params.pagination.offset;
-    const end = start + params.pagination.limit;
-    const items = filtered.slice(start, end);
-
-    return Promise.resolve({ items, total, hasMore: end < total });
+    // Paginate using shared utility
+    return Promise.resolve(paginate(filtered, params.pagination));
   }
 
   async extractClaim(newClaim: NewClaim): Promise<Result<ClaimId, string>> {
-    if (connectedAddress === null) {
+    const connectedAddress = getConnectedWallet();
+    const dimCredential = getConnectedCredential();
+
+    if (connectedAddress === null || dimCredential === null) {
       return err('Wallet not connected. Please connect to extract a claim.');
     }
 
     const now = Date.now();
-    const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
     const claim: Claim = {
       id: '' as ClaimId,
       statement: newClaim.statement,
@@ -169,29 +145,25 @@ export class MockClaimService implements ClaimService {
       updatedAt: now,
     };
 
-    try {
-      const bulletin = await getBulletinClient();
-      const encoder = new TextEncoder();
-      const data = encoder.encode(JSON.stringify(claim));
-      const result = await bulletin.upload(data);
-
-      const claimWithId: Claim = { ...claim, id: createClaimId(result.cid) };
-      userClaims.unshift(claimWithId);
-      return ok(claimWithId.id);
-    } catch {
-      // Fallback to local CID
-      const cid = calculateCIDFromJSON(claim);
-      const claimWithId: Claim = { ...claim, id: createClaimId(cid) };
-      userClaims.unshift(claimWithId);
-      return ok(claimWithId.id);
+    // Upload to Bulletin Chain (with local fallback)
+    const uploadResult = await uploadToBulletin(claim);
+    if (!uploadResult.ok) {
+      return err(uploadResult.error);
     }
+
+    const claimWithId: Claim = { ...claim, id: createClaimId(uploadResult.value.cid) };
+    userClaims.unshift(claimWithId);
+    return ok(claimWithId.id);
   }
 
   submitEvidence(
     claimId: ClaimId,
     evidence: NewClaimEvidence
   ): Promise<Result<void, string>> {
-    if (connectedAddress === null) {
+    const connectedAddress = getConnectedWallet();
+    const dimCredential = getConnectedCredential();
+
+    if (connectedAddress === null || dimCredential === null) {
       return Promise.resolve(err('Wallet not connected. Please connect to submit evidence.'));
     }
 
@@ -203,7 +175,7 @@ export class MockClaimService implements ClaimService {
         const newEvidence: ClaimEvidence = {
           signalId: evidence.signalId,
           supports: evidence.supports,
-          submittedBy: createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`),
+          submittedBy: dimCredential,
           submittedAt: Date.now(),
           ...(evidence.note !== undefined && { note: evidence.note }),
         };

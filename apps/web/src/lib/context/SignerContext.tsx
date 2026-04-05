@@ -27,11 +27,7 @@ import {
 import type { PolkadotSigner } from 'polkadot-api';
 import type { Result } from '@cocuyo/types';
 import { SignerNotConnectedError, SigningFailedError } from '../errors';
-import { setConnectedWallet } from '../services/mock-signal-service';
-import { setPostWallet } from '../services/mock-post-service';
-import { setClaimWallet } from '../services/mock-claim-service';
-import { setBountyWallet } from '../services/mock-bounty-service';
-import { setCorroborationWallet } from '../services/mock-corroboration-service';
+import { setConnectedWallet } from '../services/mock-service-utils';
 
 /** Context value with manager access and state */
 interface SignerContextValue {
@@ -71,14 +67,10 @@ export function SignerProvider({ children }: SignerProviderProps): ReactNode {
     };
   }, []);
 
-  // Update connected wallet for services
+  // Update connected wallet for all services (centralized state)
   useEffect(() => {
     const address = state?.selectedAccount?.address ?? null;
     setConnectedWallet(address);
-    setPostWallet(address);
-    setClaimWallet(address);
-    setBountyWallet(address);
-    setCorroborationWallet(address);
   }, [state?.selectedAccount]);
 
   // Render children while loading (no blocking)

@@ -19,7 +19,7 @@ export interface ClaimActionsProps {
   claimStatement: string;
   translations: {
     submitEvidence: string;
-    connectToSubmit: string;
+    signInToSubmit: string;
     evidenceSubmitted: string;
     supportThisClaim: string;
     contradictThisClaim: string;
@@ -39,7 +39,7 @@ export function ClaimActions({
 
   const handleSubmitEvidence = async (type: 'support' | 'contradict'): Promise<void> => {
     if (!isConnected) {
-      addToast(t.connectToSubmit, 'warning');
+      addToast(t.signInToSubmit, 'warning');
       return;
     }
 

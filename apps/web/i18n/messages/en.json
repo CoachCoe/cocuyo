@@ -303,7 +303,7 @@
       "durationLabel": "Duration",
       "submit": "Create Bounty",
       "creating": "Creating...",
-      "connectWallet": "Connect your wallet to create a bounty."
+      "signInRequired": "Sign in to create a bounty."
     },
     "createButton": "Create Bounty"
   },
@@ -438,10 +438,10 @@
     "noSupportingEvidence": "No supporting evidence submitted yet.",
     "noContradictingEvidence": "No contradicting evidence submitted.",
     "extractClaim": "Extract a Claim",
-    "connectToExtract": "Connect your wallet to extract claims",
+    "signInToExtract": "Sign in to extract claims",
     "claimExtracted": "Claim extracted successfully!",
     "submitEvidence": "Submit Evidence",
-    "connectToSubmit": "Connect your wallet to submit evidence",
+    "signInToSubmit": "Sign in to submit evidence",
     "evidenceSubmitted": "Evidence submitted successfully!",
     "supportThisClaim": "Support this claim",
     "contradictThisClaim": "Contradict this claim"
@@ -461,14 +461,14 @@
     "clearFilters": "Clear filters",
     "noClaims": "No pending claims",
     "noClaimsDescription": "All claims have been reviewed. Check back later for new submissions.",
-    "accessRequired": "Connection Required",
-    "accessDescription": "Connect your wallet to access the verification workbench. Collective membership is required to submit verdicts."
+    "accessRequired": "Sign In Required",
+    "accessDescription": "Sign in to access the verification workbench. Collective membership is required to submit verdicts."
   },
   "profile": {
     "title": "Your Profile",
     "description": "View your topic-weighted reputation and contribution history.",
-    "connectRequired": "Connection Required",
-    "connectDescription": "Connect your wallet to view your profile and reputation scores.",
+    "signInRequired": "Sign In Required",
+    "signInDescription": "Sign in to view your profile and reputation scores.",
     "reputation": "Reputation",
     "overallScore": "Overall Score",
     "topicScores": "Reputation by Topic",

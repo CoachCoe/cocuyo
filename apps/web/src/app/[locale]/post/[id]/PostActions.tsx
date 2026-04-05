@@ -18,7 +18,7 @@ export interface PostActionsProps {
   postTitle: string;
   translations: {
     extractClaim: string;
-    connectToExtract: string;
+    signInToExtract: string;
     claimExtracted: string;
   };
 }
@@ -34,7 +34,7 @@ export function PostActions({
 
   const handleExtractClaim = async (): Promise<void> => {
     if (!isConnected) {
-      addToast(t.connectToExtract, 'warning');
+      addToast(t.signInToExtract, 'warning');
       return;
     }
 

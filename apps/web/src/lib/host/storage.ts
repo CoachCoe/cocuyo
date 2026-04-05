@@ -7,6 +7,9 @@
 
 import { hostLocalStorage } from '@novasamatech/product-sdk';
 import { isHosted } from './detect';
+import { createLogger } from '../logging';
+
+const logger = createLogger('HostStorage');
 
 /**
  * Prefix for all storage keys to avoid collisions.
@@ -36,7 +39,8 @@ export async function read<T>(key: string): Promise<T | null> {
       }
       return JSON.parse(value) as T;
     }
-  } catch {
+  } catch (readError) {
+    logger.swallowed('Storage read failed', 'read', readError, { key });
     return null;
   }
 }
@@ -56,8 +60,8 @@ export async function write(key: string, value: unknown): Promise<void> {
     } else {
       localStorage.setItem(prefixedKey, JSON.stringify(value));
     }
-  } catch {
-    // Silently fail on storage errors
+  } catch (writeError) {
+    logger.swallowed('Storage write failed', 'write', writeError, { key });
   }
 }
 
@@ -75,8 +79,8 @@ export async function clear(key: string): Promise<void> {
     } else {
       localStorage.removeItem(prefixedKey);
     }
-  } catch {
-    // Silently fail on storage errors
+  } catch (clearError) {
+    logger.swallowed('Storage clear failed', 'clear', clearError, { key });
   }
 }
 
