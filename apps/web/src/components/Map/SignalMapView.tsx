@@ -14,7 +14,7 @@
 
 import { useState, useEffect, lazy, Suspense, type ReactNode } from 'react';
 import Link from 'next/link';
-import { isInContainer } from '@/lib/host/detect';
+import { canMakeExternalRequests } from '@/lib/host/detect';
 import type { Signal, VerificationStatus } from '@cocuyo/types';
 import type { MarkerData, MapLocation } from './BaseMap';
 
@@ -160,9 +160,9 @@ export function SignalMapView({
 }: SignalMapViewProps): ReactNode {
   const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
 
-  // Check map availability
+  // Check map availability (requires network for tile loading)
   useEffect(() => {
-    setMapAvailable(!isInContainer());
+    setMapAvailable(canMakeExternalRequests());
   }, []);
 
   // Filter signals that have coordinates

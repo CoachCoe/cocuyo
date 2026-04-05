@@ -17,7 +17,7 @@ import {
   Suspense,
   type ReactNode,
 } from 'react';
-import { isInContainer } from '@/lib/host/detect';
+import { canMakeExternalRequests } from '@/lib/host/detect';
 import { reverseGeocode, formatLocation, type GeoLocation } from '@/lib/geo';
 import { ManualLocationInput } from './ManualLocationInput';
 
@@ -84,16 +84,9 @@ export function LocationPicker({
   const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
   const [isGeocoding, setIsGeocoding] = useState(false);
 
-  // Determine if map should be available
+  // Determine if map should be available (requires network for tile loading)
   useEffect(() => {
-    // If inside Triangle container, assume map won't work (no network)
-    if (isInContainer()) {
-      setMapAvailable(false);
-      return;
-    }
-
-    // Outside container, map should work
-    setMapAvailable(true);
+    setMapAvailable(canMakeExternalRequests());
   }, []);
 
   // Handle map click - reverse geocode the location
