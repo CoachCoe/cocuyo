@@ -1,9 +1,12 @@
 /**
  * Seed Store — Runtime storage for seeded mock data.
  *
- * This store holds data populated by the seed script.
- * Mock services read from this store, which starts empty.
- * Run `pnpm seed:dev` to populate with test data.
+ * This store holds data populated by the seed function.
+ * Mock services read from this store, which starts empty by default.
+ *
+ * To enable seed data:
+ * - Set NEXT_PUBLIC_SEED_DATA=true in your .env.local file
+ * - This will auto-populate seed data on first access
  */
 
 import type {
@@ -56,7 +59,7 @@ interface SeedStore {
 
 /**
  * The global seed store.
- * Starts empty - populated by seed script or at runtime.
+ * Starts empty - populated on first access if NEXT_PUBLIC_SEED_DATA=true.
  */
 const store: SeedStore = {
   signals: [],
@@ -69,35 +72,68 @@ const store: SeedStore = {
   isSeeded: false,
 };
 
+/**
+ * Auto-seed flag. Set to true once we've attempted to auto-seed.
+ */
+let autoSeedAttempted = false;
+
+/**
+ * Attempt to auto-seed if the environment variable is set.
+ * Only runs once, on first data access.
+ */
+function ensureAutoSeeded(): void {
+  if (autoSeedAttempted) return;
+  autoSeedAttempted = true;
+
+  // Check if auto-seed is enabled via environment variable
+  if (process.env.NEXT_PUBLIC_SEED_DATA === 'true' && !store.isSeeded) {
+    // Dynamically import and run the seed function
+    // This is async but we call it fire-and-forget style
+    // The next request will have the data
+    void import('./seed-data').then(({ seedAll }) => {
+      seedAll();
+    }).catch(() => {
+      // Seed module not found or error - continue with empty data
+    });
+  }
+}
+
 // ============================================================
 // Store accessors (used by mock services)
 // ============================================================
 
 export function getSignals(locale: Locale = 'en'): Signal[] {
+  ensureAutoSeeded();
   return store.signals.map((s) => s.data[locale]);
 }
 
 export function getChains(locale: Locale = 'en'): StoryChain[] {
+  ensureAutoSeeded();
   return store.chains.map((c) => c.data[locale]);
 }
 
 export function getBounties(locale: Locale = 'en'): Bounty[] {
+  ensureAutoSeeded();
   return store.bounties.map((b) => b.data[locale]);
 }
 
 export function getPosts(locale: Locale = 'en'): Post[] {
+  ensureAutoSeeded();
   return store.posts.map((p) => p.data[locale]);
 }
 
 export function getClaims(locale: Locale = 'en'): Claim[] {
+  ensureAutoSeeded();
   return store.claims.map((c) => c.data[locale]);
 }
 
 export function getCollectives(): Collective[] {
+  ensureAutoSeeded();
   return store.collectives;
 }
 
 export function getVerificationRequests(): VerificationRequest[] {
+  ensureAutoSeeded();
   return store.verificationRequests;
 }
 
