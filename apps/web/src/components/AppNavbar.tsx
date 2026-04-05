@@ -35,6 +35,7 @@ export function AppNavbar(): ReactElement {
       homeLabel={t('home')}
       homeHref={`/${locale}`}
       brandName={t('brandName')}
+      stageBadge="ALPHA"
     />
   );
 }

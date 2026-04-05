@@ -63,6 +63,8 @@ export interface NavbarProps {
   homeHref?: string;
   /** Brand name displayed in navbar */
   brandName?: string;
+  /** Development stage badge (e.g., "ALPHA", "BETA") */
+  stageBadge?: string;
 }
 
 const defaultNavLinks: NavLink[] = [
@@ -82,6 +84,7 @@ export function Navbar({
   homeLabel = 'Firefly Network home',
   homeHref = '/',
   brandName = 'FIREFLY NETWORK',
+  stageBadge,
 }: NavbarProps): ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const Link = LinkComponent;
@@ -115,6 +118,11 @@ export function Navbar({
           <span className="font-semibold text-lg tracking-tight">
             {brandName}
           </span>
+          {stageBadge != null && (
+            <span className="px-1.5 py-0.5 text-[10px] font-medium tracking-wide border border-[var(--border-emphasis)] rounded text-[var(--fg-secondary)]">
+              {stageBadge}
+            </span>
+          )}
         </Link>
 
         {/* Desktop Navigation */}
