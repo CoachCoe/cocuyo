@@ -13,17 +13,17 @@ import {
   useState,
   useEffect,
   useCallback,
-  lazy,
-  Suspense,
   type ReactNode,
 } from 'react';
+import dynamic from 'next/dynamic';
 import { canMakeExternalRequests } from '@/lib/host/detect';
 import { reverseGeocode, formatLocation, type GeoLocation } from '@/lib/geo';
 import { ManualLocationInput } from './ManualLocationInput';
 
-// Lazy load the map to avoid SSR issues
-const BaseMap = lazy(() =>
-  import('./BaseMap').then((m) => ({ default: m.BaseMap }))
+// Dynamic import with SSR disabled - Leaflet requires window
+const BaseMap = dynamic(
+  () => import('./BaseMap').then((m) => m.BaseMap),
+  { ssr: false }
 );
 
 export interface LocationPickerValue {
@@ -172,25 +172,23 @@ export function LocationPicker({
       {/* Map view */}
       {effectiveMode === 'map' && (
         <div className="space-y-2">
-          <Suspense fallback={<MapLoader />}>
-            <BaseMap
-              center={value.coordinates ?? { lat: 20, lon: 0 }}
-              zoom={value.coordinates ? 12 : 2}
-              onClick={(loc) => void handleMapClick(loc)}
-              markers={
-                value.coordinates
-                  ? [
-                      {
-                        id: 'selected',
-                        position: value.coordinates,
-                        color: 'gold',
-                      },
-                    ]
-                  : []
-              }
-              className="h-64"
-            />
-          </Suspense>
+          <BaseMap
+            center={value.coordinates ?? { lat: 20, lon: 0 }}
+            zoom={value.coordinates ? 12 : 2}
+            onClick={(loc) => void handleMapClick(loc)}
+            markers={
+              value.coordinates
+                ? [
+                    {
+                      id: 'selected',
+                      position: value.coordinates,
+                      color: 'gold',
+                    },
+                  ]
+                : []
+            }
+            className="h-64"
+          />
 
           {/* Show geocoded name or loading state */}
           {value.coordinates && (

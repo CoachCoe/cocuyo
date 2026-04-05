@@ -12,15 +12,17 @@
  * Falls back to a message when map isn't available (Triangle).
  */
 
-import { useState, useEffect, lazy, Suspense, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { canMakeExternalRequests } from '@/lib/host/detect';
 import type { Signal, VerificationStatus } from '@cocuyo/types';
 import type { MarkerData, MapLocation } from './BaseMap';
 
-// Lazy load the map
-const BaseMap = lazy(() =>
-  import('./BaseMap').then((m) => ({ default: m.BaseMap }))
+// Dynamic import with SSR disabled - Leaflet requires window
+const BaseMap = dynamic(
+  () => import('./BaseMap').then((m) => m.BaseMap),
+  { ssr: false }
 );
 
 interface SignalMapViewProps {
@@ -224,15 +226,13 @@ export function SignalMapView({
   }
 
   return (
-    <Suspense fallback={<MapLoader className={className} />}>
-      <BaseMap
-        center={center}
-        zoom={zoom}
-        markers={markers}
-        selectedMarkerId={selectedSignalId ?? null}
-        onMarkerClick={onSignalSelect ? (id) => onSignalSelect(id) : undefined}
-        className={className}
-      />
-    </Suspense>
+    <BaseMap
+      center={center}
+      zoom={zoom}
+      markers={markers}
+      selectedMarkerId={selectedSignalId ?? null}
+      onMarkerClick={onSignalSelect ? (id) => onSignalSelect(id) : undefined}
+      className={className}
+    />
   );
 }

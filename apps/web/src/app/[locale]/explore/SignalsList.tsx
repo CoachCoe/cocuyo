@@ -6,12 +6,18 @@
  */
 
 import type { ReactElement, ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Signal, ChainId, BountyId } from '@cocuyo/types';
 import { SignalCard, AnimatedList, EmptyState, SkeletonSignalCard, type SignalBountyInfo } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
-import { SignalMapView } from '@/components/Map';
+
+// Dynamic import with SSR disabled - map requires window/Leaflet
+const SignalMapView = dynamic(
+  () => import('@/components/Map').then((m) => m.SignalMapView),
+  { ssr: false }
+);
 
 export type ViewMode = 'list' | 'map';
 
