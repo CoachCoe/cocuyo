@@ -477,5 +477,64 @@
     "corroborations": "Corroboraciones",
     "challenges": "Cuestionamientos",
     "noActivity": "Aún no tienes actividad. ¡Comienza iluminando una señal!"
+  },
+  "emptyStates": {
+    "signals": {
+      "title": "Aún no hay señales",
+      "description": "Sé el primero en iluminar. Comparte lo que observas para comenzar a construir entendimiento colectivo.",
+      "filtered": {
+        "title": "No se encontraron señales",
+        "description": "Ninguna señal coincide con tus filtros. Intenta ajustar tu búsqueda."
+      },
+      "chain": {
+        "title": "No hay señales en esta historia",
+        "description": "Esta historia espera su primera señal. Contribuye tus observaciones."
+      }
+    },
+    "bounties": {
+      "title": "Aún no hay recompensas",
+      "description": "Ningún miembro de la comunidad ha publicado recompensas todavía. Vuelve pronto.",
+      "filtered": {
+        "title": "No hay recompensas coincidentes",
+        "description": "Intenta ajustar tus filtros para encontrar recompensas."
+      }
+    },
+    "chains": {
+      "title": "Aún no hay historias",
+      "description": "Las historias emergen cuando las luciérnagas conectan sus señales. Sé el primero en iluminar.",
+      "filtered": {
+        "title": "No hay historias coincidentes",
+        "description": "Ninguna historia coincide con tus filtros actuales."
+      }
+    },
+    "posts": {
+      "title": "Aún no hay publicaciones",
+      "description": "No se ha compartido análisis de formato largo todavía. Vuelve pronto.",
+      "filtered": {
+        "title": "No hay publicaciones coincidentes",
+        "description": "Ninguna publicación coincide con tus filtros actuales."
+      }
+    },
+    "claims": {
+      "title": "Aún no hay afirmaciones",
+      "description": "No se han extraído afirmaciones verificables todavía.",
+      "filtered": {
+        "title": "No hay afirmaciones coincidentes",
+        "description": "Ninguna afirmación coincide con tus filtros actuales."
+      }
+    },
+    "workbench": {
+      "title": "No hay afirmaciones para revisar",
+      "description": "Todas las afirmaciones han sido procesadas. Vuelve más tarde para nuevas presentaciones."
+    },
+    "profile": {
+      "title": "Aún no hay contribuciones",
+      "description": "Comienza a iluminar señales y corroborar para construir tu reputación."
+    },
+    "seedRequired": {
+      "title": "No hay datos cargados",
+      "description": "Ejecuta 'pnpm seed:dev' para cargar datos de desarrollo.",
+      "hint": "Este es un entorno de desarrollo."
+    }
   }
 }

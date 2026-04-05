@@ -14,14 +14,14 @@
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf .next dist out coverage",
     "serve": "npx serve dist",
-    "deploy": "dotns bulletin upload ./dist --parallel --print-contenthash"
+    "deploy": "dotns bulletin upload ./dist --parallel --print-contenthash",
+    "seed:dev": "tsx scripts/seed-dev.ts"
   },
   "dependencies": {
     "@cocuyo/bulletin": "workspace:*",
     "@cocuyo/identity": "workspace:*",
     "@cocuyo/types": "workspace:*",
     "@cocuyo/ui": "workspace:*",
-    "ethers": "^6.10.0",
     "@novasamatech/host-api": "0.6.6-1",
     "@novasamatech/product-sdk": "0.6.6-1",
     "@polkadot-apps/address": "0.3.2",
@@ -31,6 +31,7 @@
     "@polkadot/util-crypto": "^14.0.3",
     "d3": "^7.9.0",
     "d3-geo": "^3.1.1",
+    "ethers": "^6.10.0",
     "next": "^15.5.14",
     "next-intl": "^4.8.3",
     "polkadot-api": "1.23.1",
@@ -60,6 +61,7 @@
     "jsdom": "^24.0.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.0",
     "typescript-eslint": "^8.33.0",
     "vitest": "^3.1.0"

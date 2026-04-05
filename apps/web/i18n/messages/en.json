@@ -477,5 +477,64 @@
     "corroborations": "Corroborations",
     "challenges": "Challenges",
     "noActivity": "No activity yet. Illuminate signals and corroborate to build your reputation."
+  },
+  "emptyStates": {
+    "signals": {
+      "title": "No signals yet",
+      "description": "Be the first to illuminate. Share what you observe to start building collective understanding.",
+      "filtered": {
+        "title": "No signals found",
+        "description": "No signals match your current filters. Try adjusting your search."
+      },
+      "chain": {
+        "title": "No signals in this story",
+        "description": "This story is waiting for its first signal. Contribute your observations."
+      }
+    },
+    "bounties": {
+      "title": "No bounties yet",
+      "description": "No community members have posted bounties yet. Check back soon.",
+      "filtered": {
+        "title": "No matching bounties",
+        "description": "Try adjusting your filters to find bounties."
+      }
+    },
+    "chains": {
+      "title": "No stories yet",
+      "description": "Stories emerge when fireflies connect their signals. Be the first to illuminate.",
+      "filtered": {
+        "title": "No matching stories",
+        "description": "No stories match your current filters."
+      }
+    },
+    "posts": {
+      "title": "No posts yet",
+      "description": "No longer-form analysis has been shared yet. Check back soon.",
+      "filtered": {
+        "title": "No matching posts",
+        "description": "No posts match your current filters."
+      }
+    },
+    "claims": {
+      "title": "No claims yet",
+      "description": "No verifiable claims have been extracted yet.",
+      "filtered": {
+        "title": "No matching claims",
+        "description": "No claims match your current filters."
+      }
+    },
+    "workbench": {
+      "title": "No claims to review",
+      "description": "All claims have been processed. Check back later for new submissions."
+    },
+    "profile": {
+      "title": "No contributions yet",
+      "description": "Start illuminating signals and corroborating to build your reputation."
+    },
+    "seedRequired": {
+      "title": "No data loaded",
+      "description": "Run 'pnpm seed:dev' to load development data.",
+      "hint": "This is a development environment."
+    }
   }
 }

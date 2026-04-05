@@ -8,7 +8,7 @@ import { useMemo, type ReactElement, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Signal, ChainId, BountyId } from '@cocuyo/types';
-import { SignalCard, AnimatedList, type SignalBountyInfo } from '@cocuyo/ui';
+import { SignalCard, AnimatedList, EmptyState, type SignalBountyInfo } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
 import { getBountiesForSignal } from '@/lib/services/mock-data-bounties';
 
@@ -75,11 +75,6 @@ export function SignalsList({
     return map;
   }, [signals]);
 
-  // Default empty message
-  const defaultEmptyMessage = isFiltered
-    ? 'No signals in this story chain yet.'
-    : 'No signals yet. Be the first to illuminate.';
-
   return (
     <div>
       <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} />
@@ -107,9 +102,17 @@ export function SignalsList({
           })}
         </AnimatedList>
       ) : (
-        <p className="text-secondary text-center py-12">
-          {emptyStateMessage ?? defaultEmptyMessage}
-        </p>
+        <div className="py-8">
+          <EmptyState
+            title={emptyStateMessage ?? (isFiltered ? 'No signals found' : 'No signals yet')}
+            description={
+              isFiltered
+                ? 'No signals match your current filters.'
+                : 'Be the first to illuminate. Share what you observe.'
+            }
+            size="md"
+          />
+        </div>
       )}
 
       {hasMore && (
