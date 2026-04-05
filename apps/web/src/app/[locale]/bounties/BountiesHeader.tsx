@@ -52,21 +52,9 @@ export function BountiesHeader({
             {description}
           </p>
 
-          {/* Actions row */}
-          <div className="mt-6 flex items-center justify-center gap-4">
-            {/* Create Bounty button - only shown when connected */}
-            {isConnected && createButtonLabel !== undefined && (
-              <button
-                type="button"
-                onClick={openModal}
-                className="px-6 py-3 bg-accent text-black font-semibold rounded-nested hover:bg-accent-hover transition-colors"
-              >
-                {createButtonLabel}
-              </button>
-            )}
-
-            {/* Info popover */}
-            {showInfo && (
+          {/* Info popover - right under description */}
+          {showInfo && (
+            <div className="mt-3 flex justify-center">
               <InfoPopover
                 title={infoTitle}
                 position="bottom"
@@ -74,8 +62,21 @@ export function BountiesHeader({
               >
                 {infoBody}
               </InfoPopover>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Create Bounty button - only shown when connected */}
+          {isConnected && createButtonLabel !== undefined && (
+            <div className="mt-6 flex justify-center">
+              <button
+                type="button"
+                onClick={openModal}
+                className="px-6 py-3 bg-accent text-black font-semibold rounded-nested hover:bg-accent-hover transition-colors"
+              >
+                {createButtonLabel}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
