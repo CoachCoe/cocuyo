@@ -20,7 +20,6 @@ import {
   ok,
   err,
   createBountyId,
-  createDIMCredential,
   createEscrowId,
   createTransactionHash,
 } from '@cocuyo/types';
@@ -31,16 +30,10 @@ import {
   getOpenBounties,
   type Locale,
 } from './mock-data-bounties';
+import { getConnectedWallet, getConnectedCredential } from './mock-service-utils';
 
 // Session cache for user-created bounties
 const userBounties: Bounty[] = [];
-
-// Connected wallet
-let connectedAddress: string | null = null;
-
-export function setBountyWallet(address: string | null): void {
-  connectedAddress = address;
-}
 
 function bountyToPreview(bounty: Bounty): BountyPreview {
   return {
@@ -178,14 +171,14 @@ export class MockBountyService implements BountyService {
    * Create a new bounty.
    */
   createBounty(newBounty: NewBounty): Promise<Result<BountyId, string>> {
-    if (connectedAddress === null) {
+    const dimCredential = getConnectedCredential();
+    if (dimCredential === null) {
       return Promise.resolve(
         err('Wallet not connected. Please connect to create a bounty.')
       );
     }
 
     const now = Date.now();
-    const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
 
     const bounty: Bounty = {
       id: '' as BountyId,
@@ -221,7 +214,7 @@ export class MockBountyService implements BountyService {
     bountyId: BountyId,
     signalId: SignalId
   ): Promise<Result<void, string>> {
-    if (connectedAddress === null) {
+    if (getConnectedWallet() === null) {
       return Promise.resolve(
         err('Wallet not connected. Please connect to contribute.')
       );

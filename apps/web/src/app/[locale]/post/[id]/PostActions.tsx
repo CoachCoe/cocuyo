@@ -8,8 +8,11 @@
  */
 
 import { useState, type ReactElement } from 'react';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import type { PostId } from '@cocuyo/types';
 import { useSigner } from '@/hooks';
+import { useClaimService } from '@/lib/services/hooks';
 import { useToast } from '@cocuyo/ui';
 import { IlluminateFAB } from '@/components/IlluminateFAB';
 
@@ -24,12 +27,15 @@ export interface PostActionsProps {
 }
 
 export function PostActions({
-  postId: _postId,
-  postTitle: _postTitle,
+  postId,
+  postTitle,
   translations: t,
 }: PostActionsProps): ReactElement {
   const { isConnected } = useSigner();
+  const claimService = useClaimService();
   const { addToast } = useToast();
+  const router = useRouter();
+  const locale = useLocale();
   const [isExtracting, setIsExtracting] = useState(false);
 
   const handleExtractClaim = async (): Promise<void> => {
@@ -40,10 +46,18 @@ export function PostActions({
 
     setIsExtracting(true);
 
-    // Simulate extraction (would integrate with claim service)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const result = await claimService.extractClaim({
+      statement: postTitle,
+      sourcePostId: postId,
+    });
 
-    addToast(t.claimExtracted, 'success');
+    if (result.ok) {
+      addToast(t.claimExtracted, 'success');
+      router.push(`/${locale}/claim/${result.value}`);
+    } else {
+      addToast(result.error, 'error');
+    }
+
     setIsExtracting(false);
   };
 

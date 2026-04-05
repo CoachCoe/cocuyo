@@ -4,6 +4,22 @@
  * All data access should go through these services.
  * Components should never import mock data directly.
  *
+ * ## Preferred: Service Hooks
+ *
+ * Use the hook-based services for new code:
+ * ```typescript
+ * import { useSignalService } from '@/lib/services/hooks';
+ * const { illuminate } = useSignalService();
+ * ```
+ *
+ * Hooks provide:
+ * - Integrated wallet state from useSigner()
+ * - No global state management needed
+ * - Both mock and chain implementations
+ *
+ * ## Legacy: Singleton Services
+ *
+ * Singleton exports below are maintained for backward compatibility.
  * Service selection is controlled by NEXT_PUBLIC_USE_CHAIN environment variable:
  * - false (default): Use mock services with local data
  * - true: Use chain services with Bulletin Chain storage
@@ -103,3 +119,13 @@ export { MockClaimService } from './mock-claim-service';
 export { MockCorroborationService } from './mock-corroboration-service';
 export { ChainSignalService } from './chain-signal-service';
 export { ChainChainService } from './chain-chain-service';
+
+// Export service hooks (preferred for new code)
+export {
+  useSignalService,
+  useChainService,
+  useBountyService,
+  usePostService,
+  useClaimService,
+  useCorroborationService,
+} from './hooks';

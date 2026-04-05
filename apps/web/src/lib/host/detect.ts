@@ -122,3 +122,48 @@ export function isInContainer(): boolean {
 export function getAccountsProvider(): AccountsProviderType | null {
   return _accountsProvider;
 }
+
+/**
+ * Check if external network requests are likely to work.
+ *
+ * In Triangle, external HTTP requests are blocked by default.
+ * Outside Triangle, network is always available.
+ *
+ * Note: This is a heuristic - the definitive check would be
+ * to request network permission via the Host API when available.
+ */
+export function canMakeExternalRequests(): boolean {
+  // Outside host, network is always available
+  if (!isInsideContainer()) return true;
+
+  // Inside host, we assume network is blocked until we implement
+  // proper permission handling via hostApi.permission()
+  // TODO: Implement permission request when Triangle API format is known
+  return false;
+}
+
+/**
+ * Check if geolocation is available.
+ * Works both inside and outside Triangle.
+ */
+export function hasGeolocation(): boolean {
+  return typeof navigator !== 'undefined' && 'geolocation' in navigator;
+}
+
+/**
+ * Get current position using browser geolocation API.
+ */
+export function getCurrentPosition(): Promise<GeolocationPosition> {
+  return new Promise((resolve, reject) => {
+    if (!hasGeolocation()) {
+      reject(new Error('Geolocation not available'));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 300000, // 5 minutes
+    });
+  });
+}

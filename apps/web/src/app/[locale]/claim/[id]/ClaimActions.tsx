@@ -37,7 +37,7 @@ export function ClaimActions({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedType, setSelectedType] = useState<'support' | 'contradict' | null>(null);
 
-  const handleSubmitEvidence = async (type: 'support' | 'contradict'): Promise<void> => {
+  const handleSubmitEvidence = (type: 'support' | 'contradict'): void => {
     if (!isConnected) {
       addToast(t.signInToSubmit, 'warning');
       return;
@@ -47,13 +47,10 @@ export function ClaimActions({
     setIsSubmitting(true);
 
     // Open the illuminate modal to create a signal that will be linked as evidence
-    // In a full implementation, this would pass the claim context to pre-fill the form
+    // TODO: Pass claim context to modal and wire up evidence submission after signal creation
     openModal();
 
-    // Simulate submission (would integrate with claim service)
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    addToast(t.evidenceSubmitted, 'success');
+    // Reset button state - success will be shown by the modal when signal is created
     setIsSubmitting(false);
     setSelectedType(null);
   };
@@ -65,7 +62,7 @@ export function ClaimActions({
         {/* Support button */}
         <button
           type="button"
-          onClick={() => { void handleSubmitEvidence('support'); }}
+          onClick={() => handleSubmitEvidence('support')}
           disabled={isSubmitting}
           className={`
             inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
@@ -93,7 +90,7 @@ export function ClaimActions({
         {/* Contradict button */}
         <button
           type="button"
-          onClick={() => { void handleSubmitEvidence('contradict'); }}
+          onClick={() => handleSubmitEvidence('contradict')}
           disabled={isSubmitting}
           className={`
             inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full

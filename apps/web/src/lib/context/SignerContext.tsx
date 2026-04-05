@@ -27,7 +27,6 @@ import {
 import type { PolkadotSigner } from 'polkadot-api';
 import type { Result } from '@cocuyo/types';
 import { SignerNotConnectedError, SigningFailedError } from '../errors';
-import { setConnectedWallet } from '../services/mock-service-utils';
 
 /** Context value with manager access and state */
 interface SignerContextValue {
@@ -66,12 +65,6 @@ export function SignerProvider({ children }: SignerProviderProps): ReactNode {
       manager.destroy();
     };
   }, []);
-
-  // Update connected wallet for all services (centralized state)
-  useEffect(() => {
-    const address = state?.selectedAccount?.address ?? null;
-    setConnectedWallet(address);
-  }, [state?.selectedAccount]);
 
   // Render children while loading (no blocking)
   if (!state || !managerRef.current) {

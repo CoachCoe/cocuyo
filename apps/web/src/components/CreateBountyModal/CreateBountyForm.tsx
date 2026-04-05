@@ -13,7 +13,7 @@ import { useLocale } from 'next-intl';
 import { createPUSDAmount, type NewBounty } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { useCreateBounty } from '@/hooks/useCreateBounty';
-import { bountyService } from '@/lib/services';
+import { useBountyService } from '@/lib/services/hooks';
 import { TopicInput } from '@/components/IlluminateModal/TopicInput';
 
 // Duration options in seconds
@@ -32,6 +32,7 @@ export function CreateBountyForm(): ReactElement {
   const locale = useLocale();
   const { closeModal } = useCreateBounty();
   const { isConnected } = useSigner();
+  const bountyService = useBountyService();
 
   // Form state
   const [title, setTitle] = useState('');
@@ -87,7 +88,7 @@ export function CreateBountyForm(): ReactElement {
         setIsSubmitting(false);
       }
     },
-    [isValid, isSubmitting, title, description, topics, location, fundingAmount, duration, closeModal, router, locale]
+    [isValid, isSubmitting, title, description, topics, location, fundingAmount, duration, closeModal, router, locale, bountyService]
   );
 
   if (!isConnected) {

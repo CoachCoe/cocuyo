@@ -13,8 +13,9 @@
 import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { chainService, postService, bountyService } from '@/lib/services';
+import { chainService, postService } from '@/lib/services';
 import { getSignals, getAllChainIds, type Locale } from '@/lib/services/mock-data';
+import { getBountiesForChain } from '@/lib/services/mock-data-bounties';
 import { ChainSignalList } from './ChainSignalList';
 import { ChainTabs } from './ChainTabs';
 import { AddSignalButton } from './AddSignalButton';
@@ -76,14 +77,8 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
   // Get posts related to this chain
   const allPosts = await postService.getPostsByChain(createChainId(id), locale as Locale);
 
-  // Get bounties for this chain
-  const allBounties = await bountyService.getOpenBounties({
-    locale,
-    pagination: { limit: 50, offset: 0 },
-  });
-  const chainBounties = allBounties.items.filter((b) =>
-    b.topics.some((topic) => chain.topics.includes(topic))
-  );
+  // Get bounties linked to this chain
+  const chainBounties = getBountiesForChain(createChainId(id), locale as Locale);
 
   const statusColor = getStatusColor(chain.status);
 

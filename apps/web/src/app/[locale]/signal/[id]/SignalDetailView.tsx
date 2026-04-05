@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import type { Signal, ChainId, CorroborationType, NewCorroboration } from '@cocuyo/types';
 import { VerificationBadge, useToast } from '@cocuyo/ui';
-import { corroborationService } from '@/lib/services';
+import { useCorroborationService } from '@/lib/services/hooks';
 import { useSigner } from '@/lib/context/SignerContext';
 import { useFormatters } from '@/lib/hooks/useFormatters';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -29,6 +29,7 @@ export function SignalDetailView({
 }: SignalDetailViewProps): ReactNode {
   const { author, content, context, corroborations, verification, chainLinks, createdAt } = signal;
   const { isConnected } = useSigner();
+  const corroborationService = useCorroborationService();
   const { addToast } = useToast();
   const { formatDateTime, formatRelativeTime } = useFormatters();
   const t = useTranslations('corroboration');

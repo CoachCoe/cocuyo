@@ -22,7 +22,7 @@ import { useSigner } from '@/lib/context/SignerContext';
 import type { ChainId, BountyId, NewSignal, MediaAttachment } from '@cocuyo/types';
 import { createContentHash } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
-import { signalService } from '@/lib/services';
+import { useSignalService } from '@/lib/services/hooks';
 import { getBulletinClient } from '@/lib/chain/client';
 import { TopicInput } from './TopicInput';
 import { SuggestionsList } from './SuggestionsList';
@@ -44,6 +44,7 @@ const MIN_CONTENT_LENGTH = 50;
 
 export function IlluminateForm(): ReactElement {
   const { isConnected, isInHost } = useSigner();
+  const signalService = useSignalService();
   const { preSelectedChainId, preSelectedBountyId, closeModal } = useIlluminate();
 
   const [formState, setFormState] = useState<FormState>(() => ({
@@ -196,7 +197,7 @@ export function IlluminateForm(): ReactElement {
         setIsSubmitting(false);
       }
     },
-    [canSubmit, formState, closeModal]
+    [canSubmit, formState, closeModal, signalService]
   );
 
   if (submitSuccess) {

@@ -94,6 +94,26 @@ export function getBountyForChain(chainId: ChainId, locale: Locale = 'en'): Boun
 }
 
 /**
+ * Get all open bounties linked to a story chain.
+ * Returns BountyPreview[] for chains that have associated funding.
+ */
+export function getBountiesForChain(chainId: ChainId, locale: Locale = 'en'): BountyPreview[] {
+  return getBounties(locale)
+    .filter((b) => b.relatedChainId === chainId && b.status === 'open')
+    .map((bounty) => ({
+      id: bounty.id,
+      title: bounty.title,
+      topics: bounty.topics,
+      ...(bounty.location != null && { location: bounty.location }),
+      status: bounty.status,
+      fundingAmount: bounty.fundingAmount,
+      contributionCount: bounty.contributingSignals.length,
+      payoutMode: bounty.payoutMode,
+      expiresAt: bounty.expiresAt,
+    }));
+}
+
+/**
  * Get orphan bounties - open bounties that don't have a story chain yet.
  * These are "open questions" waiting for their first signals to form a story.
  */

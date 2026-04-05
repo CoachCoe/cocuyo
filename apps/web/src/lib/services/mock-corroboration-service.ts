@@ -16,19 +16,12 @@ import {
   ok,
   err,
   createCorroborationId,
-  createDIMCredential,
 } from '@cocuyo/types';
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
+import { getConnectedCredential } from './mock-service-utils';
 
 // Session cache for corroborations
 const userCorroborations: Corroboration[] = [];
-
-// Connected wallet
-let connectedAddress: string | null = null;
-
-export function setCorroborationWallet(address: string | null): void {
-  connectedAddress = address;
-}
 
 export class MockCorroborationService implements CorroborationService {
   /**
@@ -47,14 +40,14 @@ export class MockCorroborationService implements CorroborationService {
   corroborate(
     newCorroboration: NewCorroboration
   ): Promise<Result<CorroborationId, string>> {
-    if (connectedAddress === null) {
+    const dimCredential = getConnectedCredential();
+    if (dimCredential === null) {
       return Promise.resolve(
         err('Wallet not connected. Please connect to corroborate.')
       );
     }
 
     const now = Date.now();
-    const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
 
     const corroboration: Corroboration = {
       id: '' as CorroborationId,
