@@ -3,16 +3,15 @@
 /**
  * WorkbenchView — Main client component for the verification workbench.
  *
- * Displays pending claims for collective members to review.
- * Access gating is handled by checking wallet connection and collective membership.
+ * Displays pending claims for connected users to review.
+ * Access gating: requires wallet connection (collective membership check removed).
  */
 
 import { useState, useMemo, useCallback, type ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { ClaimPreview, ClaimId, ClaimStatus } from '@cocuyo/types';
-import { useSigner, useIdentity } from '@/hooks';
-import { isCollectiveMember } from '@/lib/services/mock-data';
+import { useSigner } from '@/hooks';
 import { WorkbenchFilters } from './WorkbenchFilters';
 import { WorkbenchList } from './WorkbenchList';
 import { WorkbenchAccessGate } from './WorkbenchAccessGate';
@@ -66,7 +65,6 @@ export function WorkbenchView({
   const router = useRouter();
   const locale = useLocale();
   const { isConnected } = useSigner();
-  const { profile, status: identityStatus } = useIdentity();
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState<ClaimStatus | null>(null);
@@ -114,19 +112,8 @@ export function WorkbenchView({
 
   const isFiltered = statusFilter !== null || topicFilters.length > 0 || searchQuery.length > 0;
 
-  // Check if user's DIM credential is a member of any seeded collective
-  // This checks against actual collective member lists, not profile data
-  const credentialHash = profile?.credentialHash ?? null;
-  const isMemberOfCollective = credentialHash !== null && isCollectiveMember(credentialHash);
-
-  // Access gate: require wallet connection AND collective membership
-  // Show loading state while identity is being determined
-  if (!isConnected || identityStatus === 'loading') {
-    return <WorkbenchAccessGate />;
-  }
-
-  // After identity is loaded, check for collective membership against seeded data
-  if (!isMemberOfCollective) {
+  // Access gate: require wallet connection only (collective membership check removed)
+  if (!isConnected) {
     return <WorkbenchAccessGate />;
   }
 

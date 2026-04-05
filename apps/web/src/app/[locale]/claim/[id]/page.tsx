@@ -2,25 +2,61 @@
  * Claim detail page — View a single claim with its evidence.
  */
 
-import type { ReactElement } from 'react';
-import { notFound } from 'next/navigation';
+import type { ReactElement, ReactNode } from 'react';
 import Link from 'next/link';
 import { claimService, signalService, postService } from '@/lib/services';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ClaimStatusBadge } from '@cocuyo/ui';
-import { routing } from '../../../../../i18n/routing';
-import { type Locale, getAllClaimIdsAsync } from '@/lib/services/mock-data-posts';
+import { validateClaimId } from '@/lib/utils/validators';
 import { ClaimActions } from './ClaimActions';
-
-export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
-  const claimIds = await getAllClaimIdsAsync();
-  return routing.locales.flatMap((locale) =>
-    claimIds.map((id) => ({ locale, id }))
-  );
-}
 
 interface ClaimDetailPageProps {
   params: Promise<{ locale: string; id: string }>;
+}
+
+/**
+ * Generate static params for build.
+ * Returns a placeholder route since we don't have pre-seeded data.
+ * Real content will be fetched at runtime from Bulletin Chain.
+ */
+export function generateStaticParams(): { id: string }[] {
+  return [{ id: '_' }];
+}
+
+/**
+ * Empty state component shown when claim is not found.
+ */
+function ClaimNotFound({ locale }: { locale: string }): ReactNode {
+  return (
+    <main className="min-h-screen bg-[var(--bg-default)]">
+      <div className="border-b border-[var(--border-default)]">
+        <div className="container max-w-3xl mx-auto px-4 py-4">
+          <Link
+            href={`/${locale}/posts`}
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+          >
+            <span aria-hidden="true">&larr;</span>
+            <span>Back to Posts</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="container max-w-3xl mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-display text-[var(--fg-primary)] mb-4">
+          Claim Not Found
+        </h1>
+        <p className="text-[var(--fg-secondary)] mb-8">
+          This claim doesn&apos;t exist or hasn&apos;t been extracted yet.
+        </p>
+        <Link
+          href={`/${locale}/posts`}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--bg-default)] font-medium hover:opacity-90 transition-opacity"
+        >
+          Browse Posts
+        </Link>
+      </div>
+    </main>
+  );
 }
 
 export default async function ClaimDetailPage({ params }: ClaimDetailPageProps): Promise<ReactElement> {
@@ -29,15 +65,20 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
   const tClaims = await getTranslations('claims');
   const tPosts = await getTranslations('posts');
 
+  const claimId = validateClaimId(id);
+  if (claimId === null) {
+    return <ClaimNotFound locale={locale} />;
+  }
+
   // Fetch the claim
-  const claim = await claimService.getClaim(id as never, locale as Locale);
+  const claim = await claimService.getClaim(claimId, locale);
 
   if (claim === null) {
-    notFound();
+    return <ClaimNotFound locale={locale} />;
   }
 
   // Fetch the source post
-  const sourcePost = await postService.getPost(claim.sourcePostId, locale as Locale);
+  const sourcePost = await postService.getPost(claim.sourcePostId, locale);
 
   // Fetch evidence signals
   const evidenceSignals = await Promise.all(

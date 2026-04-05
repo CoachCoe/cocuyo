@@ -26,18 +26,13 @@ import { ok, err, createClaimId, createDIMCredential } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { getBulletinClient } from '@/lib/chain/client';
 import {
-  getClaimPreviews,
-  getClaimById,
-  getClaimsByPostId,
-  getPendingClaims as getMockPendingClaims,
-} from '../mock-data-posts';
-import type { Locale } from '../mock-data-posts';
-import {
   paginate,
   filterByTopic,
   uploadToBulletin,
   fetchFromBulletin,
-} from '../mock-service-utils';
+} from '../service-utils';
+
+export type Locale = 'en' | 'es';
 
 const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
@@ -74,7 +69,7 @@ export function useClaimService(): ClaimService {
   connectedRef.current = isConnected;
 
   const getClaim = useCallback(
-    async (id: ClaimId, locale = 'en'): Promise<Claim | null> => {
+    async (id: ClaimId, _locale = 'en'): Promise<Claim | null> => {
       // Check user claims first
       const userClaim = userClaims.find((c) => c.id === id);
       if (userClaim) return userClaim;
@@ -88,10 +83,6 @@ export function useClaimService(): ClaimService {
         }
       }
 
-      // Mock implementation
-      const mockClaim = getClaimById(id, locale as Locale);
-      if (mockClaim) return mockClaim;
-
       // Try Bulletin Chain as fallback
       return fetchFromBulletin<Claim>(id);
     },
@@ -99,16 +90,10 @@ export function useClaimService(): ClaimService {
   );
 
   const getClaimsByPost = useCallback(
-    async (postId: PostId, locale = 'en'): Promise<readonly Claim[]> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return [];
-      }
-
-      // Mock implementation
-      const mockClaims = getClaimsByPostId(postId, locale as Locale);
+    async (postId: PostId, _locale = 'en'): Promise<readonly Claim[]> => {
+      // Return only user-created claims for this post
       const userPostClaims = userClaims.filter((c) => c.sourcePostId === postId);
-      return [...userPostClaims, ...mockClaims];
+      return userPostClaims;
     },
     []
   );
@@ -120,15 +105,8 @@ export function useClaimService(): ClaimService {
       pagination: PaginationParams;
       locale?: string;
     }): Promise<PaginatedResult<ClaimPreview>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return { items: [], total: 0, hasMore: false };
-      }
-
-      // Mock implementation
-      const userPreviews = userClaims.map(claimToPreview);
-      const mockPreviews = getClaimPreviews((params.locale ?? 'en') as Locale);
-      let filtered = [...userPreviews, ...mockPreviews];
+      // Return only user-created claims
+      let filtered = userClaims.map(claimToPreview);
 
       // Filter by status
       if (params.status) {
@@ -152,18 +130,12 @@ export function useClaimService(): ClaimService {
       pagination: PaginationParams;
       locale?: string;
     }): Promise<PaginatedResult<ClaimPreview>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return { items: [], total: 0, hasMore: false };
-      }
-
-      // Mock implementation
-      const mockPending = getMockPendingClaims((params.locale ?? 'en') as Locale).map(claimToPreview);
+      // Get pending from user claims only
       const userPending = userClaims
         .filter((c) => c.status === 'pending' || c.status === 'under_review')
         .map(claimToPreview);
 
-      let filtered = [...userPending, ...mockPending];
+      let filtered = [...userPending];
 
       // Filter by topic
       filtered = filterByTopic(filtered, (c) => c.topics, params.topic);
@@ -192,7 +164,7 @@ export function useClaimService(): ClaimService {
         );
       }
 
-      // Mock implementation
+      // Session-cached implementation
       const connectedAddress = account.address;
       const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
       const now = Date.now();
@@ -238,7 +210,7 @@ export function useClaimService(): ClaimService {
         );
       }
 
-      // Mock implementation
+      // Session-cached implementation
       const connectedAddress = account.address;
       const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
 
@@ -273,8 +245,8 @@ export function useClaimService(): ClaimService {
         }
       }
 
-      // For mock claims, just return success (can't modify mock data)
-      return ok(undefined);
+      // Claim not found in user claims
+      return err('Cannot submit evidence: claim is read-only or does not exist.');
     },
     []
   );

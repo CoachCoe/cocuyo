@@ -23,15 +23,15 @@ import type {
 import { ok, err, createPostId, createDIMCredential } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { getBulletinClient } from '@/lib/chain/client';
-import { getPosts, getPostPreviews, getPostById } from '../mock-data-posts';
-import type { Locale } from '../mock-data-posts';
 import {
   generatePseudonym,
   paginate,
   filterByTopic,
   uploadToBulletin,
   fetchFromBulletin,
-} from '../mock-service-utils';
+} from '../service-utils';
+
+export type Locale = 'en' | 'es';
 
 const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
@@ -68,7 +68,7 @@ export function usePostService(): PostService {
   connectedRef.current = isConnected;
 
   const getPost = useCallback(
-    async (id: PostId, locale = 'en'): Promise<Post | null> => {
+    async (id: PostId, _locale = 'en'): Promise<Post | null> => {
       // Check user posts first
       const userPost = userPosts.find((p) => p.id === id);
       if (userPost) return userPost;
@@ -81,10 +81,6 @@ export function usePostService(): PostService {
           return null;
         }
       }
-
-      // Mock implementation
-      const mockPost = getPostById(id, locale as Locale);
-      if (mockPost) return mockPost;
 
       // Try Bulletin Chain as fallback
       return fetchFromBulletin<Post>(id);
@@ -99,15 +95,8 @@ export function usePostService(): PostService {
       pagination: PaginationParams;
       locale?: string;
     }): Promise<PaginatedResult<PostPreview>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return { items: [], total: 0, hasMore: false };
-      }
-
-      // Mock implementation
-      const userPreviews = userPosts.map(postToPreview);
-      const mockPreviews = getPostPreviews((params.locale ?? 'en') as Locale);
-      let filtered = [...userPreviews, ...mockPreviews];
+      // Return only user-created posts
+      let filtered = userPosts.map(postToPreview);
 
       // Filter by topic
       filtered = filterByTopic(filtered, (p) => p.topics, params.topic);
@@ -126,20 +115,12 @@ export function usePostService(): PostService {
   );
 
   const getPostsByChain = useCallback(
-    async (chainId: ChainId, locale = 'en'): Promise<readonly Post[]> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return [];
-      }
-
-      // Mock implementation
-      const mockPosts = getPosts(locale as Locale).filter(
-        (p) => p.relatedChainId === chainId
-      );
+    async (chainId: ChainId, _locale = 'en'): Promise<readonly Post[]> => {
+      // Return only user-created posts for this chain
       const userChainPosts = userPosts.filter(
         (p) => p.relatedChainId === chainId
       );
-      return [...userChainPosts, ...mockPosts];
+      return userChainPosts;
     },
     []
   );
@@ -160,7 +141,7 @@ export function usePostService(): PostService {
         );
       }
 
-      // Mock implementation
+      // Session-cached implementation
       const connectedAddress = account.address;
       const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
       const now = Date.now();

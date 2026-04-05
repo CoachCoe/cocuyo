@@ -12,6 +12,9 @@
 import { useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 import { getContractAddress, getRpcUrl, type NetworkName } from '@/lib/contracts/config';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('useFireflyReputation');
 import {
   FIREFLY_REPUTATION_ABI,
   DEFAULT_TOPICS,
@@ -82,7 +85,7 @@ export function useFireflyReputation(
         )) as bigint;
         return Number(score);
       } catch (err) {
-        console.error('Failed to get score:', err);
+        log.error('Failed to get score', err, { credential, topic });
         return 500; // Default score
       }
     },
@@ -118,7 +121,7 @@ export function useFireflyReputation(
           lastUpdated: result.lastUpdated,
         };
       } catch (err) {
-        console.error('Failed to get topic score:', err);
+        log.error('Failed to get topic score', err, { credential, topic });
         return {
           score: 500,
           corroborationsGiven: 0,
@@ -151,7 +154,7 @@ export function useFireflyReputation(
         });
         return result;
       } catch (err) {
-        console.error('Failed to get scores:', err);
+        log.error('Failed to get scores', err, { credential, topicCount: topics.length });
         const result = new Map<string, number>();
         topics.forEach((topic) => result.set(topic, 500));
         return result;
@@ -178,7 +181,7 @@ export function useFireflyReputation(
       const topics = (await contract.getFunction('getTopics')()) as string[];
       return topics;
     } catch (err) {
-      console.error('Failed to get topics:', err);
+      log.error('Failed to get topics', err);
       return [];
     }
   }, [getReadContract]);
@@ -191,7 +194,7 @@ export function useFireflyReputation(
       const count = (await contract.getFunction('topicCount')()) as bigint;
       return Number(count);
     } catch (err) {
-      console.error('Failed to get topic count:', err);
+      log.error('Failed to get topic count', err);
       return 0;
     }
   }, [getReadContract]);
@@ -249,7 +252,7 @@ export function useFireflyReputation(
         maxScore: Number(maxScore),
       };
     } catch (err) {
-      console.error('Failed to get constants:', err);
+      log.error('Failed to get constants', err);
       return { defaultScore: 500, minScore: 0, maxScore: 1000 };
     }
   }, [getReadContract]);

@@ -13,6 +13,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
 import { getContractAddress, getRpcUrl, type NetworkName } from '@/lib/contracts/config';
+import { createLogger } from '@/lib/utils/logger';
+
+const log = createLogger('useBountyEscrow');
 import {
   BOUNTY_ESCROW_ABI,
   BountyStatus,
@@ -117,7 +120,7 @@ export function useBountyEscrow(
           status: Number(bounty.status) as BountyStatus,
         };
       } catch (err) {
-        console.error('Failed to get bounty:', err);
+        log.error('Failed to get bounty', err, { bountyId });
         return null;
       }
     },

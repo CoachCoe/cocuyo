@@ -7,14 +7,8 @@
  */
 
 import type { ReactElement } from 'react';
-import { chainService } from '@/lib/services';
-import { signalService } from '@/lib/services';
-import { getChainTitle, type Locale } from '@/lib/services/mock-data';
-import {
-  getBountySignalsMap,
-  getChainBountyMap,
-  getOrphanBounties,
-} from '@/lib/services/mock-data-bounties';
+import { chainService, signalService, bountyService } from '@/lib/services';
+import type { ChainId, BountyId, BountyPreview } from '@cocuyo/types';
 import { ExploreView } from './ExploreView';
 import { ExploreHeader } from './ExploreHeader';
 import { IlluminateFAB } from './IlluminateFAB';
@@ -30,25 +24,39 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
   const t = await getTranslations('explore');
 
   // Fetch featured chains (with locale for translated content)
-  const featuredChains = await chainService.getFeaturedChains(locale as Locale);
+  const featuredChains = await chainService.getFeaturedChains(locale);
 
   // Fetch recent signals (with locale for translated content)
   const recentSignals = await signalService.getRecentSignals({
     pagination: { limit: 20, offset: 0 },
-    locale: locale as Locale,
+    locale,
   });
 
-  // Fetch bounty data
-  const bountySignalsMap = getBountySignalsMap();
-  const chainBountyMap = getChainBountyMap();
-  const orphanBounties = getOrphanBounties();
+  // Fetch open bounties
+  const openBountiesResult = await bountyService.getOpenBounties({
+    locale,
+    pagination: { limit: 50, offset: 0 },
+  });
 
-  // Build chain titles map
-  const chainTitles = Object.fromEntries(
-    recentSignals.items
-      .flatMap((s) => s.chainLinks)
-      .map((id) => [id, getChainTitle(id as string, locale as Locale) ?? ''])
-  );
+  // Build bounty-to-signals map (empty for now - would need indexing)
+  const bountySignalsMap: Record<BountyId, string[]> = {};
+
+  // Build chain-to-bounties map (empty for now - would need indexing)
+  const chainBountyMap: Record<ChainId, BountyPreview[]> = {};
+
+  // All bounties are "orphan" (not linked to chains) without proper indexing
+  const orphanBounties: BountyPreview[] = [...openBountiesResult.items];
+
+  // Build chain titles map from fetched data
+  const chainTitles: Record<string, string> = {};
+  for (const signal of recentSignals.items) {
+    for (const chainId of signal.chainLinks) {
+      if (chainTitles[chainId] === undefined) {
+        const chain = await chainService.getChain(chainId, locale);
+        chainTitles[chainId] = chain?.title ?? '';
+      }
+    }
+  }
 
   // Parse info popover content - split by double newlines for paragraphs
   const storiesInfoBody = t('storiesInfo.body')

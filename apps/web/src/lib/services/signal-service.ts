@@ -1,12 +1,12 @@
 /**
- * Mock implementation of the SignalService with real Bulletin storage.
+ * Signal Service implementation with real Bulletin storage.
  *
  * This service provides:
- * - Mock data for demo content (reads)
- * - Real Bulletin Chain storage for new signals (writes)
+ * - Bulletin Chain storage for signals (writes)
  * - Session cache for immediate feedback
+ * - Empty results for queries until indexing is implemented
  *
- * New signals are stored on Bulletin Chain and appear alongside demo data.
+ * Signals are stored on Bulletin Chain and can be fetched by CID.
  */
 
 import type {
@@ -20,7 +20,6 @@ import type {
   NewSignal,
 } from '@cocuyo/types';
 import { ok, err, createSignalId, emptyCorroborationSummary } from '@cocuyo/types';
-import { getSignals, getSignalsByChainId, type Locale } from './mock-data';
 import {
   setConnectedWallet as setWallet,
   getConnectedWallet,
@@ -31,7 +30,9 @@ import {
   filterByString,
   uploadToBulletin,
   fetchFromBulletin,
-} from './mock-service-utils';
+} from './service-utils';
+
+export type Locale = 'en' | 'es';
 
 // Session cache for user-created signals
 const userSignals: Signal[] = [];
@@ -39,26 +40,21 @@ const userSignals: Signal[] = [];
 // Re-export for backwards compatibility
 export { setWallet as setConnectedWallet };
 
-export class MockSignalService implements SignalService {
-  async getSignal(id: SignalId, locale: Locale = 'en'): Promise<Signal | null> {
+export class SignalServiceImpl implements SignalService {
+  async getSignal(id: SignalId, _locale: Locale = 'en'): Promise<Signal | null> {
     // Check user signals first
     const userSignal = userSignals.find((s) => s.id === id);
     if (userSignal) return userSignal;
-
-    // Check mock data
-    const signals = getSignals(locale);
-    const mockSignal = signals.find((s) => s.id === id);
-    if (mockSignal) return mockSignal;
 
     // Try fetching from Bulletin Chain
     return fetchFromBulletin<Signal>(id);
   }
 
-  getChainSignals(chainId: ChainId, locale: Locale = 'en'): Promise<readonly Signal[]> {
-    // Combine mock and user signals for this chain
-    const mockSignals = getSignalsByChainId(chainId, locale);
+  getChainSignals(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Signal[]> {
+    // Return only user-created signals for this chain
+    // Full chain queries require indexing
     const userChainSignals = userSignals.filter((s) => s.chainLinks.includes(chainId));
-    return Promise.resolve([...userChainSignals, ...mockSignals]);
+    return Promise.resolve(userChainSignals);
   }
 
   getRecentSignals(params: {
@@ -67,9 +63,9 @@ export class MockSignalService implements SignalService {
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<Signal>> {
-    // Combine user signals with mock signals
-    const mockData = getSignals(params.locale ?? 'en');
-    let filtered = [...userSignals, ...mockData];
+    // Return only user-created signals
+    // Full queries require indexing
+    let filtered = [...userSignals];
 
     // Filter by topic and location using shared utilities
     filtered = filterByTopic(filtered, (s) => s.context.topics, params.topic);
@@ -141,4 +137,7 @@ export class MockSignalService implements SignalService {
 }
 
 // Export a singleton instance
-export const signalService = new MockSignalService();
+export const signalService = new SignalServiceImpl();
+
+// Legacy alias for backward compatibility
+export { SignalServiceImpl as MockSignalService };

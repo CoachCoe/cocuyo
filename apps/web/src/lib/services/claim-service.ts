@@ -1,10 +1,10 @@
 /**
- * Mock implementation of the ClaimService with real Bulletin storage.
+ * Claim Service implementation with Bulletin storage.
  *
  * This service provides:
- * - Mock data for demo content (reads)
- * - Real Bulletin Chain storage for new claims (writes)
+ * - Bulletin Chain storage for claims (writes)
  * - Session cache for immediate feedback
+ * - Empty results for queries until indexing is implemented
  */
 
 import type {
@@ -23,20 +23,15 @@ import type {
 } from '@cocuyo/types';
 import { ok, err, createClaimId } from '@cocuyo/types';
 import {
-  getClaimPreviews,
-  getClaimById,
-  getClaimsByPostId,
-  getPendingClaims as getMockPendingClaims,
-} from './mock-data-posts';
-import type { Locale } from './mock-data-posts';
-import {
   getConnectedWallet,
   getConnectedCredential,
   paginate,
   filterByTopic,
   uploadToBulletin,
   fetchFromBulletin,
-} from './mock-service-utils';
+} from './service-utils';
+
+export type Locale = 'en' | 'es';
 
 // Session cache for user-created claims
 const userClaims: Claim[] = [];
@@ -55,24 +50,20 @@ function claimToPreview(claim: Claim): ClaimPreview {
   };
 }
 
-export class MockClaimService implements ClaimService {
-  async getClaim(id: ClaimId, locale: Locale = 'en'): Promise<Claim | null> {
+export class ClaimServiceImpl implements ClaimService {
+  async getClaim(id: ClaimId, _locale: Locale = 'en'): Promise<Claim | null> {
     // Check user claims first
     const userClaim = userClaims.find((c) => c.id === id);
     if (userClaim) return userClaim;
-
-    // Check mock data
-    const mockClaim = getClaimById(id, locale);
-    if (mockClaim) return mockClaim;
 
     // Try Bulletin Chain
     return fetchFromBulletin<Claim>(id);
   }
 
-  getClaimsByPost(postId: PostId, locale: Locale = 'en'): Promise<readonly Claim[]> {
-    const mockClaims = getClaimsByPostId(postId, locale);
+  getClaimsByPost(postId: PostId, _locale: Locale = 'en'): Promise<readonly Claim[]> {
+    // Return only user-created claims for this post
     const userPostClaims = userClaims.filter((c) => c.sourcePostId === postId);
-    return Promise.resolve([...userPostClaims, ...mockClaims]);
+    return Promise.resolve(userPostClaims);
   }
 
   getClaimsByStatus(params: {
@@ -81,10 +72,8 @@ export class MockClaimService implements ClaimService {
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<ClaimPreview>> {
-    // Combine user and mock claims
-    const userPreviews = userClaims.map(claimToPreview);
-    const mockPreviews = getClaimPreviews(params.locale ?? 'en');
-    let filtered = [...userPreviews, ...mockPreviews];
+    // Return only user-created claims
+    let filtered = userClaims.map(claimToPreview);
 
     // Filter by status
     if (params.status) {
@@ -106,13 +95,12 @@ export class MockClaimService implements ClaimService {
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<ClaimPreview>> {
-    // Get pending from mock + user claims
-    const mockPending = getMockPendingClaims(params.locale ?? 'en').map(claimToPreview);
+    // Get pending from user claims only
     const userPending = userClaims
       .filter((c) => c.status === 'pending' || c.status === 'under_review')
       .map(claimToPreview);
 
-    let filtered = [...userPending, ...mockPending];
+    let filtered = [...userPending];
 
     // Filter by topic using shared utility
     filtered = filterByTopic(filtered, (c) => c.topics, params.topic);
@@ -167,7 +155,7 @@ export class MockClaimService implements ClaimService {
       return Promise.resolve(err('Wallet not connected. Please connect to submit evidence.'));
     }
 
-    // Find the claim (user or mock)
+    // Find the claim in user cache
     const claimIndex = userClaims.findIndex((c) => c.id === claimId);
     if (claimIndex !== -1) {
       const oldClaim = userClaims[claimIndex];
@@ -198,8 +186,7 @@ export class MockClaimService implements ClaimService {
       }
     }
 
-    // Claim not found in user claims - it's either a seeded/mock claim (immutable)
-    // or doesn't exist. Return an error so the UI doesn't falsely report success.
+    // Claim not found in user claims
     return Promise.resolve(err('Cannot submit evidence: claim is read-only or does not exist.'));
   }
 
@@ -216,4 +203,7 @@ export class MockClaimService implements ClaimService {
 }
 
 // Export a singleton instance
-export const claimService = new MockClaimService();
+export const claimService = new ClaimServiceImpl();
+
+// Legacy alias for backward compatibility
+export { ClaimServiceImpl as MockClaimService };

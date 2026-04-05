@@ -5,8 +5,7 @@
  */
 
 import type { ReactElement } from 'react';
-import { bountyService } from '@/lib/services';
-import { MockBountyService } from '@/lib/services/mock-bounty-service';
+import { bountyService, type BountyServiceImpl } from '@/lib/services';
 import { BountiesView } from './BountiesView';
 import { BountiesHeader } from './BountiesHeader';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -22,8 +21,8 @@ export default async function BountiesPage({ params }: BountiesPageProps): Promi
   const tBounty = await getTranslations('bounty');
 
   // Get all bounties (use extended service method for all statuses)
-  const mockService = bountyService as MockBountyService;
-  const bountiesResult = await mockService.getAllBounties({
+  const service = bountyService as BountyServiceImpl;
+  const bountiesResult = await service.getAllBounties({
     locale,
     pagination: { limit: 50, offset: 0 },
   });

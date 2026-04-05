@@ -10,7 +10,7 @@
  */
 
 import type { ReactElement, ReactNode } from 'react';
-import type { ChainPreview, ChainId, Bounty, BountyId } from '@cocuyo/types';
+import type { ChainPreview, ChainId, BountyPreview, BountyId } from '@cocuyo/types';
 import { formatPUSDCompact } from '@cocuyo/types';
 import { FireflySymbol } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
@@ -21,10 +21,10 @@ export type ExploreFilterType = 'chain' | 'bounty' | null;
 export interface ExploreFiltersProps {
   /** Available story chains */
   chains: readonly ChainPreview[];
-  /** Mapping of chain ID to bounty (for chains with funding) */
-  chainBountyMap: Record<string, Bounty>;
+  /** Mapping of chain ID to bounties (for chains with funding) */
+  chainBountyMap: Record<string, BountyPreview[]>;
   /** Orphan bounties - open questions without stories yet */
-  orphanBounties: readonly Bounty[];
+  orphanBounties: readonly BountyPreview[];
   /** Currently active filter type */
   activeFilterType: ExploreFilterType;
   /** Currently active filter ID (chain or bounty) */
@@ -111,8 +111,9 @@ export function ExploreFilters({
         <div className="space-y-2">
           {chains.map((chain) => {
             const isActive = activeFilterType === 'chain' && activeFilterId === chain.id;
-            const bounty = chainBountyMap[chain.id];
-            const hasBounty = bounty !== undefined;
+            const bounties = chainBountyMap[chain.id] ?? [];
+            const bounty = bounties[0]; // Use first bounty for display
+            const hasBounty = bounties.length > 0;
 
             return (
               <div
@@ -141,7 +142,7 @@ export function ExploreFilters({
                 } : undefined}
               >
                 {/* Bounty badge row */}
-                {hasBounty && (
+                {hasBounty && bounty !== undefined && (
                   <div className="flex items-center justify-between mb-1.5">
                     <span
                       className="px-2 py-0.5 rounded-full font-semibold text-xs"

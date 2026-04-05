@@ -14,8 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf .next dist out coverage",
     "serve": "npx serve dist",
-    "deploy": "dotns bulletin upload ./dist --parallel --print-contenthash",
-    "seed:dev": "tsx scripts/seed-dev.ts"
+    "deploy": "dotns bulletin upload ./dist --parallel --print-contenthash"
   },
   "dependencies": {
     "@cocuyo/bulletin": "workspace:*",

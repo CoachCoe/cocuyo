@@ -10,31 +10,60 @@
  * - Option to illuminate a signal for this bounty
  */
 
-import type { ReactElement } from 'react';
-import { notFound } from 'next/navigation';
+import type { ReactElement, ReactNode } from 'react';
 import Link from 'next/link';
 import { bountyService, signalService } from '@/lib/services';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { BountyDetailView } from './BountyDetailView';
-import type { BountyId } from '@cocuyo/types';
-import { getAllBountyIdsAsync } from '@/lib/services/mock-data-bounties';
-import { routing } from '../../../../../i18n/routing';
-
-/**
- * Generate static params for all known bounties across all locales.
- */
-export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
-  const bountyIds = await getAllBountyIdsAsync();
-  return routing.locales.flatMap((locale) =>
-    bountyIds.map((id) => ({
-      locale,
-      id,
-    }))
-  );
-}
+import { validateBountyId } from '@/lib/utils/validators';
 
 interface BountyPageProps {
   params: Promise<{ locale: string; id: string }>;
+}
+
+/**
+ * Generate static params for build.
+ * Returns a placeholder route since we don't have pre-seeded data.
+ * Real content will be fetched at runtime from Bulletin Chain.
+ */
+export function generateStaticParams(): { id: string }[] {
+  return [{ id: '_' }];
+}
+
+/**
+ * Empty state component shown when bounty is not found.
+ */
+function BountyNotFound({ locale }: { locale: string }): ReactNode {
+  return (
+    <main className="min-h-screen bg-[var(--bg-default)]">
+      <div className="border-b border-[var(--border-default)]">
+        <div className="container max-w-3xl mx-auto px-4 py-4">
+          <Link
+            href={`/${locale}/bounties`}
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+          >
+            <span aria-hidden="true">&larr;</span>
+            <span>Back to Bounties</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="container max-w-3xl mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-display text-[var(--fg-primary)] mb-4">
+          Bounty Not Found
+        </h1>
+        <p className="text-[var(--fg-secondary)] mb-8">
+          This bounty doesn&apos;t exist or hasn&apos;t been created yet.
+        </p>
+        <Link
+          href={`/${locale}/bounties`}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--bg-default)] font-medium hover:opacity-90 transition-opacity"
+        >
+          Browse Bounties
+        </Link>
+      </div>
+    </main>
+  );
 }
 
 export default async function BountyPage({ params }: BountyPageProps): Promise<ReactElement> {
@@ -42,10 +71,15 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
   setRequestLocale(locale);
   const t = await getTranslations('bounty');
 
-  const bounty = await bountyService.getBounty(id as BountyId, locale);
+  const bountyId = validateBountyId(id);
+  if (bountyId === null) {
+    return <BountyNotFound locale={locale} />;
+  }
+
+  const bounty = await bountyService.getBounty(bountyId, locale);
 
   if (bounty == null) {
-    notFound();
+    return <BountyNotFound locale={locale} />;
   }
 
   // Fetch contributing signals

@@ -1,5 +1,5 @@
 /**
- * Mock implementation of the CorroborationService.
+ * Corroboration Service implementation.
  *
  * Provides corroboration functionality with session cache.
  */
@@ -18,12 +18,12 @@ import {
   createCorroborationId,
 } from '@cocuyo/types';
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
-import { getConnectedCredential } from './mock-service-utils';
+import { getConnectedCredential } from './service-utils';
 
 // Session cache for corroborations
 const userCorroborations: Corroboration[] = [];
 
-export class MockCorroborationService implements CorroborationService {
+export class CorroborationServiceImpl implements CorroborationService {
   /**
    * Get all corroborations for a signal.
    */
@@ -77,4 +77,7 @@ export class MockCorroborationService implements CorroborationService {
 }
 
 // Export a singleton instance
-export const corroborationService = new MockCorroborationService();
+export const corroborationService = new CorroborationServiceImpl();
+
+// Legacy alias for backward compatibility
+export { CorroborationServiceImpl as MockCorroborationService };

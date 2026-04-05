@@ -5,8 +5,7 @@
  */
 
 import type { ReactElement } from 'react';
-import { postService } from '@/lib/services';
-import { MockPostService } from '@/lib/services/mock-post-service';
+import { postService, type PostServiceImpl } from '@/lib/services';
 import { PostsView } from './PostsView';
 import { PostsHeader } from './PostsHeader';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -21,8 +20,8 @@ export default async function PostsPage({ params }: PostsPageProps): Promise<Rea
   const tPosts = await getTranslations('posts');
 
   // Get all posts (use extended service method)
-  const mockService = postService as MockPostService;
-  const postsResult = await mockService.getAllPosts({
+  const service = postService as PostServiceImpl;
+  const postsResult = await service.getAllPosts({
     pagination: { limit: 50, offset: 0 },
     locale: locale as 'en' | 'es',
   });

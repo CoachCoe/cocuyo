@@ -5,8 +5,7 @@
  */
 
 import type { ReactElement } from 'react';
-import { claimService } from '@/lib/services';
-import { MockClaimService } from '@/lib/services/mock-claim-service';
+import { claimService, type ClaimServiceImpl } from '@/lib/services';
 import { WorkbenchView } from './WorkbenchView';
 import { WorkbenchHeader } from './WorkbenchHeader';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -23,8 +22,8 @@ export default async function WorkbenchPage({ params }: WorkbenchPageProps): Pro
   const tPosts = await getTranslations('posts');
 
   // Get pending claims for review
-  const mockService = claimService as MockClaimService;
-  const pendingClaimsResult = await mockService.getPendingClaims({
+  const service = claimService as ClaimServiceImpl;
+  const pendingClaimsResult = await service.getPendingClaims({
     pagination: { limit: 50, offset: 0 },
     locale: locale as 'en' | 'es',
   });

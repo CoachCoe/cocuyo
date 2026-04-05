@@ -21,7 +21,6 @@ import type {
 import { ok, err, createSignalId, createDIMCredential, emptyCorroborationSummary } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { getBulletinClient } from '@/lib/chain/client';
-import { getSignals, getSignalsByChainId, type Locale } from '../mock-data';
 import {
   generatePseudonym,
   paginate,
@@ -29,7 +28,9 @@ import {
   filterByString,
   uploadToBulletin,
   fetchFromBulletin,
-} from '../mock-service-utils';
+} from '../service-utils';
+
+export type Locale = 'en' | 'es';
 
 const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
@@ -53,7 +54,7 @@ export function useSignalService(): SignalService {
   connectedRef.current = isConnected;
 
   const getSignal = useCallback(
-    async (id: SignalId, locale = 'en'): Promise<Signal | null> => {
+    async (id: SignalId, _locale = 'en'): Promise<Signal | null> => {
       // Check user signals first
       const userSignal = userSignals.find((s) => s.id === id);
       if (userSignal) return userSignal;
@@ -67,11 +68,6 @@ export function useSignalService(): SignalService {
         }
       }
 
-      // Mock implementation
-      const signals = getSignals(locale as Locale);
-      const mockSignal = signals.find((s) => s.id === id);
-      if (mockSignal) return mockSignal;
-
       // Try fetching from Bulletin Chain as fallback
       return fetchFromBulletin<Signal>(id);
     },
@@ -79,16 +75,15 @@ export function useSignalService(): SignalService {
   );
 
   const getChainSignals = useCallback(
-    async (chainId: ChainId, locale = 'en'): Promise<readonly Signal[]> => {
+    async (chainId: ChainId, _locale = 'en'): Promise<readonly Signal[]> => {
       if (USE_CHAIN) {
         // Chain implementation - requires indexing
         return [];
       }
 
-      // Mock implementation
-      const mockSignals = getSignalsByChainId(chainId, locale as Locale);
+      // Return user-created signals for this chain
       const userChainSignals = userSignals.filter((s) => s.chainLinks.includes(chainId));
-      return [...userChainSignals, ...mockSignals];
+      return userChainSignals;
     },
     []
   );
@@ -105,9 +100,8 @@ export function useSignalService(): SignalService {
         return { items: [], total: 0, hasMore: false };
       }
 
-      // Mock implementation
-      const mockData = getSignals((params.locale ?? 'en') as Locale);
-      let filtered = [...userSignals, ...mockData];
+      // Return user-created signals only
+      let filtered = [...userSignals];
 
       filtered = filterByTopic(filtered, (s) => s.context.topics, params.topic);
       filtered = filterByString(filtered, (s) => s.context.locationName, params.location);
@@ -135,7 +129,7 @@ export function useSignalService(): SignalService {
         );
       }
 
-      // Mock implementation
+      // Session-cached implementation
       const connectedAddress = account.address;
       const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
       const now = Date.now();

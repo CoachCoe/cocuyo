@@ -10,9 +10,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocale } from 'next-intl';
 import type { ChainPreview, BountyPreview } from '@cocuyo/types';
-import { chainService } from '@/lib/services';
-import { getOpenBounties, type Locale } from '@/lib/services/mock-data-bounties';
+import { chainService, bountyService } from '@/lib/services';
 import { createLogger } from '@/lib/utils/logger';
+
+type Locale = 'en' | 'es';
 
 const log = createLogger('useDebouncedSuggestions');
 
@@ -88,11 +89,14 @@ export function useDebouncedSuggestions(
       });
 
       // Get open bounties and filter by topic/location match
-      const allBounties = getOpenBounties(locale);
+      const bountyResult = await bountyService.getOpenBounties({
+        locale,
+        pagination: { limit: 50, offset: 0 },
+      });
       const trimmedLoc = location.trim().toLowerCase();
-      const matchingBounties = allBounties.filter((bounty): boolean => {
+      const matchingBounties = bountyResult.items.filter((bounty: BountyPreview): boolean => {
         const topicMatch = topics.some((t) =>
-          bounty.topics.some((bt) =>
+          bounty.topics.some((bt: string) =>
             bt.toLowerCase().includes(t.toLowerCase())
           )
         );

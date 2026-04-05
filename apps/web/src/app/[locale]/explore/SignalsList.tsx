@@ -4,13 +4,12 @@
  * SignalsList — Simple list of signal cards with section header.
  */
 
-import { useMemo, type ReactElement, type ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Signal, ChainId, BountyId } from '@cocuyo/types';
 import { SignalCard, AnimatedList, EmptyState, SkeletonSignalCard, type SignalBountyInfo } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
-import { getBountiesForSignal } from '@/lib/services/mock-data-bounties';
 
 interface SignalsListProps {
   signals: Signal[];
@@ -28,6 +27,8 @@ interface SignalsListProps {
   isLoading?: boolean | undefined;
   /** Custom empty state message */
   emptyStateMessage?: string | undefined;
+  /** Map of signal IDs to bounty info (for display) */
+  signalBountyMap?: Record<string, SignalBountyInfo> | undefined;
 }
 
 export function SignalsList({
@@ -40,6 +41,7 @@ export function SignalsList({
   isFiltered = false,
   isLoading = false,
   emptyStateMessage,
+  signalBountyMap = {},
 }: SignalsListProps): ReactElement {
   const router = useRouter();
   const locale = useLocale();
@@ -59,24 +61,6 @@ export function SignalsList({
   const handleAuthorClick = (credentialHash: string): void => {
     router.push(`/${locale}/profile/${credentialHash}`);
   };
-
-  // Build a map of signal ID to bounty info for display
-  const signalBountyMap = useMemo(() => {
-    const map: Record<string, SignalBountyInfo> = {};
-    for (const signal of signals) {
-      const signalBounties = getBountiesForSignal(signal.id);
-      if (signalBounties.length > 0 && signalBounties[0] !== undefined) {
-        // Show the first bounty this signal contributes to
-        const firstBounty = signalBounties[0];
-        map[signal.id] = {
-          id: firstBounty.id,
-          title: firstBounty.title,
-          fundingAmount: firstBounty.fundingAmount,
-        };
-      }
-    }
-    return map;
-  }, [signals]);
 
   // Show loading skeletons
   if (isLoading) {

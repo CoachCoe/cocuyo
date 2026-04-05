@@ -17,7 +17,9 @@ import type {
   PaginatedResult,
 } from '@cocuyo/types';
 import { getBulletinClient } from '@/lib/chain/client';
-import { getChains as getMockChains, getChainPreviews, type Locale } from '../mock-data';
+import { fetchFromBulletin } from '../service-utils';
+
+export type Locale = 'en' | 'es';
 
 const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
@@ -28,7 +30,7 @@ const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
  */
 export function useChainService(): ChainService {
   const getChain = useCallback(
-    async (id: ChainId, locale = 'en'): Promise<StoryChain | null> => {
+    async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
       if (USE_CHAIN) {
         try {
           const bulletin = await getBulletinClient();
@@ -38,76 +40,30 @@ export function useChainService(): ChainService {
         }
       }
 
-      // Mock implementation
-      const chains = getMockChains(locale as Locale);
-      return chains.find((c) => c.id === id) ?? null;
+      // Try fetching from Bulletin Chain
+      return fetchFromBulletin<StoryChain>(id);
     },
     []
   );
 
   const getChains = useCallback(
-    async (params: {
+    async (_params: {
       topic?: string;
       location?: string;
       status?: StoryChain['status'];
       pagination: PaginationParams;
       locale?: string;
     }): Promise<PaginatedResult<ChainPreview>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return { items: [], total: 0, hasMore: false };
-      }
-
-      // Mock implementation
-      let previews = getChainPreviews((params.locale ?? 'en') as Locale);
-
-      // Filter by topic
-      if (params.topic !== undefined) {
-        const topicLower = params.topic.toLowerCase();
-        previews = previews.filter((p) =>
-          p.topics.some((t) => t.toLowerCase().includes(topicLower))
-        );
-      }
-
-      // Filter by location
-      if (params.location !== undefined) {
-        const locationLower = params.location.toLowerCase();
-        previews = previews.filter(
-          (p) => p.location?.toLowerCase().includes(locationLower) ?? false
-        );
-      }
-
-      // Filter by status
-      if (params.status !== undefined) {
-        previews = previews.filter((p) => p.status === params.status);
-      }
-
-      // Sort by update time (newest first)
-      previews.sort((a, b) => b.updatedAt - a.updatedAt);
-
-      // Apply pagination
-      const total = previews.length;
-      const start = params.pagination.offset;
-      const end = start + params.pagination.limit;
-      const items = previews.slice(start, end);
-
-      return { items, total, hasMore: end < total };
+      // Returns empty until indexing is implemented
+      return { items: [], total: 0, hasMore: false };
     },
     []
   );
 
   const getFeaturedChains = useCallback(
-    async (locale = 'en'): Promise<readonly ChainPreview[]> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return [];
-      }
-
-      // Mock implementation
-      const previews = getChainPreviews(locale as Locale);
-      return previews
-        .sort((a, b) => b.totalCorroborations - a.totalCorroborations)
-        .slice(0, 5);
+    async (_locale = 'en'): Promise<readonly ChainPreview[]> => {
+      // Returns empty until indexing is implemented
+      return [];
     },
     []
   );

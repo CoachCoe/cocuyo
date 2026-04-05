@@ -30,11 +30,9 @@ import {
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
 import { useSigner } from '@/lib/context/SignerContext';
 import { getBulletinClient } from '@/lib/chain/client';
-import {
-  getBountyById,
-  getOpenBounties as getMockOpenBounties,
-  type Locale,
-} from '../mock-data-bounties';
+import { fetchFromBulletin } from '../service-utils';
+
+export type Locale = 'en' | 'es';
 
 const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
@@ -71,7 +69,7 @@ export function useBountyService(): BountyService {
   connectedRef.current = isConnected;
 
   const getBounty = useCallback(
-    async (id: BountyId, locale = 'en'): Promise<Bounty | null> => {
+    async (id: BountyId, _locale = 'en'): Promise<Bounty | null> => {
       // Check user bounties first
       const userBounty = userBounties.find((b) => b.id === id);
       if (userBounty) return userBounty;
@@ -85,8 +83,8 @@ export function useBountyService(): BountyService {
         }
       }
 
-      // Mock implementation
-      return getBountyById(id, locale as Locale) ?? null;
+      // Try fetching from Bulletin Chain
+      return fetchFromBulletin<Bounty>(id);
     },
     []
   );
@@ -98,19 +96,10 @@ export function useBountyService(): BountyService {
       locale?: string;
       pagination: PaginationParams;
     }): Promise<PaginatedResult<BountyPreview>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return { items: [], total: 0, hasMore: false };
-      }
-
-      // Mock implementation
-      const locale = (params.locale ?? 'en') as Locale;
-
-      // Combine user bounties with mock bounties
-      const userOpenPreviews = userBounties
+      // Return only user-created open bounties
+      let bounties = userBounties
         .filter((b) => b.status === 'open')
         .map(bountyToPreview);
-      let bounties = [...userOpenPreviews, ...getMockOpenBounties(locale)];
 
       // Filter by topic
       if (params.topic !== undefined) {
@@ -157,7 +146,7 @@ export function useBountyService(): BountyService {
         );
       }
 
-      // Mock implementation
+      // Session-cached implementation
       const connectedAddress = account.address;
       const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
       const now = Date.now();
@@ -206,7 +195,7 @@ export function useBountyService(): BountyService {
         );
       }
 
-      // Mock implementation - find bounty in user cache
+      // Find bounty in user cache
       const bountyIndex = userBounties.findIndex((b) => b.id === bountyId);
       if (bountyIndex !== -1) {
         const oldBounty = userBounties[bountyIndex];
@@ -219,8 +208,8 @@ export function useBountyService(): BountyService {
         }
       }
 
-      // For mock bounties, just return success
-      return ok(undefined);
+      // Bounty not found in user cache
+      return err('Bounty not found or is read-only.');
     },
     []
   );

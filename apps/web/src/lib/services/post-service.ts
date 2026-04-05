@@ -1,10 +1,10 @@
 /**
- * Mock implementation of the PostService with real Bulletin storage.
+ * Post Service implementation with Bulletin storage.
  *
  * This service provides:
- * - Mock data for demo content (reads)
- * - Real Bulletin Chain storage for new posts (writes)
+ * - Bulletin Chain storage for posts (writes)
  * - Session cache for immediate feedback
+ * - Empty results for queries until indexing is implemented
  */
 
 import type {
@@ -20,8 +20,6 @@ import type {
   NewPost,
 } from '@cocuyo/types';
 import { ok, err, createPostId } from '@cocuyo/types';
-import { getPosts, getPostPreviews, getPostById } from './mock-data-posts';
-import type { Locale } from './mock-data-posts';
 import {
   getConnectedWallet,
   getConnectedCredential,
@@ -30,7 +28,9 @@ import {
   filterByTopic,
   uploadToBulletin,
   fetchFromBulletin,
-} from './mock-service-utils';
+} from './service-utils';
+
+export type Locale = 'en' | 'es';
 
 // Session cache for user-created posts
 const userPosts: Post[] = [];
@@ -49,15 +49,11 @@ function postToPreview(post: Post): PostPreview {
   };
 }
 
-export class MockPostService implements PostService {
-  async getPost(id: PostId, locale: Locale = 'en'): Promise<Post | null> {
+export class PostServiceImpl implements PostService {
+  async getPost(id: PostId, _locale: Locale = 'en'): Promise<Post | null> {
     // Check user posts first
     const userPost = userPosts.find((p) => p.id === id);
     if (userPost) return userPost;
-
-    // Check mock data
-    const mockPost = getPostById(id, locale);
-    if (mockPost) return mockPost;
 
     // Try Bulletin Chain
     return fetchFromBulletin<Post>(id);
@@ -69,10 +65,8 @@ export class MockPostService implements PostService {
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<PostPreview>> {
-    // Combine user posts with mock posts
-    const userPreviews = userPosts.map(postToPreview);
-    const mockPreviews = getPostPreviews(params.locale ?? 'en');
-    let filtered = [...userPreviews, ...mockPreviews];
+    // Return only user-created posts
+    let filtered = userPosts.map(postToPreview);
 
     // Filter by topic using shared utility
     filtered = filterByTopic(filtered, (p) => p.topics, params.topic);
@@ -89,14 +83,12 @@ export class MockPostService implements PostService {
     return Promise.resolve(paginate(filtered, params.pagination));
   }
 
-  getPostsByChain(chainId: ChainId, locale: Locale = 'en'): Promise<readonly Post[]> {
-    const mockPosts = getPosts(locale).filter(
-      (p) => p.relatedChainId === chainId
-    );
+  getPostsByChain(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Post[]> {
+    // Return only user-created posts for this chain
     const userChainPosts = userPosts.filter(
       (p) => p.relatedChainId === chainId
     );
-    return Promise.resolve([...userChainPosts, ...mockPosts]);
+    return Promise.resolve(userChainPosts);
   }
 
   async createPost(newPost: NewPost): Promise<Result<PostId, string>> {
@@ -158,4 +150,7 @@ export class MockPostService implements PostService {
 }
 
 // Export a singleton instance
-export const postService = new MockPostService();
+export const postService = new PostServiceImpl();
+
+// Legacy alias for backward compatibility
+export { PostServiceImpl as MockPostService };

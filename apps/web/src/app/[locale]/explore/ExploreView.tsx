@@ -9,7 +9,7 @@
  */
 
 import { useState, useMemo, useCallback, type ReactElement, type ReactNode } from 'react';
-import type { ChainPreview, ChainId, Signal, Bounty, BountyId } from '@cocuyo/types';
+import type { ChainPreview, ChainId, Signal, BountyPreview, BountyId } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { ExploreFilters, type ExploreFilterType } from './ExploreFilters';
 import { SignalsList } from './SignalsList';
@@ -18,9 +18,9 @@ export interface ExploreViewProps {
   /** Available story chains */
   chains: readonly ChainPreview[];
   /** Mapping of chain ID to bounty (for chains with funding) */
-  chainBountyMap: Record<string, Bounty>;
+  chainBountyMap: Record<string, BountyPreview[]>;
   /** Orphan bounties - open questions without stories yet */
-  orphanBounties: readonly Bounty[];
+  orphanBounties: readonly BountyPreview[];
   /** Mapping of bounty ID to contributing signal IDs */
   bountySignalsMap: Record<string, readonly string[]>;
   /** All signals */

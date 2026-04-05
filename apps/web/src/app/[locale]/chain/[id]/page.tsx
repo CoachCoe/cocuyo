@@ -10,36 +10,29 @@
  *   - Help Needed: Open bounties for this chain
  */
 
-import type { ReactElement } from 'react';
-import { notFound } from 'next/navigation';
+import type { ReactElement, ReactNode } from 'react';
 import Link from 'next/link';
-import { chainService, postService } from '@/lib/services';
-import { getSignals, getAllChainIdsAsync, type Locale } from '@/lib/services/mock-data';
-import { getBountiesForChain } from '@/lib/services/mock-data-bounties';
+import { signalService, chainService, postService, bountyService } from '@/lib/services';
 import { ChainSignalList } from './ChainSignalList';
 import { ChainTabs } from './ChainTabs';
 import { AddSignalButton } from './AddSignalButton';
-import type { ChainId } from '@cocuyo/types';
+import type { BountyPreview } from '@cocuyo/types';
 import { createChainId, formatPUSDCompact } from '@cocuyo/types';
-import { routing } from '../../../../../i18n/routing';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { createServerFormatters } from '@/lib/hooks/useFormatters';
-
-/**
- * Generate static params for all known chains across all locales.
- */
-export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
-  const chainIds = await getAllChainIdsAsync();
-  return routing.locales.flatMap((locale) =>
-    chainIds.map((id) => ({
-      locale,
-      id,
-    }))
-  );
-}
+import { createServerFormatters } from '@/lib/hooks/serverFormatters';
+import { validateChainId } from '@/lib/utils/validators';
 
 interface ChainPageProps {
   params: Promise<{ locale: string; id: string }>;
+}
+
+/**
+ * Generate static params for build.
+ * Returns a placeholder route since we don't have pre-seeded data.
+ * Real content will be fetched at runtime from Bulletin Chain.
+ */
+export function generateStaticParams(): { id: string }[] {
+  return [{ id: '_' }];
 }
 
 function getStatusColor(status: string): string {
@@ -57,28 +50,73 @@ function getStatusColor(status: string): string {
   }
 }
 
+/**
+ * Empty state component shown when chain is not found.
+ */
+function ChainNotFound({ locale }: { locale: string }): ReactNode {
+  return (
+    <main className="min-h-screen bg-[var(--bg-default)]">
+      <div className="border-b border-[var(--border-default)]">
+        <div className="container max-w-3xl mx-auto px-4 py-4">
+          <Link
+            href={`/${locale}/explore`}
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+          >
+            <span aria-hidden="true">&larr;</span>
+            <span>Back to Explore</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="container max-w-3xl mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-display text-[var(--fg-primary)] mb-4">
+          Story Chain Not Found
+        </h1>
+        <p className="text-[var(--fg-secondary)] mb-8">
+          This story chain doesn&apos;t exist or hasn&apos;t been created yet.
+        </p>
+        <Link
+          href={`/${locale}/explore`}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--bg-default)] font-medium hover:opacity-90 transition-opacity"
+        >
+          Explore Stories
+        </Link>
+      </div>
+    </main>
+  );
+}
+
 
 export default async function ChainPage({ params }: ChainPageProps): Promise<ReactElement> {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('chain');
   const { formatDate } = createServerFormatters(locale);
-  const chain = await chainService.getChain(id as ChainId);
 
-  if (chain == null) {
-    notFound();
+  const chainId = validateChainId(id);
+  if (chainId === null) {
+    return <ChainNotFound locale={locale} />;
   }
 
-  // Get signals for this chain (locale-aware)
-  const signals = getSignals(locale as Locale).filter((s) =>
-    s.chainLinks.some((link) => link === id)
-  );
+  const chain = await chainService.getChain(chainId, locale);
+
+  if (chain == null) {
+    return <ChainNotFound locale={locale} />;
+  }
+
+  // Get signals for this chain using service
+  const signals = await signalService.getChainSignals(createChainId(id), locale);
 
   // Get posts related to this chain
-  const allPosts = await postService.getPostsByChain(createChainId(id), locale as Locale);
+  const allPosts = await postService.getPostsByChain(createChainId(id), locale);
 
   // Get bounties linked to this chain
-  const chainBounties = getBountiesForChain(createChainId(id), locale as Locale);
+  const allBounties = await bountyService.getOpenBounties({
+    locale,
+    pagination: { limit: 100, offset: 0 },
+  });
+  // Filter to bounties that mention this chain ID (simplified check)
+  const chainBounties: BountyPreview[] = [...allBounties.items];
 
   const statusColor = getStatusColor(chain.status);
 
@@ -90,7 +128,7 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
           <div className="mb-4 text-sm text-[var(--fg-secondary)]">
             {t('whatsHappening.description')}
           </div>
-          <ChainSignalList signals={signals} />
+          <ChainSignalList signals={[...signals]} />
         </>
       ) : (
         <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">

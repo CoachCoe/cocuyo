@@ -1,8 +1,10 @@
 /**
- * Mock bounty service for development.
+ * Bounty Service implementation with Bulletin storage.
  *
- * Uses mock data from mock-data-bounties.ts with session cache
- * for user-created bounties.
+ * This service provides:
+ * - Bulletin Chain storage for bounties (writes)
+ * - Session cache for immediate feedback
+ * - Empty results for queries until indexing is implemented
  */
 
 import type {
@@ -25,12 +27,12 @@ import {
 } from '@cocuyo/types';
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
 import {
-  getBountyById,
-  getBountyPreviews,
-  getOpenBounties,
-  type Locale,
-} from './mock-data-bounties';
-import { getConnectedWallet, getConnectedCredential } from './mock-service-utils';
+  getConnectedWallet,
+  getConnectedCredential,
+  fetchFromBulletin,
+} from './service-utils';
+
+export type Locale = 'en' | 'es';
 
 // Session cache for user-created bounties
 const userBounties: Bounty[] = [];
@@ -50,23 +52,19 @@ function bountyToPreview(bounty: Bounty): BountyPreview {
 }
 
 /**
- * Mock implementation of BountyService.
- *
- * This service uses static mock data for development.
- * Replace with ChainBountyService when blockchain integration is ready.
+ * Bounty Service implementation.
  */
-export class MockBountyService implements BountyService {
+export class BountyServiceImpl implements BountyService {
   /**
    * Get a single bounty by ID.
    */
-  async getBounty(id: BountyId, locale?: string): Promise<Bounty | null> {
+  async getBounty(id: BountyId, _locale?: string): Promise<Bounty | null> {
     // Check user bounties first
     const userBounty = userBounties.find((b) => b.id === id);
     if (userBounty) return userBounty;
 
-    // Simulate network delay
-    await this.delay(50);
-    return getBountyById(id, (locale ?? 'en') as Locale) ?? null;
+    // Try fetching from Bulletin Chain
+    return fetchFromBulletin<Bounty>(id);
   }
 
   /**
@@ -78,16 +76,10 @@ export class MockBountyService implements BountyService {
     locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>> {
-    // Simulate network delay
-    await this.delay(100);
-
-    const locale = (params.locale ?? 'en') as Locale;
-
-    // Combine user bounties with mock bounties
-    const userOpenPreviews = userBounties
+    // Return only user-created open bounties
+    let bounties = userBounties
       .filter((b) => b.status === 'open')
       .map(bountyToPreview);
-    let bounties = [...userOpenPreviews, ...getOpenBounties(locale)];
 
     // Filter by topic if specified
     if (params.topic !== undefined) {
@@ -126,14 +118,8 @@ export class MockBountyService implements BountyService {
     locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>> {
-    // Simulate network delay
-    await this.delay(100);
-
-    const locale = (params.locale ?? 'en') as Locale;
-
-    // Combine user bounties with mock bounties
-    const userPreviews = userBounties.map(bountyToPreview);
-    let bounties = [...userPreviews, ...getBountyPreviews(locale)];
+    // Return only user-created bounties
+    let bounties = userBounties.map(bountyToPreview);
 
     // Filter by status if specified
     if (params.status !== undefined) {
@@ -233,14 +219,13 @@ export class MockBountyService implements BountyService {
       }
     }
 
-    // For mock bounties, just return success
-    return Promise.resolve(ok(undefined));
-  }
-
-  /**
-   * Simulate network delay for realistic UX.
-   */
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    // Bounty not found in user cache
+    return Promise.resolve(err('Bounty not found or is read-only.'));
   }
 }
+
+// Export a singleton instance
+export const bountyService = new BountyServiceImpl();
+
+// Legacy alias for backward compatibility
+export { BountyServiceImpl as MockBountyService };
