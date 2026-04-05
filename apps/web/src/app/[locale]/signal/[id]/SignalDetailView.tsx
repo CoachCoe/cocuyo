@@ -21,11 +21,13 @@ import { ExternalLink } from '@/components/ExternalLink';
 interface SignalDetailViewProps {
   signal: Signal;
   chainTitles: Record<string, string>;
+  locale: string;
 }
 
 export function SignalDetailView({
   signal,
   chainTitles,
+  locale,
 }: SignalDetailViewProps): ReactNode {
   const { author, content, context, corroborations, verification, chainLinks, createdAt } = signal;
   const { isConnected } = useSigner();
@@ -189,7 +191,7 @@ export function SignalDetailView({
           <h2 className="text-lg font-semibold text-[var(--fg-primary)]">{tSignal('partOfChains')}</h2>
           <div className="space-y-2">
             {chainLinks.map((chainId: ChainId) => (
-              <Link key={chainId} href={`/chain/${chainId}`}
+              <Link key={chainId} href={`/${locale}/chain/${chainId}`}
                 className="block p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-nested hover:border-[var(--border-emphasis)] transition-colors">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-[var(--fg-primary)]">{chainTitles[chainId] ?? chainId}</span>

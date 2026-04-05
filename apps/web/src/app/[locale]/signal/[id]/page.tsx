@@ -103,7 +103,7 @@ export default async function SignalPage({ params }: Props): Promise<ReactNode> 
 
       {/* Signal Content */}
       <div className="container max-w-3xl mx-auto px-4 py-8">
-        <SignalDetailView signal={signal} chainTitles={chainTitles} />
+        <SignalDetailView signal={signal} chainTitles={chainTitles} locale={locale} />
       </div>
     </main>
   );
