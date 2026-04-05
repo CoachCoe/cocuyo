@@ -12,7 +12,7 @@ import { useState, useMemo, useCallback, type ReactElement, type ReactNode } fro
 import type { ChainPreview, ChainId, Signal, BountyPreview, BountyId } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { ExploreFilters, type ExploreFilterType } from './ExploreFilters';
-import { SignalsList } from './SignalsList';
+import { SignalsList, type ViewMode } from './SignalsList';
 
 export interface ExploreViewProps {
   /** Available story chains */
@@ -63,6 +63,7 @@ export function ExploreView({
 }: ExploreViewProps): ReactElement {
   const [filterType, setFilterType] = useState<ExploreFilterType>(null);
   const [filterId, setFilterId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const { openModal } = useIlluminate();
 
   // Handle filter change
@@ -168,6 +169,8 @@ export function ExploreView({
           infoBody={filterType === null ? signalsInfoBody : undefined}
           isFiltered={filterType !== null}
           emptyStateMessage={emptyStateMessage}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
       </main>
     </div>

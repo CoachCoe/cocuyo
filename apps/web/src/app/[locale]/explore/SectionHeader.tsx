@@ -17,17 +17,20 @@ export interface SectionHeaderProps {
   infoTitle?: string | undefined;
   /** Body content for the info popover */
   infoBody?: ReactNode | undefined;
+  /** Additional CSS classes */
+  className?: string | undefined;
 }
 
 export function SectionHeader({
   title,
   infoTitle,
   infoBody,
+  className,
 }: SectionHeaderProps): ReactElement {
   const showInfo = infoTitle !== undefined && infoBody !== undefined;
 
   return (
-    <div className="flex items-center gap-2 mb-4">
+    <div className={`flex items-center gap-2 ${className ?? 'mb-4'}`}>
       <h2 className="text-sm font-semibold text-secondary uppercase tracking-wide">
         {title}
       </h2>
