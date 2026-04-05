@@ -7,7 +7,7 @@
  */
 
 import type { ReactElement } from 'react';
-import { chainService, signalService, bountyService } from '@/lib/services';
+import { chainService, signalService } from '@/lib/services';
 import type { ChainId, BountyId, BountyPreview } from '@cocuyo/types';
 import { ExploreView } from './ExploreView';
 import { ExploreHeader } from './ExploreHeader';
@@ -32,20 +32,12 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
     locale,
   });
 
-  // Fetch open bounties
-  const openBountiesResult = await bountyService.getOpenBounties({
-    locale,
-    pagination: { limit: 50, offset: 0 },
-  });
-
-  // Build bounty-to-signals map (empty for now - would need indexing)
+  // Bounty-to-signals and chain-to-bounties relationships require indexing.
+  // Pass empty maps/arrays to avoid showing incorrect associations.
+  // Bounties are shown in the dedicated /bounties page instead.
   const bountySignalsMap: Record<BountyId, string[]> = {};
-
-  // Build chain-to-bounties map (empty for now - would need indexing)
   const chainBountyMap: Record<ChainId, BountyPreview[]> = {};
-
-  // All bounties are "orphan" (not linked to chains) without proper indexing
-  const orphanBounties: BountyPreview[] = [...openBountiesResult.items];
+  const orphanBounties: BountyPreview[] = [];
 
   // Build chain titles map from fetched data
   const chainTitles: Record<string, string> = {};

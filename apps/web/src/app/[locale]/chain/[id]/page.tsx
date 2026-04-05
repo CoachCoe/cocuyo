@@ -12,12 +12,11 @@
 
 import type { ReactElement, ReactNode } from 'react';
 import Link from 'next/link';
-import { signalService, chainService, postService, bountyService } from '@/lib/services';
+import { signalService, chainService, postService } from '@/lib/services';
 import { ChainSignalList } from './ChainSignalList';
 import { ChainTabs } from './ChainTabs';
 import { AddSignalButton } from './AddSignalButton';
-import type { BountyPreview } from '@cocuyo/types';
-import { createChainId, formatPUSDCompact } from '@cocuyo/types';
+import { createChainId } from '@cocuyo/types';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { createServerFormatters } from '@/lib/hooks/serverFormatters';
 import { validateChainId } from '@/lib/utils/validators';
@@ -110,13 +109,9 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
   // Get posts related to this chain
   const allPosts = await postService.getPostsByChain(createChainId(id), locale);
 
-  // Get bounties linked to this chain
-  const allBounties = await bountyService.getOpenBounties({
-    locale,
-    pagination: { limit: 100, offset: 0 },
-  });
-  // Filter to bounties that mention this chain ID (simplified check)
-  const chainBounties: BountyPreview[] = [...allBounties.items];
+  // Chain-linked bounties require indexing that doesn't exist yet.
+  // Return empty array to avoid showing incorrect/unrelated bounties.
+  const chainBounties: never[] = [];
 
   const statusColor = getStatusColor(chain.status);
 
@@ -184,46 +179,11 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
   // Bounties content
   const bountiesContent = (
     <div>
-      {chainBounties.length > 0 ? (
-        <>
-          <div className="mb-4 text-sm text-[var(--fg-secondary)]">
-            {t('helpNeeded.description')}
-          </div>
-          <div className="space-y-4">
-            {chainBounties.map((bounty) => (
-              <Link
-                key={bounty.id}
-                href={`/${locale}/bounty/${bounty.id}`}
-                className="block p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg hover:border-[var(--color-firefly-gold)]/40 transition-colors"
-                style={{ borderLeft: '3px solid var(--color-firefly-gold)' }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span
-                    className="px-2 py-0.5 rounded-full font-semibold text-xs"
-                    style={{ backgroundColor: 'rgba(232, 185, 49, 0.25)', color: 'var(--color-firefly-gold)' }}
-                  >
-                    Earn {formatPUSDCompact(bounty.fundingAmount)}
-                  </span>
-                </div>
-                <h3 className="font-medium text-[var(--fg-primary)]">
-                  {bounty.title}
-                </h3>
-                {bounty.location != null && (
-                  <p className="text-sm text-[var(--fg-tertiary)] mt-1">
-                    {bounty.location}
-                  </p>
-                )}
-              </Link>
-            ))}
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
-          <p className="text-[var(--fg-secondary)]">
-            {t('helpNeeded.noBounties')}
-          </p>
-        </div>
-      )}
+      <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
+        <p className="text-[var(--fg-secondary)]">
+          {t('helpNeeded.noBounties')}
+        </p>
+      </div>
     </div>
   );
 

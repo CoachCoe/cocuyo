@@ -1,8 +1,14 @@
 /**
- * Validation utilities for route parameters and branded types.
+ * Route parameter guards for branded types.
  *
- * These functions validate and narrow unknown inputs to branded types,
- * avoiding unsafe type assertions (`as`) throughout the codebase.
+ * These functions perform basic guards (non-empty string checks) before
+ * branding route parameters. They do NOT validate ID format - that
+ * validation happens at the service layer which returns null for
+ * non-existent entities.
+ *
+ * Purpose: Avoid unsafe type assertions (`as`) in route handlers by
+ * providing a consistent guard pattern that rejects obviously invalid
+ * inputs (empty strings, non-strings) before service calls.
  */
 
 import {
@@ -19,21 +25,19 @@ import {
 } from '@cocuyo/types';
 
 /**
- * Validate and convert a route parameter to SignalId.
- * Returns null if the input is not a valid signal ID format.
+ * Guard and brand a route parameter as SignalId.
+ * Returns null for empty/non-string inputs. Service layer validates existence.
  */
 export function validateSignalId(id: unknown): SignalId | null {
   if (typeof id !== 'string' || id.length === 0) {
     return null;
   }
-  // Accept any non-empty string as a signal ID
-  // The service layer will handle not-found cases
   return createSignalId(id);
 }
 
 /**
- * Validate and convert a route parameter to ChainId.
- * Returns null if the input is not a valid chain ID format.
+ * Guard and brand a route parameter as ChainId.
+ * Returns null for empty/non-string inputs. Service layer validates existence.
  */
 export function validateChainId(id: unknown): ChainId | null {
   if (typeof id !== 'string' || id.length === 0) {
@@ -43,8 +47,8 @@ export function validateChainId(id: unknown): ChainId | null {
 }
 
 /**
- * Validate and convert a route parameter to BountyId.
- * Returns null if the input is not a valid bounty ID format.
+ * Guard and brand a route parameter as BountyId.
+ * Returns null for empty/non-string inputs. Service layer validates existence.
  */
 export function validateBountyId(id: unknown): BountyId | null {
   if (typeof id !== 'string' || id.length === 0) {
@@ -54,8 +58,8 @@ export function validateBountyId(id: unknown): BountyId | null {
 }
 
 /**
- * Validate and convert a route parameter to PostId.
- * Returns null if the input is not a valid post ID format.
+ * Guard and brand a route parameter as PostId.
+ * Returns null for empty/non-string inputs. Service layer validates existence.
  */
 export function validatePostId(id: unknown): PostId | null {
   if (typeof id !== 'string' || id.length === 0) {
@@ -65,8 +69,8 @@ export function validatePostId(id: unknown): PostId | null {
 }
 
 /**
- * Validate and convert a route parameter to ClaimId.
- * Returns null if the input is not a valid claim ID format.
+ * Guard and brand a route parameter as ClaimId.
+ * Returns null for empty/non-string inputs. Service layer validates existence.
  */
 export function validateClaimId(id: unknown): ClaimId | null {
   if (typeof id !== 'string' || id.length === 0) {
