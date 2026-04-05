@@ -17,6 +17,9 @@ import {
   getAllSignalIds as getSeededSignalIds,
   getAllChainIds as getSeededChainIds,
   getAllCollectiveIds as getSeededCollectiveIds,
+  getAllSignalIdsAsync as getSeededSignalIdsAsync,
+  getAllChainIdsAsync as getSeededChainIdsAsync,
+  getAllCollectiveIdsAsync as getSeededCollectiveIdsAsync,
   type Locale,
 } from './seed-store';
 
@@ -93,16 +96,34 @@ export function getSignalById(signalId: string, locale: Locale = 'en'): Signal |
 
 /**
  * Get all signal IDs for static generation.
+ * @deprecated Use getAllSignalIdsAsync() for deterministic seeding.
  */
 export function getAllSignalIds(): string[] {
   return getSeededSignalIds();
 }
 
 /**
+ * Get all signal IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ */
+export async function getAllSignalIdsAsync(): Promise<string[]> {
+  return getSeededSignalIdsAsync();
+}
+
+/**
  * Get all chain IDs for static generation.
+ * @deprecated Use getAllChainIdsAsync() for deterministic seeding.
  */
 export function getAllChainIds(): string[] {
   return getSeededChainIds();
+}
+
+/**
+ * Get all chain IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ */
+export async function getAllChainIdsAsync(): Promise<string[]> {
+  return getSeededChainIdsAsync();
 }
 
 // ============================================================
@@ -147,10 +168,43 @@ export function getCollectiveById(id: string): Collective | undefined {
 }
 
 /**
+ * Check if a DIM credential is a member of any seeded collective.
+ * Used for access control (e.g., workbench access).
+ *
+ * @param credentialHash - The user's DIM credential hash
+ * @returns The collective IDs the user is a member of, or empty array if none
+ */
+export function getCollectiveMembershipsForCredential(credentialHash: string): string[] {
+  const collectives = getSeededCollectives();
+  return collectives
+    .filter((c) => c.members.some((m) => m.credentialHash === credentialHash))
+    .map((c) => c.id);
+}
+
+/**
+ * Check if a DIM credential is a member of any seeded collective.
+ *
+ * @param credentialHash - The user's DIM credential hash
+ * @returns true if the user is a member of at least one collective
+ */
+export function isCollectiveMember(credentialHash: string): boolean {
+  return getCollectiveMembershipsForCredential(credentialHash).length > 0;
+}
+
+/**
  * Get all collective IDs for static generation.
+ * @deprecated Use getAllCollectiveIdsAsync() for deterministic seeding.
  */
 export function getAllCollectiveIds(): string[] {
   return getSeededCollectiveIds();
+}
+
+/**
+ * Get all collective IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ */
+export async function getAllCollectiveIdsAsync(): Promise<string[]> {
+  return getSeededCollectiveIdsAsync();
 }
 
 /**

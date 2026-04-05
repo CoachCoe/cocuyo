@@ -9,11 +9,11 @@ import { claimService, signalService, postService } from '@/lib/services';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ClaimStatusBadge } from '@cocuyo/ui';
 import { routing } from '../../../../../i18n/routing';
-import { type Locale, getAllClaimIds } from '@/lib/services/mock-data-posts';
+import { type Locale, getAllClaimIdsAsync } from '@/lib/services/mock-data-posts';
 import { ClaimActions } from './ClaimActions';
 
-export function generateStaticParams(): Array<{ locale: string; id: string }> {
-  const claimIds = getAllClaimIds();
+export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
+  const claimIds = await getAllClaimIdsAsync();
   return routing.locales.flatMap((locale) =>
     claimIds.map((id) => ({ locale, id }))
   );

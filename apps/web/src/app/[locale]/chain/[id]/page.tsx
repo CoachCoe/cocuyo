@@ -14,7 +14,7 @@ import type { ReactElement } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { chainService, postService } from '@/lib/services';
-import { getSignals, getAllChainIds, type Locale } from '@/lib/services/mock-data';
+import { getSignals, getAllChainIdsAsync, type Locale } from '@/lib/services/mock-data';
 import { getBountiesForChain } from '@/lib/services/mock-data-bounties';
 import { ChainSignalList } from './ChainSignalList';
 import { ChainTabs } from './ChainTabs';
@@ -28,8 +28,8 @@ import { createServerFormatters } from '@/lib/hooks/useFormatters';
 /**
  * Generate static params for all known chains across all locales.
  */
-export function generateStaticParams(): Array<{ locale: string; id: string }> {
-  const chainIds = getAllChainIds();
+export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
+  const chainIds = await getAllChainIdsAsync();
   return routing.locales.flatMap((locale) =>
     chainIds.map((id) => ({
       locale,

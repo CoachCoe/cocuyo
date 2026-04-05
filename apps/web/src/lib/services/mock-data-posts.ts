@@ -18,6 +18,8 @@ import {
   getClaims as getSeededClaims,
   getAllPostIds as getSeededPostIds,
   getAllClaimIds as getSeededClaimIds,
+  getAllPostIdsAsync as getSeededPostIdsAsync,
+  getAllClaimIdsAsync as getSeededClaimIdsAsync,
   type Locale,
 } from './seed-store';
 
@@ -110,14 +112,32 @@ export function getPendingClaims(locale: Locale = 'en'): Claim[] {
 
 /**
  * Get all post IDs for static generation.
+ * @deprecated Use getAllPostIdsAsync() for deterministic seeding.
  */
 export function getAllPostIds(): string[] {
   return getSeededPostIds();
 }
 
 /**
+ * Get all post IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ */
+export async function getAllPostIdsAsync(): Promise<string[]> {
+  return getSeededPostIdsAsync();
+}
+
+/**
  * Get all claim IDs for static generation.
+ * @deprecated Use getAllClaimIdsAsync() for deterministic seeding.
  */
 export function getAllClaimIds(): string[] {
   return getSeededClaimIds();
+}
+
+/**
+ * Get all claim IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ */
+export async function getAllClaimIdsAsync(): Promise<string[]> {
+  return getSeededClaimIdsAsync();
 }

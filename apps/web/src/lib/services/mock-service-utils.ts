@@ -153,7 +153,7 @@ export interface UploadResult {
  * Upload data to Bulletin Chain with local CID fallback.
  * Returns the CID (from Bulletin if available, calculated locally otherwise).
  */
-export async function uploadToBulletin<T>(data: T): Promise<Result<UploadResult, string>> {
+export async function uploadToBulletin(data: unknown): Promise<Result<UploadResult, string>> {
   try {
     const bulletin = await getBulletinClient();
     const encoder = new TextEncoder();

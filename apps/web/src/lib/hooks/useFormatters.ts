@@ -32,10 +32,20 @@ interface Formatters {
 /**
  * Normalize timestamp to milliseconds.
  * Handles both Unix seconds and milliseconds.
+ *
+ * Heuristic: timestamps < 1e12 are in seconds (covers dates through ~2001 in ms,
+ * but ~2286 in seconds). Current Date.now() returns ~1.7e12, so this correctly
+ * identifies millisecond timestamps from modern systems while converting
+ * second-based timestamps (common in seed data and APIs) to milliseconds.
+ *
+ * @example
+ * normalizeTimestamp(1700000000)     // 1700000000000 (seconds -> ms)
+ * normalizeTimestamp(1700000000000)  // 1700000000000 (already ms)
+ * normalizeTimestamp(Date.now())     // unchanged (already ms)
  */
-function normalizeTimestamp(timestamp: number): number {
-  // If timestamp is in seconds (less than year 2100 in ms), convert to ms
-  return timestamp < 4_102_444_800_000 ? timestamp * 1000 : timestamp;
+export function normalizeTimestamp(timestamp: number): number {
+  // Timestamps < 1 trillion are in seconds; multiply to get milliseconds
+  return timestamp < 1_000_000_000_000 ? timestamp * 1000 : timestamp;
 }
 
 /**

@@ -198,8 +198,9 @@ export class MockClaimService implements ClaimService {
       }
     }
 
-    // For mock claims, just return success (can't modify mock data)
-    return Promise.resolve(ok(undefined));
+    // Claim not found in user claims - it's either a seeded/mock claim (immutable)
+    // or doesn't exist. Return an error so the UI doesn't falsely report success.
+    return Promise.resolve(err('Cannot submit evidence: claim is read-only or does not exist.'));
   }
 
   getAllClaims(params: {

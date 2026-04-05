@@ -8,7 +8,7 @@
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getSignalById, getAllSignalIds, getChainTitle, type Locale } from '@/lib/services/mock-data';
+import { getSignalById, getAllSignalIdsAsync, getChainTitle, type Locale } from '@/lib/services/mock-data';
 import { SignalDetailView } from './SignalDetailView';
 import { routing } from '../../../../../i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
@@ -17,9 +17,10 @@ interface Props {
   params: Promise<{ locale: string; id: string }>;
 }
 
-export function generateStaticParams(): Array<{ locale: string; id: string }> {
+export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
+  const signalIds = await getAllSignalIdsAsync();
   return routing.locales.flatMap((locale) =>
-    getAllSignalIds().map((id) => ({ locale, id }))
+    signalIds.map((id) => ({ locale, id }))
   );
 }
 

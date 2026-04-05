@@ -17,14 +17,14 @@ import { bountyService, signalService } from '@/lib/services';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { BountyDetailView } from './BountyDetailView';
 import type { BountyId } from '@cocuyo/types';
-import { getBounties } from '@/lib/services/mock-data-bounties';
+import { getAllBountyIdsAsync } from '@/lib/services/mock-data-bounties';
 import { routing } from '../../../../../i18n/routing';
 
 /**
  * Generate static params for all known bounties across all locales.
  */
-export function generateStaticParams(): Array<{ locale: string; id: string }> {
-  const bountyIds = getBounties().map((b) => b.id);
+export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
+  const bountyIds = await getAllBountyIdsAsync();
   return routing.locales.flatMap((locale) =>
     bountyIds.map((id) => ({
       locale,

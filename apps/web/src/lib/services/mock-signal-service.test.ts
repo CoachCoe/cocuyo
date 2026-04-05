@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { MockSignalService } from './mock-signal-service';
 import { createSignalId, createChainId } from '@cocuyo/types';
+import { setConnectedWallet } from './mock-service-utils';
 
 describe('MockSignalService', () => {
   let service: MockSignalService;
@@ -124,6 +125,15 @@ describe('MockSignalService', () => {
   });
 
   describe('illuminate', () => {
+    // Set up mock wallet for illuminate tests (requires connected wallet)
+    beforeEach(() => {
+      setConnectedWallet('0x1234567890abcdef1234567890abcdef12345678');
+    });
+
+    afterEach(() => {
+      setConnectedWallet(null);
+    });
+
     it('returns a success result with a content-addressed ID', async () => {
       const result = await service.illuminate({
         content: { text: 'Test signal' },
@@ -135,7 +145,7 @@ describe('MockSignalService', () => {
         // CIDv1 with blake2b-256 starts with 'bafk'
         expect(result.value).toMatch(/^bafk/);
       }
-    });
+    }, 10000); // Bulletin fallback can be slow
 
     it('generates deterministic IDs for same content', async () => {
       const signal = {
@@ -152,6 +162,6 @@ describe('MockSignalService', () => {
         expect(result1.value).toMatch(/^bafk/);
         expect(result2.value).toMatch(/^bafk/);
       }
-    });
+    }, 30000); // Bulletin fallback can be slow (2 uploads, each may timeout)
   });
 });

@@ -73,29 +73,48 @@ const store: SeedStore = {
 };
 
 /**
- * Auto-seed flag. Set to true once we've attempted to auto-seed.
+ * Promise that resolves when auto-seeding is complete.
+ * null means seeding hasn't been attempted yet.
  */
-let autoSeedAttempted = false;
+let seedingPromise: Promise<void> | null = null;
 
 /**
  * Attempt to auto-seed if the environment variable is set.
- * Only runs once, on first data access.
+ * Returns a promise that resolves when seeding is complete.
+ * Safe to call multiple times - all callers await the same promise.
+ *
+ * IMPORTANT: This function propagates seeding errors instead of swallowing them.
+ * Static generation will fail fast if seeding fails, rather than silently
+ * producing empty route sets.
  */
-function ensureAutoSeeded(): void {
-  if (autoSeedAttempted) return;
-  autoSeedAttempted = true;
+function ensureAutoSeeded(): Promise<void> {
+  if (seedingPromise !== null) {
+    return seedingPromise;
+  }
 
   // Check if auto-seed is enabled via environment variable
   if (process.env.NEXT_PUBLIC_SEED_DATA === 'true' && !store.isSeeded) {
     // Dynamically import and run the seed function
-    // This is async but we call it fire-and-forget style
-    // The next request will have the data
-    void import('./seed-data').then(({ seedAll }) => {
-      seedAll();
-    }).catch(() => {
-      // Seed module not found or error - continue with empty data
-    });
+    // Errors are propagated to callers - static generation will fail fast
+    seedingPromise = import('./seed-data')
+      .then(({ seedAll }) => {
+        seedAll();
+      })
+      .catch((error: unknown) => {
+        // Log the error for debugging
+        console.error('[seed-store] Failed to load seed data:', error);
+        // Re-throw to propagate to callers (especially static generation)
+        throw new Error(
+          `Seeding failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+          'Static generation cannot proceed without seed data when NEXT_PUBLIC_SEED_DATA=true.'
+        );
+      });
+  } else {
+    // No seeding needed - resolve immediately
+    seedingPromise = Promise.resolve();
   }
+
+  return seedingPromise;
 }
 
 // ============================================================
@@ -103,37 +122,37 @@ function ensureAutoSeeded(): void {
 // ============================================================
 
 export function getSignals(locale: Locale = 'en'): Signal[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.signals.map((s) => s.data[locale]);
 }
 
 export function getChains(locale: Locale = 'en'): StoryChain[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.chains.map((c) => c.data[locale]);
 }
 
 export function getBounties(locale: Locale = 'en'): Bounty[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.bounties.map((b) => b.data[locale]);
 }
 
 export function getPosts(locale: Locale = 'en'): Post[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.posts.map((p) => p.data[locale]);
 }
 
 export function getClaims(locale: Locale = 'en'): Claim[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.claims.map((c) => c.data[locale]);
 }
 
 export function getCollectives(): Collective[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.collectives;
 }
 
 export function getVerificationRequests(): VerificationRequest[] {
-  ensureAutoSeeded();
+  void ensureAutoSeeded();
   return store.verificationRequests;
 }
 
@@ -192,26 +211,135 @@ export function clearStore(): void {
 // ID accessors (for static generation)
 // ============================================================
 
+/**
+ * Verify that seeding completed successfully.
+ * Throws if NEXT_PUBLIC_SEED_DATA=true but store wasn't populated.
+ */
+function assertSeededIfRequired(): void {
+  if (process.env.NEXT_PUBLIC_SEED_DATA === 'true' && !store.isSeeded) {
+    throw new Error(
+      'Seed data was expected (NEXT_PUBLIC_SEED_DATA=true) but store is empty. ' +
+      'This likely means seeding failed silently. Check seed-data.ts for errors.'
+    );
+  }
+}
+
+/**
+ * Get all signal IDs synchronously.
+ * WARNING: May return empty array if seeding hasn't completed.
+ * Prefer getAllSignalIdsAsync() for static generation.
+ */
 export function getAllSignalIds(): string[] {
   return store.signals.map((s) => s.id);
 }
 
+/**
+ * Get all signal IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ * Throws if seeding was expected but failed.
+ */
+export async function getAllSignalIdsAsync(): Promise<string[]> {
+  await ensureAutoSeeded();
+  assertSeededIfRequired();
+  return store.signals.map((s) => s.id);
+}
+
+/**
+ * Get all chain IDs synchronously.
+ * WARNING: May return empty array if seeding hasn't completed.
+ * Prefer getAllChainIdsAsync() for static generation.
+ */
 export function getAllChainIds(): string[] {
   return store.chains.map((c) => c.id);
 }
 
+/**
+ * Get all chain IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ * Throws if seeding was expected but failed.
+ */
+export async function getAllChainIdsAsync(): Promise<string[]> {
+  await ensureAutoSeeded();
+  assertSeededIfRequired();
+  return store.chains.map((c) => c.id);
+}
+
+/**
+ * Get all bounty IDs synchronously.
+ * WARNING: May return empty array if seeding hasn't completed.
+ * Prefer getAllBountyIdsAsync() for static generation.
+ */
 export function getAllBountyIds(): string[] {
   return store.bounties.map((b) => b.id);
 }
 
+/**
+ * Get all bounty IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ * Throws if seeding was expected but failed.
+ */
+export async function getAllBountyIdsAsync(): Promise<string[]> {
+  await ensureAutoSeeded();
+  assertSeededIfRequired();
+  return store.bounties.map((b) => b.id);
+}
+
+/**
+ * Get all post IDs synchronously.
+ * WARNING: May return empty array if seeding hasn't completed.
+ * Prefer getAllPostIdsAsync() for static generation.
+ */
 export function getAllPostIds(): string[] {
   return store.posts.map((p) => p.id);
 }
 
+/**
+ * Get all post IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ * Throws if seeding was expected but failed.
+ */
+export async function getAllPostIdsAsync(): Promise<string[]> {
+  await ensureAutoSeeded();
+  assertSeededIfRequired();
+  return store.posts.map((p) => p.id);
+}
+
+/**
+ * Get all claim IDs synchronously.
+ * WARNING: May return empty array if seeding hasn't completed.
+ * Prefer getAllClaimIdsAsync() for static generation.
+ */
 export function getAllClaimIds(): string[] {
   return store.claims.map((c) => c.id);
 }
 
+/**
+ * Get all claim IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ * Throws if seeding was expected but failed.
+ */
+export async function getAllClaimIdsAsync(): Promise<string[]> {
+  await ensureAutoSeeded();
+  assertSeededIfRequired();
+  return store.claims.map((c) => c.id);
+}
+
+/**
+ * Get all collective IDs synchronously.
+ * WARNING: May return empty array if seeding hasn't completed.
+ * Prefer getAllCollectiveIdsAsync() for static generation.
+ */
 export function getAllCollectiveIds(): string[] {
+  return store.collectives.map((c) => c.id);
+}
+
+/**
+ * Get all collective IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ * Throws if seeding was expected but failed.
+ */
+export async function getAllCollectiveIdsAsync(): Promise<string[]> {
+  await ensureAutoSeeded();
+  assertSeededIfRequired();
   return store.collectives.map((c) => c.id);
 }

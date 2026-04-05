@@ -27,7 +27,7 @@ export interface ClaimActionsProps {
 }
 
 export function ClaimActions({
-  claimId: _claimId,
+  claimId,
   claimStatement: _claimStatement,
   translations: t,
 }: ClaimActionsProps): ReactElement {
@@ -46,9 +46,12 @@ export function ClaimActions({
     setSelectedType(type);
     setIsSubmitting(true);
 
-    // Open the illuminate modal to create a signal that will be linked as evidence
-    // TODO: Pass claim context to modal and wire up evidence submission after signal creation
-    openModal();
+    // Open the illuminate modal with claim context
+    // The modal will create a signal and link it as evidence to this claim
+    openModal({
+      claimId,
+      evidenceType: type,
+    });
 
     // Reset button state - success will be shown by the modal when signal is created
     setIsSubmitting(false);

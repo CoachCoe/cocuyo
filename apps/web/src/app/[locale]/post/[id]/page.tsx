@@ -9,12 +9,12 @@ import { postService, claimService, signalService } from '@/lib/services';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ClaimCard } from '@cocuyo/ui';
 import { routing } from '../../../../../i18n/routing';
-import { type Locale, getAllPostIds } from '@/lib/services/mock-data-posts';
+import { type Locale, getAllPostIdsAsync } from '@/lib/services/mock-data-posts';
 import { PostActions } from './PostActions';
 import { ExternalLink } from '@/components/ExternalLink';
 
-export function generateStaticParams(): Array<{ locale: string; id: string }> {
-  const postIds = getAllPostIds();
+export async function generateStaticParams(): Promise<Array<{ locale: string; id: string }>> {
+  const postIds = await getAllPostIdsAsync();
   return routing.locales.flatMap((locale) =>
     postIds.map((id) => ({ locale, id }))
   );

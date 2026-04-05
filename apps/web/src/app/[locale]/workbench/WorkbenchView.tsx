@@ -11,7 +11,8 @@ import { useState, useMemo, useCallback, type ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { ClaimPreview, ClaimId, ClaimStatus } from '@cocuyo/types';
-import { useSigner } from '@/hooks';
+import { useSigner, useIdentity } from '@/hooks';
+import { isCollectiveMember } from '@/lib/services/mock-data';
 import { WorkbenchFilters } from './WorkbenchFilters';
 import { WorkbenchList } from './WorkbenchList';
 import { WorkbenchAccessGate } from './WorkbenchAccessGate';
@@ -65,6 +66,7 @@ export function WorkbenchView({
   const router = useRouter();
   const locale = useLocale();
   const { isConnected } = useSigner();
+  const { profile, status: identityStatus } = useIdentity();
 
   // Filter state
   const [statusFilter, setStatusFilter] = useState<ClaimStatus | null>(null);
@@ -112,9 +114,19 @@ export function WorkbenchView({
 
   const isFiltered = statusFilter !== null || topicFilters.length > 0 || searchQuery.length > 0;
 
-  // Access gate for non-connected users
-  // In a real implementation, we would also check collective membership
-  if (!isConnected) {
+  // Check if user's DIM credential is a member of any seeded collective
+  // This checks against actual collective member lists, not profile data
+  const credentialHash = profile?.credentialHash ?? null;
+  const isMemberOfCollective = credentialHash !== null && isCollectiveMember(credentialHash);
+
+  // Access gate: require wallet connection AND collective membership
+  // Show loading state while identity is being determined
+  if (!isConnected || identityStatus === 'loading') {
+    return <WorkbenchAccessGate />;
+  }
+
+  // After identity is loaded, check for collective membership against seeded data
+  if (!isMemberOfCollective) {
     return <WorkbenchAccessGate />;
   }
 

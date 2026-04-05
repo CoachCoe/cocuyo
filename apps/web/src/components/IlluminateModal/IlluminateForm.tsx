@@ -22,7 +22,7 @@ import { useSigner } from '@/lib/context/SignerContext';
 import type { ChainId, BountyId, NewSignal, MediaAttachment } from '@cocuyo/types';
 import { createContentHash } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
-import { useSignalService } from '@/lib/services/hooks';
+import { useSignalService, useClaimService } from '@/lib/services/hooks';
 import { getBulletinClient } from '@/lib/chain/client';
 import { TopicInput } from './TopicInput';
 import { SuggestionsList } from './SuggestionsList';
@@ -45,7 +45,11 @@ const MIN_CONTENT_LENGTH = 50;
 export function IlluminateForm(): ReactElement {
   const { isConnected, isInHost } = useSigner();
   const signalService = useSignalService();
-  const { preSelectedChainId, preSelectedBountyId, closeModal } = useIlluminate();
+  const claimService = useClaimService();
+  const { preSelectedChainId, preSelectedBountyId, evidenceClaimId, evidenceType, closeModal } = useIlluminate();
+
+  // Track if we're submitting evidence for a claim
+  const isEvidenceSubmission = evidenceClaimId !== null && evidenceType !== null;
 
   const [formState, setFormState] = useState<FormState>(() => ({
     content: '',
@@ -181,6 +185,22 @@ export function IlluminateForm(): ReactElement {
         const result = await signalService.illuminate(newSignal);
 
         if (result.ok) {
+          const signalId = result.value;
+
+          // If this is evidence submission, link the signal to the claim
+          if (evidenceClaimId !== null && evidenceType !== null) {
+            const evidenceResult = await claimService.submitEvidence(evidenceClaimId, {
+              signalId,
+              supports: evidenceType === 'support',
+            });
+
+            if (!evidenceResult.ok) {
+              // Signal was created but evidence linking failed
+              setSubmitError(`Signal created, but failed to link as evidence: ${evidenceResult.error}`);
+              return;
+            }
+          }
+
           setSubmitSuccess(true);
           // Close modal after brief delay
           setTimeout(() => {
@@ -197,15 +217,27 @@ export function IlluminateForm(): ReactElement {
         setIsSubmitting(false);
       }
     },
-    [canSubmit, formState, closeModal, signalService]
+    [canSubmit, formState, closeModal, signalService, claimService, evidenceClaimId, evidenceType]
   );
 
   if (submitSuccess) {
     return (
       <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-[var(--color-firefly-gold-glow)]">
+        <div className={`inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full ${
+          isEvidenceSubmission
+            ? evidenceType === 'support'
+              ? 'bg-[var(--fg-success)]/15'
+              : 'bg-[var(--fg-error)]/15'
+            : 'bg-[var(--color-firefly-gold-glow)]'
+        }`}>
           <svg
-            className="w-8 h-8 text-firefly-gold"
+            className={`w-8 h-8 ${
+              isEvidenceSubmission
+                ? evidenceType === 'support'
+                  ? 'text-[var(--fg-success)]'
+                  : 'text-[var(--fg-error)]'
+                : 'text-firefly-gold'
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -219,9 +251,15 @@ export function IlluminateForm(): ReactElement {
             />
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-primary mb-2">Signal Illuminated</h3>
+        <h3 className="text-xl font-semibold text-primary mb-2">
+          {isEvidenceSubmission ? 'Evidence Submitted' : 'Signal Illuminated'}
+        </h3>
         <p className="text-secondary">
-          Your observation has been added to the network.
+          {isEvidenceSubmission
+            ? evidenceType === 'support'
+              ? 'Your supporting evidence has been linked to the claim.'
+              : 'Your contradicting evidence has been linked to the claim.'
+            : 'Your observation has been added to the network.'}
         </p>
       </div>
     );

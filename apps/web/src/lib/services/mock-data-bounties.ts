@@ -10,6 +10,7 @@ import type { Bounty, BountyPreview, ChainId } from '@cocuyo/types';
 import {
   getBounties as getSeededBounties,
   getAllBountyIds as getSeededBountyIds,
+  getAllBountyIdsAsync as getSeededBountyIdsAsync,
   type Locale,
 } from './seed-store';
 
@@ -138,7 +139,16 @@ export function getChainBountyMap(locale: Locale = 'en'): Record<string, Bounty>
 
 /**
  * Get all bounty IDs for static generation.
+ * @deprecated Use getAllBountyIdsAsync() for deterministic seeding.
  */
 export function getAllBountyIds(): string[] {
   return getSeededBountyIds();
+}
+
+/**
+ * Get all bounty IDs after ensuring seeding is complete.
+ * Use this in generateStaticParams().
+ */
+export async function getAllBountyIdsAsync(): Promise<string[]> {
+  return getSeededBountyIdsAsync();
 }

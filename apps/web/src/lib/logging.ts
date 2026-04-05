@@ -73,10 +73,21 @@ export function logWarn(message: string, ctx: LogContext): void {
  * Note: For swallowed errors where fallback behavior is expected,
  * use logSwallowedError instead.
  */
+function stringifyError(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  if (typeof error === 'number' || typeof error === 'boolean') return String(error);
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return '[unstringifiable error]';
+  }
+}
+
 export function logError(message: string, ctx: LogContext, error?: unknown): void {
   const baseContext = ctx.context ?? {};
   const errorContext = error !== undefined
-    ? { ...baseContext, error: error instanceof Error ? error.message : String(error) }
+    ? { ...baseContext, error: stringifyError(error) }
     : baseContext;
 
   log('error', message, { module: ctx.module, operation: ctx.operation, context: errorContext });
@@ -95,16 +106,24 @@ export function logSwallowedError(
 
   const baseContext = ctx.context ?? {};
   const errorContext = error !== undefined
-    ? { ...baseContext, error: error instanceof Error ? error.message : String(error) }
+    ? { ...baseContext, error: stringifyError(error) }
     : baseContext;
 
   log('debug', `[Swallowed] ${message}`, { module: ctx.module, operation: ctx.operation, context: errorContext });
 }
 
+interface Logger {
+  debug: (message: string, operation: string, context?: Record<string, unknown>) => void;
+  info: (message: string, operation: string, context?: Record<string, unknown>) => void;
+  warn: (message: string, operation: string, context?: Record<string, unknown>) => void;
+  error: (message: string, operation: string, error?: unknown, context?: Record<string, unknown>) => void;
+  swallowed: (message: string, operation: string, error?: unknown, context?: Record<string, unknown>) => void;
+}
+
 /**
  * Create a scoped logger for a specific module.
  */
-export function createLogger(module: string) {
+export function createLogger(module: string): Logger {
   return {
     debug: (message: string, operation: string, context?: Record<string, unknown>) =>
       logDebug(message, { module, operation, ...(context !== undefined && { context }) }),

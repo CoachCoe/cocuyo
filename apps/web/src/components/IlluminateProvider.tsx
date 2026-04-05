@@ -15,13 +15,20 @@ import {
   type ReactNode,
   type ReactElement,
 } from 'react';
-import type { ChainId, BountyId } from '@cocuyo/types';
+import type { ChainId, BountyId, ClaimId } from '@cocuyo/types';
+
+/** Evidence type for claim submissions */
+export type EvidenceType = 'support' | 'contradict';
 
 export interface IlluminateModalOptions {
   /** Pre-select a story chain to link the signal to */
   chainId?: ChainId;
   /** Pre-select a bounty to contribute to */
   bountyId?: BountyId;
+  /** Claim ID to submit evidence for */
+  claimId?: ClaimId;
+  /** Whether the evidence supports or contradicts the claim */
+  evidenceType?: EvidenceType;
 }
 
 export interface IlluminateContextValue {
@@ -31,6 +38,10 @@ export interface IlluminateContextValue {
   preSelectedChainId: ChainId | null;
   /** Pre-selected bounty ID (if opening from a bounty page) */
   preSelectedBountyId: BountyId | null;
+  /** Claim ID to submit evidence for (if opening from a claim page) */
+  evidenceClaimId: ClaimId | null;
+  /** Whether the evidence supports or contradicts the claim */
+  evidenceType: EvidenceType | null;
   /** Open the illuminate modal */
   openModal: (options?: IlluminateModalOptions) => void;
   /** Close the illuminate modal */
@@ -47,10 +58,14 @@ export function IlluminateProvider({ children }: IlluminateProviderProps): React
   const [isOpen, setIsOpen] = useState(false);
   const [preSelectedChainId, setPreSelectedChainId] = useState<ChainId | null>(null);
   const [preSelectedBountyId, setPreSelectedBountyId] = useState<BountyId | null>(null);
+  const [evidenceClaimId, setEvidenceClaimId] = useState<ClaimId | null>(null);
+  const [evidenceType, setEvidenceType] = useState<EvidenceType | null>(null);
 
   const openModal = useCallback((options?: IlluminateModalOptions): void => {
     setPreSelectedChainId(options?.chainId ?? null);
     setPreSelectedBountyId(options?.bountyId ?? null);
+    setEvidenceClaimId(options?.claimId ?? null);
+    setEvidenceType(options?.evidenceType ?? null);
     setIsOpen(true);
   }, []);
 
@@ -60,6 +75,8 @@ export function IlluminateProvider({ children }: IlluminateProviderProps): React
     setTimeout(() => {
       setPreSelectedChainId(null);
       setPreSelectedBountyId(null);
+      setEvidenceClaimId(null);
+      setEvidenceType(null);
     }, 200);
   }, []);
 
@@ -68,10 +85,12 @@ export function IlluminateProvider({ children }: IlluminateProviderProps): React
       isOpen,
       preSelectedChainId,
       preSelectedBountyId,
+      evidenceClaimId,
+      evidenceType,
       openModal,
       closeModal,
     }),
-    [isOpen, preSelectedChainId, preSelectedBountyId, openModal, closeModal]
+    [isOpen, preSelectedChainId, preSelectedBountyId, evidenceClaimId, evidenceType, openModal, closeModal]
   );
 
   return (
