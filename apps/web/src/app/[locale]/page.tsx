@@ -59,15 +59,8 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
               </span>
             </div>
 
-            {/* Primary CTA - Enter the app */}
-            <Link href="/explore">
-              <Button variant="illuminate" size="lg">
-                {tActions('illuminate')}
-              </Button>
-            </Link>
-
             {/* Secondary link to About */}
-            <div className="mt-6">
+            <div className="mb-6">
               <Link
                 href="/about"
                 className="text-sm text-secondary hover:text-primary transition-colors"
@@ -75,6 +68,13 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
                 {t('cta.howItWorks')}
               </Link>
             </div>
+
+            {/* Primary CTA - Enter the app */}
+            <Link href="/explore">
+              <Button variant="illuminate" size="lg">
+                {tActions('illuminate')}
+              </Button>
+            </Link>
           </div>
         </section>
       </main>
