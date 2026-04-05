@@ -27,13 +27,28 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // Fix Leaflet default marker icon issue in Next.js
+// Use inline SVG to avoid external network requests (required for Triangle sandbox)
 if (typeof window !== 'undefined') {
   // @ts-expect-error - Leaflet icon fix for webpack
   delete L.Icon.Default.prototype._getIconUrl;
+
+  // Default blue marker as inline SVG (no external requests)
+  const defaultMarkerSvg = `
+    <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#2563eb" stroke="#1d4ed8" stroke-width="2"
+        d="M12.5 0C5.5 0 0 5.5 0 12.5c0 8 12.5 28.5 12.5 28.5S25 20.5 25 12.5C25 5.5 19.5 0 12.5 0z"/>
+      <circle fill="white" cx="12.5" cy="12.5" r="5"/>
+    </svg>
+  `;
+  const defaultIconUrl = `data:image/svg+xml;base64,${btoa(defaultMarkerSvg)}`;
+
   L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconRetinaUrl: defaultIconUrl,
+    iconUrl: defaultIconUrl,
+    shadowUrl: '', // No shadow needed for SVG icons
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
   });
 }
 

@@ -3,7 +3,12 @@
  *
  * Provides reverse geocoding via Nominatim (OpenStreetMap)
  * and distance calculations via Haversine formula.
+ *
+ * Note: Reverse geocoding requires network access and will
+ * return null when running inside Triangle (sandboxed).
  */
+
+import { canMakeExternalRequests } from './host/detect';
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
 
@@ -21,11 +26,18 @@ export interface ReverseGeocodeResult {
 /**
  * Reverse geocode coordinates to a location name.
  * Uses Nominatim (OpenStreetMap's free geocoding service).
+ *
+ * Returns null when running inside Triangle (no network access).
  */
 export async function reverseGeocode(
   lat: number,
   lon: number
 ): Promise<ReverseGeocodeResult | null> {
+  // Network requests are blocked in Triangle sandbox
+  if (!canMakeExternalRequests()) {
+    return null;
+  }
+
   try {
     const params = new URLSearchParams({
       lat: lat.toString(),
