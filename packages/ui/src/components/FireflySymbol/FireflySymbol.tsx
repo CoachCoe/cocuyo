@@ -12,6 +12,8 @@ export interface FireflySymbolProps {
   size?: number | string;
   /** Color of the symbol. Defaults to firefly gold */
   color?: 'gold' | 'white' | 'inherit';
+  /** Whether to animate with a subtle glow pulse */
+  animate?: boolean;
   /** Additional CSS class */
   className?: string;
   /** Accessible label */
@@ -27,6 +29,7 @@ const colorMap = {
 export function FireflySymbol({
   size = 16,
   color = 'gold',
+  animate = false,
   className = '',
   'aria-label': ariaLabel = 'Firefly',
 }: FireflySymbolProps): ReactElement {
@@ -36,9 +39,11 @@ export function FireflySymbol({
     lineHeight: 1,
   };
 
+  const animateClass = animate ? 'animate-firefly-pulse' : '';
+
   return (
     <span
-      className={className}
+      className={`${animateClass} ${className}`.trim()}
       style={style}
       role="img"
       aria-label={ariaLabel}

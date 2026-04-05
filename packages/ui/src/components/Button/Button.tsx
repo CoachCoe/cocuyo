@@ -64,10 +64,11 @@ export function Button({
     `,
     illuminate: `
       bg-transparent text-[var(--fg-accent)] border border-[var(--border-accent)]
-      hover:bg-[var(--bg-accent-firefly)] hover:text-black hover:shadow-glow hover:scale-[1.02]
+      animate-firefly-pulse
+      hover:bg-[var(--bg-accent-firefly)] hover:text-black hover:shadow-glow hover:scale-[1.02] hover:animate-none
       active:brightness-110 active:shadow-[0_0_30px_rgba(232,185,49,0.25)]
       focus-visible:outline-[var(--fg-accent)]
-      disabled:border-[var(--fg-tertiary)] disabled:text-[var(--fg-tertiary)]
+      disabled:border-[var(--fg-tertiary)] disabled:text-[var(--fg-tertiary)] disabled:animate-none
       disabled:hover:bg-transparent disabled:hover:text-[var(--fg-tertiary)] disabled:hover:shadow-none disabled:hover:scale-100
     `,
   };

@@ -2,116 +2,117 @@
  * Mock bounty data for development.
  */
 
-import type { Bounty, BountyPreview } from '@cocuyo/types';
-import { createBountyId, createDIMCredential, createSignalId } from '@cocuyo/types';
+import type { Bounty, BountyPreview, ChainId } from '@cocuyo/types';
+import {
+  createBountyId,
+  createChainId,
+  createDIMCredential,
+  createSignalId,
+  createEscrowId,
+  createTransactionHash,
+  createPUSDAmount,
+} from '@cocuyo/types';
 import { hoursAgo, daysAgo, daysFromNow } from '@/lib/utils/time';
 
 /**
  * Mock bounties demonstrating community-funded information requests.
+ *
+ * Some bounties are linked to story chains (relatedChainId), representing
+ * funded investigations. Others are "orphan" bounties - open questions
+ * waiting for their first signals.
  */
 export const mockBounties: Bounty[] = [
+  // === Venezuelan bounties linked to story chains ===
   {
-    id: createBountyId('bounty-001'),
-    title: 'Document conditions at the Merrimack River industrial discharge point',
+    id: createBountyId('bounty-ve-001'),
+    title: 'Document current food basket prices across Caracas',
     description:
-      'We need photographic and video evidence of current conditions at the industrial discharge point near the old mill. Specifically looking for: water color/clarity, any visible discharge, smell observations, and timestamps. Multiple visits at different times of day would be valuable.',
-    topics: ['environmental', 'water-quality', 'documentation'],
-    location: 'Concord, NH',
+      'We need weekly documentation of basic food basket prices (canasta básica) from supermarkets and markets across different neighborhoods in Caracas. Include: store name/location, date, itemized prices for staples (rice, beans, flour, cooking oil, eggs), photos of price tags, and any observations about availability or shortages.',
+    topics: ['economy', 'food-security', 'inflation', 'documentation'],
+    location: 'Caracas, Venezuela',
     status: 'open',
-    fundingAmount: BigInt(500_000_000), // 500 USDC (6 decimals)
-    funderCredential: createDIMCredential('dim-funder-001'),
-    contributingSignals: [createSignalId('sig-003')],
+    fundingAmount: createPUSDAmount(450_000_000n), // $450 pUSD
+    funderCredential: createDIMCredential('dim-funder-ve-001'),
+    escrowId: createEscrowId('escrow-ve-001'),
+    fundingTxHash: createTransactionHash('0xve001...abc'),
+    payoutMode: 'private',
+    contributingSignals: [createSignalId('sig-001'), createSignalId('sig-002')],
+    relatedChainId: createChainId('chain-001'),
     createdAt: daysAgo(5),
     expiresAt: daysFromNow(25),
   },
   {
-    id: createBountyId('bounty-002'),
-    title: 'Actual wait times at the DMV on Elm Street',
+    id: createBountyId('bounty-ve-002'),
+    title: 'Verify recent ministry appointments and dismissals',
     description:
-      'The posted wait times online never match reality. Looking for fireflies to document their actual wait times at the Elm Street DMV location. Include: day of week, time of arrival, service needed, and total wait time. Photos of the waiting area welcome.',
-    topics: ['local-government', 'public-services'],
-    location: 'Manchester, NH',
+      'Track and verify official appointments and dismissals in Venezuelan government ministries. Looking for: official gazette publications, press conference recordings, social media announcements from official accounts, and any documentation showing appointment dates, credentials, and previous positions of new officials.',
+    topics: ['politics', 'transparency', 'governance', 'public-records'],
+    location: 'Venezuela',
     status: 'open',
-    fundingAmount: BigInt(150_000_000), // 150 USDC
-    funderCredential: createDIMCredential('dim-funder-002'),
+    fundingAmount: createPUSDAmount(600_000_000n), // $600 pUSD
+    funderCredential: createDIMCredential('dim-funder-ve-002'),
+    escrowId: createEscrowId('escrow-ve-002'),
+    fundingTxHash: createTransactionHash('0xve002...def'),
+    payoutMode: 'private',
+    contributingSignals: [createSignalId('sig-004'), createSignalId('sig-005')],
+    relatedChainId: createChainId('chain-002'),
+    createdAt: daysAgo(4),
+    expiresAt: daysFromNow(26),
+  },
+  // === Venezuelan orphan bounties (open questions without stories yet) ===
+  {
+    id: createBountyId('bounty-ve-003'),
+    title: 'Document hospital conditions and medication availability in Maracaibo',
+    description:
+      'We need firsthand documentation of conditions at public hospitals in Maracaibo. Looking for: photos of waiting areas, pharmacy stock levels, staff testimonies about equipment/supply shortages, and patient wait times for emergency care.',
+    topics: ['health', 'infrastructure', 'crisis', 'documentation'],
+    location: 'Maracaibo, Venezuela',
+    status: 'open',
+    fundingAmount: createPUSDAmount(350_000_000n), // $350 pUSD
+    funderCredential: createDIMCredential('dim-funder-ve-003'),
+    escrowId: createEscrowId('escrow-ve-003'),
+    fundingTxHash: createTransactionHash('0xve003...ghi'),
+    payoutMode: 'private',
     contributingSignals: [],
+    // No chain yet - orphan bounty
     createdAt: daysAgo(3),
     expiresAt: daysFromNow(27),
   },
   {
-    id: createBountyId('bounty-003'),
-    title: 'School lunch quality documentation — Nashua District',
+    id: createBountyId('bounty-ve-004'),
+    title: 'Track electricity outages and water service interruptions',
     description:
-      'Parents concerned about school lunch quality in Nashua schools. Looking for photos and descriptions of actual meals served. Please include: school name, date, what was served vs. what was on the menu, and any observations about portion sizes or food quality.',
-    topics: ['education', 'public-health', 'local-government'],
-    location: 'Nashua, NH',
+      'Document the frequency and duration of power outages and water service cuts across Venezuelan states. Include: date/time of outage, duration, affected neighborhood, any official explanations given, and photos if safe to capture.',
+    topics: ['infrastructure', 'public-services', 'crisis'],
+    location: 'Venezuela',
     status: 'open',
-    fundingAmount: BigInt(300_000_000), // 300 USDC
-    funderCredential: createDIMCredential('dim-funder-003'),
-    contributingSignals: [createSignalId('sig-010'), createSignalId('sig-011')],
-    createdAt: daysAgo(7),
-    expiresAt: daysFromNow(23),
-  },
-  {
-    id: createBountyId('bounty-004'),
-    title: 'Traffic study for proposed Main Street development',
-    description:
-      'The city claims a traffic study was done for the new development on Main Street but won\'t release it. Looking for: anyone who attended planning meetings where it was discussed, copies of any public documents referencing the study, or observations of current traffic patterns at the site.',
-    topics: ['local-government', 'development', 'public-records'],
-    location: 'Manchester, NH',
-    status: 'open',
-    fundingAmount: BigInt(750_000_000), // 750 USDC
-    funderCredential: createDIMCredential('dim-funder-004'),
-    contributingSignals: [createSignalId('sig-007')],
-    createdAt: daysAgo(10),
-    expiresAt: daysFromNow(20),
-  },
-  {
-    id: createBountyId('bounty-005'),
-    title: 'Verify claims about new homeless shelter capacity',
-    description:
-      'City announced the new shelter can accommodate 200 people, but staff have said otherwise. Looking for: actual bed counts, occupancy observations, staff statements, or any documentation about true capacity.',
-    topics: ['housing', 'local-government', 'public-services'],
-    location: 'Concord, NH',
-    status: 'open',
-    fundingAmount: BigInt(400_000_000), // 400 USDC
-    funderCredential: createDIMCredential('dim-funder-005'),
+    fundingAmount: createPUSDAmount(275_000_000n), // $275 pUSD
+    funderCredential: createDIMCredential('dim-funder-ve-004'),
+    escrowId: createEscrowId('escrow-ve-004'),
+    fundingTxHash: createTransactionHash('0xve004...jkl'),
+    payoutMode: 'private',
     contributingSignals: [],
+    // No chain yet - orphan bounty
     createdAt: daysAgo(2),
     expiresAt: daysFromNow(28),
   },
   {
-    id: createBountyId('bounty-006'),
-    title: 'Construction site safety violations — Downtown project',
+    id: createBountyId('bounty-ve-005'),
+    title: 'Verify reports of detained journalists and activists',
     description:
-      'Multiple residents have reported unsafe conditions at the downtown construction site. Looking for documentation of: missing safety barriers, after-hours work without permits, debris in public areas, or worker safety concerns.',
-    topics: ['safety', 'development', 'labor'],
-    location: 'Manchester, NH',
+      'Help verify and document cases of detained journalists, activists, and political figures. Looking for: detention location confirmations, family statements, lawyer access status, and any official charges filed.',
+    topics: ['human-rights', 'politics', 'press-freedom', 'detention'],
+    location: 'Venezuela',
     status: 'open',
-    fundingAmount: BigInt(250_000_000), // 250 USDC
-    funderCredential: createDIMCredential('dim-funder-006'),
+    fundingAmount: createPUSDAmount(500_000_000n), // $500 pUSD
+    funderCredential: createDIMCredential('dim-funder-ve-005'),
+    escrowId: createEscrowId('escrow-ve-005'),
+    fundingTxHash: createTransactionHash('0xve005...mno'),
+    payoutMode: 'private',
     contributingSignals: [],
+    // No chain yet - orphan bounty
     createdAt: hoursAgo(18),
     expiresAt: daysFromNow(30),
-  },
-  {
-    id: createBountyId('bounty-007'),
-    title: 'Police response times in the North End',
-    description:
-      'Residents of the North End neighborhood report slow police response times compared to other areas. Looking for: documented response times to calls, dispatch recordings (if legally obtained), or corroborating observations from multiple incidents.',
-    topics: ['public-safety', 'local-government', 'equity'],
-    location: 'Manchester, NH',
-    status: 'fulfilled',
-    fundingAmount: BigInt(600_000_000), // 600 USDC
-    funderCredential: createDIMCredential('dim-funder-007'),
-    contributingSignals: [
-      createSignalId('sig-020'),
-      createSignalId('sig-021'),
-      createSignalId('sig-022'),
-      createSignalId('sig-023'),
-    ],
-    createdAt: daysAgo(30),
-    expiresAt: daysAgo(2),
   },
 ];
 
@@ -127,6 +128,7 @@ export function getBountyPreviews(): BountyPreview[] {
     status: bounty.status,
     fundingAmount: bounty.fundingAmount,
     contributionCount: bounty.contributingSignals.length,
+    payoutMode: bounty.payoutMode,
     expiresAt: bounty.expiresAt,
   }));
 }
@@ -143,4 +145,67 @@ export function getOpenBounties(): BountyPreview[] {
  */
 export function getBountyById(id: string): Bounty | undefined {
   return mockBounties.find((b) => b.id === id);
+}
+
+/**
+ * Get bounties that a signal contributes to.
+ * Returns BountyPreview[] for any bounty where the signal ID appears in contributingSignals.
+ */
+export function getBountiesForSignal(signalId: string): BountyPreview[] {
+  return mockBounties
+    .filter((b) => b.contributingSignals.some((s) => s === signalId))
+    .map((bounty) => ({
+      id: bounty.id,
+      title: bounty.title,
+      topics: bounty.topics,
+      ...(bounty.location != null && { location: bounty.location }),
+      status: bounty.status,
+      fundingAmount: bounty.fundingAmount,
+      contributionCount: bounty.contributingSignals.length,
+      payoutMode: bounty.payoutMode,
+      expiresAt: bounty.expiresAt,
+    }));
+}
+
+/**
+ * Get a mapping of bounty IDs to their contributing signal IDs.
+ * This allows filtering signals by bounty on the client side.
+ */
+export function getBountySignalsMap(): Record<string, readonly string[]> {
+  return Object.fromEntries(
+    mockBounties.map((bounty) => [bounty.id, bounty.contributingSignals])
+  );
+}
+
+/**
+ * Get the bounty linked to a story chain (if any).
+ * Returns the full Bounty object for chains that have associated funding.
+ */
+export function getBountyForChain(chainId: ChainId): Bounty | undefined {
+  return mockBounties.find(
+    (b) => b.relatedChainId === chainId && b.status === 'open'
+  );
+}
+
+/**
+ * Get orphan bounties - open bounties that don't have a story chain yet.
+ * These are "open questions" waiting for their first signals to form a story.
+ */
+export function getOrphanBounties(): Bounty[] {
+  return mockBounties.filter(
+    (b) => b.status === 'open' && b.relatedChainId === undefined
+  );
+}
+
+/**
+ * Get a mapping of chain IDs to their associated bounty (if any).
+ */
+export function getChainBountyMap(): Record<string, Bounty> {
+  const map: Record<string, Bounty> = {};
+  for (const bounty of mockBounties) {
+    if (bounty.relatedChainId !== undefined && bounty.status === 'open') {
+      map[bounty.relatedChainId] = bounty;
+    }
+  }
+  return map;
 }

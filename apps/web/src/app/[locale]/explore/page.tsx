@@ -1,15 +1,20 @@
 /**
- * Explore page — Browse active story chains and recent signals.
+ * Explore page — Browse active story chains, bounties, and recent signals.
  *
  * Two-column layout:
- * - Left: Story chain filters (sidebar)
- * - Right: Signal feed (filterable by story)
+ * - Left: Filters sidebar (story chains + bounties)
+ * - Right: Signal feed (filterable by story or bounty)
  */
 
 import type { ReactElement } from 'react';
 import { chainService } from '@/lib/services';
 import { signalService } from '@/lib/services';
 import { getChainTitle, type Locale } from '@/lib/services/mock-data';
+import {
+  getBountySignalsMap,
+  getChainBountyMap,
+  getOrphanBounties,
+} from '@/lib/services/mock-data-bounties';
 import { ExploreView } from './ExploreView';
 import { ExploreHeader } from './ExploreHeader';
 import { IlluminateFAB } from './IlluminateFAB';
@@ -32,6 +37,11 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
     pagination: { limit: 20, offset: 0 },
     locale: locale as Locale,
   });
+
+  // Fetch bounty data
+  const bountySignalsMap = getBountySignalsMap();
+  const chainBountyMap = getChainBountyMap();
+  const orphanBounties = getOrphanBounties();
 
   // Build chain titles map
   const chainTitles = Object.fromEntries(
@@ -57,6 +67,14 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
       </p>
     ));
 
+  const openBountiesInfoBody = t('openBountiesInfo.body')
+    .split('\n\n')
+    .map((paragraph, index) => (
+      <p key={index} className={index > 0 ? 'mt-3' : ''}>
+        {paragraph}
+      </p>
+    ));
+
   return (
     <>
       <main className="min-h-screen">
@@ -72,18 +90,25 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
           <div className="container-wide">
             <ExploreView
               chains={featuredChains}
+              chainBountyMap={chainBountyMap}
+              orphanBounties={orphanBounties}
+              bountySignalsMap={bountySignalsMap}
               signals={[...recentSignals.items]}
               chainTitles={chainTitles}
               hasMore={recentSignals.hasMore}
               translations={{
                 allSignals: t('allSignals'),
-                storyChainsLabel: t('stories'),
+                storiesLabel: t('storiesLabel'),
+                openBountiesLabel: t('openBountiesLabel'),
                 recentSignalsLabel: t('recentSignals'),
                 storiesInfoTitle: t('storiesInfo.title'),
                 signalsInfoTitle: t('signalsInfo.title'),
+                openBountiesInfoTitle: t('openBountiesInfo.title'),
+                noMatchingBountySignals: t('noMatchingBountySignals'),
               }}
               storiesInfoBody={storiesInfoBody}
               signalsInfoBody={signalsInfoBody}
+              openBountiesInfoBody={openBountiesInfoBody}
             />
           </div>
         </section>

@@ -33,7 +33,7 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
           <div className="container-wide relative z-10 text-center py-20">
             {/* Firefly symbol */}
             <div className="mb-8">
-              <FireflySymbol size={48} color="gold" aria-hidden="true" />
+              <FireflySymbol size={48} color="gold" animate aria-hidden="true" />
             </div>
 
             {/* Headline */}

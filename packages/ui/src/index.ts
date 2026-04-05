@@ -18,10 +18,19 @@ export { Footer } from './components/Footer';
 export type { FooterProps } from './components/Footer';
 
 export { SignalCard } from './components/SignalCard';
-export type { SignalCardProps } from './components/SignalCard';
+export type { SignalCardProps, SignalBountyInfo } from './components/SignalCard';
 
 export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';
+
+export { BountyStatusBadge } from './components/BountyStatusBadge';
+export type { BountyStatusBadgeProps } from './components/BountyStatusBadge';
+
+export { PaymentModeBadge } from './components/PaymentModeBadge';
+export type { PaymentModeBadgeProps } from './components/PaymentModeBadge';
+
+export { BountyCard } from './components/BountyCard';
+export type { BountyCardProps } from './components/BountyCard';
 
 export { Spinner } from './components/Spinner';
 export type { SpinnerProps } from './components/Spinner';

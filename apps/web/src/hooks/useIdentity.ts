@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useTriangleAccount } from './useTriangleAccount';
+import { useSigner } from '@/lib/context/SignerContext';
 import {
   createDIMClient,
   generatePseudonym,
@@ -91,7 +91,7 @@ async function clearStoredProfile(credentialHash: string): Promise<void> {
  * Hook to manage identity state.
  */
 export function useIdentity(): IdentityState {
-  const { isConnected, isInHost } = useTriangleAccount();
+  const { isConnected, isInHost } = useSigner();
 
   const [status, setStatus] = useState<IdentityStatus>('loading');
   const [dimStatus, setDimStatus] = useState<DIMStatus>('unknown');

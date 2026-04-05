@@ -1,10 +1,9 @@
 'use client';
 
 /**
- * ExploreHeader — Page header with title and illuminate button.
+ * ExploreHeader — Hero section for the explore page.
  *
- * Desktop: Shows illuminate button in header.
- * Mobile: Button hidden, FAB is used instead.
+ * Centered, impactful header with large title, description, and illuminate button.
  */
 
 import type { ReactElement } from 'react';
@@ -32,38 +31,39 @@ export function ExploreHeader({
   };
 
   return (
-    <section className="pt-8 pb-0">
+    <section className="pt-16 pb-8">
       <div className="container-wide">
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 md:p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">{title}</h1>
-              <p className="text-secondary text-sm md:text-base max-w-xl">
-                {description}
-              </p>
-            </div>
-            <div className="hidden md:block shrink-0">
-              <button
-                type="button"
-                onClick={handleIlluminate}
-                className="
-                  inline-flex items-center gap-2
-                  px-6 py-3
-                  bg-[var(--bg-accent-firefly)] text-black
-                  font-semibold text-base
-                  rounded-lg
-                  shadow-glow animate-pulse-subtle
-                  hover:brightness-110 hover:scale-[1.02]
-                  active:scale-[0.98]
-                  transition-all duration-150
-                  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fg-accent)]
-                "
-              >
-                <FireflySymbol size={18} color="inherit" />
-                {illuminateLabel}
-              </button>
-            </div>
-          </div>
+        <div className="text-center max-w-2xl mx-auto">
+          {/* Title */}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-primary mb-4">
+            {title}
+          </h1>
+
+          {/* Description */}
+          <p className="text-lg text-secondary leading-relaxed mb-8">
+            {description}
+          </p>
+
+          {/* Illuminate button */}
+          <button
+            type="button"
+            onClick={handleIlluminate}
+            className="
+              inline-flex items-center gap-2
+              px-8 py-3.5
+              bg-[var(--bg-accent-firefly)] text-black
+              font-semibold text-base
+              rounded-full
+              shadow-glow animate-pulse-subtle
+              hover:brightness-110 hover:scale-[1.02]
+              active:scale-[0.98]
+              transition-all duration-150
+              focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fg-accent)]
+            "
+          >
+            <FireflySymbol size={18} color="inherit" />
+            {illuminateLabel}
+          </button>
         </div>
       </div>
     </section>

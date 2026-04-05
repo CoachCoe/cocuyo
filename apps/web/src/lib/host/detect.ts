@@ -1,4 +1,8 @@
 /**
+ * @deprecated Use SignerManager from @polkadot-apps/signer instead.
+ * This module is being replaced by the SignerManager-based implementation
+ * in @/lib/context/SignerContext.
+ *
  * Host Detection Module
  *
  * Detects whether the app is running inside Triangle host environment

@@ -14,6 +14,7 @@
 import type { ReactElement } from 'react';
 import { FireflySymbol } from '@cocuyo/ui';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { ExternalLink, ExternalLinkSection } from '@/components/ExternalLink';
 
 interface AboutPageProps {
   params: Promise<{ locale: string }>;
@@ -49,14 +50,12 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
               <p>{t('fireflyPrinciple.p2')}</p>
               <p>
                 {t('fireflyPrinciple.p3')}{' '}
-                <a
+                <ExternalLink
                   href="https://rebbit.notion.site/The-Efecto-Cocuyo-Experience-Independent-Media-Alliance-2fdee372c52c80c29adad1bcaa70da99"
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="text-[var(--color-text-primary)] underline hover:text-[var(--color-accent)] transition-colors"
                 >
                   →
-                </a>
+                </ExternalLink>
               </p>
             </div>
           </div>
@@ -204,53 +203,51 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
                 </li>
               </ul>
 
-              <div className="pt-6 flex flex-wrap gap-4">
-                <a
-                  href="https://polkadot.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border-default)] rounded hover:border-[var(--color-border-emphasis)] transition-colors"
-                >
-                  <span>Polkadot</span>
-                  <span
-                    className="inline-block w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: 'var(--color-polkadot-pink)' }}
-                    aria-hidden="true"
-                  />
-                </a>
-                <a
-                  href="https://web3.foundation"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border-default)] rounded hover:border-[var(--color-border-emphasis)] transition-colors"
-                >
-                  Web3 Foundation
-                </a>
-              </div>
+              <ExternalLinkSection>
+                <div className="pt-6 flex flex-wrap gap-4">
+                  <ExternalLink
+                    href="https://polkadot.com"
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border-default)] rounded hover:border-[var(--color-border-emphasis)] transition-colors"
+                  >
+                    <span>Polkadot</span>
+                    <span
+                      className="inline-block w-2.5 h-2.5 rounded-full"
+                      style={{ backgroundColor: 'var(--color-polkadot-pink)' }}
+                      aria-hidden="true"
+                    />
+                  </ExternalLink>
+                  <ExternalLink
+                    href="https://web3.foundation"
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border-default)] rounded hover:border-[var(--color-border-emphasis)] transition-colors"
+                  >
+                    Web3 Foundation
+                  </ExternalLink>
+                </div>
+              </ExternalLinkSection>
             </div>
           </div>
         </section>
 
-        {/* Open Source */}
-        <section className="py-20 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-default)]">
-          <div className="container-narrow text-center">
-            <h2 className="text-2xl font-semibold mb-6">{t('openSource.title')}</h2>
+        {/* Open Source - hidden in host mode */}
+        <ExternalLinkSection>
+          <section className="py-20 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-default)]">
+            <div className="container-narrow text-center">
+              <h2 className="text-2xl font-semibold mb-6">{t('openSource.title')}</h2>
 
-            <p className="text-[var(--color-text-secondary)] leading-relaxed mb-8">
-              {t('openSource.description')}
-            </p>
+              <p className="text-[var(--color-text-secondary)] leading-relaxed mb-8">
+                {t('openSource.description')}
+              </p>
 
-            <a
-              href="https://github.com/paritytech/cocuyo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors"
-            >
-              <span>{t('openSource.viewOnGitHub')}</span>
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </section>
+              <ExternalLink
+                href="https://github.com/paritytech/cocuyo"
+                className="inline-flex items-center gap-2 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors"
+              >
+                <span>{t('openSource.viewOnGitHub')}</span>
+                <span aria-hidden="true">→</span>
+              </ExternalLink>
+            </div>
+          </section>
+        </ExternalLinkSection>
       </main>
     </>
   );

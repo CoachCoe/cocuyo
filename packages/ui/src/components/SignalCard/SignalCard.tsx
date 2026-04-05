@@ -14,16 +14,28 @@
  */
 
 import type { ReactElement } from 'react';
-import type { Signal, ChainId } from '@cocuyo/types';
+import type { Signal, ChainId, BountyId, PUSDAmount } from '@cocuyo/types';
+import { formatPUSDCompact } from '@cocuyo/types';
 import { VerificationBadge } from '../VerificationBadge';
+
+/** Bounty info for display on signal cards */
+export interface SignalBountyInfo {
+  readonly id: BountyId;
+  readonly title: string;
+  readonly fundingAmount: PUSDAmount;
+}
 
 export interface SignalCardProps {
   /** The signal to display */
   signal: Signal;
   /** Optional: Title of the linked chain for display */
   chainTitle?: string;
+  /** Optional: Bounty this signal contributes to */
+  bounty?: SignalBountyInfo | undefined;
   /** Callback when the chain link is clicked */
   onChainClick?: (chainId: ChainId) => void;
+  /** Callback when the bounty badge is clicked */
+  onBountyClick?: (bountyId: BountyId) => void;
   /** Callback when the card itself is clicked */
   onClick?: () => void;
   /** Callback when the author is clicked */
@@ -62,7 +74,9 @@ function formatRelativeTime(timestamp: number): string {
 export function SignalCard({
   signal,
   chainTitle,
+  bounty,
   onChainClick,
+  onBountyClick,
   onClick,
   onAuthorClick,
 }: SignalCardProps): ReactElement {
@@ -79,6 +93,13 @@ export function SignalCard({
     e.stopPropagation();
     if (onAuthorClick !== undefined) {
       onAuthorClick(author.credentialHash);
+    }
+  };
+
+  const handleBountyClick = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    if (onBountyClick !== undefined && bounty !== undefined) {
+      onBountyClick(bounty.id);
     }
   };
 
@@ -214,6 +235,23 @@ export function SignalCard({
           >
             <span>Part of:</span>
             <span className="text-[var(--fg-primary)]">{chainTitle}</span>
+            <span aria-hidden="true">&rarr;</span>
+          </button>
+        </div>
+      )}
+
+      {/* Bounty badge */}
+      {bounty !== undefined && (
+        <div className={`pt-3 mt-3 ${chainLinks.length > 0 && chainTitle !== undefined ? '' : 'border-t border-[var(--border-subtle)]'}`}>
+          <button
+            type="button"
+            onClick={handleBountyClick}
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--color-firefly-gold)] transition-colors"
+          >
+            <span className="px-1.5 py-0.5 rounded bg-[var(--color-firefly-gold)]/15 text-[var(--color-firefly-gold)] font-medium text-xs border border-[var(--color-firefly-gold)]/30">
+              Earn {formatPUSDCompact(bounty.fundingAmount)}
+            </span>
+            <span className="truncate max-w-[200px]">{bounty.title}</span>
             <span aria-hidden="true">&rarr;</span>
           </button>
         </div>
