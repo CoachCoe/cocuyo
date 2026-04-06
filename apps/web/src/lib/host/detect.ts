@@ -28,24 +28,20 @@ type AccountsProviderType = ReturnType<
 let _accountsProvider: AccountsProviderType | null = null;
 
 /**
- * Check if we're running inside a host environment (iframe or webview).
+ * Check if we're running inside Triangle host environment.
+ *
+ * Only returns true for Triangle-specific markers, not generic iframes.
+ * Being in a regular iframe (e.g., embedded preview) doesn't block network.
  */
 function isInsideContainer(): boolean {
   if (typeof window === 'undefined') return false;
 
-  try {
-    // Check for Triangle iframe
-    const inIframe = window.self !== window.top;
-    // Check for Polkadot Desktop webview
-    const inWebview = '__HOST_WEBVIEW_MARK__' in window;
-    // Check for host API port
-    const hasApiPort = '__HOST_API_PORT__' in window;
+  // Check for Triangle-specific markers only
+  // Generic iframe detection (window.self !== window.top) is too broad
+  const inWebview = '__HOST_WEBVIEW_MARK__' in window;
+  const hasApiPort = '__HOST_API_PORT__' in window;
 
-    return inIframe || inWebview || hasApiPort;
-  } catch {
-    // Cross-origin iframe access throws - this means we ARE in an iframe
-    return true;
-  }
+  return inWebview || hasApiPort;
 }
 
 /**
