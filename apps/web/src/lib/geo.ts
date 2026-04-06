@@ -4,13 +4,49 @@
  * Provides reverse geocoding via Nominatim (OpenStreetMap)
  * and distance calculations via Haversine formula.
  *
- * Note: Reverse geocoding requires network access and will
- * return null when running inside Triangle (sandboxed).
+ * When running inside Triangle, requests external network permission
+ * via the Host API before making geocoding requests.
  */
 
-import { canMakeExternalRequests } from './host/detect';
+import { canMakeExternalRequests, isInContainer } from './host/detect';
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
+const NOMINATIM_DOMAIN = 'nominatim.openstreetmap.org';
+
+// Track if we've already been granted permission for the session
+let nominatimPermissionGranted = false;
+
+/**
+ * Request permission to make external requests to Nominatim.
+ * Only needed when running inside Triangle.
+ */
+async function requestNominatimPermission(): Promise<boolean> {
+  if (nominatimPermissionGranted) {
+    return true;
+  }
+
+  try {
+    const { hostApi } = await import('@novasamatech/product-sdk');
+    // The SDK uses versioned enums: { tag: "v1", value: { tag: "ExternalRequest", value: domain } }
+    const result = await hostApi.permission({
+      tag: 'v1',
+      value: {
+        tag: 'ExternalRequest',
+        value: NOMINATIM_DOMAIN,
+      },
+    });
+
+    // Result is { tag: "v1", value: boolean } when successful
+    if (result.isOk() && result.value.value) {
+      nominatimPermissionGranted = true;
+      return true;
+    }
+    return false;
+  } catch {
+    // Host API not available or permission denied
+    return false;
+  }
+}
 
 export interface GeoLocation {
   lat: number;
@@ -27,15 +63,25 @@ export interface ReverseGeocodeResult {
  * Reverse geocode coordinates to a location name.
  * Uses Nominatim (OpenStreetMap's free geocoding service).
  *
- * Returns null when running inside Triangle (no network access).
+ * When running inside Triangle, requests external network permission
+ * via the Host API. Returns null if permission is denied or unavailable.
  */
 export async function reverseGeocode(
   lat: number,
   lon: number
 ): Promise<ReverseGeocodeResult | null> {
-  // Network requests are blocked in Triangle sandbox
+  // Outside Triangle, network is always available
+  // Inside Triangle, request permission via Host API
   if (!canMakeExternalRequests()) {
-    return null;
+    if (!isInContainer()) {
+      // Not in Triangle and can't make requests - something is wrong
+      return null;
+    }
+    // Inside Triangle - request permission
+    const hasPermission = await requestNominatimPermission();
+    if (!hasPermission) {
+      return null;
+    }
   }
 
   try {
