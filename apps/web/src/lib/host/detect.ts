@@ -30,14 +30,25 @@ let _accountsProvider: AccountsProviderType | null = null;
 /**
  * Check if we're running inside Triangle host environment.
  *
- * Only returns true for Triangle-specific markers, not generic iframes.
- * Being in a regular iframe (e.g., embedded preview) doesn't block network.
+ * Uses the official SDK detection when available, with fallback
+ * to checking for Triangle-specific window markers.
  */
 function isInsideContainer(): boolean {
   if (typeof window === 'undefined') return false;
 
-  // Check for Triangle-specific markers only
-  // Generic iframe detection (window.self !== window.top) is too broad
+  // Try SDK detection first (most reliable)
+  try {
+    // Dynamic import check - if sandboxProvider exists and reports correct environment
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const sdk = require('@novasamatech/product-sdk');
+    if (sdk?.sandboxProvider?.isCorrectEnvironment?.()) {
+      return true;
+    }
+  } catch {
+    // SDK not available, fall through to manual detection
+  }
+
+  // Fallback: Check for Triangle-specific markers
   const inWebview = '__HOST_WEBVIEW_MARK__' in window;
   const hasApiPort = '__HOST_API_PORT__' in window;
 
@@ -120,22 +131,15 @@ export function getAccountsProvider(): AccountsProviderType | null {
 }
 
 /**
- * Check if external network requests are likely to work.
+ * Check if external (cross-origin) network requests will work.
  *
- * In Triangle, external HTTP requests are blocked by default.
+ * In Triangle sandbox, cross-origin fetch/XHR is blocked by the host.
+ * Only same-origin requests (to Service Worker) are allowed.
  * Outside Triangle, network is always available.
- *
- * Note: This is a heuristic - the definitive check would be
- * to request network permission via the Host API when available.
  */
 export function canMakeExternalRequests(): boolean {
-  // Outside host, network is always available
-  if (!isInsideContainer()) return true;
-
-  // Inside host, we assume network is blocked until we implement
-  // proper permission handling via hostApi.permission()
-  // TODO: Implement permission request when Triangle API format is known
-  return false;
+  // Cross-origin requests are blocked in Triangle sandbox
+  return !isInsideContainer();
 }
 
 /**
