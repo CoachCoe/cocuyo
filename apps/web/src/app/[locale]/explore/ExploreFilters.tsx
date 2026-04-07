@@ -88,7 +88,9 @@ export function ExploreFilters({
     <div className="space-y-6">
       {/* Stories Section */}
       <div className="space-y-4">
-        <SectionHeader title={t.storiesLabel} infoTitle={storiesInfoTitle} infoBody={storiesInfoBody} />
+        <div className="flex items-center min-h-[40px]">
+          <SectionHeader title={t.storiesLabel} infoTitle={storiesInfoTitle} infoBody={storiesInfoBody} className="mb-0" />
+        </div>
 
         {/* All Signals option */}
         <button

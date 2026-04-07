@@ -118,7 +118,7 @@ export function SignalsList({
   if (isLoading) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 min-h-[40px]">
           <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} className="mb-0" />
           {viewToggle}
         </div>
@@ -133,7 +133,7 @@ export function SignalsList({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 min-h-[40px]">
         <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} className="mb-0" />
         {viewToggle}
       </div>
@@ -167,7 +167,7 @@ export function SignalsList({
           })}
         </AnimatedList>
       ) : (
-        <div className="py-8">
+        <div>
           <EmptyState
             title={emptyStateMessage ?? (isFiltered ? 'No signals found' : 'No signals yet')}
             description={
