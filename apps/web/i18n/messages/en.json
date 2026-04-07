@@ -1,0 +1,553 @@
+{
+  "metadata": {
+    "title": "Firefly Network — Lights in the Dark",
+    "description": "A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected."
+  },
+  "nav": {
+    "stories": "Stories",
+    "helpNeeded": "Help Needed",
+    "about": "About",
+    "home": "Firefly Network home",
+    "brandName": "FIREFLY NETWORK"
+  },
+  "footer": {
+    "builtOn": "Built on Polkadot",
+    "tagline": "Lights in the dark.",
+    "copyright": "Parity Technologies"
+  },
+  "home": {
+    "hero": {
+      "title": "Lights in the Dark",
+      "subtitle": "A surveillance-resistant network for collective intelligence. Where verified humans share, corroborate, and build understanding — without exposing their identities."
+    },
+    "pillars": {
+      "anonymousButHuman": "Anonymous but Human",
+      "verifiedButPrivate": "Verified but Private",
+      "distributedButConnected": "Distributed but Connected"
+    },
+    "cta": {
+      "howItWorks": "How does this work?"
+    },
+    "preview": {
+      "title": "Recent Posts"
+    },
+    "whatIs": {
+      "title": "What is the Firefly Network?",
+      "p1": "In the Caribbean, indigenous peoples used cocuyos — bioluminescent beetles — as natural lamps to guide them through the dark. No single cocuyo illuminates a path. But millions of tiny sparks, together, can light an entire nation.",
+      "p2": "The Firefly Network is not a social media platform. It is a collective intelligence network where every participant is both sensor and analyst, where information spreads through corroboration rather than amplification, and where the value of a contribution is determined by the cryptographic weight of human verification — not algorithms or engagement metrics.",
+      "p3": "Here, you are not a user. You are a firefly — a verified human being contributing light to the collective understanding."
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "illuminate": {
+        "title": "Illuminate",
+        "description": "Share what you observe. A post is an observation, a piece of evidence, a data point. Each post is signed by your anonymous credential, proving a verified human created it."
+      },
+      "corroborate": {
+        "title": "Corroborate",
+        "description": "Verify what others share. Corroboration is not a like — it's a reputation-staked act. When you corroborate, you're putting your accumulated reputation behind your assessment."
+      },
+      "connect": {
+        "title": "Connect",
+        "description": "Posts link into story chains — emergent structures that form as fireflies connect their observations. The chain becomes stronger than any individual post through distributed verification."
+      }
+    },
+    "whatIsNot": {
+      "title": "What This Is Not",
+      "noFollowers": "No follower counts. No profiles. No celebrities. Fireflies are anonymous.",
+      "noScroll": "No infinite scroll. No algorithmic feed. No engagement optimization.",
+      "noLikes": "No likes, reactions, or shares. Information spreads through corroboration, not amplification.",
+      "noTracking": "No data collection. No tracking. No surveillance. We don't collect what we can't be forced to reveal."
+    },
+    "polkadot": {
+      "title": "Built on Polkadot",
+      "description": "The Firefly Network is built on and for the Polkadot ecosystem — leveraging decentralized identity, censorship-resistant storage, and cross-chain interoperability. No single point of failure. No single point of control.",
+      "learnMore": "Learn more about Polkadot"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About the Network",
+      "subtitle": "Millions of tiny sparks can illuminate an entire nation."
+    },
+    "fireflyPrinciple": {
+      "title": "The Firefly Principle",
+      "p1": "In the Caribbean, indigenous peoples used cocuyos — bioluminescent beetles — as natural lamps to guide them through the dark. A single cocuyo casts barely enough light to see your own hand. But gather them together, and they become something more.",
+      "p2": "This is the principle behind the Firefly Network: no single observer sees the whole picture. But when verified humans share what they observe, corroborate what others see, and connect their posts into chains of evidence — the darkness begins to lift.",
+      "p3": "We are inspired by Efecto Cocuyo, a Venezuelan independent media platform founded in 2015 by journalists who refused to let government censorship silence the truth. They proved that community-driven journalism could survive and thrive even under authoritarian conditions. The firefly image resonated because it speaks to something universal: small lights that together illuminate the darkness."
+    },
+    "threePillars": {
+      "title": "The Three Pillars",
+      "anonymousButHuman": {
+        "title": "Anonymous but Human",
+        "description": "Every firefly is a verified human being — proved through DIM (Decentralized Identity Mechanism), a proof-of-personhood system that confirms you're human without revealing who you are. No usernames, no profiles, no personal data. Just a cryptographic credential that says: \"A real human made this.\""
+      },
+      "verifiedButPrivate": {
+        "title": "Verified but Private",
+        "description": "Every post and corroboration carries cryptographic proof. Every chain has a transparent verification trail. But none of this requires exposing anyone's identity. The verification is public; the verifier is private. This is fact-checking without surveillance."
+      },
+      "distributedButConnected": {
+        "title": "Distributed but Connected",
+        "description": "Posts and chains are stored on decentralized infrastructure. No central server to seize, no company to subpoena, no single point of failure. If the founding team disappeared tomorrow, the network would continue. That's the point."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "posts": {
+        "title": "Posts",
+        "description": "A post is an observation, a piece of evidence, a witness account, a data point. When you illuminate a post, you're contributing a discrete piece of information — signed by your anonymous credential, tagged with optional context (topic, location, timeframe), and ready to connect with other posts."
+      },
+      "corroboration": {
+        "title": "Corroboration",
+        "description": "Corroboration is not a like. It's a reputation-staked act of verification. When you corroborate a post, you're making a specific claim: \"I can independently confirm this,\" or \"I have additional evidence,\" or \"This is consistent with my expertise.\" Your corroboration is recorded permanently, weighted by your reputation in the relevant domain. If the post is later debunked, your reputation diminishes."
+      },
+      "storyChains": {
+        "title": "Story Chains",
+        "description": "Story chains are emergent structures. No one \"creates\" a chain — chains crystallize as fireflies link their posts to related observations. A chain about water quality might start with one person noticing a smell, grow as others corroborate and add photos, and strengthen as someone contributes public records about permits. The chain becomes more than the sum of its posts."
+      },
+      "verificationTrails": {
+        "title": "Verification Trails",
+        "description": "Every chain carries a transparent verification trail — the complete history of posts, corroborations, challenges, and evidence. You don't need to trust us to tell you something is verified. You can trace the trail yourself and see exactly how many independent humans, with what reputation, made what claims."
+      }
+    },
+    "surveillanceResistance": {
+      "title": "Surveillance Resistance",
+      "intro": "The network is designed so that no single point of compromise — no server seizure, no subpoena, no insider threat — can expose the identity of any firefly or remove any post from the network.",
+      "noUserDatabase": "No user database. DIM credentials are generated through proof-of-personhood and held by you. There is no central registry of participants.",
+      "noContentServer": "No content server. Posts are stored on decentralized infrastructure. There is no single server to seize.",
+      "noMetadata": "No metadata collection. We don't log IP addresses, device fingerprints, or access patterns.",
+      "noCookies": "No cookies. None. Zero. We don't collect what we can't be forced to reveal."
+    },
+    "builtOnPolkadot": {
+      "title": "Built on Polkadot",
+      "intro": "The Firefly Network is built on and for the Polkadot ecosystem. We chose Polkadot because its values align with ours: decentralization, interoperability, and user sovereignty.",
+      "infrastructure": "Our infrastructure leverages:",
+      "dim": "DIM — Decentralized identity for proof-of-personhood",
+      "bulletinChain": "Bulletin Chain — Censorship-resistant storage",
+      "parachains": "Polkadot parachains — Verification and reputation logic"
+    },
+    "openSource": {
+      "title": "Open Source",
+      "description": "All code is open source. All governance is public. All verification trails are auditable. Transparency is not optional — it's foundational.",
+      "viewOnGitHub": "View on GitHub"
+    }
+  },
+  "explore": {
+    "title": "Stories",
+    "description": "Browse ongoing investigations and ground-truth from the network.",
+    "illuminateNew": "Illuminate",
+    "stories": "Story Chains",
+    "allPosts": "All Posts",
+    "noStories": "No stories yet. Illuminate a post to start one.",
+    "recentPosts": "Recent Posts",
+    "posts": "posts",
+    "corroborations": "corroborations",
+    "linkToStory": "Link to story",
+    "startNewChain": "Start new chain",
+    "storiesInfo": {
+      "title": "What are Stories?",
+      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their posts to related observations.\n\nSome stories have bounties attached (marked with \"Earn $X\"). These are funded investigations — contribute valuable posts and earn a share of the reward.\n\nThe story becomes more than the sum of its posts."
+    },
+    "postsInfo": {
+      "title": "What are Posts?",
+      "body": "A post is an observation, a piece of evidence, a witness account, a data point.\n\nWhen you illuminate a post, you're contributing information signed by your anonymous credential — ready to connect with other posts and form story chains.\n\nPosts gain weight through corroboration from other verified humans."
+    },
+    "storiesLabel": "Story Chains",
+    "openBountiesLabel": "Open Bounties",
+    "openBountiesInfo": {
+      "title": "What are Open Bounties?",
+      "body": "Bounties are funded by community members who need specific information — journalists, NGOs, diaspora communities, or anyone seeking ground truth.\n\nThe funds are held in escrow until the bounty is fulfilled. When you contribute valuable posts, you earn a share of the reward.\n\nPayments can be public (pUSD) or private (Coinage) to protect your identity. Open bounties are waiting for their first posts — be the first to illuminate."
+    },
+    "noMatchingBountyPosts": "No posts have contributed to this bounty yet.",
+    "daysRemaining": "{count} days remaining",
+    "hoursRemaining": "{count} hours remaining",
+    "expiresSoon": "Expires soon"
+  },
+  "chain": {
+    "backToStories": "Stories",
+    "storyChain": "Story",
+    "verificationSummary": "Verification Summary",
+    "posts": "Posts",
+    "corroborations": "Corroborations",
+    "challenges": "Challenges",
+    "contributors": "Contributors",
+    "weight": "Weight",
+    "chainStarted": "Story started",
+    "addPostCta": "Have information to add to this story?",
+    "verificationTrail": "Verification Trail",
+    "noPosts": "No posts in this story yet.",
+    "beFirstToIlluminate": "Be the First to Illuminate",
+    "tabs": {
+      "whatsHappening": "What's Happening",
+      "deepDives": "Deep Dives",
+      "helpNeeded": "Help Needed"
+    },
+    "whatsHappening": {
+      "title": "Latest Posts",
+      "description": "Ground-truth observations from the network",
+      "noPosts": "No posts yet. Be the first to illuminate."
+    },
+    "deepDives": {
+      "title": "Analysis & Reports",
+      "description": "In-depth investigations and context",
+      "noPosts": "No analysis posts yet for this story."
+    },
+    "helpNeeded": {
+      "title": "Open Bounties",
+      "description": "Funded requests for information",
+      "noBounties": "No open bounties for this story.",
+      "createBounty": "Fund a Bounty"
+    }
+  },
+  "feed": {
+    "title": "Your Feed",
+    "following": "Following",
+    "discover": "Discover",
+    "setupPrompt": "Complete your profile setup to see posts from topics you follow.",
+    "completeSetup": "Complete Setup",
+    "noMatchingPosts": "No posts match your followed topics yet.",
+    "tryFollowingMore": "Try following more topics in your profile settings.",
+    "noPostsYet": "No posts yet. Be the first to illuminate."
+  },
+  "verify": {
+    "title": "Verification Workbench",
+    "description": "Posts awaiting collective verification",
+    "noPending": "No posts pending verification.",
+    "evidence": "evidence",
+    "votes": "votes"
+  },
+  "collectives": {
+    "title": "Collectives",
+    "description": "Fact-checking groups that verify posts collaboratively",
+    "createCollective": "Create Collective",
+    "members": "members",
+    "verifications": "verifications",
+    "reputation": "reputation"
+  },
+  "common": {
+    "loading": "Loading...",
+    "justNow": "just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "weeksAgo": "{count}w ago",
+    "comingSoon": "Coming Soon"
+  },
+  "actions": {
+    "illuminate": "Illuminate",
+    "corroborate": "Corroborate",
+    "challenge": "Challenge",
+    "earn": "Earn"
+  },
+  "status": {
+    "active": "active",
+    "established": "established",
+    "emerging": "emerging",
+    "contested": "contested",
+    "pending": "pending",
+    "inReview": "in review"
+  },
+  "bounties": {
+    "title": "Bounties",
+    "description": "Community-funded requests for information. Contribute posts to earn rewards.",
+    "allBounties": "All",
+    "filters": "Filters",
+    "status": "Status",
+    "statusOpen": "Open",
+    "statusFulfilled": "Fulfilled",
+    "statusExpired": "Expired",
+    "statusCancelled": "Cancelled",
+    "bountyWord": "bounty",
+    "bountiesWord": "bounties",
+    "ofWord": "of",
+    "clearFilters": "Clear filters",
+    "statusLabel": "Status",
+    "filterByTopic": "Filter by Topic",
+    "searchPlaceholder": "Search bounties...",
+    "topicSelected": "topic",
+    "topicsSelected": "topics",
+    "topics": {
+      "label": "Topics",
+      "crisis": "Crisis",
+      "detention": "Detention",
+      "disinformation": "Disinformation",
+      "documentation": "Documentation",
+      "economy": "Economy",
+      "finance": "Finance",
+      "food-security": "Food Security",
+      "governance": "Governance",
+      "health": "Health",
+      "human-rights": "Human Rights",
+      "inflation": "Inflation",
+      "infrastructure": "Infrastructure",
+      "media": "Media",
+      "politics": "Politics",
+      "press-freedom": "Press Freedom",
+      "public-records": "Public Records",
+      "public-services": "Public Services",
+      "transparency": "Transparency",
+      "venezuela": "Venezuela"
+    },
+    "info": {
+      "title": "What are Bounties?",
+      "body": "Bounties are community-funded requests for specific information. When you have knowledge that fulfills a bounty, illuminate a post and link it to the bounty.\n\nIf your post contributes valuable information, you earn a share of the bounty reward. Payments can be made publicly via pUSD or privately via Coinage.\n\nBounties create a functioning market for investigative information — funded by the people who need it."
+    },
+    "create": {
+      "title": "Create Bounty",
+      "titleLabel": "Title",
+      "titlePlaceholder": "What information are you looking for?",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe in detail what kind of information you need, where it might be found, and what would constitute a valuable contribution...",
+      "topicsLabel": "Topics",
+      "topicsPlaceholder": "Add relevant topics",
+      "locationLabel": "Location",
+      "locationPlaceholder": "Geographic focus (if any)",
+      "optional": "optional",
+      "fundingLabel": "Funding Amount",
+      "durationLabel": "Duration",
+      "submit": "Create Bounty",
+      "creating": "Creating...",
+      "signInRequired": "Sign in to create a bounty."
+    },
+    "createButton": "Create Bounty"
+  },
+  "bounty": {
+    "breadcrumb": {
+      "bounties": "Bounties",
+      "detail": "Bounty Details"
+    },
+    "funding": "Funding",
+    "payoutMode": "Payout Mode",
+    "expires": "Expires",
+    "expired": "Expired",
+    "expiresSoon": "Expires soon",
+    "hoursLeftSuffix": "h left",
+    "dayLeft": "1 day left",
+    "daysLeftSuffix": "days left",
+    "contributingPosts": "Contributing Posts",
+    "noPostsYet": "No posts have contributed to this bounty yet.",
+    "postWord": "post",
+    "postsWord": "posts",
+    "illuminate": "Illuminate",
+    "fulfilled": "This bounty has been fulfilled",
+    "cancelled": "This bounty was cancelled",
+    "topics": "Topics",
+    "location": "Location",
+    "description": "What we're looking for",
+    "paymentPublic": "Public pUSD",
+    "paymentPrivate": "Private",
+    "whatsThis": "What's this?",
+    "posted": "Posted"
+  },
+  "corroboration": {
+    "modal": {
+      "title": "Corroborate Post",
+      "stakingWarning": "You are staking your reputation on this corroboration.",
+      "noteLabel": "Add a note (optional)",
+      "notePlaceholder": "Explain your corroboration...",
+      "cancel": "Cancel",
+      "submitChallenge": "Submit Challenge",
+      "corroborate": "Corroborate"
+    },
+    "types": {
+      "witness": "Witness",
+      "witnessDesc": "I can independently confirm this observation.",
+      "evidence": "Evidence",
+      "evidenceDesc": "I have additional documentation that supports this.",
+      "expertise": "Expertise",
+      "expertiseDesc": "This is consistent with my knowledge in this domain.",
+      "challenge": "Challenge",
+      "challengeDesc": "I have reason to believe this is inaccurate."
+    },
+    "referencedLinks": "Referenced links:",
+    "source": "Source",
+    "weight": "Weight"
+  },
+  "post": {
+    "topics": "Topics:",
+    "location": "Location:",
+    "illuminated": "Illuminated:",
+    "corroborations": "Corroborations",
+    "witnesses": "Witnesses",
+    "evidence": "Evidence",
+    "expert": "Expert",
+    "challenges": "Challenges",
+    "totalWeight": "Total weight:",
+    "partOfChains": "Part of Story Chains",
+    "addCorroboration": "Add Corroboration",
+    "submitChallenge": "Submit Challenge",
+    "typeLabel": "Type",
+    "noteOptional": "Note (optional)",
+    "reasonForChallenge": "Reason for challenge",
+    "notePlaceholder": "Add context or details...",
+    "challengePlaceholder": "Explain why this is inaccurate...",
+    "setupRequired": "Complete your profile setup to {action} posts."
+  },
+  "posts": {
+    "title": "Posts",
+    "description": "Observations, evidence, and investigations from the network.",
+    "allPosts": "All",
+    "filterByTopic": "Filter by Topic",
+    "searchPlaceholder": "Search posts...",
+    "topicSelected": "topic",
+    "topicsSelected": "topics",
+    "postWord": "post",
+    "postsWord": "posts",
+    "ofWord": "of",
+    "clearFilters": "Clear filters",
+    "corroborationWord": "corroboration",
+    "corroborationsWord": "corroborations",
+    "challengeWord": "challenge",
+    "challengesWord": "challenges",
+    "readMore": "Read more",
+    "backToPosts": "Back to Posts",
+    "sources": "Sources",
+    "relatedPosts": "Related Posts",
+    "corroborate": "Corroborate",
+    "dispute": "Dispute",
+    "viewTrust": "View Trust",
+    "addToStory": "Add to Story",
+    "topics": {
+      "crisis": "Crisis",
+      "daily-life": "Daily Life",
+      "data": "Data",
+      "disinformation": "Disinformation",
+      "economy": "Economy",
+      "food-security": "Food Security",
+      "governance": "Governance",
+      "health": "Health",
+      "inflation": "Inflation",
+      "infrastructure": "Infrastructure",
+      "media": "Media",
+      "medication": "Medication",
+      "politics": "Politics",
+      "social-media": "Social Media",
+      "transparency": "Transparency",
+      "venezuela": "Venezuela",
+      "wages": "Wages"
+    }
+  },
+  "claims": {
+    "title": "Claims",
+    "description": "Verifiable claims extracted from community posts.",
+    "extractedClaims": "Extracted Claims",
+    "supporting": "supporting",
+    "contradicting": "contradicting",
+    "evidence": "evidence",
+    "viewClaim": "View claim",
+    "backToPost": "Back to Post",
+    "statusPending": "Pending",
+    "statusUnderReview": "Under Review",
+    "statusVerified": "Verified",
+    "statusDisputed": "Disputed",
+    "statusFalse": "False",
+    "statusUnverifiable": "Unverifiable",
+    "verdict": "Verdict",
+    "issuedOn": "Issued on",
+    "extractedFrom": "Extracted from",
+    "supportingEvidence": "Supporting Evidence",
+    "contradictingEvidence": "Contradicting Evidence",
+    "noSupportingEvidence": "No supporting evidence submitted yet.",
+    "noContradictingEvidence": "No contradicting evidence submitted.",
+    "extractClaim": "Extract a Claim",
+    "extracting": "Extracting...",
+    "signInToExtract": "Sign in to extract claims",
+    "claimExtracted": "Claim extracted successfully!",
+    "submitEvidence": "Submit Evidence",
+    "signInToSubmit": "Sign in to submit evidence",
+    "evidenceSubmitted": "Evidence submitted successfully!",
+    "supportThisClaim": "Support this claim",
+    "contradictThisClaim": "Contradict this claim"
+  },
+  "workbench": {
+    "title": "Verification Workbench",
+    "description": "Review pending claims and submit verdicts. Access requires collective membership.",
+    "allClaims": "All",
+    "filterByTopic": "Filter by Topic",
+    "filterByStatus": "Filter by Status",
+    "searchPlaceholder": "Search claims...",
+    "topicSelected": "topic",
+    "topicsSelected": "topics",
+    "claimWord": "claim",
+    "claimsWord": "claims",
+    "ofWord": "of",
+    "clearFilters": "Clear filters",
+    "noClaims": "No pending claims",
+    "noClaimsDescription": "All claims have been reviewed. Check back later for new submissions.",
+    "accessRequired": "Sign In Required",
+    "accessDescription": "Sign in to access the verification workbench. Collective membership is required to submit verdicts."
+  },
+  "profile": {
+    "title": "Your Profile",
+    "description": "View your topic-weighted reputation and contribution history.",
+    "signInRequired": "Sign In Required",
+    "signInDescription": "Sign in to view your profile and reputation scores.",
+    "reputation": "Reputation",
+    "overallScore": "Overall Score",
+    "topicScores": "Reputation by Topic",
+    "contributions": "Contributions",
+    "posts": "Posts",
+    "corroborations": "Corroborations",
+    "challenges": "Challenges",
+    "noActivity": "No activity yet. Illuminate posts and corroborate to build your reputation."
+  },
+  "emptyStates": {
+    "posts": {
+      "title": "No posts yet",
+      "description": "Be the first to illuminate. Share what you observe to start building collective understanding.",
+      "filtered": {
+        "title": "No posts found",
+        "description": "No posts match your current filters. Try adjusting your search."
+      },
+      "chain": {
+        "title": "No posts in this story",
+        "description": "This story is waiting for its first post. Contribute your observations."
+      }
+    },
+    "bounties": {
+      "title": "No bounties yet",
+      "description": "No community members have posted bounties yet. Check back soon.",
+      "filtered": {
+        "title": "No matching bounties",
+        "description": "Try adjusting your filters to find bounties."
+      }
+    },
+    "chains": {
+      "title": "No stories yet",
+      "description": "Stories emerge when fireflies connect their posts. Be the first to illuminate.",
+      "filtered": {
+        "title": "No matching stories",
+        "description": "No stories match your current filters."
+      }
+    },
+    "posts": {
+      "title": "No posts yet",
+      "description": "No longer-form analysis has been shared yet. Check back soon.",
+      "filtered": {
+        "title": "No matching posts",
+        "description": "No posts match your current filters."
+      }
+    },
+    "claims": {
+      "title": "No claims yet",
+      "description": "No verifiable claims have been extracted yet.",
+      "filtered": {
+        "title": "No matching claims",
+        "description": "No claims match your current filters."
+      }
+    },
+    "workbench": {
+      "title": "No claims to review",
+      "description": "All claims have been processed. Check back later for new submissions."
+    },
+    "profile": {
+      "title": "No contributions yet",
+      "description": "Start illuminating posts and corroborating to build your reputation."
+    },
+    "seedRequired": {
+      "title": "No data loaded",
+      "description": "Run 'pnpm seed:dev' to load development data.",
+      "hint": "This is a development environment."
+    }
+  }
+}
