@@ -71,6 +71,7 @@ cocuyo/
 │       └── i18n/         # Internationalization config
 ├── packages/
 │   ├── bulletin/         # Bulletin chain client
+│   ├── contracts/        # Solidity smart contracts (Hardhat)
 │   ├── identity/         # DIM identity integration
 │   ├── types/            # Shared TypeScript types
 │   └── ui/               # Shared UI component library
@@ -88,11 +89,13 @@ cocuyo/
 | Language | TypeScript (strict mode) |
 | Styling | Tailwind CSS + CSS custom properties |
 | Fonts | Unbounded (Polkadot ecosystem) + Inter |
-| Maps | D3 + TopoJSON |
+| Maps | Leaflet + D3 + TopoJSON |
 | Localization | next-intl |
-| Wallet | Triangle SDK |
+| Wallet | Triangle SDK (Nova Wallet) |
+| Blockchain | Polkadot API, polkadot-api |
+| Smart Contracts | Solidity, Hardhat, OpenZeppelin |
 | Monorepo | pnpm workspaces + Turborepo |
-| Testing | Vitest + React Testing Library + Playwright |
+| Testing | Vitest + React Testing Library |
 | CI/CD | GitHub Actions → GitHub Pages |
 
 ## Localization
