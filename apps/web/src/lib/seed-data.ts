@@ -3,6 +3,8 @@
  *
  * Inspired by real investigative journalism from Efecto Cocuyo.
  * https://efectococuyo.com/cocuyo-chequea/maquinaria-eco-44-medios/
+ *
+ * Supports both English and Spanish locales.
  */
 
 import type {
@@ -30,6 +32,8 @@ import {
   emptyCorroborationSummary,
 } from '@cocuyo/types';
 
+type Locale = 'en' | 'es';
+
 // Fixed IDs for seed data
 const POST_1_ID = createPostId('seed-post-001');
 const POST_2_ID = createPostId('seed-post-002');
@@ -44,212 +48,323 @@ const DIM_CREDENTIAL_1 = createDIMCredential('dim-seed-user-001');
 const DIM_CREDENTIAL_2 = createDIMCredential('dim-seed-user-002');
 const DIM_CREDENTIAL_3 = createDIMCredential('dim-seed-user-003');
 
-const NOW = Date.now();
-const HOUR = 60 * 60 * 1000;
-const DAY = 24 * HOUR;
+// Fixed timestamps for seed data (won't go stale after deployment)
+// Based on the Efecto Cocuyo investigation timeline - March 2025
+const MARCH_15_2025 = new Date('2025-03-15T10:00:00Z').getTime();
+const MARCH_16_2025 = new Date('2025-03-16T14:30:00Z').getTime();
+const MARCH_17_2025 = new Date('2025-03-17T09:15:00Z').getTime();
+const MARCH_18_2025 = new Date('2025-03-18T16:00:00Z').getTime();
+const APRIL_15_2025 = new Date('2025-04-15T12:00:00Z').getTime(); // Bounty expiry
 
 // ============================================================================
-// Posts
+// Localized Content
 // ============================================================================
 
-const post1: Post = {
-  id: POST_1_ID,
-  author: {
-    id: 'seed-author-001',
-    credentialHash: DIM_CREDENTIAL_1,
-    pseudonym: 'MediaWatcher',
-    disclosureLevel: 'anonymous',
-    location: 'Caracas',
+const localizedContent = {
+  post1: {
+    en: {
+      title: '44 media outlets amplify Venezuelan government narratives',
+      text: 'A collaborative investigation by ProBox, Cazadores de Fake News, Efecto Cocuyo, and Medianálisis reveals a coordinated network of 44 media outlets that systematically amplify the narratives and propaganda of the Venezuelan government. The network includes state media (VTV), supposedly independent portals, and international media from Russia, China, Iran, and the United States.',
+    },
+    es: {
+      title: '44 medios amplifican narrativas del gobierno venezolano',
+      text: 'Una investigación colaborativa de ProBox, Cazadores de Fake News, Efecto Cocuyo y Medianálisis revela una red coordinada de 44 medios que sistemáticamente amplifican las narrativas y propaganda del gobierno venezolano. La red incluye medios estatales (VTV), portales supuestamente independientes, y medios internacionales de Rusia, China, Irán y Estados Unidos.',
+    },
   },
-  content: {
-    title: '44 medios amplifican narrativas del gobierno venezolano',
-    text: 'Una investigación colaborativa de ProBox, Cazadores de Fake News, Efecto Cocuyo y Medianálisis revela una red coordinada de 44 medios que sistemáticamente amplifican las narrativas y propaganda del gobierno venezolano. La red incluye medios estatales (VTV), portales supuestamente independientes, y medios internacionales de Rusia, China, Irán y Estados Unidos.',
-    links: ['https://efectococuyo.com/cocuyo-chequea/maquinaria-eco-44-medios/'],
+  post2: {
+    en: {
+      title: '132 identical publications between El Universal and Globovisión',
+      text: 'We documented 132 shared publications between El Universal and Globovisión with nearly identical headlines, text, and structure. This content replication pattern is consistent with a coordinated amplification operation.',
+    },
+    es: {
+      title: '132 publicaciones idénticas entre El Universal y Globovisión',
+      text: 'Documentamos 132 publicaciones compartidas entre El Universal y Globovisión con titulares, texto y estructura casi idénticos. Este patrón de replicación de contenido es consistente con una operación de amplificación coordinada.',
+    },
   },
-  context: {
+  post3: {
+    en: {
+      text: 'During the monitoring period, 30,948 mentions were recorded on social networks. X (Twitter) represented 45.06% of the discussion. Three synchronized hashtag campaigns were identified: #HandsOffVenezuela, #VenezuelaNoSeRinde, and #PuebloLevantaLaCara.',
+    },
+    es: {
+      text: 'Durante el período de monitoreo se registraron 30,948 menciones en redes sociales. X (Twitter) representó el 45.06% de la discusión. Se identificaron tres campañas de hashtags sincronizados: #HandsOffVenezuela, #VenezuelaNoSeRinde, y #PuebloLevantaLaCara.',
+    },
+  },
+  chain1: {
+    en: {
+      title: '#TheEchoMachine',
+      description: 'Investigation into how 44 media outlets globalize the Venezuelan regime\'s narrative. Collaborative tracking of the propaganda amplification network.',
+    },
+    es: {
+      title: '#LaMaquinariaDelEco',
+      description: 'Investigación sobre cómo 44 medios globalizan la narrativa del régimen venezolano. Seguimiento colaborativo de la red de amplificación de propaganda.',
+    },
+  },
+  bounty1: {
+    en: {
+      title: 'Identify funding sources for the media network',
+      description: 'We are looking for documented evidence about the funding sources of the 44 media outlets identified in the #TheEchoMachine investigation. We are especially interested in documenting advertising contracts with state entities, international transfers, or corporate links.',
+    },
+    es: {
+      title: 'Identificar fuentes de financiamiento de la red de medios',
+      description: 'Buscamos evidencia documentada sobre las fuentes de financiamiento de los 44 medios identificados en la investigación #LaMaquinariaDelEco. Interesa especialmente documentar contratos publicitarios con entidades estatales, transferencias internacionales, o vínculos corporativos.',
+    },
+  },
+  corroboration1: {
+    en: {
+      evidenceDescription: 'Complete ProBox report with methodology and analysis data',
+    },
+    es: {
+      evidenceDescription: 'Informe completo de ProBox con metodología y datos del análisis',
+    },
+  },
+  corroboration2: {
+    en: {
+      evidenceContent: 'I work in digital media in Venezuela. I have personally observed how similar content guidelines arrive at different newsrooms simultaneously.',
+    },
+    es: {
+      evidenceContent: 'Trabajo en medios digitales en Venezuela. He observado personalmente cómo llegan pautas de contenido similares a diferentes redacciones simultáneamente.',
+    },
+  },
+  claim1: {
+    en: {
+      statement: '44 media outlets participate in a coordinated network to amplify Venezuelan government narratives',
+    },
+    es: {
+      statement: '44 medios participan en una red coordinada de amplificación de narrativas del gobierno venezolano',
+    },
+  },
+};
+
+// ============================================================================
+// Factory Functions
+// ============================================================================
+
+function createPost1(locale: Locale): Post {
+  const content = localizedContent.post1[locale];
+  return {
+    id: POST_1_ID,
+    author: {
+      id: 'seed-author-001',
+      credentialHash: DIM_CREDENTIAL_1,
+      pseudonym: 'MediaWatcher',
+      disclosureLevel: 'anonymous',
+      location: 'Caracas',
+    },
+    content: {
+      title: content.title,
+      text: content.text,
+      links: ['https://efectococuyo.com/cocuyo-chequea/maquinaria-eco-44-medios/'],
+    },
+    context: {
+      topics: ['media', 'disinformation', 'venezuela'],
+      locationName: 'Venezuela',
+      location: { latitude: 10.4806, longitude: -66.9036 },
+    },
+    dimSignature: DIM_CREDENTIAL_1,
+    status: 'published',
+    chainLinks: [CHAIN_1_ID],
+    corroborations: {
+      witnessCount: 2,
+      evidenceCount: 3,
+      expertiseCount: 1,
+      challengeCount: 0,
+      totalWeight: 6,
+    },
+    verification: { status: 'unverified' },
+    createdAt: MARCH_15_2025,
+  };
+}
+
+function createPost2(locale: Locale): Post {
+  const content = localizedContent.post2[locale];
+  return {
+    id: POST_2_ID,
+    author: {
+      id: 'seed-author-002',
+      credentialHash: DIM_CREDENTIAL_2,
+      pseudonym: 'DataAnalyst',
+      disclosureLevel: 'anonymous',
+    },
+    content: {
+      title: content.title,
+      text: content.text,
+    },
+    context: {
+      topics: ['media', 'disinformation', 'venezuela'],
+      locationName: 'Venezuela',
+    },
+    dimSignature: DIM_CREDENTIAL_2,
+    status: 'published',
+    chainLinks: [CHAIN_1_ID],
+    corroborations: {
+      witnessCount: 0,
+      evidenceCount: 2,
+      expertiseCount: 0,
+      challengeCount: 0,
+      totalWeight: 2,
+    },
+    verification: { status: 'unverified' },
+    createdAt: MARCH_16_2025,
+  };
+}
+
+function createPost3(locale: Locale): Post {
+  const content = localizedContent.post3[locale];
+  return {
+    id: POST_3_ID,
+    author: {
+      id: 'seed-author-003',
+      credentialHash: DIM_CREDENTIAL_3,
+      pseudonym: 'SocialMonitor',
+      disclosureLevel: 'anonymous',
+    },
+    content: {
+      text: content.text,
+    },
+    context: {
+      topics: ['social-media', 'disinformation', 'venezuela'],
+    },
+    dimSignature: DIM_CREDENTIAL_3,
+    status: 'published',
+    chainLinks: [CHAIN_1_ID],
+    corroborations: emptyCorroborationSummary(),
+    verification: { status: 'unverified' },
+    createdAt: MARCH_17_2025,
+  };
+}
+
+function createStoryChain1(locale: Locale): StoryChain {
+  const content = localizedContent.chain1[locale];
+  return {
+    id: CHAIN_1_ID,
+    title: content.title,
+    description: content.description,
     topics: ['media', 'disinformation', 'venezuela'],
-    locationName: 'Venezuela',
-    location: { latitude: 10.4806, longitude: -66.9036 },
-  },
-  dimSignature: DIM_CREDENTIAL_1,
-  status: 'published',
-  chainLinks: [CHAIN_1_ID],
-  corroborations: {
-    witnessCount: 2,
-    evidenceCount: 3,
-    expertiseCount: 1,
-    challengeCount: 0,
-    totalWeight: 6,
-  },
-  verification: { status: 'unverified' },
-  createdAt: NOW - 2 * DAY,
-};
+    status: 'emerging',
+    postIds: [POST_1_ID, POST_2_ID, POST_3_ID],
+    stats: {
+      postCount: 3,
+      totalCorroborations: 8,
+      totalChallenges: 0,
+      contributorCount: 3,
+      totalWeight: 8,
+    },
+    createdAt: MARCH_15_2025,
+    updatedAt: MARCH_17_2025,
+  };
+}
 
-const post2: Post = {
-  id: POST_2_ID,
-  author: {
-    id: 'seed-author-002',
-    credentialHash: DIM_CREDENTIAL_2,
-    pseudonym: 'DataAnalyst',
-    disclosureLevel: 'anonymous',
-  },
-  content: {
-    title: '132 publicaciones idénticas entre El Universal y Globovisión',
-    text: 'Documentamos 132 publicaciones compartidas entre El Universal y Globovisión con titulares, texto y estructura casi idénticos. Este patrón de replicación de contenido es consistente con una operación de amplificación coordinada.',
-  },
-  context: {
+function createBounty1(locale: Locale): Bounty {
+  const content = localizedContent.bounty1[locale];
+  return {
+    id: BOUNTY_1_ID,
+    title: content.title,
+    description: content.description,
+    topics: ['media', 'disinformation', 'venezuela', 'finance'],
+    fundingAmount: createPUSDAmount(BigInt(50000)), // $500.00
+    funderCredential: DIM_CREDENTIAL_1,
+    escrowId: createEscrowId('escrow-seed-001'),
+    fundingTxHash: createTransactionHash('0xseed001'),
+    contributingPostIds: [POST_1_ID],
+    status: 'open',
+    payoutMode: 'public',
+    createdAt: MARCH_18_2025,
+    expiresAt: APRIL_15_2025,
+  };
+}
+
+function createCorroboration1(locale: Locale): Corroboration {
+  const content = localizedContent.corroboration1[locale];
+  return {
+    id: CORR_1_ID,
+    postId: POST_1_ID,
+    type: 'evidence',
+    dimSignature: DIM_CREDENTIAL_2,
+    weight: 1,
+    createdAt: MARCH_16_2025,
+    evidenceType: 'source_link',
+    evidenceContent: 'https://probox.org/investigacion-maquinaria-eco',
+    evidenceDescription: content.evidenceDescription,
+  };
+}
+
+function createCorroboration2(locale: Locale): Corroboration {
+  const content = localizedContent.corroboration2[locale];
+  return {
+    id: CORR_2_ID,
+    postId: POST_1_ID,
+    type: 'witness',
+    dimSignature: DIM_CREDENTIAL_3,
+    weight: 1,
+    createdAt: MARCH_17_2025,
+    evidenceType: 'observation',
+    evidenceContent: content.evidenceContent,
+  };
+}
+
+function createClaim1(locale: Locale): Claim {
+  const content = localizedContent.claim1[locale];
+  return {
+    id: CLAIM_1_ID,
+    statement: content.statement,
+    sourcePostId: POST_1_ID,
+    extractedBy: DIM_CREDENTIAL_1,
     topics: ['media', 'disinformation', 'venezuela'],
-    locationName: 'Venezuela',
-  },
-  dimSignature: DIM_CREDENTIAL_2,
-  status: 'published',
-  chainLinks: [CHAIN_1_ID],
-  corroborations: {
-    witnessCount: 0,
-    evidenceCount: 2,
-    expertiseCount: 0,
-    challengeCount: 0,
-    totalWeight: 2,
-  },
-  verification: { status: 'unverified' },
-  createdAt: NOW - DAY - 6 * HOUR,
-};
-
-const post3: Post = {
-  id: POST_3_ID,
-  author: {
-    id: 'seed-author-003',
-    credentialHash: DIM_CREDENTIAL_3,
-    pseudonym: 'SocialMonitor',
-    disclosureLevel: 'anonymous',
-  },
-  content: {
-    text: 'Durante el período de monitoreo se registraron 30,948 menciones en redes sociales. X (Twitter) representó el 45.06% de la discusión. Se identificaron tres campañas de hashtags sincronizados: #HandsOffVenezuela, #VenezuelaNoSeRinde, y #PuebloLevantaLaCara.',
-  },
-  context: {
-    topics: ['social-media', 'disinformation', 'venezuela'],
-  },
-  dimSignature: DIM_CREDENTIAL_3,
-  status: 'published',
-  chainLinks: [CHAIN_1_ID],
-  corroborations: emptyCorroborationSummary(),
-  verification: { status: 'unverified' },
-  createdAt: NOW - 12 * HOUR,
-};
+    evidence: [],
+    status: 'under_review',
+    createdAt: MARCH_15_2025,
+    updatedAt: MARCH_16_2025,
+  };
+}
 
 // ============================================================================
-// Story Chain
+// Localized Getters
 // ============================================================================
 
-const storyChain1: StoryChain = {
-  id: CHAIN_1_ID,
-  title: '#LaMaquinariaDelEco',
-  description: 'Investigación sobre cómo 44 medios globalizan la narrativa del régimen venezolano. Seguimiento colaborativo de la red de amplificación de propaganda.',
-  topics: ['media', 'disinformation', 'venezuela'],
-  status: 'emerging',
-  postIds: [POST_1_ID, POST_2_ID, POST_3_ID],
-  stats: {
-    postCount: 3,
-    totalCorroborations: 8,
-    totalChallenges: 0,
-    contributorCount: 3,
-    totalWeight: 8,
-  },
-  createdAt: NOW - 2 * DAY,
-  updatedAt: NOW - 12 * HOUR,
-};
+export function getSeedPostsForLocale(locale: Locale): Map<PostId, Post> {
+  return new Map<PostId, Post>([
+    [POST_1_ID, createPost1(locale)],
+    [POST_2_ID, createPost2(locale)],
+    [POST_3_ID, createPost3(locale)],
+  ]);
+}
+
+export function getSeedStoryChainsForLocale(locale: Locale): Map<ChainId, StoryChain> {
+  return new Map<ChainId, StoryChain>([
+    [CHAIN_1_ID, createStoryChain1(locale)],
+  ]);
+}
+
+export function getSeedBountiesForLocale(locale: Locale): Map<BountyId, Bounty> {
+  return new Map<BountyId, Bounty>([
+    [BOUNTY_1_ID, createBounty1(locale)],
+  ]);
+}
+
+export function getSeedCorroborationsForLocale(locale: Locale): Map<CorroborationId, Corroboration> {
+  return new Map<CorroborationId, Corroboration>([
+    [CORR_1_ID, createCorroboration1(locale)],
+    [CORR_2_ID, createCorroboration2(locale)],
+  ]);
+}
+
+export function getSeedClaimsForLocale(locale: Locale): Map<ClaimId, Claim> {
+  return new Map<ClaimId, Claim>([
+    [CLAIM_1_ID, createClaim1(locale)],
+  ]);
+}
 
 // ============================================================================
-// Bounty
+// Default Exports (English for backwards compatibility)
 // ============================================================================
 
-const bounty1: Bounty = {
-  id: BOUNTY_1_ID,
-  title: 'Identificar fuentes de financiamiento de la red de medios',
-  description: 'Buscamos evidencia documentada sobre las fuentes de financiamiento de los 44 medios identificados en la investigación #LaMaquinariaDelEco. Interesa especialmente documentar contratos publicitarios con entidades estatales, transferencias internacionales, o vínculos corporativos.',
-  topics: ['media', 'disinformation', 'venezuela', 'finance'],
-  fundingAmount: createPUSDAmount(BigInt(50000)), // $500.00
-  funderCredential: DIM_CREDENTIAL_1,
-  escrowId: createEscrowId('escrow-seed-001'),
-  fundingTxHash: createTransactionHash('0xseed001'),
-  contributingPostIds: [POST_1_ID],
-  status: 'open',
-  payoutMode: 'public',
-  createdAt: NOW - DAY,
-  expiresAt: NOW + 30 * DAY,
-};
+export const seedPosts = getSeedPostsForLocale('en');
+export const seedStoryChains = getSeedStoryChainsForLocale('en');
+export const seedBounties = getSeedBountiesForLocale('en');
+export const seedCorroborations = getSeedCorroborationsForLocale('en');
+export const seedClaims = getSeedClaimsForLocale('en');
 
-// ============================================================================
-// Corroborations
-// ============================================================================
-
-const corroboration1: Corroboration = {
-  id: CORR_1_ID,
-  postId: POST_1_ID,
-  type: 'evidence',
-  dimSignature: DIM_CREDENTIAL_2,
-  weight: 1,
-  createdAt: NOW - DAY - 12 * HOUR,
-  evidenceType: 'source_link',
-  evidenceContent: 'https://probox.org/investigacion-maquinaria-eco',
-  evidenceDescription: 'Informe completo de ProBox con metodología y datos del análisis',
-};
-
-const corroboration2: Corroboration = {
-  id: CORR_2_ID,
-  postId: POST_1_ID,
-  type: 'witness',
-  dimSignature: DIM_CREDENTIAL_3,
-  weight: 1,
-  createdAt: NOW - DAY,
-  evidenceType: 'observation',
-  evidenceContent: 'Trabajo en medios digitales en Venezuela. He observado personalmente cómo llegan pautas de contenido similares a diferentes redacciones simultáneamente.',
-};
-
-// ============================================================================
-// Claim
-// ============================================================================
-
-const claim1: Claim = {
-  id: CLAIM_1_ID,
-  statement: '44 medios participan en una red coordinada de amplificación de narrativas del gobierno venezolano',
-  sourcePostId: POST_1_ID,
-  extractedBy: DIM_CREDENTIAL_1,
-  topics: ['media', 'disinformation', 'venezuela'],
-  evidence: [],
-  status: 'under_review',
-  createdAt: NOW - 2 * DAY,
-  updatedAt: NOW - DAY,
-};
-
-// ============================================================================
-// Exports
-// ============================================================================
-
-export const seedPosts = new Map<PostId, Post>([
-  [POST_1_ID, post1],
-  [POST_2_ID, post2],
-  [POST_3_ID, post3],
-]);
-
-export const seedStoryChains = new Map<ChainId, StoryChain>([
-  [CHAIN_1_ID, storyChain1],
-]);
-
-export const seedBounties = new Map<BountyId, Bounty>([
-  [BOUNTY_1_ID, bounty1],
-]);
-
-export const seedCorroborations = new Map<CorroborationId, Corroboration>([
-  [CORR_1_ID, corroboration1],
-  [CORR_2_ID, corroboration2],
-]);
-
-export const seedClaims = new Map<ClaimId, Claim>([
-  [CLAIM_1_ID, claim1],
-]);
-
-// Derived mappings
+// Derived mappings (locale-independent)
 export const seedPostClaims = new Map<PostId, ClaimId[]>([
   [POST_1_ID, [CLAIM_1_ID]],
 ]);
@@ -265,3 +380,9 @@ export const seedPostBounties = new Map<PostId, BountyId[]>([
 export const seedBountyPosts = new Map<BountyId, PostId[]>([
   [BOUNTY_1_ID, [POST_1_ID]],
 ]);
+
+// Export IDs for use in generateStaticParams
+export const SEED_POST_IDS = ['seed-post-001', 'seed-post-002', 'seed-post-003'];
+export const SEED_CHAIN_IDS = ['seed-chain-001'];
+export const SEED_BOUNTY_IDS = ['seed-bounty-001'];
+export const SEED_CLAIM_IDS = ['seed-claim-001'];

@@ -31,12 +31,12 @@ import {
   getConnectedCredential,
   fetchFromBulletin,
 } from './service-utils';
-import { seedBounties } from '@/lib/seed-data';
+import { getSeedBountiesForLocale } from '@/lib/seed-data';
 
 export type Locale = 'en' | 'es';
 
-// Session cache for user-created bounties (initialized with seed data)
-const userBounties: Bounty[] = [...seedBounties.values()];
+// Session cache for user-created bounties (non-seed data only)
+const userCreatedBounties: Bounty[] = [];
 
 function bountyToPreview(bounty: Bounty): BountyPreview {
   return {
@@ -59,10 +59,16 @@ export class BountyServiceImpl implements BountyService {
   /**
    * Get a single bounty by ID.
    */
-  async getBounty(id: BountyId, _locale?: string): Promise<Bounty | null> {
-    // Check user bounties first
-    const userBounty = userBounties.find((b) => b.id === id);
+  async getBounty(id: BountyId, locale?: string): Promise<Bounty | null> {
+    const loc = (locale ?? 'en') as Locale;
+
+    // Check user-created bounties first
+    const userBounty = userCreatedBounties.find((b) => b.id === id);
     if (userBounty) return userBounty;
+
+    // Check localized seed data
+    const seedBounty = getSeedBountiesForLocale(loc).get(id);
+    if (seedBounty) return seedBounty;
 
     // Try fetching from Bulletin Chain
     return fetchFromBulletin<Bounty>(id);
@@ -77,8 +83,11 @@ export class BountyServiceImpl implements BountyService {
     locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>> {
-    // Return only user-created open bounties
-    let bounties = userBounties
+    const locale = (params.locale ?? 'en') as Locale;
+    const allBounties = [...userCreatedBounties, ...getSeedBountiesForLocale(locale).values()];
+
+    // Return only open bounties
+    let bounties = allBounties
       .filter((b) => b.status === 'open')
       .map(bountyToPreview);
 
@@ -119,8 +128,9 @@ export class BountyServiceImpl implements BountyService {
     locale?: string;
     pagination: PaginationParams;
   }): Promise<PaginatedResult<BountyPreview>> {
-    // Return only user-created bounties
-    let bounties = userBounties.map(bountyToPreview);
+    const locale = (params.locale ?? 'en') as Locale;
+    const allBounties = [...userCreatedBounties, ...getSeedBountiesForLocale(locale).values()];
+    let bounties = allBounties.map(bountyToPreview);
 
     // Filter by status if specified
     if (params.status !== undefined) {
@@ -189,7 +199,7 @@ export class BountyServiceImpl implements BountyService {
     const bountyWithId: Bounty = { ...bounty, id: createBountyId(cid) };
 
     // Add to session cache
-    userBounties.unshift(bountyWithId);
+    userCreatedBounties.unshift(bountyWithId);
 
     return Promise.resolve(ok(bountyWithId.id));
   }
@@ -208,11 +218,11 @@ export class BountyServiceImpl implements BountyService {
     }
 
     // Find bounty in user cache
-    const bountyIndex = userBounties.findIndex((b) => b.id === bountyId);
+    const bountyIndex = userCreatedBounties.findIndex((b) => b.id === bountyId);
     if (bountyIndex !== -1) {
-      const oldBounty = userBounties[bountyIndex];
+      const oldBounty = userCreatedBounties[bountyIndex];
       if (oldBounty) {
-        userBounties[bountyIndex] = {
+        userCreatedBounties[bountyIndex] = {
           ...oldBounty,
           contributingPostIds: [...oldBounty.contributingPostIds, postId],
         };
@@ -224,15 +234,6 @@ export class BountyServiceImpl implements BountyService {
     return Promise.resolve(err('Bounty not found or is read-only.'));
   }
 
-  /**
-   * @deprecated Use contributeToBounty instead
-   */
-  contributeToToBounty(
-    bountyId: BountyId,
-    postId: PostId
-  ): Promise<Result<void, string>> {
-    return this.contributeToBounty(bountyId, postId);
-  }
 }
 
 // Export a singleton instance

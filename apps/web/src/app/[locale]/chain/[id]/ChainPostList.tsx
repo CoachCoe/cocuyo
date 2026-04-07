@@ -237,8 +237,8 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
                     </>
                   )}
                   <span aria-hidden="true">&middot;</span>
-                  <time dateTime={new Date(post.createdAt * 1000).toISOString()}>
-                    {formatRelativeTime(post.createdAt * 1000)}
+                  <time dateTime={new Date(post.createdAt).toISOString()}>
+                    {formatRelativeTime(post.createdAt)}
                   </time>
                 </div>
 

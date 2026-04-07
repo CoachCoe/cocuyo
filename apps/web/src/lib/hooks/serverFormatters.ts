@@ -3,7 +3,13 @@
  * Use these in Server Components where hooks aren't available.
  */
 
-import { normalizeTimestamp } from './useFormatters';
+/**
+ * Normalize timestamp to milliseconds.
+ * Timestamps under 1 trillion are assumed to be seconds.
+ */
+function normalizeTimestamp(timestamp: number): number {
+  return timestamp < 1_000_000_000_000 ? timestamp * 1000 : timestamp;
+}
 
 interface Formatters {
   /** Format a timestamp as a full date (e.g., "April 4, 2026" / "4 de abril de 2026") */

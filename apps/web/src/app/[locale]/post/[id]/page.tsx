@@ -17,11 +17,12 @@ interface PostDetailPageProps {
 
 /**
  * Generate static params for build.
- * Returns a placeholder route since we don't have pre-seeded data.
- * Real content will be fetched at runtime from Bulletin Chain.
+ * With output: export, we must generate all locale+id combinations.
  */
-export function generateStaticParams(): { id: string }[] {
-  return [{ id: '_' }];
+export function generateStaticParams(): { locale: string; id: string }[] {
+  const locales = ['en', 'es'];
+  const ids = ['_', 'seed-post-001', 'seed-post-002', 'seed-post-003'];
+  return locales.flatMap((locale) => ids.map((id) => ({ locale, id })));
 }
 
 /**
@@ -176,11 +177,13 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
             post={post}
             translations={{
               extractClaim: tClaims('extractClaim'),
+              extracting: tClaims('extracting'),
               signInToExtract: tClaims('signInToExtract'),
               claimExtracted: tClaims('claimExtracted'),
               corroborate: tPosts('corroborate'),
               dispute: tPosts('dispute'),
               viewTrust: tPosts('viewTrust'),
+              addToStory: tPosts('addToStory'),
             }}
           />
 

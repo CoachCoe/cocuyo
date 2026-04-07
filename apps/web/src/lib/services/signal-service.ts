@@ -36,12 +36,12 @@ import {
   uploadToBulletin,
   fetchFromBulletin,
 } from './service-utils';
-import { seedPosts } from '@/lib/seed-data';
+import { getSeedPostsForLocale } from '@/lib/seed-data';
 
 export type Locale = 'en' | 'es';
 
-// Session cache for user-created posts (initialized with seed data)
-const userPosts: Post[] = [...seedPosts.values()];
+// Session cache for user-created posts (non-seed data only)
+const userCreatedPosts: Post[] = [];
 
 // Re-export for backwards compatibility
 export { setWallet as setConnectedWallet };
@@ -51,20 +51,23 @@ export { setWallet as setConnectedWallet };
  * The name is kept for backwards compatibility.
  */
 export class SignalServiceImpl implements PostService {
-  async getPost(id: PostId, _locale: Locale = 'en'): Promise<Post | null> {
-    // Check user posts first
-    const userPost = userPosts.find((p) => p.id === id);
+  async getPost(id: PostId, locale: Locale = 'en'): Promise<Post | null> {
+    // Check user-created posts first
+    const userPost = userCreatedPosts.find((p) => p.id === id);
     if (userPost) return userPost;
+
+    // Check localized seed data
+    const seedPost = getSeedPostsForLocale(locale).get(id);
+    if (seedPost) return seedPost;
 
     // Try fetching from Bulletin Chain
     return fetchFromBulletin<Post>(id);
   }
 
-  getChainPosts(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Post[]> {
-    // Return only user-created posts for this chain
-    // Full chain queries require indexing
-    const userChainPosts = userPosts.filter((p) => p.chainLinks.includes(chainId));
-    return Promise.resolve(userChainPosts);
+  getChainPosts(chainId: ChainId, locale: Locale = 'en'): Promise<readonly Post[]> {
+    const allPosts = [...userCreatedPosts, ...getSeedPostsForLocale(locale).values()];
+    const chainPosts = allPosts.filter((p) => p.chainLinks.includes(chainId));
+    return Promise.resolve(chainPosts);
   }
 
   getRecentPosts(params: {
@@ -74,9 +77,9 @@ export class SignalServiceImpl implements PostService {
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<PostPreview>> {
-    // Return only user-created posts
-    // Full queries require indexing
-    let filtered = [...userPosts];
+    const locale = params.locale ?? 'en';
+    const allPosts = [...userCreatedPosts, ...getSeedPostsForLocale(locale).values()];
+    let filtered = [...allPosts];
 
     // Filter by topic and location using shared utilities
     filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
@@ -109,8 +112,9 @@ export class SignalServiceImpl implements PostService {
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<Post>> {
-    // Return full post objects for display components
-    let filtered = [...userPosts];
+    const locale = params.locale ?? 'en';
+    const allPosts = [...userCreatedPosts, ...getSeedPostsForLocale(locale).values()];
+    let filtered = [...allPosts];
 
     // Filter by topic and location using shared utilities
     filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
@@ -177,9 +181,19 @@ export class SignalServiceImpl implements PostService {
     };
 
     // Add to session cache
-    userPosts.unshift(postWithId);
+    userCreatedPosts.unshift(postWithId);
 
     return ok(postWithId.id);
+  }
+
+  getAllPosts(params: {
+    pagination: PaginationParams;
+    locale?: Locale;
+  }): Promise<PaginatedResult<PostPreview>> {
+    return this.getRecentPosts({
+      pagination: params.pagination,
+      ...(params.locale !== undefined && { locale: params.locale }),
+    });
   }
 }
 

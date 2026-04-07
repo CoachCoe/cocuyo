@@ -14,9 +14,12 @@ interface Props {
 
 /**
  * Generate static params for build.
+ * With output: export, we must generate all locale+id combinations.
  */
-export function generateStaticParams(): { id: string }[] {
-  return [{ id: '_' }];
+export function generateStaticParams(): { locale: string; id: string }[] {
+  const locales = ['en', 'es'];
+  const ids = ['_', 'seed-post-001', 'seed-post-002', 'seed-post-003'];
+  return locales.flatMap((locale) => ids.map((id) => ({ locale, id })));
 }
 
 export default async function SignalRedirect({ params }: Props): Promise<never> {

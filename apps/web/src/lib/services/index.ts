@@ -29,7 +29,6 @@ import type { ChainService, BountyService, PostService, ClaimService, Corroborat
 import { SignalServiceImpl } from './signal-service';
 import { ChainServiceImpl } from './chain-service';
 import { BountyServiceImpl } from './bounty-service';
-import { PostServiceImpl } from './post-service';
 import { ClaimServiceImpl } from './claim-service';
 import { CorroborationServiceImpl } from './corroboration-service';
 import { ChainSignalService } from './chain-signal-service';
@@ -82,13 +81,10 @@ export const bountyService: BountyService = new BountyServiceImpl();
 /**
  * Post service instance.
  *
- * Provides access to post data:
- * - getPost: Fetch a single post by ID
- * - getRecentPosts: Paginated post listing with filters
- * - getChainPosts: Get posts in a story chain
- * - illuminate: Create a new post
+ * Alias to signalService for consistent naming.
+ * Use this for new code; signalService is kept for backwards compatibility.
  */
-export const postService: PostService = new PostServiceImpl();
+export const postService: PostService = signalService;
 
 /**
  * Claim service instance.
@@ -116,7 +112,7 @@ export const corroborationService: CorroborationService = new CorroborationServi
 export { SignalServiceImpl, SignalServiceImpl as MockSignalService } from './signal-service';
 export { ChainServiceImpl, ChainServiceImpl as MockChainService } from './chain-service';
 export { BountyServiceImpl, BountyServiceImpl as MockBountyService } from './bounty-service';
-export { PostServiceImpl, PostServiceImpl as MockPostService } from './post-service';
+export { SignalServiceImpl as PostServiceImpl, SignalServiceImpl as MockPostService } from './signal-service';
 export { ClaimServiceImpl, ClaimServiceImpl as MockClaimService } from './claim-service';
 export { CorroborationServiceImpl, CorroborationServiceImpl as MockCorroborationService } from './corroboration-service';
 export { ChainSignalService } from './chain-signal-service';

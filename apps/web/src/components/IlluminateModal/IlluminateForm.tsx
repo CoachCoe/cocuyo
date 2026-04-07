@@ -26,8 +26,15 @@ import { useSignalService, useClaimService } from '@/lib/services/hooks';
 import { getBulletinClient } from '@/lib/chain/client';
 import { TopicInput } from './TopicInput';
 import { SuggestionsList } from './SuggestionsList';
+import { StoryLinkSection } from './StoryLinkSection';
 import { useDebouncedSuggestions } from '@/lib/hooks/useDebouncedSuggestions';
 import { PhotoUpload } from '@/components/PhotoUpload';
+import { useAppState } from '@/components/AppStateProvider';
+
+interface PendingNewStory {
+  title: string;
+  description: string;
+}
 
 interface FormState {
   content: string;
@@ -37,6 +44,7 @@ interface FormState {
   photos: File[];
   selectedChains: ChainId[];
   selectedBounties: BountyId[];
+  pendingNewStory: PendingNewStory | null;
   acknowledged: boolean;
 }
 
@@ -51,6 +59,8 @@ export function IlluminateForm(): ReactElement {
   // Track if we're submitting evidence for a claim
   const isEvidenceSubmission = evidenceClaimId !== null && evidenceType !== null;
 
+  const { createStory } = useAppState();
+
   const [formState, setFormState] = useState<FormState>(() => ({
     content: '',
     topics: [],
@@ -59,6 +69,7 @@ export function IlluminateForm(): ReactElement {
     photos: [],
     selectedChains: preSelectedChainId != null ? [preSelectedChainId] : [],
     selectedBounties: preSelectedBountyId != null ? [preSelectedBountyId] : [],
+    pendingNewStory: null,
     acknowledged: false,
   }));
 
@@ -127,6 +138,13 @@ export function IlluminateForm(): ReactElement {
     }));
   }, []);
 
+  const handleCreateNewStory = useCallback((title: string, description: string): void => {
+    setFormState((prev) => ({
+      ...prev,
+      pendingNewStory: { title, description },
+    }));
+  }, []);
+
   const handleAcknowledgeChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>): void => {
       setFormState((prev) => ({ ...prev, acknowledged: event.target.checked }));
@@ -187,6 +205,16 @@ export function IlluminateForm(): ReactElement {
         if (result.ok) {
           const postId = result.value;
 
+          // If user wanted to create a new story, do it now
+          if (formState.pendingNewStory !== null) {
+            createStory(
+              formState.pendingNewStory.title,
+              formState.pendingNewStory.description,
+              postId,
+              formState.topics
+            );
+          }
+
           // If this is evidence submission, link the post to the claim
           if (evidenceClaimId !== null && evidenceType !== null) {
             const evidenceResult = await claimService.submitEvidence(evidenceClaimId, {
@@ -217,7 +245,7 @@ export function IlluminateForm(): ReactElement {
         setIsSubmitting(false);
       }
     },
-    [canSubmit, formState, closeModal, signalService, claimService, evidenceClaimId, evidenceType]
+    [canSubmit, formState, closeModal, signalService, claimService, createStory, evidenceClaimId, evidenceType]
   );
 
   if (submitSuccess) {
@@ -368,18 +396,54 @@ export function IlluminateForm(): ReactElement {
         />
       </div>
 
-      {/* Chain/Bounty suggestions */}
-      <SuggestionsList
-        chains={suggestedChains}
-        bounties={suggestedBounties}
+      {/* Story chain linking */}
+      <StoryLinkSection
+        suggestedChains={suggestedChains}
         selectedChains={formState.selectedChains}
-        selectedBounties={formState.selectedBounties}
-        preSelectedChainId={preSelectedChainId}
-        preSelectedBountyId={preSelectedBountyId}
         onChainToggle={handleChainToggle}
-        onBountyToggle={handleBountyToggle}
-        isLoading={isSuggestionsLoading}
+        onCreateStory={handleCreateNewStory}
+        isLoadingSuggestions={isSuggestionsLoading}
       />
+
+      {/* Pending new story indicator */}
+      {formState.pendingNewStory !== null && (
+        <div className="p-3 bg-[var(--fg-accent)]/10 border border-[var(--fg-accent)]/30 rounded-nested">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-[var(--fg-accent)]">
+                New story will be created: {formState.pendingNewStory.title}
+              </p>
+              {formState.pendingNewStory.description && (
+                <p className="text-xs text-secondary mt-0.5">
+                  {formState.pendingNewStory.description}
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormState((prev) => ({ ...prev, pendingNewStory: null }))}
+              className="text-xs text-secondary hover:text-primary"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bounty suggestions */}
+      {suggestedBounties.length > 0 && (
+        <SuggestionsList
+          chains={[]}
+          bounties={suggestedBounties}
+          selectedChains={[]}
+          selectedBounties={formState.selectedBounties}
+          preSelectedChainId={null}
+          preSelectedBountyId={preSelectedBountyId}
+          onChainToggle={() => {}}
+          onBountyToggle={handleBountyToggle}
+          isLoading={false}
+        />
+      )}
 
       {/* Acknowledgment */}
       <div className="p-4 bg-surface-muted border border-DEFAULT rounded-nested">

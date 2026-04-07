@@ -28,21 +28,23 @@ interface TopicInputProps {
 
 // Common topics in the network (would come from API in production)
 const SUGGESTED_TOPICS = [
-  'environmental',
-  'water-quality',
-  'local-government',
-  'public-services',
-  'education',
-  'public-health',
-  'housing',
-  'development',
-  'public-records',
-  'safety',
-  'labor',
-  'public-safety',
-  'equity',
-  'transportation',
-  'documentation',
+  'media',
+  'disinformation',
+  'venezuela',
+  'social-media',
+  'politics',
+  'economy',
+  'health',
+  'infrastructure',
+  'governance',
+  'finance',
+  'transparency',
+  'crisis',
+  'daily-life',
+  'medication',
+  'food-security',
+  'inflation',
+  'wages',
 ];
 
 export function TopicInput({

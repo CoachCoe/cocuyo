@@ -14,32 +14,41 @@ import type {
   PaginatedResult,
 } from '@cocuyo/types';
 import { fetchFromBulletin } from './service-utils';
-import { seedStoryChains } from '@/lib/seed-data';
+import { getSeedStoryChainsForLocale } from '@/lib/seed-data';
 
 export type Locale = 'en' | 'es';
 
-// Session cache for chains (initialized with seed data)
-const userChains: StoryChain[] = [...seedStoryChains.values()];
+// Session cache for user-created chains (non-seed data only)
+const userCreatedChains: StoryChain[] = [];
 
 export class ChainServiceImpl implements ChainService {
-  async getChain(id: ChainId, _locale: Locale = 'en'): Promise<StoryChain | null> {
-    // Check local cache first
-    const localChain = userChains.find((c) => c.id === id);
-    if (localChain) return localChain;
+  async getChain(id: ChainId, locale?: string): Promise<StoryChain | null> {
+    const loc = (locale === 'es' ? 'es' : 'en') as Locale;
+
+    // Check user-created chains first
+    const userChain = userCreatedChains.find((c) => c.id === id);
+    if (userChain) return userChain;
+
+    // Check localized seed data
+    const seedChain = getSeedStoryChainsForLocale(loc).get(id);
+    if (seedChain) return seedChain;
 
     // Try fetching from Bulletin Chain
     return fetchFromBulletin<StoryChain>(id);
   }
 
-  getChains(_params: {
+  getChains(params: {
     topic?: string;
     location?: string;
     status?: StoryChain['status'];
     pagination: PaginationParams;
     locale?: Locale;
   }): Promise<PaginatedResult<ChainPreview>> {
+    const locale = params.locale ?? 'en';
+    const allChains = [...userCreatedChains, ...getSeedStoryChainsForLocale(locale).values()];
+
     // Convert to previews
-    const previews: ChainPreview[] = userChains.map((chain) => ({
+    const previews: ChainPreview[] = allChains.map((chain) => ({
       id: chain.id,
       title: chain.title,
       topics: [...chain.topics],
@@ -56,9 +65,11 @@ export class ChainServiceImpl implements ChainService {
     });
   }
 
-  getFeaturedChains(_locale: Locale = 'en'): Promise<readonly ChainPreview[]> {
+  getFeaturedChains(locale: Locale = 'en'): Promise<readonly ChainPreview[]> {
+    const allChains = [...userCreatedChains, ...getSeedStoryChainsForLocale(locale).values()];
+
     // Convert to previews
-    const previews: ChainPreview[] = userChains.map((chain) => ({
+    const previews: ChainPreview[] = allChains.map((chain) => ({
       id: chain.id,
       title: chain.title,
       topics: [...chain.topics],
