@@ -18,3 +18,5 @@ export {
 } from './chain';
 
 export { storage, read, write, clear } from './storage';
+
+export { requestExternalPermissions } from './permissions';

@@ -92,6 +92,11 @@ export async function initHostDetection(): Promise<boolean> {
       // Create accounts provider with sandbox transport
       _accountsProvider = sdk.createAccountsProvider(sdk.sandboxTransport);
 
+      // Request external network permissions early (map tiles, geocoding, etc.)
+      // This prompts the user once per domain, then persists in host storage
+      const { requestExternalPermissions } = await import('./permissions');
+      await requestExternalPermissions();
+
       initialized = true;
       hosted = true;
       return true;
