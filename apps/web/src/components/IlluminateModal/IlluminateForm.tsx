@@ -439,7 +439,7 @@ export function IlluminateForm(): ReactElement {
           selectedBounties={formState.selectedBounties}
           preSelectedChainId={null}
           preSelectedBountyId={preSelectedBountyId}
-          onChainToggle={() => {}}
+          onChainToggle={(): void => { /* no-op: chains disabled in bounty mode */ }}
           onBountyToggle={handleBountyToggle}
           isLoading={false}
         />
