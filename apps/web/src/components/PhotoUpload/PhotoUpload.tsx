@@ -10,7 +10,7 @@
  */
 
 import { useState, useCallback, useRef, type ReactElement, type DragEvent } from 'react';
-import { MAX_SIGNAL_PHOTOS } from '@cocuyo/types';
+import { MAX_POST_PHOTOS } from '@cocuyo/types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -42,7 +42,7 @@ export function PhotoUpload({
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const canAddMore = photos.length < MAX_SIGNAL_PHOTOS;
+  const canAddMore = photos.length < MAX_POST_PHOTOS;
 
   const validateFile = useCallback((file: File): string | null => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -63,8 +63,8 @@ export function PhotoUpload({
       const errors: string[] = [];
 
       for (const file of fileArray) {
-        if (photos.length + validFiles.length >= MAX_SIGNAL_PHOTOS) {
-          errors.push(`Maximum ${MAX_SIGNAL_PHOTOS} photos allowed.`);
+        if (photos.length + validFiles.length >= MAX_POST_PHOTOS) {
+          errors.push(`Maximum ${MAX_POST_PHOTOS} photos allowed.`);
           break;
         }
 
@@ -182,7 +182,7 @@ export function PhotoUpload({
               </span>
             </p>
             <p className="text-xs text-[var(--fg-tertiary)]">
-              {t?.maxFiles ?? `Up to ${MAX_SIGNAL_PHOTOS} photos`} &bull;{' '}
+              {t?.maxFiles ?? `Up to ${MAX_POST_PHOTOS} photos`} &bull;{' '}
               {t?.maxSize ?? 'Max 5MB each'}
             </p>
           </div>

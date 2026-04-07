@@ -1,25 +1,30 @@
 /**
  * Signal Service implementation with real Bulletin storage.
  *
+ * Note: This service is named "Signal" for backwards compatibility.
+ * In the new UX model, "Signal" has been renamed to "Post" in user-facing contexts.
+ *
  * This service provides:
- * - Bulletin Chain storage for signals (writes)
+ * - Bulletin Chain storage for posts (writes)
  * - Session cache for immediate feedback
  * - Empty results for queries until indexing is implemented
  *
- * Signals are stored on Bulletin Chain and can be fetched by CID.
+ * Posts are stored on Bulletin Chain and can be fetched by CID.
  */
 
 import type {
-  SignalService,
-  Signal,
-  SignalId,
+  PostService,
+  Post,
+  PostId,
+  PostPreview,
+  PostStatus,
   ChainId,
   PaginationParams,
   PaginatedResult,
   Result,
-  NewSignal,
+  NewPost,
 } from '@cocuyo/types';
-import { ok, err, createSignalId, emptyCorroborationSummary } from '@cocuyo/types';
+import { ok, err, createPostId, emptyCorroborationSummary } from '@cocuyo/types';
 import {
   setConnectedWallet as setWallet,
   getConnectedWallet,
@@ -31,45 +36,85 @@ import {
   uploadToBulletin,
   fetchFromBulletin,
 } from './service-utils';
+import { seedPosts } from '@/lib/seed-data';
 
 export type Locale = 'en' | 'es';
 
-// Session cache for user-created signals
-const userSignals: Signal[] = [];
+// Session cache for user-created posts (initialized with seed data)
+const userPosts: Post[] = [...seedPosts.values()];
 
 // Re-export for backwards compatibility
 export { setWallet as setConnectedWallet };
 
-export class SignalServiceImpl implements SignalService {
-  async getSignal(id: SignalId, _locale: Locale = 'en'): Promise<Signal | null> {
-    // Check user signals first
-    const userSignal = userSignals.find((s) => s.id === id);
-    if (userSignal) return userSignal;
+/**
+ * SignalServiceImpl - now works with Post types.
+ * The name is kept for backwards compatibility.
+ */
+export class SignalServiceImpl implements PostService {
+  async getPost(id: PostId, _locale: Locale = 'en'): Promise<Post | null> {
+    // Check user posts first
+    const userPost = userPosts.find((p) => p.id === id);
+    if (userPost) return userPost;
 
     // Try fetching from Bulletin Chain
-    return fetchFromBulletin<Signal>(id);
+    return fetchFromBulletin<Post>(id);
   }
 
-  getChainSignals(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Signal[]> {
-    // Return only user-created signals for this chain
+  getChainPosts(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Post[]> {
+    // Return only user-created posts for this chain
     // Full chain queries require indexing
-    const userChainSignals = userSignals.filter((s) => s.chainLinks.includes(chainId));
-    return Promise.resolve(userChainSignals);
+    const userChainPosts = userPosts.filter((p) => p.chainLinks.includes(chainId));
+    return Promise.resolve(userChainPosts);
   }
 
-  getRecentSignals(params: {
+  getRecentPosts(params: {
     topic?: string;
     location?: string;
+    status?: PostStatus;
     pagination: PaginationParams;
     locale?: Locale;
-  }): Promise<PaginatedResult<Signal>> {
-    // Return only user-created signals
+  }): Promise<PaginatedResult<PostPreview>> {
+    // Return only user-created posts
     // Full queries require indexing
-    let filtered = [...userSignals];
+    let filtered = [...userPosts];
 
     // Filter by topic and location using shared utilities
-    filtered = filterByTopic(filtered, (s) => s.context.topics, params.topic);
-    filtered = filterByString(filtered, (s) => s.context.locationName, params.location);
+    filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
+    filtered = filterByString(filtered, (p) => p.context.locationName, params.location);
+
+    // Sort by creation time (newest first)
+    filtered.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Convert to previews
+    const previews: PostPreview[] = filtered.map((post) => ({
+      id: post.id,
+      ...(post.content.title !== undefined && { title: post.content.title }),
+      excerpt: post.content.text.slice(0, 200),
+      topics: [...post.context.topics],
+      ...(post.context.locationName !== undefined && { locationName: post.context.locationName }),
+      status: post.status,
+      corroborationCount: post.corroborations.witnessCount + post.corroborations.expertiseCount,
+      challengeCount: post.corroborations.challengeCount,
+      createdAt: post.createdAt,
+    }));
+
+    // Apply pagination using shared utility
+    return Promise.resolve(paginate(previews, params.pagination));
+  }
+
+  getRecentPostsForDisplay(params: {
+    topic?: string;
+    location?: string;
+    status?: PostStatus;
+    pagination: PaginationParams;
+    locale?: Locale;
+  }): Promise<PaginatedResult<Post>> {
+    // Return full post objects for display components
+    let filtered = [...userPosts];
+
+    // Filter by topic and location using shared utilities
+    filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
+    filtered = filterByString(filtered, (p) => p.context.locationName, params.location);
 
     // Sort by creation time (newest first)
     filtered.sort((a, b) => b.createdAt - a.createdAt);
@@ -78,7 +123,7 @@ export class SignalServiceImpl implements SignalService {
     return Promise.resolve(paginate(filtered, params.pagination));
   }
 
-  async illuminate(signal: NewSignal): Promise<Result<SignalId, string>> {
+  async illuminate(post: NewPost): Promise<Result<PostId, string>> {
     const connectedAddress = getConnectedWallet();
     const dimCredential = getConnectedCredential();
 
@@ -88,9 +133,9 @@ export class SignalServiceImpl implements SignalService {
 
     const now = Date.now();
 
-    // Build full signal with author info
-    const fullSignal: Signal = {
-      id: '' as SignalId, // Will be replaced with CID
+    // Build full post with author info
+    const fullPost: Post = {
+      id: '' as PostId, // Will be replaced with CID
       author: {
         id: connectedAddress,
         credentialHash: dimCredential,
@@ -98,41 +143,43 @@ export class SignalServiceImpl implements SignalService {
         disclosureLevel: 'anonymous',
       },
       content: {
-        text: signal.content.text,
-        ...(signal.content.links && { links: signal.content.links }),
-        ...(signal.content.media && { media: signal.content.media }),
+        ...(post.content.title !== undefined && { title: post.content.title }),
+        text: post.content.text,
+        ...(post.content.links && { links: post.content.links }),
+        ...(post.content.media && { media: post.content.media }),
       },
       context: {
-        topics: signal.context.topics,
-        ...(signal.context.locationName !== undefined && { locationName: signal.context.locationName }),
-        ...(signal.context.location !== undefined && { location: signal.context.location }),
-        ...(signal.context.timeframe !== undefined && { timeframe: signal.context.timeframe }),
+        topics: [...post.context.topics],
+        ...(post.context.locationName !== undefined && { locationName: post.context.locationName }),
+        ...(post.context.location !== undefined && { location: post.context.location }),
+        ...(post.context.timeframe !== undefined && { timeframe: post.context.timeframe }),
       },
       dimSignature: dimCredential,
+      status: 'published',
       corroborations: emptyCorroborationSummary(),
       verification: {
         status: 'unverified',
       },
-      chainLinks: signal.chainLinks ?? [],
+      chainLinks: post.chainLinks ?? [],
       createdAt: now,
     };
 
     // Upload to Bulletin Chain (with local fallback)
-    const uploadResult = await uploadToBulletin(fullSignal);
+    const uploadResult = await uploadToBulletin(fullPost);
     if (!uploadResult.ok) {
       return err(uploadResult.error);
     }
 
     // Update with CID
-    const signalWithId: Signal = {
-      ...fullSignal,
-      id: createSignalId(uploadResult.value.cid),
+    const postWithId: Post = {
+      ...fullPost,
+      id: createPostId(uploadResult.value.cid),
     };
 
     // Add to session cache
-    userSignals.unshift(signalWithId);
+    userPosts.unshift(postWithId);
 
-    return ok(signalWithId.id);
+    return ok(postWithId.id);
   }
 }
 

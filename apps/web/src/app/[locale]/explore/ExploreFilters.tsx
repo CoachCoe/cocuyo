@@ -37,7 +37,7 @@ export interface ExploreFiltersProps {
   onIlluminateBounty: (bountyId: BountyId) => void;
   /** Translation strings */
   translations: {
-    allSignalsLabel: string;
+    allPostsLabel: string;
     storiesLabel: string;
     openBountiesLabel: string;
   };
@@ -82,7 +82,7 @@ export function ExploreFilters({
   openBountiesInfoTitle,
   openBountiesInfoBody,
 }: ExploreFiltersProps): ReactElement {
-  const isAllSignalsActive = activeFilterType === null;
+  const isAllPostsActive = activeFilterType === null;
 
   return (
     <div className="space-y-6">
@@ -92,7 +92,7 @@ export function ExploreFilters({
           <SectionHeader title={t.storiesLabel} infoTitle={storiesInfoTitle} infoBody={storiesInfoBody} className="mb-0" />
         </div>
 
-        {/* All Signals option */}
+        {/* All Posts option */}
         <button
           type="button"
           onClick={() => onFilterChange(null, null)}
@@ -100,13 +100,13 @@ export function ExploreFilters({
             w-full text-left px-3 py-2 rounded-nested
             text-sm font-medium transition-colors
             ${
-              isAllSignalsActive
+              isAllPostsActive
                 ? 'bg-[var(--bg-surface-nested)] text-primary border border-[var(--border-emphasis)]'
                 : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
             }
           `}
         >
-          {t.allSignalsLabel}
+          {t.allPostsLabel}
         </button>
 
         {/* Story chain list */}
@@ -188,7 +188,7 @@ export function ExploreFilters({
                     {chain.title}
                   </span>
                   <span className="text-xs text-tertiary shrink-0">
-                    {chain.signalCount}
+                    {chain.postCount}
                   </span>
                   {/* Illuminate button for non-bounty stories */}
                   {!hasBounty && (

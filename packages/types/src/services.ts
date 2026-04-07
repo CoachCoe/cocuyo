@@ -15,12 +15,12 @@ import type {
   EscrowId,
   PolkadotAddress,
   PostId,
-  SignalId,
   TransactionHash,
+  VerdictId,
 } from './brands';
 import type { Bounty, BountyPayout, BountyPreview, NewBounty } from './bounty';
 import type { ChainPreview, StoryChain } from './chain';
-import type { Claim, ClaimPreview, ClaimStatus, NewClaim, NewClaimEvidence } from './claim';
+import type { Claim, ClaimPreview, ClaimStatus, NewClaim, NewClaimEvidence, NewVerdict, Verdict } from './claim';
 import type { NewPost, Post, PostPreview, PostStatus } from './post';
 import type {
   Coin,
@@ -36,7 +36,6 @@ import type { PUSDAmount, PUSDBalance } from './currency';
 import type { PaymentMode } from './payment-mode';
 import type { PersonhoodLevel, PersonhoodCapabilities } from './personhood';
 import type { ReputationTopic } from './reputation-topics';
-import type { Signal, NewSignal } from './signal';
 
 /**
  * Result type for operations that can fail.
@@ -77,26 +76,43 @@ export interface PaginatedResult<T> {
   readonly hasMore: boolean;
 }
 
+// ============================================================================
+// Post Service (replaces SignalService)
+// ============================================================================
+
 /**
- * Signal service interface.
+ * Post service interface.
  */
-export interface SignalService {
-  /** Get a single signal by ID */
-  getSignal(id: SignalId, locale?: string): Promise<Signal | null>;
+export interface PostService {
+  /** Get a single post by ID */
+  getPost(id: PostId, locale?: string): Promise<Post | null>;
 
-  /** Get all signals in a chain */
-  getChainSignals(chainId: ChainId, locale?: string): Promise<readonly Signal[]>;
+  /** Get all posts in a chain */
+  getChainPosts(chainId: ChainId, locale?: string): Promise<readonly Post[]>;
 
-  /** Get recent signals, optionally filtered by topic or location */
-  getRecentSignals(params: {
+  /** Get recent posts, optionally filtered by topic or location */
+  getRecentPosts(params: {
     topic?: string;
     location?: string;
+    status?: PostStatus;
     pagination: PaginationParams;
     locale?: string;
-  }): Promise<PaginatedResult<Signal>>;
+  }): Promise<PaginatedResult<PostPreview>>;
 
-  /** Illuminate a new signal */
-  illuminate(signal: NewSignal): Promise<Result<SignalId, string>>;
+  /**
+   * Get recent posts with full data for display components.
+   * Returns full Post objects instead of PostPreview.
+   */
+  getRecentPostsForDisplay(params: {
+    topic?: string;
+    location?: string;
+    status?: PostStatus;
+    pagination: PaginationParams;
+    locale?: string;
+  }): Promise<PaginatedResult<Post>>;
+
+  /** Illuminate a new post */
+  illuminate(post: NewPost): Promise<Result<PostId, string>>;
 }
 
 /**
@@ -123,8 +139,8 @@ export interface ChainService {
  * Corroboration service interface.
  */
 export interface CorroborationService {
-  /** Get all corroborations for a signal */
-  getSignalCorroborations(signalId: SignalId): Promise<readonly Corroboration[]>;
+  /** Get all corroborations for a post */
+  getPostCorroborations(postId: PostId): Promise<readonly Corroboration[]>;
 
   /** Submit a corroboration */
   corroborate(
@@ -150,37 +166,11 @@ export interface BountyService {
   /** Create a new bounty */
   createBounty(bounty: NewBounty): Promise<Result<BountyId, string>>;
 
-  /** Contribute a signal to a bounty */
-  contributeToToBounty(
+  /** Contribute a post to a bounty */
+  contributeToBounty(
     bountyId: BountyId,
-    signalId: SignalId
+    postId: PostId
   ): Promise<Result<void, string>>;
-}
-
-// ============================================================================
-// Post Service
-// ============================================================================
-
-/**
- * Post service interface.
- */
-export interface PostService {
-  /** Get a single post by ID */
-  getPost(id: PostId, locale?: string): Promise<Post | null>;
-
-  /** Get recent posts, optionally filtered */
-  getRecentPosts(params: {
-    topic?: string;
-    status?: PostStatus;
-    pagination: PaginationParams;
-    locale?: string;
-  }): Promise<PaginatedResult<PostPreview>>;
-
-  /** Get posts by chain ID */
-  getPostsByChain(chainId: ChainId, locale?: string): Promise<readonly Post[]>;
-
-  /** Create a new post */
-  createPost(post: NewPost): Promise<Result<PostId, string>>;
 }
 
 // ============================================================================
@@ -220,6 +210,24 @@ export interface ClaimService {
     claimId: ClaimId,
     evidence: NewClaimEvidence
   ): Promise<Result<void, string>>;
+}
+
+// ============================================================================
+// Verdict Service
+// ============================================================================
+
+/**
+ * Verdict service interface.
+ */
+export interface VerdictService {
+  /** Get a verdict by ID */
+  getVerdict(id: VerdictId): Promise<Verdict | null>;
+
+  /** Get verdict for a claim */
+  getVerdictForClaim(claimId: ClaimId): Promise<Verdict | null>;
+
+  /** Issue a verdict on a claim */
+  issueVerdict(verdict: NewVerdict): Promise<Result<VerdictId, string>>;
 }
 
 // ============================================================================
@@ -292,22 +300,22 @@ export interface ReputationService {
 
   /**
    * Record a corroboration event.
-   * Increases reputation for both the corroborator and signal author.
+   * Increases reputation for both the corroborator and post author.
    */
   recordCorroboration(params: {
     corroboratorCredential: DIMCredential;
-    signalAuthorCredential: DIMCredential;
-    signalId: SignalId;
+    postAuthorCredential: DIMCredential;
+    postId: PostId;
     topics: readonly ReputationTopic[];
   }): Promise<Result<void, ReputationError>>;
 
   /**
    * Record a successful challenge.
-   * Decreases reputation for the signal author.
+   * Decreases reputation for the post author.
    */
   recordChallenge(params: {
     challengedCredential: DIMCredential;
-    signalId: SignalId;
+    postId: PostId;
     topics: readonly ReputationTopic[];
   }): Promise<Result<void, ReputationError>>;
 }
@@ -486,7 +494,7 @@ export interface EscrowService {
     distributions: readonly {
       recipientAddress: PolkadotAddress;
       recipientCredential: DIMCredential;
-      signalId: SignalId;
+      postId: PostId;
       amount: PUSDAmount;
     }[];
   }): Promise<Result<BountyPayout, EscrowError>>;

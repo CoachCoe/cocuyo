@@ -1,37 +1,37 @@
 'use client';
 
 /**
- * SignalCard — Display component for a signal.
+ * FeedPostCard — Full display component for a post in feeds.
  *
- * The signal card is the primary content element. It must feel substantial
+ * The card is the primary content element. It must feel substantial
  * without being heavy. Key features:
  * - Author with pseudonym (privacy-controlled)
  * - Verification badge (if verified)
  * - Context tags (topic, location, time)
- * - Signal content
+ * - Post content
  * - Corroboration summary
  * - Chain link (if part of a story chain)
  */
 
 import type { ReactElement } from 'react';
-import type { Signal, ChainId, BountyId, PUSDAmount } from '@cocuyo/types';
+import type { Post, ChainId, BountyId, PUSDAmount } from '@cocuyo/types';
 import { formatPUSDCompact } from '@cocuyo/types';
 import { VerificationBadge } from '../VerificationBadge';
 
-/** Bounty info for display on signal cards */
-export interface SignalBountyInfo {
+/** Bounty info for display on cards */
+export interface PostBountyInfo {
   readonly id: BountyId;
   readonly title: string;
   readonly fundingAmount: PUSDAmount;
 }
 
-export interface SignalCardProps {
-  /** The signal to display */
-  signal: Signal;
+export interface FeedPostCardProps {
+  /** The post to display */
+  post: Post;
   /** Optional: Title of the linked chain for display */
   chainTitle?: string;
-  /** Optional: Bounty this signal contributes to */
-  bounty?: SignalBountyInfo | undefined;
+  /** Optional: Bounty this post contributes to */
+  bounty?: PostBountyInfo | undefined;
   /** Callback when the chain link is clicked */
   onChainClick?: (chainId: ChainId) => void;
   /** Callback when the bounty badge is clicked */
@@ -40,6 +40,14 @@ export interface SignalCardProps {
   onClick?: () => void;
   /** Callback when the author is clicked */
   onAuthorClick?: (credentialHash: string) => void;
+  /** Callback when corroborate button is clicked */
+  onCorroborate?: () => void;
+  /** Callback when dispute button is clicked */
+  onDispute?: () => void;
+  /** Callback when trust details link is clicked */
+  onViewTrust?: () => void;
+  /** Whether to show action buttons (corroborate/dispute) */
+  showActions?: boolean;
 }
 
 /**
@@ -71,16 +79,20 @@ function formatRelativeTime(timestamp: number): string {
   return `${String(years)}y ago`;
 }
 
-export function SignalCard({
-  signal,
+export function FeedPostCard({
+  post,
   chainTitle,
   bounty,
   onChainClick,
   onBountyClick,
   onClick,
   onAuthorClick,
-}: SignalCardProps): ReactElement {
-  const { author, content, context, corroborations, verification, chainLinks, createdAt } = signal;
+  onCorroborate,
+  onDispute,
+  onViewTrust,
+  showActions = false,
+}: FeedPostCardProps): ReactElement {
+  const { author, content, context, corroborations, verification, chainLinks, createdAt } = post;
 
   const handleChainClick = (e: React.MouseEvent): void => {
     e.stopPropagation();
@@ -108,6 +120,21 @@ export function SignalCard({
       e.preventDefault();
       onClick?.();
     }
+  };
+
+  const handleCorroborate = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    onCorroborate?.();
+  };
+
+  const handleDispute = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    onDispute?.();
+  };
+
+  const handleViewTrust = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    onViewTrust?.();
   };
 
   return (
@@ -224,38 +251,72 @@ export function SignalCard({
       )}
 
       {/* Corroboration summary */}
-      <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)] mb-4">
-        <span className="flex items-center gap-1">
-          <span className="text-[var(--fg-success)]" aria-hidden="true">
-            &#9673;
-          </span>
-          <span>
-            <span className="text-[var(--fg-success)]">
-              {corroborations.witnessCount + corroborations.expertiseCount}
-            </span>
-            {' '}corroborations
-          </span>
-        </span>
-        {corroborations.evidenceCount > 0 && (
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)]">
           <span className="flex items-center gap-1">
-            <span aria-hidden="true">&#9889;</span>
-            <span>{corroborations.evidenceCount} evidence</span>
-          </span>
-        )}
-        {corroborations.challengeCount > 0 && (
-          <span className="flex items-center gap-1">
-            <span className="text-[var(--fg-error)]" aria-hidden="true">
-              &#9651;
+            <span className="text-[var(--fg-success)]" aria-hidden="true">
+              &#9673;
             </span>
             <span>
-              <span className="text-[var(--fg-error)]">
-                {corroborations.challengeCount}
+              <span className="text-[var(--fg-success)]">
+                {corroborations.witnessCount + corroborations.expertiseCount}
               </span>
-              {' '}challenge{corroborations.challengeCount !== 1 ? 's' : ''}
+              {' '}corroborations
             </span>
           </span>
+          {corroborations.evidenceCount > 0 && (
+            <span className="flex items-center gap-1">
+              <span aria-hidden="true">&#9889;</span>
+              <span>{corroborations.evidenceCount} evidence</span>
+            </span>
+          )}
+          {corroborations.challengeCount > 0 && (
+            <span className="flex items-center gap-1">
+              <span className="text-[var(--fg-error)]" aria-hidden="true">
+                &#9651;
+              </span>
+              <span>
+                <span className="text-[var(--fg-error)]">
+                  {corroborations.challengeCount}
+                </span>
+                {' '}challenge{corroborations.challengeCount !== 1 ? 's' : ''}
+              </span>
+            </span>
+          )}
+        </div>
+        {/* View trust details link */}
+        {onViewTrust !== undefined && (
+          <button
+            type="button"
+            onClick={handleViewTrust}
+            className="text-xs text-[var(--fg-tertiary)] hover:text-[var(--fg-accent)] transition-colors"
+          >
+            View details
+          </button>
         )}
       </div>
+
+      {/* Action buttons */}
+      {showActions && (
+        <div className="flex items-center gap-3 mb-4">
+          <button
+            type="button"
+            onClick={handleCorroborate}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-nested border border-[var(--fg-success)]/30 text-[var(--fg-success)] hover:bg-[var(--fg-success)]/10 transition-colors"
+          >
+            <span aria-hidden="true">&#9673;</span>
+            Corroborate
+          </button>
+          <button
+            type="button"
+            onClick={handleDispute}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-nested border border-[var(--fg-error)]/30 text-[var(--fg-error)] hover:bg-[var(--fg-error)]/10 transition-colors"
+          >
+            <span aria-hidden="true">&#9651;</span>
+            Dispute
+          </button>
+        </div>
+      )}
 
       {/* Chain link */}
       {chainLinks.length > 0 && chainTitle !== undefined && (

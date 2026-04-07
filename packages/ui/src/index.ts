@@ -17,8 +17,8 @@ export type { NavbarProps } from './components/Navbar';
 export { Footer } from './components/Footer';
 export type { FooterProps } from './components/Footer';
 
-export { SignalCard } from './components/SignalCard';
-export type { SignalCardProps, SignalBountyInfo } from './components/SignalCard';
+export { FeedPostCard } from './components/FeedPostCard';
+export type { FeedPostCardProps, PostBountyInfo } from './components/FeedPostCard';
 
 export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';
@@ -41,6 +41,9 @@ export type { ClaimCardProps, ClaimCardTranslations } from './components/ClaimCa
 export { ClaimStatusBadge } from './components/ClaimStatusBadge';
 export type { ClaimStatusBadgeProps, ClaimStatusTranslations } from './components/ClaimStatusBadge';
 
+export { VerdictBadge } from './components/VerdictBadge';
+export type { VerdictBadgeProps } from './components/VerdictBadge';
+
 export { Spinner } from './components/Spinner';
 export type { SpinnerProps } from './components/Spinner';
 
@@ -53,7 +56,7 @@ export type { ToastProviderProps, ToastData, ToastVariant } from './components/T
 export { ErrorBoundary } from './components/ErrorBoundary';
 export type { ErrorBoundaryProps } from './components/ErrorBoundary';
 
-export { Skeleton, SkeletonText, SkeletonCard, SkeletonPostCard, SkeletonClaimCard, SkeletonSignalCard } from './components/Skeleton';
+export { Skeleton, SkeletonText, SkeletonCard, SkeletonPostCard, SkeletonClaimCard, SkeletonFeedPostCard } from './components/Skeleton';
 export type { SkeletonProps } from './components/Skeleton';
 
 export { Breadcrumb } from './components/Breadcrumb';

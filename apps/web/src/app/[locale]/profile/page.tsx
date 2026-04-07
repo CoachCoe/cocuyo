@@ -56,7 +56,7 @@ export default async function ProfilePage({ params }: ProfilePageProps): Promise
               overallScore: tProfile('overallScore'),
               topicScores: tProfile('topicScores'),
               contributions: tProfile('contributions'),
-              signals: tProfile('signals'),
+              posts: tProfile('posts'),
               corroborations: tProfile('corroborations'),
               challenges: tProfile('challenges'),
               noActivity: tProfile('noActivity'),

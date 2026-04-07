@@ -9,4 +9,4 @@
 export { BaseMap, type MapLocation, type MarkerData } from './BaseMap';
 export { LocationPicker, type LocationPickerValue } from './LocationPicker';
 export { ManualLocationInput } from './ManualLocationInput';
-export { SignalMapView } from './SignalMapView';
+export { PostMapView } from './PostMapView';

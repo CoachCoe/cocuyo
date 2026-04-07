@@ -4,7 +4,7 @@
  * ChainTabs — Tabbed navigation for story chain detail page.
  *
  * Tabs:
- * - What's Happening: Latest signals (raw observations)
+ * - What's Happening: Latest posts (raw observations)
  * - Deep Dives: Analysis posts related to this chain
  * - Help Needed: Open bounties for this chain
  */

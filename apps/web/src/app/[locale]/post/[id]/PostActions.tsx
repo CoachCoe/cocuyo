@@ -10,25 +10,28 @@
 import { useState, type ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import type { PostId } from '@cocuyo/types';
+import type { Post } from '@cocuyo/types';
 import { useSigner } from '@/hooks';
 import { useClaimService } from '@/lib/services/hooks';
 import { useToast } from '@cocuyo/ui';
 import { IlluminateFAB } from '@/components/IlluminateFAB';
+import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
+import { useTrustDrawer } from '@/components/TrustDrawer';
 
 export interface PostActionsProps {
-  postId: PostId;
-  postTitle: string;
+  post: Post;
   translations: {
     extractClaim: string;
     signInToExtract: string;
     claimExtracted: string;
+    corroborate: string;
+    dispute: string;
+    viewTrust: string;
   };
 }
 
 export function PostActions({
-  postId,
-  postTitle,
+  post,
   translations: t,
 }: PostActionsProps): ReactElement {
   const { isConnected } = useSigner();
@@ -37,6 +40,28 @@ export function PostActions({
   const router = useRouter();
   const locale = useLocale();
   const [isExtracting, setIsExtracting] = useState(false);
+  const { openSheet: openCorroborateSheet } = useCorroborateDispute();
+  const { openDrawer: openTrustDrawer } = useTrustDrawer();
+
+  const handleCorroborate = (): void => {
+    if (!isConnected) {
+      addToast(t.signInToExtract, 'warning');
+      return;
+    }
+    openCorroborateSheet({ post, mode: 'corroborate' });
+  };
+
+  const handleDispute = (): void => {
+    if (!isConnected) {
+      addToast(t.signInToExtract, 'warning');
+      return;
+    }
+    openCorroborateSheet({ post, mode: 'dispute' });
+  };
+
+  const handleViewTrust = (): void => {
+    openTrustDrawer(post.id);
+  };
 
   const handleExtractClaim = async (): Promise<void> => {
     if (!isConnected) {
@@ -47,8 +72,8 @@ export function PostActions({
     setIsExtracting(true);
 
     const result = await claimService.extractClaim({
-      statement: postTitle,
-      sourcePostId: postId,
+      statement: post.content.title ?? post.content.text.slice(0, 200),
+      sourcePostId: post.id,
     });
 
     if (result.ok) {
@@ -63,18 +88,51 @@ export function PostActions({
 
   return (
     <>
-      {/* Extract Claim button */}
-      <div className="flex justify-center mb-8">
+      {/* Primary action buttons */}
+      <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+        {/* Corroborate */}
+        <button
+          type="button"
+          onClick={handleCorroborate}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-nested border border-[var(--fg-success)]/30 text-[var(--fg-success)] font-medium text-sm hover:bg-[var(--fg-success)]/10 transition-colors"
+        >
+          <span aria-hidden="true">&#9673;</span>
+          <span>{t.corroborate}</span>
+        </button>
+
+        {/* Dispute */}
+        <button
+          type="button"
+          onClick={handleDispute}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-nested border border-[var(--fg-error)]/30 text-[var(--fg-error)] font-medium text-sm hover:bg-[var(--fg-error)]/10 transition-colors"
+        >
+          <span aria-hidden="true">&#9651;</span>
+          <span>{t.dispute}</span>
+        </button>
+
+        {/* View Trust */}
+        <button
+          type="button"
+          onClick={handleViewTrust}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-nested border border-[var(--border-default)] text-[var(--fg-secondary)] font-medium text-sm hover:border-[var(--fg-accent)] hover:text-[var(--fg-accent)] transition-colors"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span>{t.viewTrust}</span>
+        </button>
+
+        {/* Extract Claim */}
         <button
           type="button"
           onClick={() => { void handleExtractClaim(); }}
           disabled={isExtracting}
           className={`
-            inline-flex items-center gap-2 px-6 py-3 rounded-full
-            font-medium text-sm transition-all duration-200
+            inline-flex items-center gap-2 px-4 py-2.5 rounded-nested
+            font-medium text-sm transition-all duration-200 border
             ${isConnected
-              ? 'bg-[var(--color-firefly-gold)] text-[var(--bg-primary)] hover:shadow-[0_4px_20px_rgba(232,185,49,0.4)] hover:scale-105 active:scale-100'
-              : 'bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)] border border-[var(--border-default)]'
+              ? 'border-[var(--color-firefly-gold)]/30 text-[var(--color-firefly-gold)] hover:bg-[var(--color-firefly-gold)]/10'
+              : 'border-[var(--border-default)] text-[var(--fg-secondary)]'
             }
             ${isExtracting ? 'opacity-70 cursor-wait' : ''}
           `}

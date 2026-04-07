@@ -108,10 +108,10 @@ export default async function AboutPage({ params }: AboutPageProps): Promise<Rea
               <div>
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
                   <span style={{ color: 'var(--color-accent)' }}>✦</span>
-                  {t('howItWorks.signals.title')}
+                  {t('howItWorks.posts.title')}
                 </h3>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  {t('howItWorks.signals.description')}
+                  {t('howItWorks.posts.description')}
                 </p>
               </div>
 

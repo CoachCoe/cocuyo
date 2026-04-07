@@ -19,7 +19,7 @@ import type {
   Result,
   NewPost,
 } from '@cocuyo/types';
-import { ok, err, createPostId } from '@cocuyo/types';
+import { ok, err, createPostId, emptyCorroborationSummary } from '@cocuyo/types';
 import {
   getConnectedWallet,
   getConnectedCredential,
@@ -38,12 +38,12 @@ const userPosts: Post[] = [];
 function postToPreview(post: Post): PostPreview {
   return {
     id: post.id,
-    title: post.content.title,
+    ...(post.content.title !== undefined && { title: post.content.title }),
     excerpt: post.content.text.slice(0, 200) + (post.content.text.length > 200 ? '...' : ''),
-    topics: post.context.topics,
+    topics: [...post.context.topics],
     ...(post.context.locationName !== undefined && { locationName: post.context.locationName }),
-    claimCount: post.extractedClaimIds.length,
-    signalCount: post.relatedSignalIds.length,
+    corroborationCount: post.corroborations.witnessCount + post.corroborations.expertiseCount,
+    challengeCount: post.corroborations.challengeCount,
     status: post.status,
     createdAt: post.createdAt,
   };
@@ -61,6 +61,7 @@ export class PostServiceImpl implements PostService {
 
   getRecentPosts(params: {
     topic?: string;
+    location?: string;
     status?: PostStatus;
     pagination: PaginationParams;
     locale?: Locale;
@@ -69,7 +70,7 @@ export class PostServiceImpl implements PostService {
     let filtered = userPosts.map(postToPreview);
 
     // Filter by topic using shared utility
-    filtered = filterByTopic(filtered, (p) => p.topics, params.topic);
+    filtered = filterByTopic(filtered, (p) => [...p.topics], params.topic);
 
     // Filter by status
     if (params.status) {
@@ -83,20 +84,45 @@ export class PostServiceImpl implements PostService {
     return Promise.resolve(paginate(filtered, params.pagination));
   }
 
-  getPostsByChain(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Post[]> {
+  getRecentPostsForDisplay(params: {
+    topic?: string;
+    location?: string;
+    status?: PostStatus;
+    pagination: PaginationParams;
+    locale?: Locale;
+  }): Promise<PaginatedResult<Post>> {
+    // Return full post objects for display components
+    let filtered = [...userPosts];
+
+    // Filter by topic using shared utility
+    filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
+
+    // Filter by status
+    if (params.status) {
+      filtered = filtered.filter((p) => p.status === params.status);
+    }
+
+    // Sort by creation time (newest first)
+    filtered.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Paginate using shared utility
+    return Promise.resolve(paginate(filtered, params.pagination));
+  }
+
+  getChainPosts(chainId: ChainId, _locale: Locale = 'en'): Promise<readonly Post[]> {
     // Return only user-created posts for this chain
     const userChainPosts = userPosts.filter(
-      (p) => p.relatedChainId === chainId
+      (p) => p.chainLinks.includes(chainId)
     );
     return Promise.resolve(userChainPosts);
   }
 
-  async createPost(newPost: NewPost): Promise<Result<PostId, string>> {
+  async illuminate(newPost: NewPost): Promise<Result<PostId, string>> {
     const connectedAddress = getConnectedWallet();
     const dimCredential = getConnectedCredential();
 
     if (connectedAddress === null || dimCredential === null) {
-      return err('Wallet not connected. Please connect to create a post.');
+      return err('Wallet not connected. Please connect to illuminate.');
     }
 
     const now = Date.now();
@@ -109,21 +135,23 @@ export class PostServiceImpl implements PostService {
         disclosureLevel: 'anonymous',
       },
       content: {
-        title: newPost.content.title,
+        ...(newPost.content.title !== undefined && { title: newPost.content.title }),
         text: newPost.content.text,
         ...(newPost.content.links && { links: newPost.content.links }),
+        ...(newPost.content.media && { media: newPost.content.media }),
       },
       context: {
-        topics: newPost.context.topics,
+        topics: [...newPost.context.topics],
         ...(newPost.context.locationName !== undefined && { locationName: newPost.context.locationName }),
+        ...(newPost.context.location !== undefined && { location: newPost.context.location }),
+        ...(newPost.context.timeframe !== undefined && { timeframe: newPost.context.timeframe }),
       },
       dimSignature: dimCredential,
-      extractedClaimIds: [],
-      relatedSignalIds: newPost.relatedSignalIds ?? [],
-      ...(newPost.relatedChainId !== undefined && { relatedChainId: newPost.relatedChainId }),
       status: 'published',
+      chainLinks: newPost.chainLinks ?? [],
+      corroborations: emptyCorroborationSummary(),
+      verification: { status: 'unverified' },
       createdAt: now,
-      updatedAt: now,
     };
 
     // Upload to Bulletin Chain (with local fallback)
@@ -146,6 +174,13 @@ export class PostServiceImpl implements PostService {
       pagination: params.pagination,
       ...(locale !== undefined && { locale }),
     });
+  }
+
+  /**
+   * @deprecated Use illuminate instead
+   */
+  createPost(newPost: NewPost): Promise<Result<PostId, string>> {
+    return this.illuminate(newPost);
   }
 }
 

@@ -198,7 +198,7 @@ export function useIdentity(): IdentityState {
         disclosureLevel: data.disclosureLevel,
         ...(data.publicInfo !== undefined && { publicInfo: data.publicInfo }),
         stats: {
-          signalsPosted: 0,
+          postsCreated: 0,
           corroborationsGiven: 0,
           corroborationsReceived: 0,
           collectivesJoined: 0,

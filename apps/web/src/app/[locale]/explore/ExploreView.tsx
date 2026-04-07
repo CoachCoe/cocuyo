@@ -9,10 +9,10 @@
  */
 
 import { useState, useMemo, useCallback, type ReactElement, type ReactNode } from 'react';
-import type { ChainPreview, ChainId, Signal, BountyPreview, BountyId } from '@cocuyo/types';
+import type { ChainPreview, ChainId, Post, BountyPreview, BountyId } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { ExploreFilters, type ExploreFilterType } from './ExploreFilters';
-import { SignalsList, type ViewMode } from './SignalsList';
+import { FeedPostsList, type ViewMode } from './FeedPostsList';
 
 export interface ExploreViewProps {
   /** Available story chains */
@@ -21,29 +21,29 @@ export interface ExploreViewProps {
   chainBountyMap: Record<string, BountyPreview[]>;
   /** Orphan bounties - open questions without stories yet */
   orphanBounties: readonly BountyPreview[];
-  /** Mapping of bounty ID to contributing signal IDs */
-  bountySignalsMap: Record<string, readonly string[]>;
-  /** All signals */
-  signals: Signal[];
+  /** Mapping of bounty ID to contributing post IDs */
+  bountyPostsMap: Record<string, readonly string[]>;
+  /** All posts */
+  posts: Post[];
   /** Chain titles map for signal cards */
   chainTitles: Record<string, string>;
   /** Whether there are more signals to load */
   hasMore: boolean;
   /** Translation strings */
   translations: {
-    allSignals: string;
+    allPosts: string;
     storiesLabel: string;
     openBountiesLabel: string;
-    recentSignalsLabel: string;
+    recentPostsLabel: string;
     storiesInfoTitle: string;
-    signalsInfoTitle: string;
+    postsInfoTitle: string;
     openBountiesInfoTitle: string;
-    noMatchingBountySignals: string;
+    noMatchingBountyPosts: string;
   };
   /** Info popover content for stories */
   storiesInfoBody?: ReactNode | undefined;
-  /** Info popover content for signals */
-  signalsInfoBody?: ReactNode | undefined;
+  /** Info popover content for posts */
+  postsInfoBody?: ReactNode | undefined;
   /** Info popover content for open bounties */
   openBountiesInfoBody?: ReactNode | undefined;
 }
@@ -52,13 +52,13 @@ export function ExploreView({
   chains,
   chainBountyMap,
   orphanBounties,
-  bountySignalsMap,
-  signals,
+  bountyPostsMap,
+  posts,
   chainTitles,
   hasMore,
   translations,
   storiesInfoBody,
-  signalsInfoBody,
+  postsInfoBody,
   openBountiesInfoBody,
 }: ExploreViewProps): ReactElement {
   const [filterType, setFilterType] = useState<ExploreFilterType>(null);
@@ -94,42 +94,42 @@ export function ExploreView({
     return orphanBounties.find((b) => b.id === filterId) ?? null;
   }, [filterType, filterId, orphanBounties]);
 
-  // Filter signals based on active filter
-  const filteredSignals = useMemo(() => {
+  // Filter posts based on active filter
+  const filteredPosts = useMemo(() => {
     switch (filterType) {
       case null:
-        return signals;
+        return posts;
       case 'chain':
-        return signals.filter((signal) => signal.chainLinks.includes(filterId as ChainId));
+        return posts.filter((post) => post.chainLinks.includes(filterId as ChainId));
       case 'bounty': {
-        if (filterId === null) return signals;
-        const contributingSignalIds = bountySignalsMap[filterId] ?? [];
-        return signals.filter((signal) => contributingSignalIds.includes(signal.id));
+        if (filterId === null) return posts;
+        const contributingPostIds = bountyPostsMap[filterId] ?? [];
+        return posts.filter((post) => contributingPostIds.includes(post.id));
       }
     }
-  }, [signals, filterType, filterId, bountySignalsMap]);
+  }, [posts, filterType, filterId, bountyPostsMap]);
 
-  // Determine the signals section title based on filter
-  const signalsSectionTitle = useMemo(() => {
+  // Determine the posts section title based on filter
+  const postsSectionTitle = useMemo(() => {
     switch (filterType) {
       case null:
-        return translations.recentSignalsLabel;
+        return translations.recentPostsLabel;
       case 'chain': {
         const chain = chains.find((c) => c.id === filterId);
-        return chain?.title ?? translations.recentSignalsLabel;
+        return chain?.title ?? translations.recentPostsLabel;
       }
       case 'bounty':
-        return activeBounty?.title ?? translations.recentSignalsLabel;
+        return activeBounty?.title ?? translations.recentPostsLabel;
     }
-  }, [filterType, filterId, chains, activeBounty, translations.recentSignalsLabel]);
+  }, [filterType, filterId, chains, activeBounty, translations.recentPostsLabel]);
 
   // Determine empty state message
   const emptyStateMessage = useMemo(() => {
     if (filterType === 'bounty') {
-      return translations.noMatchingBountySignals;
+      return translations.noMatchingBountyPosts;
     }
     return undefined; // Use default
-  }, [filterType, translations.noMatchingBountySignals]);
+  }, [filterType, translations.noMatchingBountyPosts]);
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
@@ -146,7 +146,7 @@ export function ExploreView({
             onIlluminateChain={handleIlluminateChain}
             onIlluminateBounty={handleIlluminateBounty}
             translations={{
-              allSignalsLabel: translations.allSignals,
+              allPostsLabel: translations.allPosts,
               storiesLabel: translations.storiesLabel,
               openBountiesLabel: translations.openBountiesLabel,
             }}
@@ -158,15 +158,15 @@ export function ExploreView({
         </div>
       </aside>
 
-      {/* Main content - Signal Feed */}
+      {/* Main content - Post Feed */}
       <main className="flex-1 min-w-0">
-        <SignalsList
-          signals={filteredSignals}
+        <FeedPostsList
+          posts={filteredPosts}
           chainTitles={chainTitles}
           hasMore={hasMore && filterType === null}
-          title={signalsSectionTitle}
-          infoTitle={filterType === null ? translations.signalsInfoTitle : undefined}
-          infoBody={filterType === null ? signalsInfoBody : undefined}
+          title={postsSectionTitle}
+          infoTitle={filterType === null ? translations.postsInfoTitle : undefined}
+          infoBody={filterType === null ? postsInfoBody : undefined}
           isFiltered={filterType !== null}
           emptyStateMessage={emptyStateMessage}
           viewMode={viewMode}

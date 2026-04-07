@@ -12,28 +12,15 @@
  */
 
 import {
-  createSignalId,
   createChainId,
   createBountyId,
   createPostId,
   createClaimId,
-  type SignalId,
   type ChainId,
   type BountyId,
   type PostId,
   type ClaimId,
 } from '@cocuyo/types';
-
-/**
- * Guard and brand a route parameter as SignalId.
- * Returns null for empty/non-string inputs. Service layer validates existence.
- */
-export function validateSignalId(id: unknown): SignalId | null {
-  if (typeof id !== 'string' || id.length === 0) {
-    return null;
-  }
-  return createSignalId(id);
-}
 
 /**
  * Guard and brand a route parameter as ChainId.

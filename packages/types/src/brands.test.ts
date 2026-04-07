@@ -1,40 +1,42 @@
 import { describe, it, expect } from 'vitest';
 import {
-  createSignalId,
+  createPostId,
   createChainId,
   createCorroborationId,
   createBountyId,
   createDIMCredential,
   createContentHash,
-  type SignalId,
+  createVerdictId,
+  type PostId,
   type ChainId,
   type CorroborationId,
   type BountyId,
   type DIMCredential,
   type ContentHash,
+  type VerdictId,
 } from './brands';
 
 describe('Branded Types', () => {
-  describe('createSignalId', () => {
-    it('creates a SignalId from a valid string', () => {
-      const id = createSignalId('sig-123');
-      expect(id).toBe('sig-123');
+  describe('createPostId', () => {
+    it('creates a PostId from a valid string', () => {
+      const id = createPostId('post-123');
+      expect(id).toBe('post-123');
     });
 
-    it('creates a SignalId from a hash-like string', () => {
+    it('creates a PostId from a hash-like string', () => {
       const hash = '0x1234567890abcdef1234567890abcdef12345678';
-      const id = createSignalId(hash);
+      const id = createPostId(hash);
       expect(id).toBe(hash);
     });
 
     it('preserves the branded type (compile-time check)', () => {
-      const id: SignalId = createSignalId('sig-test');
+      const id: PostId = createPostId('post-test');
       // This would fail compilation if types are wrong
       expect(typeof id).toBe('string');
     });
 
     it('handles empty string', () => {
-      const id = createSignalId('');
+      const id = createPostId('');
       expect(id).toBe('');
     });
   });
@@ -71,6 +73,18 @@ describe('Branded Types', () => {
 
     it('preserves the branded type', () => {
       const id: BountyId = createBountyId('bounty-test');
+      expect(typeof id).toBe('string');
+    });
+  });
+
+  describe('createVerdictId', () => {
+    it('creates a VerdictId from a valid string', () => {
+      const id = createVerdictId('verdict-202');
+      expect(id).toBe('verdict-202');
+    });
+
+    it('preserves the branded type', () => {
+      const id: VerdictId = createVerdictId('verdict-test');
       expect(typeof id).toBe('string');
     });
   });
@@ -115,16 +129,16 @@ describe('Branded Types', () => {
     it('different branded types are not interchangeable at compile time', () => {
       // This test documents the compile-time behavior
       // If branded types worked correctly, the following would be a compile error:
-      // const signalId: SignalId = createChainId('chain-1');
+      // const postId: PostId = createChainId('chain-1');
 
       // At runtime, they're all strings, but TypeScript prevents mixing
-      const signalId = createSignalId('sig-1');
+      const postId = createPostId('post-1');
       const chainId = createChainId('chain-1');
 
       // They're different branded types but both strings at runtime
-      expect(typeof signalId).toBe('string');
+      expect(typeof postId).toBe('string');
       expect(typeof chainId).toBe('string');
-      expect(signalId).not.toBe(chainId);
+      expect(postId).not.toBe(chainId);
     });
   });
 });

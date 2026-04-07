@@ -1,27 +1,27 @@
 /**
- * Story Chain types — emergent structures formed when signals connect.
+ * Story Chain types — emergent structures formed when posts connect.
  *
  * A story chain is not "created" by anyone. It crystallizes as fireflies
- * link their signals to related observations. The chain represents
+ * link their posts to related observations. The chain represents
  * collective understanding built through distributed corroboration.
  */
 
-import type { ChainId, SignalId } from './brands';
+import type { ChainId, PostId } from './brands';
 
 /** Status of a story chain */
 export type ChainStatus =
-  | 'emerging'     // Few signals, still forming
-  | 'active'       // Actively receiving signals and corroborations
+  | 'emerging'     // Few posts, still forming
+  | 'active'       // Actively receiving posts and corroborations
   | 'established'  // Well-corroborated, stable
   | 'contested';   // Significant challenges, under dispute
 
 /** Summary statistics for a chain */
 export interface ChainStats {
-  /** Total number of signals in this chain */
-  readonly signalCount: number;
-  /** Total corroborations across all signals */
+  /** Total number of posts in this chain */
+  readonly postCount: number;
+  /** Total corroborations across all posts */
   readonly totalCorroborations: number;
-  /** Total challenges across all signals */
+  /** Total challenges across all posts */
   readonly totalChallenges: number;
   /** Number of unique fireflies who contributed */
   readonly contributorCount: number;
@@ -30,15 +30,15 @@ export interface ChainStats {
 }
 
 /**
- * A story chain — an emergent structure of connected signals.
+ * A story chain — an emergent structure of connected posts.
  *
- * Chains form organically when signals reference each other or share topics.
+ * Chains form organically when posts reference each other or share topics.
  * They represent the collective understanding of an event, situation, or question.
  */
 export interface StoryChain {
   /** Unique identifier for this chain */
   readonly id: ChainId;
-  /** Human-readable title (derived from topics or first signal) */
+  /** Human-readable title (derived from topics or first post) */
   readonly title: string;
   /** Brief description of what this chain is about */
   readonly description: string;
@@ -48,8 +48,8 @@ export interface StoryChain {
   readonly location?: string;
   /** Current status of the chain */
   readonly status: ChainStatus;
-  /** IDs of signals in this chain, ordered by creation time */
-  readonly signalIds: readonly SignalId[];
+  /** IDs of posts in this chain, ordered by creation time */
+  readonly postIds: readonly PostId[];
   /** Summary statistics */
   readonly stats: ChainStats;
   /** When this chain first emerged (Unix timestamp) */
@@ -67,7 +67,7 @@ export interface ChainPreview {
   readonly topics: readonly string[];
   readonly location?: string;
   readonly status: ChainStatus;
-  readonly signalCount: number;
+  readonly postCount: number;
   readonly totalCorroborations: number;
   readonly updatedAt: number;
 }

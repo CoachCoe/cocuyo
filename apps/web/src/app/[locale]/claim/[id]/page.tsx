@@ -80,16 +80,16 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
   // Fetch the source post
   const sourcePost = await postService.getPost(claim.sourcePostId, locale);
 
-  // Fetch evidence signals
-  const evidenceSignals = await Promise.all(
+  // Fetch evidence posts
+  const evidencePosts = await Promise.all(
     claim.evidence.map(async (e) => {
-      const signal = await signalService.getSignal(e.signalId, locale);
-      return { ...e, signal };
+      const post = await signalService.getPost(e.postId, locale);
+      return { ...e, post };
     })
   );
 
-  const supportingEvidence = evidenceSignals.filter((e) => e.supports);
-  const contradictingEvidence = evidenceSignals.filter((e) => !e.supports);
+  const supportingEvidence = evidencePosts.filter((e) => e.supports);
+  const contradictingEvidence = evidencePosts.filter((e) => !e.supports);
 
   // Build topic translation map
   const topicTranslations: Record<string, string> = {};
@@ -214,19 +214,19 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
                 <div className="space-y-3">
                   {supportingEvidence.map((e) => (
                     <div
-                      key={e.signalId}
+                      key={e.postId}
                       className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--fg-success)]/20 rounded-container"
                     >
-                      {e.signal !== null && (
+                      {e.post !== null && (
                         <Link
-                          href={`/${locale}/signal/${e.signal.id}`}
+                          href={`/${locale}/post/${e.post.id}`}
                           className="block hover:opacity-80 transition-opacity"
                         >
                           <p className="text-sm text-[var(--fg-primary)] line-clamp-2 mb-2">
-                            {e.signal.content.text}
+                            {e.post.content.text}
                           </p>
                           <p className="text-xs text-[var(--fg-tertiary)]">
-                            By {e.signal.author.pseudonym}
+                            By {e.post.author.pseudonym}
                           </p>
                         </Link>
                       )}
@@ -255,19 +255,19 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
                 <div className="space-y-3">
                   {contradictingEvidence.map((e) => (
                     <div
-                      key={e.signalId}
+                      key={e.postId}
                       className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--fg-error)]/20 rounded-container"
                     >
-                      {e.signal !== null && (
+                      {e.post !== null && (
                         <Link
-                          href={`/${locale}/signal/${e.signal.id}`}
+                          href={`/${locale}/post/${e.post.id}`}
                           className="block hover:opacity-80 transition-opacity"
                         >
                           <p className="text-sm text-[var(--fg-primary)] line-clamp-2 mb-2">
-                            {e.signal.content.text}
+                            {e.post.content.text}
                           </p>
                           <p className="text-xs text-[var(--fg-tertiary)]">
-                            By {e.signal.author.pseudonym}
+                            By {e.post.author.pseudonym}
                           </p>
                         </Link>
                       )}

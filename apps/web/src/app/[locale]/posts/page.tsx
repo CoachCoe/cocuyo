@@ -68,10 +68,10 @@ export default async function PostsPage({ params }: PostsPageProps): Promise<Rea
               postsWord: tPosts('postsWord'),
               ofWord: tPosts('ofWord'),
               clearFilters: tPosts('clearFilters'),
-              claimWord: tPosts('claimWord'),
-              claimsWord: tPosts('claimsWord'),
-              signalWord: tPosts('signalWord'),
-              signalsWord: tPosts('signalsWord'),
+              corroborationWord: tPosts('corroborationWord'),
+              corroborationsWord: tPosts('corroborationsWord'),
+              challengeWord: tPosts('challengeWord'),
+              challengesWord: tPosts('challengesWord'),
               readMore: tPosts('readMore'),
             }}
           />

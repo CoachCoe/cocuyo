@@ -9,6 +9,5 @@
 export { useSignalService } from './useSignalService';
 export { useChainService } from './useChainService';
 export { useBountyService } from './useBountyService';
-export { usePostService } from './usePostService';
 export { useClaimService } from './useClaimService';
 export { useCorroborationService } from './useCorroborationService';

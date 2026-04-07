@@ -68,8 +68,8 @@ export interface NavbarProps {
 }
 
 const defaultNavLinks: NavLink[] = [
-  { href: '/explore', label: 'Signals' },
-  { href: '/verify', label: 'Verify' },
+  { href: '/explore', label: 'Explore' },
+  { href: '/bounties', label: 'Bounties' },
   { href: '/about', label: 'About' },
 ];
 

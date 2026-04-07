@@ -12,7 +12,7 @@ import type {
   CorroborationService,
   Corroboration,
   CorroborationId,
-  SignalId,
+  PostId,
   NewCorroboration,
   Result,
 } from '@cocuyo/types';
@@ -40,15 +40,15 @@ export function useCorroborationService(): CorroborationService {
   const connectedRef = useRef(isConnected);
   connectedRef.current = isConnected;
 
-  const getSignalCorroborations = useCallback(
-    async (signalId: SignalId): Promise<readonly Corroboration[]> => {
+  const getPostCorroborations = useCallback(
+    async (postId: PostId): Promise<readonly Corroboration[]> => {
       if (USE_CHAIN) {
         // Chain implementation - requires indexing
         return [];
       }
 
-      // Mock implementation - return corroborations for this signal
-      return userCorroborations.filter((c) => c.signalId === signalId);
+      // Mock implementation - return corroborations for this post
+      return userCorroborations.filter((c) => c.postId === postId);
     },
     []
   );
@@ -76,14 +76,23 @@ export function useCorroborationService(): CorroborationService {
 
       const corroboration: Corroboration = {
         id: '' as CorroborationId,
-        signalId: newCorroboration.signalId,
+        postId: newCorroboration.postId,
         type: newCorroboration.type,
         dimSignature: dimCredential,
         weight: 1.0, // Default weight, would be calculated from reputation
         createdAt: now,
         ...(newCorroboration.note !== undefined && { note: newCorroboration.note }),
-        ...(newCorroboration.evidenceSignalId !== undefined && {
-          evidenceSignalId: newCorroboration.evidenceSignalId,
+        ...(newCorroboration.evidencePostId !== undefined && {
+          evidencePostId: newCorroboration.evidencePostId,
+        }),
+        ...(newCorroboration.evidenceType !== undefined && {
+          evidenceType: newCorroboration.evidenceType,
+        }),
+        ...(newCorroboration.evidenceContent !== undefined && {
+          evidenceContent: newCorroboration.evidenceContent,
+        }),
+        ...(newCorroboration.evidenceDescription !== undefined && {
+          evidenceDescription: newCorroboration.evidenceDescription,
         }),
       };
 
@@ -103,7 +112,7 @@ export function useCorroborationService(): CorroborationService {
   );
 
   return {
-    getSignalCorroborations,
+    getPostCorroborations,
     corroborate,
   };
 }

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SignalCard } from './SignalCard';
-import type { Signal } from '@cocuyo/types';
-import { createSignalId, createChainId, createDIMCredential } from '@cocuyo/types';
+import { FeedPostCard } from './FeedPostCard';
+import type { Post } from '@cocuyo/types';
+import { createPostId, createChainId, createDIMCredential } from '@cocuyo/types';
 
-const mockSignal: Signal = {
-  id: createSignalId('sig-001'),
+const mockPost: Post = {
+  id: createPostId('post-001'),
   author: {
     id: '001',
     credentialHash: createDIMCredential('dim-anon-001'),
@@ -15,7 +15,7 @@ const mockSignal: Signal = {
     reputation: 42,
   },
   content: {
-    text: 'This is a test signal with important information.',
+    text: 'This is a test post with important information.',
   },
   context: {
     topics: ['environmental', 'water-quality'],
@@ -23,6 +23,7 @@ const mockSignal: Signal = {
     location: { latitude: 43.0, longitude: -71.0 },
   },
   dimSignature: createDIMCredential('dim-anon-001'),
+  status: 'published',
   chainLinks: [createChainId('chain-001')],
   corroborations: {
     witnessCount: 5,
@@ -35,119 +36,119 @@ const mockSignal: Signal = {
   createdAt: Math.floor(Date.now() / 1000) - 3600, // 1 hour ago
 };
 
-describe('SignalCard', () => {
+describe('FeedPostCard', () => {
   describe('rendering', () => {
-    it('renders signal content', () => {
-      render(<SignalCard signal={mockSignal} />);
-      expect(screen.getByText(mockSignal.content.text)).toBeInTheDocument();
+    it('renders post content', () => {
+      render(<FeedPostCard post={mockPost} />);
+      expect(screen.getByText(mockPost.content.text)).toBeInTheDocument();
     });
 
     it('renders author pseudonym', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('TestUser')).toBeInTheDocument();
     });
 
     it('renders author initial in avatar', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('T')).toBeInTheDocument();
     });
 
     it('renders author location when disclosed', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('Test City')).toBeInTheDocument();
     });
 
     it('renders first topic', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('environmental')).toBeInTheDocument();
     });
 
     it('renders location name', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('Test Location, NH')).toBeInTheDocument();
     });
 
     it('renders relative time', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('1h ago')).toBeInTheDocument();
     });
   });
 
   describe('corroborations', () => {
     it('renders total corroboration count', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       // witnessCount + expertiseCount = 5 + 1 = 6
       expect(screen.getByText('6')).toBeInTheDocument();
       expect(screen.getByText('corroborations')).toBeInTheDocument();
     });
 
     it('renders evidence count when present', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByText('2 evidence')).toBeInTheDocument();
     });
 
     it('renders challenge count when present', () => {
-      const signalWithChallenges = {
-        ...mockSignal,
-        corroborations: { ...mockSignal.corroborations, challengeCount: 2 },
+      const postWithChallenges = {
+        ...mockPost,
+        corroborations: { ...mockPost.corroborations, challengeCount: 2 },
       };
-      render(<SignalCard signal={signalWithChallenges} />);
+      render(<FeedPostCard post={postWithChallenges} />);
       expect(screen.getByText('2')).toBeInTheDocument();
       expect(screen.getByText('challenges')).toBeInTheDocument();
     });
 
     it('hides evidence when zero', () => {
-      const signalNoEvidence = {
-        ...mockSignal,
-        corroborations: { ...mockSignal.corroborations, evidenceCount: 0 },
+      const postNoEvidence = {
+        ...mockPost,
+        corroborations: { ...mockPost.corroborations, evidenceCount: 0 },
       };
-      render(<SignalCard signal={signalNoEvidence} />);
+      render(<FeedPostCard post={postNoEvidence} />);
       expect(screen.queryByText('0 evidence')).not.toBeInTheDocument();
     });
   });
 
   describe('chain link', () => {
     it('renders chain link when chainTitle provided', () => {
-      render(<SignalCard signal={mockSignal} chainTitle="Water Quality Investigation" />);
+      render(<FeedPostCard post={mockPost} chainTitle="Water Quality Investigation" />);
       expect(screen.getByText('Part of:')).toBeInTheDocument();
       expect(screen.getByText('Water Quality Investigation')).toBeInTheDocument();
     });
 
     it('hides chain link when no chainTitle', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.queryByText('Part of:')).not.toBeInTheDocument();
     });
 
     it('calls onChainClick when chain link clicked', () => {
       const handleChainClick = vi.fn();
       render(
-        <SignalCard
-          signal={mockSignal}
+        <FeedPostCard
+          post={mockPost}
           chainTitle="Water Quality"
           onChainClick={handleChainClick}
         />
       );
       fireEvent.click(screen.getByText('Water Quality'));
-      expect(handleChainClick).toHaveBeenCalledWith(mockSignal.chainLinks[0]);
+      expect(handleChainClick).toHaveBeenCalledWith(mockPost.chainLinks[0]);
     });
   });
 
   describe('verification badge', () => {
     it('renders verified badge', () => {
-      const verifiedSignal = {
-        ...mockSignal,
+      const verifiedPost = {
+        ...mockPost,
         verification: { status: 'verified' as const },
       };
-      render(<SignalCard signal={verifiedSignal} />);
+      render(<FeedPostCard post={verifiedPost} />);
       expect(screen.getByLabelText('Verified')).toBeInTheDocument();
     });
 
     it('renders disputed badge', () => {
-      const disputedSignal = {
-        ...mockSignal,
+      const disputedPost = {
+        ...mockPost,
         verification: { status: 'disputed' as const },
       };
-      render(<SignalCard signal={disputedSignal} />);
+      render(<FeedPostCard post={disputedPost} />);
       expect(screen.getByText('Disputed')).toBeInTheDocument();
     });
   });
@@ -155,7 +156,7 @@ describe('SignalCard', () => {
   describe('interactions', () => {
     it('calls onClick when card clicked', () => {
       const handleClick = vi.fn();
-      render(<SignalCard signal={mockSignal} onClick={handleClick} />);
+      render(<FeedPostCard post={mockPost} onClick={handleClick} />);
       // When clickable, article becomes a button
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
@@ -166,14 +167,14 @@ describe('SignalCard', () => {
 
     it('calls onAuthorClick when author clicked', () => {
       const handleAuthorClick = vi.fn();
-      render(<SignalCard signal={mockSignal} onAuthorClick={handleAuthorClick} />);
+      render(<FeedPostCard post={mockPost} onAuthorClick={handleAuthorClick} />);
       fireEvent.click(screen.getByText('TestUser'));
-      expect(handleAuthorClick).toHaveBeenCalledWith(mockSignal.author.credentialHash);
+      expect(handleAuthorClick).toHaveBeenCalledWith(mockPost.author.credentialHash);
     });
 
     it('supports keyboard navigation when clickable', () => {
       const handleClick = vi.fn();
-      render(<SignalCard signal={mockSignal} onClick={handleClick} />);
+      render(<FeedPostCard post={mockPost} onClick={handleClick} />);
       // First button is the card itself
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
@@ -185,19 +186,19 @@ describe('SignalCard', () => {
 
   describe('accessibility', () => {
     it('has article role when not clickable', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       expect(screen.getByRole('article')).toBeInTheDocument();
     });
 
     it('has button role when clickable', () => {
-      render(<SignalCard signal={mockSignal} onClick={vi.fn()} />);
+      render(<FeedPostCard post={mockPost} onClick={vi.fn()} />);
       // The card becomes a button, plus there's the author button
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
     });
 
     it('is focusable when clickable', () => {
-      render(<SignalCard signal={mockSignal} onClick={vi.fn()} />);
+      render(<FeedPostCard post={mockPost} onClick={vi.fn()} />);
       // First button is the card
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
@@ -205,34 +206,34 @@ describe('SignalCard', () => {
     });
 
     it('has proper time element', () => {
-      render(<SignalCard signal={mockSignal} />);
+      render(<FeedPostCard post={mockPost} />);
       const timeEl = screen.getByText('1h ago').closest('time');
       expect(timeEl).toHaveAttribute('dateTime');
     });
   });
 
   describe('edge cases', () => {
-    it('handles signal without location', () => {
-      // Create a new signal without location fields (omitted, not undefined)
+    it('handles post without location', () => {
+      // Create a new post without location fields (omitted, not undefined)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { location: _authorLoc, ...authorWithoutLocation } = mockSignal.author;
+      const { location: _authorLoc, ...authorWithoutLocation } = mockPost.author;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { locationName: _locName, location: _loc, ...contextWithoutLocation } = mockSignal.context;
-      const signalNoLocation: Signal = {
-        ...mockSignal,
+      const { locationName: _locName, location: _loc, ...contextWithoutLocation } = mockPost.context;
+      const postNoLocation: Post = {
+        ...mockPost,
         author: authorWithoutLocation,
         context: contextWithoutLocation,
       };
-      render(<SignalCard signal={signalNoLocation} />);
+      render(<FeedPostCard post={postNoLocation} />);
       expect(screen.getByText('TestUser')).toBeInTheDocument();
     });
 
     it('handles empty chain links', () => {
-      const signalNoChains: Signal = {
-        ...mockSignal,
+      const postNoChains: Post = {
+        ...mockPost,
         chainLinks: [],
       };
-      render(<SignalCard signal={signalNoChains} chainTitle="Some Chain" />);
+      render(<FeedPostCard post={postNoChains} chainTitle="Some Chain" />);
       expect(screen.queryByText('Part of:')).not.toBeInTheDocument();
     });
   });

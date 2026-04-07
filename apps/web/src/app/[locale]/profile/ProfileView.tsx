@@ -19,7 +19,7 @@ export interface ProfileViewTranslations {
   overallScore: string;
   topicScores: string;
   contributions: string;
-  signals: string;
+  posts: string;
   corroborations: string;
   challenges: string;
   noActivity: string;
@@ -43,7 +43,7 @@ const mockReputation = {
     infrastructure: 70,
   },
   contributions: {
-    signals: 12,
+    posts: 12,
     corroborations: 45,
     challenges: 3,
   },
@@ -113,10 +113,10 @@ export function ProfileView({
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-2xl font-semibold text-[var(--fg-primary)]">
-              {mockReputation.contributions.signals}
+              {mockReputation.contributions.posts}
             </div>
             <div className="text-sm text-[var(--fg-secondary)]">
-              {t.signals}
+              {t.posts}
             </div>
           </div>
           <div>

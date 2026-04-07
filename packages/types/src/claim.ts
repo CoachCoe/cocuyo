@@ -3,10 +3,13 @@
  *
  * A claim is a verifiable assertion extracted from a post.
  * Claims are the fundamental unit of fact-checking — each claim
- * can be independently verified, with evidence linked from signals.
+ * can be independently verified, with evidence linked from posts.
+ *
+ * Note: "Claim" is an internal term. The UI shows claims in the Trust Drawer
+ * but doesn't expose this vocabulary in primary user-facing surfaces.
  */
 
-import type { ClaimId, CollectiveId, DIMCredential, PostId, SignalId } from './brands';
+import type { ClaimId, CollectiveId, DIMCredential, PostId, VerdictId } from './brands';
 
 /** Status of a claim in the verification workflow */
 export type ClaimStatus =
@@ -18,23 +21,24 @@ export type ClaimStatus =
   | 'unverifiable'; // Cannot be verified (insufficient evidence)
 
 /**
- * Evidence linking a signal to a claim.
+ * Evidence linking a post to a claim.
  */
 export interface ClaimEvidence {
-  /** The signal providing evidence */
-  readonly signalId: SignalId;
-  /** Whether this signal supports or contradicts the claim */
+  /** The post providing evidence */
+  readonly postId: PostId;
+  /** Whether this post supports or contradicts the claim */
   readonly supports: boolean;
   /** Who submitted this evidence link */
   readonly submittedBy: DIMCredential;
-  /** Optional note explaining how the signal relates to the claim */
+  /** Optional note explaining how the post relates to the claim */
   readonly note?: string;
   /** When this evidence was submitted */
   readonly submittedAt: number;
 }
 
 /**
- * A verification verdict on a claim.
+ * A verification verdict on a claim (legacy format).
+ * See also: Verdict type for new user-visible verdict format.
  */
 export interface ClaimVerdict {
   /** Final status */
@@ -52,7 +56,7 @@ export interface ClaimVerdict {
  *
  * Every claim:
  * - Originates from a specific post
- * - Can have evidence (signals) linked to it
+ * - Can have evidence (posts) linked to it
  * - Goes through a verification workflow
  * - May receive a verdict from a collective
  */
@@ -69,9 +73,9 @@ export interface Claim {
   readonly extractedBy: DIMCredential;
   /** Current verification status */
   readonly status: ClaimStatus;
-  /** Signals linked as evidence */
+  /** Posts linked as evidence */
   readonly evidence: readonly ClaimEvidence[];
-  /** Verdict if verification is complete */
+  /** Verdict if verification is complete (legacy) */
   readonly verdict?: ClaimVerdict;
   /** Topic tags (inherited from source post or added) */
   readonly topics: readonly string[];
@@ -112,10 +116,55 @@ export interface NewClaim {
  * Input type for submitting evidence to a claim.
  */
 export interface NewClaimEvidence {
-  /** The signal providing evidence */
-  readonly signalId: SignalId;
-  /** Whether this signal supports or contradicts the claim */
+  /** The post providing evidence */
+  readonly postId: PostId;
+  /** Whether this post supports or contradicts the claim */
   readonly supports: boolean;
   /** Optional note explaining the relationship */
   readonly note?: string;
+}
+
+// ============================================================================
+// Verdict Types (user-visible collective determinations)
+// ============================================================================
+
+/**
+ * Verdict status — the user-visible determination on a claim.
+ * These map to the badge colors shown on posts.
+ */
+export type VerdictStatus =
+  | 'confirmed'     // Claim is accurate (gold badge)
+  | 'disputed'      // Evidence is conflicting (amber badge)
+  | 'false'         // Claim is inaccurate (red badge)
+  | 'synthetic'     // Content is AI-generated (orange badge)
+  | 'inconclusive'; // Cannot determine (gray badge)
+
+/**
+ * A verdict — a collective's formal determination on a claim.
+ *
+ * Verdicts are the user-visible outcome of the verification process.
+ * They appear as badges on post cards and in the Trust Drawer.
+ */
+export interface Verdict {
+  /** Unique identifier */
+  readonly id: VerdictId;
+  /** The claim this verdict addresses */
+  readonly claimId: ClaimId;
+  /** Collective that issued the verdict */
+  readonly collectiveId: CollectiveId;
+  /** The determination status */
+  readonly status: VerdictStatus;
+  /** Explanation of the reasoning */
+  readonly rationale: string;
+  /** When the verdict was issued (Unix timestamp) */
+  readonly issuedAt: number;
+}
+
+/**
+ * Input type for issuing a new verdict.
+ */
+export interface NewVerdict {
+  readonly claimId: ClaimId;
+  readonly status: VerdictStatus;
+  readonly rationale: string;
 }

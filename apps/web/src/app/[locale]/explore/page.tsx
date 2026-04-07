@@ -26,28 +26,24 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
   // Fetch featured chains (with locale for translated content)
   const featuredChains = await chainService.getFeaturedChains(locale);
 
-  // Fetch recent signals (with locale for translated content)
-  const recentSignals = await signalService.getRecentSignals({
+  // Fetch recent posts with full data for display (with locale for translated content)
+  const recentPosts = await signalService.getRecentPostsForDisplay({
     pagination: { limit: 20, offset: 0 },
     locale,
   });
 
-  // Bounty-to-signals and chain-to-bounties relationships require indexing.
+  // Bounty-to-posts and chain-to-bounties relationships require indexing.
   // Pass empty maps/arrays to avoid showing incorrect associations.
   // Bounties are shown in the dedicated /bounties page instead.
-  const bountySignalsMap: Record<BountyId, string[]> = {};
+  const bountyPostsMap: Record<BountyId, string[]> = {};
   const chainBountyMap: Record<ChainId, BountyPreview[]> = {};
   const orphanBounties: BountyPreview[] = [];
 
-  // Build chain titles map from fetched data
+  // Chain titles map - populated from featured chains
+  // Note: PostPreview doesn't track chain membership, so we use chain data
   const chainTitles: Record<string, string> = {};
-  for (const signal of recentSignals.items) {
-    for (const chainId of signal.chainLinks) {
-      if (chainTitles[chainId] === undefined) {
-        const chain = await chainService.getChain(chainId, locale);
-        chainTitles[chainId] = chain?.title ?? '';
-      }
-    }
+  for (const chain of featuredChains) {
+    chainTitles[chain.id] = chain.title;
   }
 
   // Parse info popover content - split by double newlines for paragraphs
@@ -59,7 +55,7 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
       </p>
     ));
 
-  const signalsInfoBody = t('signalsInfo.body')
+  const postsInfoBody = t('postsInfo.body')
     .split('\n\n')
     .map((paragraph, index) => (
       <p key={index} className={index > 0 ? 'mt-3' : ''}>
@@ -92,22 +88,22 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
               chains={featuredChains}
               chainBountyMap={chainBountyMap}
               orphanBounties={orphanBounties}
-              bountySignalsMap={bountySignalsMap}
-              signals={[...recentSignals.items]}
+              bountyPostsMap={bountyPostsMap}
+              posts={[...recentPosts.items]}
               chainTitles={chainTitles}
-              hasMore={recentSignals.hasMore}
+              hasMore={recentPosts.hasMore}
               translations={{
-                allSignals: t('allSignals'),
+                allPosts: t('allPosts'),
                 storiesLabel: t('storiesLabel'),
                 openBountiesLabel: t('openBountiesLabel'),
-                recentSignalsLabel: t('recentSignals'),
+                recentPostsLabel: t('recentPosts'),
                 storiesInfoTitle: t('storiesInfo.title'),
-                signalsInfoTitle: t('signalsInfo.title'),
+                postsInfoTitle: t('postsInfo.title'),
                 openBountiesInfoTitle: t('openBountiesInfo.title'),
-                noMatchingBountySignals: t('noMatchingBountySignals'),
+                noMatchingBountyPosts: t('noMatchingBountyPosts'),
               }}
               storiesInfoBody={storiesInfoBody}
-              signalsInfoBody={signalsInfoBody}
+              postsInfoBody={postsInfoBody}
               openBountiesInfoBody={openBountiesInfoBody}
             />
           </div>

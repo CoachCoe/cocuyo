@@ -1,9 +1,9 @@
 'use client';
 
 /**
- * SignalMapView — Display signals on an interactive map.
+ * PostMapView — Display posts on an interactive map.
  *
- * Shows signal markers colored by verification status:
+ * Shows post markers colored by verification status:
  * - Gold: Verified/high corroboration
  * - Green: Corroborated
  * - Gray: Pending
@@ -16,7 +16,7 @@ import { useState, useEffect, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { canMakeExternalRequests } from '@/lib/host/detect';
-import type { Signal, VerificationStatus } from '@cocuyo/types';
+import type { Post, VerificationStatus } from '@cocuyo/types';
 import type { MarkerData, MapLocation } from './BaseMap';
 
 // Dynamic import with SSR disabled - Leaflet requires window
@@ -25,11 +25,11 @@ const BaseMap = dynamic(
   { ssr: false }
 );
 
-interface SignalMapViewProps {
-  signals: Signal[];
+interface PostMapViewProps {
+  posts: Post[];
   locale: string;
-  selectedSignalId?: string | null;
-  onSignalSelect?: (signalId: string | null) => void;
+  selectedPostId?: string | null;
+  onPostSelect?: (postId: string | null) => void;
   className?: string;
 }
 
@@ -47,11 +47,11 @@ function getMarkerColor(
 }
 
 /**
- * Extract coordinates from signal context.
- * Returns null if signal has no location.
+ * Extract coordinates from post context.
+ * Returns null if post has no location.
  */
-function getSignalCoordinates(signal: Signal): MapLocation | null {
-  const location = signal.context.location;
+function getPostCoordinates(post: Post): MapLocation | null {
+  const location = post.context.location;
   if (!location) return null;
   return { lat: location.latitude, lon: location.longitude };
 }
@@ -122,44 +122,44 @@ function MapUnavailable({ className }: { className?: string }): ReactNode {
 }
 
 /**
- * Signal popup content.
+ * Post popup content.
  */
-function SignalPopup({
-  signal,
+function PostPopup({
+  post,
   locale,
 }: {
-  signal: Signal;
+  post: Post;
   locale: string;
 }): ReactNode {
   return (
     <div className="min-w-[200px] max-w-[280px]">
       <p className="text-sm text-[var(--fg-primary)] line-clamp-3 mb-2">
-        {signal.content.text.slice(0, 150)}
-        {signal.content.text.length > 150 ? '...' : ''}
+        {post.content.text.slice(0, 150)}
+        {post.content.text.length > 150 ? '...' : ''}
       </p>
 
       <div className="flex items-center justify-between text-xs">
         <span className="text-[var(--fg-tertiary)]">
-          {signal.context.locationName ?? 'Unknown location'}
+          {post.context.locationName ?? 'Unknown location'}
         </span>
         <Link
-          href={`/${locale}/signal/${signal.id}`}
+          href={`/${locale}/post/${post.id}`}
           className="text-[var(--color-firefly-gold)] hover:underline"
         >
-          View signal
+          View post
         </Link>
       </div>
     </div>
   );
 }
 
-export function SignalMapView({
-  signals,
+export function PostMapView({
+  posts,
   locale,
-  selectedSignalId,
-  onSignalSelect,
+  selectedPostId,
+  onPostSelect,
   className = 'h-96',
-}: SignalMapViewProps): ReactNode {
+}: PostMapViewProps): ReactNode {
   const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
 
   // Check map availability (requires network for tile loading)
@@ -167,24 +167,24 @@ export function SignalMapView({
     setMapAvailable(canMakeExternalRequests());
   }, []);
 
-  // Filter signals that have coordinates
-  const mappableSignals = signals.filter((s) => getSignalCoordinates(s) !== null);
+  // Filter posts that have coordinates
+  const mappablePosts = posts.filter((p) => getPostCoordinates(p) !== null);
 
-  // Convert signals to markers
-  const markers: MarkerData[] = mappableSignals.map((signal) => {
-    const coords = getSignalCoordinates(signal);
+  // Convert posts to markers
+  const markers: MarkerData[] = mappablePosts.map((post) => {
+    const coords = getPostCoordinates(post);
     if (coords === null) {
       // This should never happen since we filtered above, but TypeScript needs assurance
       throw new Error('Unexpected null coordinates');
     }
     return {
-      id: signal.id,
+      id: post.id,
       position: coords,
       color: getMarkerColor(
-        signal.verification.status,
-        signal.corroborations.totalWeight
+        post.verification.status,
+        post.corroborations.totalWeight
       ),
-      popup: <SignalPopup signal={signal} locale={locale} />,
+      popup: <PostPopup post={post} locale={locale} />,
     };
   });
 
@@ -212,14 +212,14 @@ export function SignalMapView({
     return <MapUnavailable className={className} />;
   }
 
-  // No mappable signals
+  // No mappable posts
   if (markers.length === 0) {
     return (
       <div
         className={`bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg flex items-center justify-center ${className}`}
       >
         <p className="text-[var(--fg-tertiary)]">
-          No signals with location data
+          No posts with location data
         </p>
       </div>
     );
@@ -230,8 +230,8 @@ export function SignalMapView({
       center={center}
       zoom={zoom}
       markers={markers}
-      selectedMarkerId={selectedSignalId ?? null}
-      onMarkerClick={onSignalSelect ? (id) => onSignalSelect(id) : undefined}
+      selectedMarkerId={selectedPostId ?? null}
+      onMarkerClick={onPostSelect ? (id) => onPostSelect(id) : undefined}
       className={className}
     />
   );

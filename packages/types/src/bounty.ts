@@ -12,7 +12,7 @@ import type {
   DIMCredential,
   EscrowId,
   PolkadotAddress,
-  SignalId,
+  PostId,
   TransactionHash,
 } from './brands';
 import type { PUSDAmount } from './currency';
@@ -57,8 +57,8 @@ export interface Bounty {
   readonly fundingTxHash: TransactionHash;
   /** Payment mode for payout (public pUSD or private Coinage) */
   readonly payoutMode: PaymentMode;
-  /** Signals that have contributed to this bounty */
-  readonly contributingSignals: readonly SignalId[];
+  /** Posts that have contributed to this bounty */
+  readonly contributingPostIds: readonly PostId[];
   /** Story chain that may have formed around this bounty */
   readonly relatedChainId?: ChainId;
   /** When this bounty was posted (Unix timestamp) */
@@ -119,8 +119,8 @@ export interface BountyPayout {
  * Individual payout to a bounty contributor.
  */
 export interface PayoutDistribution {
-  /** Signal that contributed to fulfillment */
-  readonly signalId: SignalId;
+  /** Post that contributed to fulfillment */
+  readonly postId: PostId;
   /** Recipient's wallet address (for public mode) */
   readonly recipientAddress?: PolkadotAddress;
   /** Recipient's DIM credential (for attribution) */
@@ -138,12 +138,12 @@ export interface PayoutDistribution {
 /**
  * A tracked contribution to a bounty.
  *
- * When a signal is linked to a bounty, a BountyContribution record is created.
- * The corroborationWeight is updated as the signal receives corroborations.
+ * When a post is linked to a bounty, a BountyContribution record is created.
+ * The corroborationWeight is updated as the post receives corroborations.
  */
 export interface BountyContribution {
-  /** The signal that contributed */
-  readonly signalId: SignalId;
+  /** The post that contributed */
+  readonly postId: PostId;
   /** The bounty being contributed to */
   readonly bountyId: BountyId;
   /** DIM credential of the contributor */
@@ -152,7 +152,7 @@ export interface BountyContribution {
   readonly topics: readonly ReputationTopic[];
   /**
    * Corroboration weight — sum of corroborator reputation scores.
-   * Updated each time the signal receives a corroboration.
+   * Updated each time the post receives a corroboration.
    * Higher weight = more valuable contribution.
    */
   readonly corroborationWeight: number;
@@ -173,9 +173,9 @@ export interface AllocationShare {
   readonly contributorCredential: DIMCredential;
   /** Wallet address for payout (resolved from credential) */
   readonly recipientAddress: PolkadotAddress;
-  /** Signals that contributed to this share */
-  readonly signalIds: readonly SignalId[];
-  /** Total corroboration weight across all contributed signals */
+  /** Posts that contributed to this share */
+  readonly postIds: readonly PostId[];
+  /** Total corroboration weight across all contributed posts */
   readonly totalWeight: number;
   /** Percentage of bounty (0-100, two decimal precision) */
   readonly sharePercent: number;

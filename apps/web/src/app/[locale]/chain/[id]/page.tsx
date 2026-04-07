@@ -1,21 +1,21 @@
 /**
- * Story Chain detail page — View a complete story with signals, analysis, and bounties.
+ * Story Chain detail page — View a complete story with posts, analysis, and bounties.
  *
  * This page shows:
  * - Chain title, description, and status
  * - Verification trail summary
  * - Tabbed content:
- *   - What's Happening: Signals in the chain
+ *   - What's Happening: Posts in the chain
  *   - Deep Dives: Analysis posts related to this chain
  *   - Help Needed: Open bounties for this chain
  */
 
 import type { ReactElement, ReactNode } from 'react';
 import Link from 'next/link';
-import { signalService, chainService, postService } from '@/lib/services';
-import { ChainSignalList } from './ChainSignalList';
+import { signalService, chainService } from '@/lib/services';
+import { ChainPostList } from './ChainPostList';
 import { ChainTabs } from './ChainTabs';
-import { AddSignalButton } from './AddSignalButton';
+import { AddPostButton } from './AddPostButton';
 import { createChainId } from '@cocuyo/types';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { createServerFormatters } from '@/lib/hooks/serverFormatters';
@@ -103,11 +103,11 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
     return <ChainNotFound locale={locale} />;
   }
 
-  // Get signals for this chain using service
-  const signals = await signalService.getChainSignals(createChainId(id), locale);
+  // Get posts for this chain using service
+  const posts = await signalService.getChainPosts(createChainId(id), locale);
 
-  // Get posts related to this chain
-  const allPosts = await postService.getPostsByChain(createChainId(id), locale);
+  // Deep dives (longer form posts) - for now same as chain posts
+  const deepDives = posts.filter((p) => p.content.title !== undefined);
 
   // Chain-linked bounties require indexing that doesn't exist yet.
   // Return empty array to avoid showing incorrect/unrelated bounties.
@@ -115,39 +115,39 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
 
   const statusColor = getStatusColor(chain.status);
 
-  // Signals content
-  const signalsContent = (
+  // Posts content
+  const postsContent1 = (
     <div>
-      {signals.length > 0 ? (
+      {posts.length > 0 ? (
         <>
           <div className="mb-4 text-sm text-[var(--fg-secondary)]">
             {t('whatsHappening.description')}
           </div>
-          <ChainSignalList signals={[...signals]} />
+          <ChainPostList posts={[...posts]} />
         </>
       ) : (
         <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
           <p className="text-[var(--fg-secondary)] mb-4">
-            {t('whatsHappening.noSignals')}
+            {t('whatsHappening.noPosts')}
           </p>
-          <AddSignalButton chainId={createChainId(id)}>
+          <AddPostButton chainId={createChainId(id)}>
             {t('beFirstToIlluminate')}
-          </AddSignalButton>
+          </AddPostButton>
         </div>
       )}
     </div>
   );
 
-  // Posts content
-  const postsContent = (
+  // Deep dives content
+  const deepDivesContent = (
     <div>
-      {allPosts.length > 0 ? (
+      {deepDives.length > 0 ? (
         <>
           <div className="mb-4 text-sm text-[var(--fg-secondary)]">
             {t('deepDives.description')}
           </div>
           <div className="space-y-4">
-            {allPosts.map((post) => (
+            {deepDives.map((post) => (
               <Link
                 key={post.id}
                 href={`/${locale}/post/${post.id}`}
@@ -251,8 +251,8 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
                 <h3 className="font-semibold mb-4">{t('verificationSummary')}</h3>
                 <dl className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-[var(--fg-secondary)]">{t('signals')}</dt>
-                    <dd className="text-[var(--fg-primary)] font-medium">{chain.stats.signalCount}</dd>
+                    <dt className="text-[var(--fg-secondary)]">{t('posts')}</dt>
+                    <dd className="text-[var(--fg-primary)] font-medium">{chain.stats.postCount}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-[var(--fg-secondary)]">{t('corroborations')}</dt>
@@ -303,9 +303,9 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
         <section className="py-6 bg-[var(--bg-surface-raised)] border-b border-[var(--border-default)]">
           <div className="container-wide flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[var(--fg-secondary)]">
-              {t('addSignalCta')}
+              {t('addPostCta')}
             </p>
-            <AddSignalButton chainId={createChainId(id)} />
+            <AddPostButton chainId={createChainId(id)} />
           </div>
         </section>
 
@@ -313,11 +313,11 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
         <section className="py-6">
           <div className="container-wide">
             <ChainTabs
-              signalsContent={signalsContent}
-              postsContent={postsContent}
+              signalsContent={postsContent1}
+              postsContent={deepDivesContent}
               bountiesContent={bountiesContent}
-              signalsCount={signals.length}
-              postsCount={allPosts.length}
+              signalsCount={posts.length}
+              postsCount={deepDives.length}
               bountiesCount={chainBounties.length}
               translations={{
                 whatsHappening: t('tabs.whatsHappening'),

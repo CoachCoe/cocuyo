@@ -158,8 +158,8 @@ export function SkeletonClaimCard({
   );
 }
 
-/** Skeleton for SignalCard */
-export function SkeletonSignalCard({
+/** Skeleton for FeedPostCard */
+export function SkeletonFeedPostCard({
   className = '',
 }: {
   className?: string;

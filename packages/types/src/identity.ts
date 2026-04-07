@@ -47,11 +47,11 @@ export interface ReputationScore {
  * Statistics about a firefly's contributions.
  */
 export interface FireflyStats {
-  /** Total signals posted */
-  readonly signalsPosted: number;
+  /** Total posts created */
+  readonly postsCreated: number;
   /** Total corroborations given to others */
   readonly corroborationsGiven: number;
-  /** Total corroborations received on own signals */
+  /** Total corroborations received on own posts */
   readonly corroborationsReceived: number;
   /** Number of collectives joined */
   readonly collectivesJoined: number;

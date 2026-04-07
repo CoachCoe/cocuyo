@@ -1,10 +1,10 @@
 'use client';
 
 /**
- * IlluminateForm — Form for creating a new signal.
+ * IlluminateForm — Form for creating a new post.
  *
  * Fields:
- * - Signal content (required, 50+ chars)
+ * - Post content (required, 50+ chars)
  * - Topics (required, at least 1)
  * - Location (optional)
  * - Supporting links (optional)
@@ -19,7 +19,7 @@ import {
   type FormEvent,
 } from 'react';
 import { useSigner } from '@/lib/context/SignerContext';
-import type { ChainId, BountyId, NewSignal, MediaAttachment } from '@cocuyo/types';
+import type { ChainId, BountyId, NewPost, MediaAttachment } from '@cocuyo/types';
 import { createContentHash } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { useSignalService, useClaimService } from '@/lib/services/hooks';
@@ -169,7 +169,7 @@ export function IlluminateForm(): ReactElement {
           );
         }
 
-        const newSignal: NewSignal = {
+        const newPost: NewPost = {
           content: {
             text: formState.content,
             ...(linksArray.length > 0 && { links: linksArray }),
@@ -182,21 +182,21 @@ export function IlluminateForm(): ReactElement {
           chainLinks: formState.selectedChains,
         };
 
-        const result = await signalService.illuminate(newSignal);
+        const result = await signalService.illuminate(newPost);
 
         if (result.ok) {
-          const signalId = result.value;
+          const postId = result.value;
 
-          // If this is evidence submission, link the signal to the claim
+          // If this is evidence submission, link the post to the claim
           if (evidenceClaimId !== null && evidenceType !== null) {
             const evidenceResult = await claimService.submitEvidence(evidenceClaimId, {
-              signalId,
+              postId,
               supports: evidenceType === 'support',
             });
 
             if (!evidenceResult.ok) {
-              // Signal was created but evidence linking failed
-              setSubmitError(`Signal created, but failed to link as evidence: ${evidenceResult.error}`);
+              // Post was created but evidence linking failed
+              setSubmitError(`Post created, but failed to link as evidence: ${evidenceResult.error}`);
               return;
             }
           }
@@ -272,19 +272,19 @@ export function IlluminateForm(): ReactElement {
         <div className="p-4 bg-error/10 border border-error/30 rounded-nested">
           <p className="text-sm text-[var(--fg-error)]">
             {isInHost
-              ? 'Sign in to Triangle to illuminate a signal. Your identity remains anonymous through DIM verification.'
-              : 'Open this app in Triangle to illuminate a signal. Your identity remains anonymous through DIM verification.'}
+              ? 'Sign in to Triangle to illuminate a post. Your identity remains anonymous through DIM verification.'
+              : 'Open this app in Triangle to illuminate a post. Your identity remains anonymous through DIM verification.'}
           </p>
         </div>
       )}
 
-      {/* Signal content */}
+      {/* Post content */}
       <div>
-        <label htmlFor="signal-content" className="block text-sm font-medium text-primary mb-2">
+        <label htmlFor="post-content" className="block text-sm font-medium text-primary mb-2">
           What did you observe? <span className="text-[var(--fg-error)]">*</span>
         </label>
         <textarea
-          id="signal-content"
+          id="post-content"
           value={formState.content}
           onChange={handleContentChange}
           placeholder="Describe what you witnessed, heard, or documented. Be specific and factual."
@@ -312,27 +312,27 @@ export function IlluminateForm(): ReactElement {
 
       {/* Topics */}
       <div>
-        <label htmlFor="signal-topics" className="block text-sm font-medium text-primary mb-2">
+        <label htmlFor="post-topics" className="block text-sm font-medium text-primary mb-2">
           Topics <span className="text-[var(--fg-error)]">*</span>
         </label>
         <TopicInput
-          id="signal-topics"
+          id="post-topics"
           topics={formState.topics}
           onChange={handleTopicsChange}
           placeholder="Add topics (press Enter or comma)"
         />
         <p className="mt-1 text-xs text-tertiary">
-          Add at least one topic to categorize your signal.
+          Add at least one topic to categorize your post.
         </p>
       </div>
 
       {/* Location */}
       <div>
-        <label htmlFor="signal-location" className="block text-sm font-medium text-primary mb-2">
+        <label htmlFor="post-location" className="block text-sm font-medium text-primary mb-2">
           Location
         </label>
         <input
-          id="signal-location"
+          id="post-location"
           type="text"
           value={formState.location}
           onChange={handleLocationChange}
@@ -355,11 +355,11 @@ export function IlluminateForm(): ReactElement {
 
       {/* Supporting links */}
       <div>
-        <label htmlFor="signal-links" className="block text-sm font-medium text-primary mb-2">
+        <label htmlFor="post-links" className="block text-sm font-medium text-primary mb-2">
           Supporting Links
         </label>
         <textarea
-          id="signal-links"
+          id="post-links"
           value={formState.links}
           onChange={handleLinksChange}
           placeholder="Add URLs to supporting documents, images, or sources (one per line)"

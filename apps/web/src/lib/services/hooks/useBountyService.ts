@@ -17,7 +17,7 @@ import type {
   PaginationParams,
   PaginatedResult,
   Result,
-  SignalId,
+  PostId,
 } from '@cocuyo/types';
 import {
   ok,
@@ -47,7 +47,7 @@ function bountyToPreview(bounty: Bounty): BountyPreview {
     ...(bounty.location !== undefined && { location: bounty.location }),
     status: bounty.status,
     fundingAmount: bounty.fundingAmount,
-    contributionCount: bounty.contributingSignals.length,
+    contributionCount: bounty.contributingPostIds.length,
     payoutMode: bounty.payoutMode,
     expiresAt: bounty.expiresAt,
   };
@@ -163,7 +163,7 @@ export function useBountyService(): BountyService {
         escrowId: createEscrowId(`escrow-${Date.now()}`),
         fundingTxHash: createTransactionHash(`0x${Date.now().toString(16)}`),
         payoutMode: newBounty.payoutMode ?? 'private',
-        contributingSignals: [],
+        contributingPostIds: [],
         createdAt: now,
         expiresAt: now + newBounty.duration * 1000,
       };
@@ -180,8 +180,8 @@ export function useBountyService(): BountyService {
     []
   );
 
-  const contributeToToBounty = useCallback(
-    async (bountyId: BountyId, signalId: SignalId): Promise<Result<void, string>> => {
+  const contributeToBounty = useCallback(
+    async (bountyId: BountyId, postId: PostId): Promise<Result<void, string>> => {
       const connected = connectedRef.current;
 
       if (!connected) {
@@ -202,7 +202,7 @@ export function useBountyService(): BountyService {
         if (oldBounty) {
           userBounties[bountyIndex] = {
             ...oldBounty,
-            contributingSignals: [...oldBounty.contributingSignals, signalId],
+            contributingPostIds: [...oldBounty.contributingPostIds, postId],
           };
           return ok(undefined);
         }
@@ -218,6 +218,6 @@ export function useBountyService(): BountyService {
     getBounty,
     getOpenBounties,
     createBounty,
-    contributeToToBounty,
+    contributeToBounty,
   };
 }

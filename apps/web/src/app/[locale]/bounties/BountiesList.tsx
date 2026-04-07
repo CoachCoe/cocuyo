@@ -30,8 +30,8 @@ export interface BountiesListProps {
     hoursLeftSuffix: string;
     dayLeft: string;
     daysLeftSuffix: string;
-    signalWord: string;
-    signalsWord: string;
+    postWord: string;
+    postsWord: string;
     illuminate: string;
     paymentPublic: string;
     paymentPrivate: string;

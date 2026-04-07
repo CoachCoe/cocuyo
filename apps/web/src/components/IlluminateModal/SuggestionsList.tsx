@@ -156,7 +156,7 @@ export function SuggestionsList({
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-text-tertiary)]">
-                      <span>{chain.signalCount} signals</span>
+                      <span>{chain.postCount} posts</span>
                       <span className="text-[var(--color-corroborated)]">
                         {chain.totalCorroborations} corroborations
                       </span>

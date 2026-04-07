@@ -3,11 +3,11 @@
  *
  * A corroboration is NOT a "like." It is a reputation-staked act of verification.
  * When you corroborate, you are putting your accumulated reputation behind
- * your assessment. If the signal is later successfully challenged,
+ * your assessment. If the post is later successfully challenged,
  * your reputation in that domain diminishes.
  */
 
-import type { CorroborationId, DIMCredential, SignalId } from './brands';
+import type { CorroborationId, DIMCredential, PostId } from './brands';
 
 /**
  * Types of corroboration — each carries different meaning and weight.
@@ -17,6 +17,15 @@ export type CorroborationType =
   | 'evidence'   // "I have additional documentation that supports this"
   | 'expertise'  // "This is consistent with my knowledge in this domain"
   | 'challenge'; // "I have reason to believe this is inaccurate"
+
+/**
+ * Evidence type for submissions via Corroborate/Dispute gestures.
+ */
+export type EvidenceType =
+  | 'source_link'    // URL input
+  | 'document'       // File upload (placeholder)
+  | 'photo'          // Image upload (placeholder)
+  | 'observation';   // Free text firsthand account
 
 /**
  * A single corroboration record.
@@ -29,25 +38,33 @@ export type CorroborationType =
 export interface Corroboration {
   /** Unique identifier */
   readonly id: CorroborationId;
-  /** The signal being corroborated */
-  readonly signalId: SignalId;
+  /** The post being corroborated */
+  readonly postId: PostId;
   /** Type of corroboration */
   readonly type: CorroborationType;
   /** DIM credential of the corroborating firefly */
   readonly dimSignature: DIMCredential;
   /** Optional explanation or evidence reference */
   readonly note?: string;
-  /** If type is 'evidence', the supporting signal ID */
-  readonly evidenceSignalId?: SignalId;
+  /** If type is 'evidence', the supporting post ID */
+  readonly evidencePostId?: PostId;
   /** Reputation weight at time of corroboration */
   readonly weight: number;
   /** When this corroboration was made (Unix timestamp) */
   readonly createdAt: number;
+
+  // Evidence fields (for Corroborate/Dispute sheet submissions)
+  /** Type of evidence submitted */
+  readonly evidenceType?: EvidenceType;
+  /** Evidence content (URL, file reference, or text) */
+  readonly evidenceContent?: string;
+  /** Description of what the evidence shows */
+  readonly evidenceDescription?: string;
 }
 
 /**
- * Summary of corroborations for a signal.
- * This is the aggregated view displayed on signal cards.
+ * Summary of corroborations for a post.
+ * This is the aggregated view displayed on post cards.
  */
 export interface CorroborationSummary {
   /** Number of witness corroborations */
@@ -66,11 +83,16 @@ export interface CorroborationSummary {
  * Input type for creating a new corroboration.
  */
 export interface NewCorroboration {
-  readonly signalId: SignalId;
+  readonly postId: PostId;
   readonly type: CorroborationType;
   readonly note?: string;
   /** Required if type is 'evidence' */
-  readonly evidenceSignalId?: SignalId;
+  readonly evidencePostId?: PostId;
+
+  // Evidence fields (for Corroborate/Dispute sheet submissions)
+  readonly evidenceType?: EvidenceType;
+  readonly evidenceContent?: string;
+  readonly evidenceDescription?: string;
 }
 
 /**

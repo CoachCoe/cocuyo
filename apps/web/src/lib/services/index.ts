@@ -8,8 +8,8 @@
  *
  * Use the hook-based services for new code:
  * ```typescript
- * import { useSignalService } from '@/lib/services/hooks';
- * const { illuminate } = useSignalService();
+ * import { usePostService } from '@/lib/services/hooks';
+ * const { illuminate } = usePostService();
  * ```
  *
  * Hooks provide:
@@ -25,7 +25,7 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { SignalService, ChainService, BountyService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
+import type { ChainService, BountyService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
 import { SignalServiceImpl } from './signal-service';
 import { ChainServiceImpl } from './chain-service';
 import { BountyServiceImpl } from './bounty-service';
@@ -42,15 +42,17 @@ import { ChainChainService } from './chain-chain-service';
 const USE_CHAIN_SERVICES = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
 /**
- * Signal service instance.
+ * Signal service instance (now uses Post types).
  *
- * Provides access to signal data:
- * - getSignal: Fetch a single signal by ID
- * - getChainSignals: Get all signals in a story chain
- * - getRecentSignals: Paginated signal listing
- * - illuminate: Create a new signal
+ * Provides access to post data:
+ * - getPost: Fetch a single post by ID
+ * - getChainPosts: Get all posts in a story chain
+ * - getRecentPosts: Paginated post listing
+ * - illuminate: Create a new post
+ *
+ * Note: Named "signalService" for backwards compatibility.
  */
-export const signalService: SignalService = USE_CHAIN_SERVICES
+export const signalService: PostService = USE_CHAIN_SERVICES
   ? new ChainSignalService()
   : new SignalServiceImpl();
 
@@ -73,7 +75,7 @@ export const chainService: ChainService = USE_CHAIN_SERVICES
  * - getBounty: Fetch a single bounty by ID
  * - getOpenBounties: Paginated bounty listing with filters
  * - createBounty: Create a new bounty (requires wallet)
- * - contributeToToBounty: Link a signal to a bounty
+ * - contributeToBounty: Link a post to a bounty
  */
 export const bountyService: BountyService = new BountyServiceImpl();
 
@@ -83,8 +85,8 @@ export const bountyService: BountyService = new BountyServiceImpl();
  * Provides access to post data:
  * - getPost: Fetch a single post by ID
  * - getRecentPosts: Paginated post listing with filters
- * - getPostsByChain: Get posts in a story chain
- * - createPost: Create a new post
+ * - getChainPosts: Get posts in a story chain
+ * - illuminate: Create a new post
  */
 export const postService: PostService = new PostServiceImpl();
 
@@ -105,7 +107,7 @@ export const claimService: ClaimService = new ClaimServiceImpl();
  * Corroboration service instance.
  *
  * Provides corroboration functionality:
- * - getSignalCorroborations: Get all corroborations for a signal
+ * - getPostCorroborations: Get all corroborations for a post
  * - corroborate: Submit a corroboration
  */
 export const corroborationService: CorroborationService = new CorroborationServiceImpl();
@@ -125,7 +127,6 @@ export {
   useSignalService,
   useChainService,
   useBountyService,
-  usePostService,
   useClaimService,
   useCorroborationService,
 } from './hooks';

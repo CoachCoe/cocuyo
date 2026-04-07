@@ -46,8 +46,8 @@ export interface BountiesViewProps {
     hoursLeftSuffix: string;
     dayLeft: string;
     daysLeftSuffix: string;
-    signalWord: string;
-    signalsWord: string;
+    postWord: string;
+    postsWord: string;
     illuminate: string;
     paymentPublic: string;
     paymentPrivate: string;
@@ -166,8 +166,8 @@ export function BountiesView({
           hoursLeftSuffix: t.hoursLeftSuffix,
           dayLeft: t.dayLeft,
           daysLeftSuffix: t.daysLeftSuffix,
-          signalWord: t.signalWord,
-          signalsWord: t.signalsWord,
+          postWord: t.postWord,
+          postsWord: t.postsWord,
           illuminate: t.illuminate,
           paymentPublic: t.paymentPublic,
           paymentPrivate: t.paymentPrivate,

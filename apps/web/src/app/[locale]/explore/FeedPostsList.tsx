@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * SignalsList — Simple list of signal cards with section header.
+ * FeedPostsList — List of post cards with section header.
  * Supports toggling between list and map view.
  */
 
@@ -9,20 +9,22 @@ import type { ReactElement, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import type { Signal, ChainId, BountyId } from '@cocuyo/types';
-import { SignalCard, AnimatedList, EmptyState, SkeletonSignalCard, type SignalBountyInfo } from '@cocuyo/ui';
+import type { Post, ChainId, BountyId } from '@cocuyo/types';
+import { FeedPostCard, AnimatedList, EmptyState, SkeletonFeedPostCard, type PostBountyInfo } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
+import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
+import { useTrustDrawer } from '@/components/TrustDrawer';
 
 // Dynamic import with SSR disabled - map requires window/Leaflet
-const SignalMapView = dynamic(
-  () => import('@/components/Map').then((m) => m.SignalMapView),
+const PostMapView = dynamic(
+  () => import('@/components/Map').then((m) => m.PostMapView),
   { ssr: false }
 );
 
 export type ViewMode = 'list' | 'map';
 
-interface SignalsListProps {
-  signals: Signal[];
+interface FeedPostsListProps {
+  posts: Post[];
   chainTitles: Record<string, string>;
   hasMore: boolean;
   /** Section title */
@@ -37,16 +39,16 @@ interface SignalsListProps {
   isLoading?: boolean | undefined;
   /** Custom empty state message */
   emptyStateMessage?: string | undefined;
-  /** Map of signal IDs to bounty info (for display) */
-  signalBountyMap?: Record<string, SignalBountyInfo> | undefined;
+  /** Map of post IDs to bounty info (for display) */
+  postBountyMap?: Record<string, PostBountyInfo> | undefined;
   /** Current view mode */
   viewMode?: ViewMode | undefined;
   /** Callback when view mode changes */
   onViewModeChange?: ((mode: ViewMode) => void) | undefined;
 }
 
-export function SignalsList({
-  signals,
+export function FeedPostsList({
+  posts,
   chainTitles,
   hasMore,
   title,
@@ -55,15 +57,17 @@ export function SignalsList({
   isFiltered = false,
   isLoading = false,
   emptyStateMessage,
-  signalBountyMap = {},
+  postBountyMap = {},
   viewMode = 'list',
   onViewModeChange,
-}: SignalsListProps): ReactElement {
+}: FeedPostsListProps): ReactElement {
   const router = useRouter();
   const locale = useLocale();
+  const { openSheet: openCorroborateSheet } = useCorroborateDispute();
+  const { openDrawer: openTrustDrawer } = useTrustDrawer();
 
-  const handleSignalClick = (signal: Signal): void => {
-    router.push(`/${locale}/signal/${signal.id}`);
+  const handlePostClick = (post: Post): void => {
+    router.push(`/${locale}/post/${post.id}`);
   };
 
   const handleChainClick = (chainId: ChainId): void => {
@@ -76,6 +80,28 @@ export function SignalsList({
 
   const handleAuthorClick = (credentialHash: string): void => {
     router.push(`/${locale}/profile/${credentialHash}`);
+  };
+
+  const handleCorroborate = (post: Post): void => {
+    const bounty = postBountyMap[post.id];
+    openCorroborateSheet({
+      post,
+      mode: 'corroborate',
+      ...(bounty !== undefined && { bounty }),
+    });
+  };
+
+  const handleDispute = (post: Post): void => {
+    const bounty = postBountyMap[post.id];
+    openCorroborateSheet({
+      post,
+      mode: 'dispute',
+      ...(bounty !== undefined && { bounty }),
+    });
+  };
+
+  const handleViewTrust = (post: Post): void => {
+    openTrustDrawer(post.id);
   };
 
   // View mode toggle component
@@ -124,7 +150,7 @@ export function SignalsList({
         </div>
         <div className="grid gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonSignalCard key={i} />
+            <SkeletonFeedPostCard key={i} />
           ))}
         </div>
       </div>
@@ -139,29 +165,33 @@ export function SignalsList({
       </div>
 
       {viewMode === 'map' ? (
-        <SignalMapView
-          signals={signals}
+        <PostMapView
+          posts={posts}
           locale={locale}
           className="h-[500px] rounded-lg"
         />
-      ) : signals.length > 0 ? (
+      ) : posts.length > 0 ? (
         <AnimatedList className="grid gap-4" variant="fast">
-          {signals.map((signal) => {
+          {posts.map((post) => {
             const chainTitle =
-              signal.chainLinks.length > 0
-                ? chainTitles[signal.chainLinks[0] as string]
+              post.chainLinks.length > 0
+                ? chainTitles[post.chainLinks[0] as string]
                 : undefined;
-            const bounty = signalBountyMap[signal.id];
+            const bounty = postBountyMap[post.id];
             return (
-              <SignalCard
-                key={signal.id}
-                signal={signal}
+              <FeedPostCard
+                key={post.id}
+                post={post}
                 {...(chainTitle !== undefined && { chainTitle })}
                 {...(bounty !== undefined && { bounty })}
-                onClick={() => handleSignalClick(signal)}
+                onClick={() => handlePostClick(post)}
                 onChainClick={handleChainClick}
                 onBountyClick={handleBountyClick}
                 onAuthorClick={handleAuthorClick}
+                onCorroborate={() => handleCorroborate(post)}
+                onDispute={() => handleDispute(post)}
+                onViewTrust={() => handleViewTrust(post)}
+                showActions
               />
             );
           })}
@@ -169,10 +199,10 @@ export function SignalsList({
       ) : (
         <div>
           <EmptyState
-            title={emptyStateMessage ?? (isFiltered ? 'No signals found' : 'No signals yet')}
+            title={emptyStateMessage ?? (isFiltered ? 'No posts found' : 'No posts yet')}
             description={
               isFiltered
-                ? 'No signals match your current filters.'
+                ? 'No posts match your current filters.'
                 : 'Be the first to illuminate. Share what you observe.'
             }
             size="md"
@@ -186,7 +216,7 @@ export function SignalsList({
             type="button"
             className="px-6 py-2.5 text-sm font-medium border border-[var(--color-border-default)] rounded-small hover:border-[var(--fg-accent)] hover:text-[var(--fg-accent)] transition-colors"
           >
-            Load more signals
+            Load more posts
           </button>
         </div>
       )}

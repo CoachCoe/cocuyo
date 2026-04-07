@@ -161,7 +161,7 @@ export class ClaimServiceImpl implements ClaimService {
       const oldClaim = userClaims[claimIndex];
       if (oldClaim) {
         const newEvidence: ClaimEvidence = {
-          signalId: evidence.signalId,
+          postId: evidence.postId,
           supports: evidence.supports,
           submittedBy: dimCredential,
           submittedAt: Date.now(),

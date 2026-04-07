@@ -1,20 +1,20 @@
 /**
  * Verification types — fact-checking workflow in F-Network.
  *
- * Signals can be submitted for verification by collectives.
+ * Posts can be submitted for verification by collectives.
  * Members review evidence, vote on verdicts, and publish
  * on-chain attestations.
  */
 
 import type {
-  SignalId,
+  PostId,
   CollectiveId,
   VerificationRequestId,
   DIMCredential,
 } from './brands';
 
 /**
- * Verification status of a signal.
+ * Verification status of a post.
  */
 export type VerificationStatus =
   | 'unverified'  // No verification requested
@@ -48,7 +48,7 @@ export interface VerificationEvidence {
   readonly sources: readonly string[];
   /** Media attachments (CIDs) */
   readonly mediaCids?: readonly string[];
-  /** Whether this supports or contradicts the signal */
+  /** Whether this supports or contradicts the post */
   readonly supports: boolean;
   /** When submitted */
   readonly submittedAt: number;
@@ -81,7 +81,7 @@ export interface VoteSummary {
 }
 
 /**
- * The final verdict on a signal.
+ * The final verdict on a post.
  */
 export interface VerificationVerdict {
   /** Final status */
@@ -99,17 +99,17 @@ export interface VerificationVerdict {
 }
 
 /**
- * A verification request for a signal.
+ * A verification request for a post.
  */
 export interface VerificationRequest {
   /** Unique identifier */
   readonly id: VerificationRequestId;
   /** CID on Bulletin Chain */
   readonly cid?: string;
-  /** Signal being verified */
-  readonly signalId: SignalId;
-  /** CID of the signal */
-  readonly signalCid: string;
+  /** Post being verified */
+  readonly postId: PostId;
+  /** CID of the post */
+  readonly postCid: string;
   /** Collective handling verification */
   readonly collectiveId: CollectiveId;
   /** Current workflow status */
@@ -131,7 +131,7 @@ export interface VerificationRequest {
  */
 export interface VerificationRequestPreview {
   readonly id: VerificationRequestId;
-  readonly signalId: SignalId;
+  readonly postId: PostId;
   readonly collectiveId: CollectiveId;
   readonly status: VerificationRequestStatus;
   readonly evidenceCount: number;

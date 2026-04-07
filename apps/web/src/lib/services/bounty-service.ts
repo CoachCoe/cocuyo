@@ -16,7 +16,7 @@ import type {
   PaginatedResult,
   PaginationParams,
   Result,
-  SignalId,
+  PostId,
 } from '@cocuyo/types';
 import {
   ok,
@@ -31,11 +31,12 @@ import {
   getConnectedCredential,
   fetchFromBulletin,
 } from './service-utils';
+import { seedBounties } from '@/lib/seed-data';
 
 export type Locale = 'en' | 'es';
 
-// Session cache for user-created bounties
-const userBounties: Bounty[] = [];
+// Session cache for user-created bounties (initialized with seed data)
+const userBounties: Bounty[] = [...seedBounties.values()];
 
 function bountyToPreview(bounty: Bounty): BountyPreview {
   return {
@@ -45,7 +46,7 @@ function bountyToPreview(bounty: Bounty): BountyPreview {
     ...(bounty.location !== undefined && { location: bounty.location }),
     status: bounty.status,
     fundingAmount: bounty.fundingAmount,
-    contributionCount: bounty.contributingSignals.length,
+    contributionCount: bounty.contributingPostIds.length,
     payoutMode: bounty.payoutMode,
     expiresAt: bounty.expiresAt,
   };
@@ -178,7 +179,7 @@ export class BountyServiceImpl implements BountyService {
       escrowId: createEscrowId(`escrow-${Date.now()}`),
       fundingTxHash: createTransactionHash(`0x${Date.now().toString(16)}`),
       payoutMode: newBounty.payoutMode ?? 'private',
-      contributingSignals: [],
+      contributingPostIds: [],
       createdAt: now,
       expiresAt: now + newBounty.duration * 1000,
     };
@@ -194,11 +195,11 @@ export class BountyServiceImpl implements BountyService {
   }
 
   /**
-   * Contribute a signal to a bounty.
+   * Contribute a post to a bounty.
    */
-  contributeToToBounty(
+  contributeToBounty(
     bountyId: BountyId,
-    signalId: SignalId
+    postId: PostId
   ): Promise<Result<void, string>> {
     if (getConnectedWallet() === null) {
       return Promise.resolve(
@@ -213,7 +214,7 @@ export class BountyServiceImpl implements BountyService {
       if (oldBounty) {
         userBounties[bountyIndex] = {
           ...oldBounty,
-          contributingSignals: [...oldBounty.contributingSignals, signalId],
+          contributingPostIds: [...oldBounty.contributingPostIds, postId],
         };
         return Promise.resolve(ok(undefined));
       }
@@ -221,6 +222,16 @@ export class BountyServiceImpl implements BountyService {
 
     // Bounty not found in user cache
     return Promise.resolve(err('Bounty not found or is read-only.'));
+  }
+
+  /**
+   * @deprecated Use contributeToBounty instead
+   */
+  contributeToToBounty(
+    bountyId: BountyId,
+    postId: PostId
+  ): Promise<Result<void, string>> {
+    return this.contributeToBounty(bountyId, postId);
   }
 }
 

@@ -21,6 +21,8 @@ import { hostApi } from '@novasamatech/product-sdk';
 const REQUIRED_PERMISSIONS = [
   // Map tiles - OpenStreetMap uses subdomains a/b/c.tile.openstreetmap.org
   'https://*.tile.openstreetmap.org',
+  // Map tiles - CARTO basemaps
+  'https://basemaps.cartocdn.com',
   // Reverse geocoding
   'https://nominatim.openstreetmap.org',
 ];

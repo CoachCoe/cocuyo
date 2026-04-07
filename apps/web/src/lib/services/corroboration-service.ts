@@ -8,7 +8,7 @@ import type {
   CorroborationService,
   Corroboration,
   CorroborationId,
-  SignalId,
+  PostId,
   NewCorroboration,
   Result,
 } from '@cocuyo/types';
@@ -25,13 +25,20 @@ const userCorroborations: Corroboration[] = [];
 
 export class CorroborationServiceImpl implements CorroborationService {
   /**
-   * Get all corroborations for a signal.
+   * Get all corroborations for a post.
    */
-  getSignalCorroborations(signalId: SignalId): Promise<readonly Corroboration[]> {
+  getPostCorroborations(postId: PostId): Promise<readonly Corroboration[]> {
     const corroborations = userCorroborations.filter(
-      (c) => c.signalId === signalId
+      (c) => c.postId === postId
     );
     return Promise.resolve(corroborations);
+  }
+
+  /**
+   * @deprecated Use getPostCorroborations instead
+   */
+  getSignalCorroborations(postId: PostId): Promise<readonly Corroboration[]> {
+    return this.getPostCorroborations(postId);
   }
 
   /**
@@ -51,14 +58,23 @@ export class CorroborationServiceImpl implements CorroborationService {
 
     const corroboration: Corroboration = {
       id: '' as CorroborationId,
-      signalId: newCorroboration.signalId,
+      postId: newCorroboration.postId,
       type: newCorroboration.type,
       dimSignature: dimCredential,
       weight: 1.0, // Default weight, would be calculated from reputation
       createdAt: now,
       ...(newCorroboration.note !== undefined && { note: newCorroboration.note }),
-      ...(newCorroboration.evidenceSignalId !== undefined && {
-        evidenceSignalId: newCorroboration.evidenceSignalId,
+      ...(newCorroboration.evidencePostId !== undefined && {
+        evidencePostId: newCorroboration.evidencePostId,
+      }),
+      ...(newCorroboration.evidenceType !== undefined && {
+        evidenceType: newCorroboration.evidenceType,
+      }),
+      ...(newCorroboration.evidenceContent !== undefined && {
+        evidenceContent: newCorroboration.evidenceContent,
+      }),
+      ...(newCorroboration.evidenceDescription !== undefined && {
+        evidenceDescription: newCorroboration.evidenceDescription,
       }),
     };
 

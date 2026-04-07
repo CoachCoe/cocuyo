@@ -9,10 +9,10 @@ import type { PostPreview, PostId } from '@cocuyo/types';
 import { PostCard, EmptyState, SkeletonPostCard } from '@cocuyo/ui';
 
 export interface PostsListTranslations {
-  claimWord: string;
-  claimsWord: string;
-  signalWord: string;
-  signalsWord: string;
+  corroborationWord: string;
+  corroborationsWord: string;
+  challengeWord: string;
+  challengesWord: string;
   readMore: string;
 }
 
@@ -79,10 +79,10 @@ export function PostsList({
           onClick={onPostClick}
           topicTranslations={topicTranslations}
           translations={{
-            claimWord: t.claimWord,
-            claimsWord: t.claimsWord,
-            signalWord: t.signalWord,
-            signalsWord: t.signalsWord,
+            corroborationWord: t.corroborationWord,
+            corroborationsWord: t.corroborationsWord,
+            challengeWord: t.challengeWord,
+            challengesWord: t.challengesWord,
             readMore: t.readMore,
           }}
         />

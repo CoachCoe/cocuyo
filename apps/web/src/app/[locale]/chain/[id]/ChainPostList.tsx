@@ -1,23 +1,23 @@
 'use client';
 
 /**
- * Signal list component for chain detail page.
- * Shows signals as a timeline with corroboration actions.
+ * Post list component for chain detail page.
+ * Shows posts as a timeline with corroboration actions.
  */
 
 import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import type { Signal, CorroborationType } from '@cocuyo/types';
+import type { Post, CorroborationType } from '@cocuyo/types';
 import { useFormatters } from '@/lib/hooks/useFormatters';
 import { ExternalLink } from '@/components/ExternalLink';
 
-interface ChainSignalListProps {
-  signals: Signal[];
+interface ChainPostListProps {
+  posts: Post[];
 }
 
 interface CorroborationModalProps {
-  signal: Signal;
+  post: Post;
   onClose: () => void;
   onSubmit: (type: CorroborationType, note: string) => void;
   translations: {
@@ -39,7 +39,7 @@ interface CorroborationModalProps {
   };
 }
 
-function CorroborationModal({ signal: _signal, onClose, onSubmit, translations: t }: CorroborationModalProps): ReactElement {
+function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }: CorroborationModalProps): ReactElement {
   const [selectedType, setSelectedType] = useState<CorroborationType | null>(null);
   const [note, setNote] = useState('');
 
@@ -165,15 +165,15 @@ function CorroborationModal({ signal: _signal, onClose, onSubmit, translations: 
   );
 }
 
-export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement {
-  const [corroboratingSignal, setCorroboratingSignal] = useState<Signal | null>(null);
+export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
+  const [corroboratingPost, setCorroboratingPost] = useState<Post | null>(null);
   const { formatRelativeTime } = useFormatters();
   const t = useTranslations('corroboration');
 
   const handleCorroborate = (type: CorroborationType, note: string): void => {
     // In real implementation, this would submit to the chain
     alert(`Corroboration submitted: ${type}${note ? ` - "${note}"` : ''}`);
-    setCorroboratingSignal(null);
+    setCorroboratingPost(null);
   };
 
   const modalTranslations = {
@@ -203,11 +203,11 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
           aria-hidden="true"
         />
 
-        {/* Signals */}
+        {/* Posts */}
         <div className="space-y-6">
-          {signals.map((signal, index) => (
+          {posts.map((post, index) => (
             <article
-              key={signal.id}
+              key={post.id}
               className={`relative pl-12 ${index < 10 ? 'animate-stagger-item' : ''}`}
               style={{ '--stagger-index': index } as React.CSSProperties}
             >
@@ -227,34 +227,34 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
               <div className="bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg p-6">
                 {/* Context */}
                 <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)] mb-3">
-                  {signal.context.topics.length > 0 && (
-                    <span className="capitalize">{signal.context.topics[0]}</span>
+                  {post.context.topics.length > 0 && (
+                    <span className="capitalize">{post.context.topics[0]}</span>
                   )}
-                  {signal.context.locationName != null && (
+                  {post.context.locationName != null && (
                     <>
                       <span aria-hidden="true">&middot;</span>
-                      <span>{signal.context.locationName}</span>
+                      <span>{post.context.locationName}</span>
                     </>
                   )}
                   <span aria-hidden="true">&middot;</span>
-                  <time dateTime={new Date(signal.createdAt * 1000).toISOString()}>
-                    {formatRelativeTime(signal.createdAt * 1000)}
+                  <time dateTime={new Date(post.createdAt * 1000).toISOString()}>
+                    {formatRelativeTime(post.createdAt * 1000)}
                   </time>
                 </div>
 
                 {/* Content */}
                 <p className="text-base text-[var(--color-text-primary)] leading-relaxed mb-4">
-                  {signal.content.text}
+                  {post.content.text}
                 </p>
 
                 {/* Links if any */}
-                {signal.content.links != null && signal.content.links.length > 0 && (
+                {post.content.links != null && post.content.links.length > 0 && (
                   <div className="mb-4">
                     <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
                       {t('referencedLinks')}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {signal.content.links.map((link, i) => (
+                      {post.content.links.map((link, i) => (
                         <ExternalLink
                           key={i}
                           href={link}
@@ -274,32 +274,32 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
                       <span className="text-[var(--color-corroborated)]">◉</span>
                       <span>
                         <span className="text-[var(--color-corroborated)]">
-                          {signal.corroborations.witnessCount + signal.corroborations.expertiseCount}
+                          {post.corroborations.witnessCount + post.corroborations.expertiseCount}
                         </span>
                       </span>
                     </span>
-                    {signal.corroborations.evidenceCount > 0 && (
+                    {post.corroborations.evidenceCount > 0 && (
                       <span className="flex items-center gap-1">
                         <span>⚡</span>
-                        <span>{signal.corroborations.evidenceCount}</span>
+                        <span>{post.corroborations.evidenceCount}</span>
                       </span>
                     )}
-                    {signal.corroborations.challengeCount > 0 && (
+                    {post.corroborations.challengeCount > 0 && (
                       <span className="flex items-center gap-1">
                         <span className="text-[var(--color-challenged)]">△</span>
                         <span className="text-[var(--color-challenged)]">
-                          {signal.corroborations.challengeCount}
+                          {post.corroborations.challengeCount}
                         </span>
                       </span>
                     )}
                     <span className="text-[var(--color-text-tertiary)]">
-                      {t('weight')}: {signal.corroborations.totalWeight.toFixed(1)}
+                      {t('weight')}: {post.corroborations.totalWeight.toFixed(1)}
                     </span>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => setCorroboratingSignal(signal)}
+                    onClick={() => setCorroboratingPost(post)}
                     className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
                   >
                     {t('modal.corroborate')}
@@ -312,10 +312,10 @@ export function ChainSignalList({ signals }: ChainSignalListProps): ReactElement
       </div>
 
       {/* Corroboration Modal */}
-      {corroboratingSignal != null && (
+      {corroboratingPost != null && (
         <CorroborationModal
-          signal={corroboratingSignal}
-          onClose={() => setCorroboratingSignal(null)}
+          post={corroboratingPost}
+          onClose={() => setCorroboratingPost(null)}
           onSubmit={handleCorroborate}
           translations={modalTranslations}
         />

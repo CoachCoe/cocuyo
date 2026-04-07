@@ -4,7 +4,7 @@
 
 import type { ReactElement, ReactNode } from 'react';
 import Link from 'next/link';
-import { postService, claimService, signalService } from '@/lib/services';
+import { postService, claimService } from '@/lib/services';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ClaimCard } from '@cocuyo/ui';
 import { validatePostId } from '@/lib/utils/validators';
@@ -80,12 +80,6 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
 
   // Fetch claims for this post
   const claims = await claimService.getClaimsByPost(post.id, locale);
-
-  // Fetch related signals
-  const signals = await Promise.all(
-    post.relatedSignalIds.map((signalId) => signalService.getSignal(signalId, locale))
-  );
-  const relatedSignals = signals.filter((s) => s !== null);
 
   // Build topic translation map
   const topicTranslations: Record<string, string> = {};
@@ -179,12 +173,14 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
 
           {/* Action buttons */}
           <PostActions
-            postId={post.id}
-            postTitle={post.content.title}
+            post={post}
             translations={{
               extractClaim: tClaims('extractClaim'),
               signInToExtract: tClaims('signInToExtract'),
               claimExtracted: tClaims('claimExtracted'),
+              corroborate: tPosts('corroborate'),
+              dispute: tPosts('dispute'),
+              viewTrust: tPosts('viewTrust'),
             }}
           />
 
@@ -229,30 +225,6 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
             </section>
           )}
 
-          {/* Related Signals Section */}
-          {relatedSignals.length > 0 && (
-            <section>
-              <h2 className="text-lg font-display font-medium text-[var(--fg-primary)] mb-4">
-                {tPosts('relatedSignals')} ({relatedSignals.length})
-              </h2>
-              <div className="space-y-3">
-                {relatedSignals.map((signal) => (
-                  <Link
-                    key={signal.id}
-                    href={`/${locale}/signal/${signal.id}`}
-                    className="block p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container hover:border-[var(--color-firefly-gold)]/40 transition-colors"
-                  >
-                    <p className="text-sm text-[var(--fg-primary)] line-clamp-2">
-                      {signal.content.text}
-                    </p>
-                    <p className="text-xs text-[var(--fg-tertiary)] mt-2">
-                      By {signal.author.pseudonym}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
         </div>
       </article>
     </main>

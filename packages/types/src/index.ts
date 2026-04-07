@@ -7,7 +7,6 @@
 
 // Branded types for type-safe identifiers
 export type {
-  SignalId,
   ChainId,
   CorroborationId,
   BountyId,
@@ -23,10 +22,10 @@ export type {
   CoinPublicKey,
   PostId,
   ClaimId,
+  VerdictId,
 } from './brands';
 
 export {
-  createSignalId,
   createChainId,
   createCorroborationId,
   createBountyId,
@@ -42,31 +41,24 @@ export {
   createCoinPublicKey,
   createPostId,
   createClaimId,
+  createVerdictId,
 } from './brands';
 
-// Signal types
+// Post types (replaces Signal types)
 export type {
+  PostStatus,
   GeoCoordinate,
   TimeRange,
   MediaAttachment,
-  SignalContent,
-  SignalContext,
-  SignalVerification,
-  Signal,
-  NewSignal,
-} from './signal';
-
-export { MAX_SIGNAL_PHOTOS } from './signal';
-
-// Post types
-export type {
-  PostStatus,
   PostContent,
   PostContext,
+  PostVerification,
   Post,
   PostPreview,
   NewPost,
 } from './post';
+
+export { MAX_POST_PHOTOS } from './post';
 
 // Claim types
 export type {
@@ -77,6 +69,9 @@ export type {
   ClaimPreview,
   NewClaim,
   NewClaimEvidence,
+  VerdictStatus,
+  Verdict,
+  NewVerdict,
 } from './claim';
 
 // Identity types
@@ -129,6 +124,7 @@ export type {
 // Corroboration types
 export type {
   CorroborationType,
+  EvidenceType,
   Corroboration,
   CorroborationSummary,
   NewCorroboration,
@@ -187,12 +183,12 @@ export type {
   Result,
   PaginationParams,
   PaginatedResult,
-  SignalService,
+  PostService,
   ChainService,
   CorroborationService,
   BountyService,
-  PostService,
   ClaimService,
+  VerdictService,
   // Reputation services
   ReputationError,
   TopicReputationScore,

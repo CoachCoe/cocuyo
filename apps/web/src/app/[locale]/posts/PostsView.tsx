@@ -34,10 +34,10 @@ export interface PostsViewProps {
     postsWord: string;
     ofWord: string;
     clearFilters: string;
-    claimWord: string;
-    claimsWord: string;
-    signalWord: string;
-    signalsWord: string;
+    corroborationWord: string;
+    corroborationsWord: string;
+    challengeWord: string;
+    challengesWord: string;
     readMore: string;
   };
 }
@@ -82,7 +82,7 @@ export function PostsView({
       const query = searchQuery.trim().toLowerCase();
       result = result.filter(
         (p) =>
-          p.title.toLowerCase().includes(query) ||
+          (p.title?.toLowerCase().includes(query) ?? false) ||
           p.excerpt.toLowerCase().includes(query) ||
           p.topics.some((topic) => topic.toLowerCase().includes(query)) ||
           (p.locationName?.toLowerCase().includes(query) ?? false)
@@ -127,10 +127,10 @@ export function PostsView({
         isFiltered={isFiltered}
         onPostClick={handlePostClick}
         translations={{
-          claimWord: t.claimWord,
-          claimsWord: t.claimsWord,
-          signalWord: t.signalWord,
-          signalsWord: t.signalsWord,
+          corroborationWord: t.corroborationWord,
+          corroborationsWord: t.corroborationsWord,
+          challengeWord: t.challengeWord,
+          challengesWord: t.challengesWord,
           readMore: t.readMore,
         }}
       />

@@ -4,20 +4,20 @@
  * PostCard — Display component for a post preview.
  *
  * The post card shows key information at a glance:
- * - Title (2-line truncate)
+ * - Title (optional, 2-line truncate)
  * - Excerpt from content
  * - Topics and location tags
- * - Claim count and signal count
+ * - Corroboration and challenge counts
  */
 
 import type { ReactElement } from 'react';
 import type { PostPreview, PostId } from '@cocuyo/types';
 
 export interface PostCardTranslations {
-  claimWord: string;
-  claimsWord: string;
-  signalWord: string;
-  signalsWord: string;
+  corroborationWord: string;
+  corroborationsWord: string;
+  challengeWord: string;
+  challengesWord: string;
   readMore: string;
 }
 
@@ -44,7 +44,9 @@ function formatCount(count: number, singular: string, plural: string): string {
  */
 function formatRelativeTime(timestamp: number): string {
   const now = Date.now();
-  const diff = now - timestamp;
+  // Handle both millisecond and second timestamps
+  const ts = timestamp > 1e12 ? timestamp : timestamp * 1000;
+  const diff = now - ts;
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
@@ -58,7 +60,7 @@ function formatRelativeTime(timestamp: number): string {
   if (days < 7) {
     return `${days}d ago`;
   }
-  return new Date(timestamp).toLocaleDateString();
+  return new Date(ts).toLocaleDateString();
 }
 
 export function PostCard({
@@ -67,7 +69,7 @@ export function PostCard({
   translations: t,
   topicTranslations,
 }: PostCardProps): ReactElement {
-  const { id, title, excerpt, topics, locationName, claimCount, signalCount, createdAt } = post;
+  const { id, title, excerpt, topics, locationName, corroborationCount, challengeCount, createdAt } = post;
 
   const handleClick = (): void => {
     onClick?.(id);
@@ -91,12 +93,14 @@ export function PostCard({
       onKeyDown={onClick !== undefined ? handleKeyDown : undefined}
       tabIndex={onClick !== undefined ? 0 : undefined}
       role={onClick !== undefined ? 'button' : undefined}
-      aria-label={`Post: ${title}`}
+      aria-label={title !== undefined ? `Post: ${title}` : 'Post'}
     >
-      {/* Title - 2 line truncate */}
-      <h3 className="text-lg font-medium text-[var(--fg-primary)] leading-snug mb-2 line-clamp-2">
-        {title}
-      </h3>
+      {/* Title - 2 line truncate (only shown if present) */}
+      {title !== undefined && (
+        <h3 className="text-lg font-medium text-[var(--fg-primary)] leading-snug mb-2 line-clamp-2">
+          {title}
+        </h3>
+      )}
 
       {/* Excerpt - 3 line truncate */}
       <p className="text-sm text-[var(--fg-secondary)] leading-relaxed mb-4 line-clamp-3">
@@ -123,12 +127,16 @@ export function PostCard({
       {/* Stats row */}
       <div className="flex items-center justify-between text-sm border-t border-[var(--border-subtle)] pt-4">
         <div className="flex items-center gap-4 text-[var(--fg-secondary)]">
-          <span>
-            {formatCount(claimCount, t?.claimWord ?? 'claim', t?.claimsWord ?? 'claims')}
+          <span className="flex items-center gap-1">
+            <span className="text-[var(--fg-success)]" aria-hidden="true">&#9673;</span>
+            {formatCount(corroborationCount, t?.corroborationWord ?? 'corroboration', t?.corroborationsWord ?? 'corroborations')}
           </span>
-          <span>
-            {formatCount(signalCount, t?.signalWord ?? 'signal', t?.signalsWord ?? 'signals')}
-          </span>
+          {challengeCount > 0 && (
+            <span className="flex items-center gap-1">
+              <span className="text-[var(--fg-error)]" aria-hidden="true">&#9651;</span>
+              {formatCount(challengeCount, t?.challengeWord ?? 'challenge', t?.challengesWord ?? 'challenges')}
+            </span>
+          )}
         </div>
         <span className="text-xs text-[var(--fg-tertiary)]">
           {formatRelativeTime(createdAt)}

@@ -23,8 +23,8 @@ export interface BountyCardTranslations {
   hoursLeftSuffix: string;
   dayLeft: string;
   daysLeftSuffix: string;
-  signalWord: string;
-  signalsWord: string;
+  postWord: string;
+  postsWord: string;
   illuminate: string;
   paymentPublic: string;
   paymentPrivate: string;
@@ -75,12 +75,12 @@ function formatExpiry(expiresAt: number, t?: BountyCardTranslations): string {
 }
 
 /**
- * Format signal count with proper pluralization.
+ * Format post count with proper pluralization.
  */
-function formatSignalCount(count: number, t?: BountyCardTranslations): string {
+function formatPostCount(count: number, t?: BountyCardTranslations): string {
   const word = count === 1
-    ? (t?.signalWord ?? 'signal')
-    : (t?.signalsWord ?? 'signals');
+    ? (t?.postWord ?? 'post')
+    : (t?.postsWord ?? 'posts');
   return `${count} ${word}`;
 }
 
@@ -174,7 +174,7 @@ export function BountyCard({
             {formatPUSDCompact(fundingAmount)}
           </span>
           <span>
-            {formatSignalCount(contributionCount, t)}
+            {formatPostCount(contributionCount, t)}
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -188,7 +188,7 @@ export function BountyCard({
               type="button"
               onClick={handleIlluminateClick}
               className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full bg-[var(--color-firefly-gold)] text-[var(--bg-primary)] font-medium animate-pulse-subtle hover:opacity-90 transition-opacity"
-              aria-label={`Illuminate signal for: ${title}`}
+              aria-label={`Illuminate post for: ${title}`}
             >
               <FireflySymbol size={10} color="inherit" aria-hidden="true" />
               {t?.illuminate ?? 'Illuminate'}

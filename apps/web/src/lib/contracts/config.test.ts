@@ -29,10 +29,14 @@ describe('contract config', () => {
   });
 
   describe('CONTRACT_ADDRESSES', () => {
-    it('should have paseo addresses (null until deployed)', () => {
+    it('should have paseo addresses (deployed 2026-04-03)', () => {
       expect(CONTRACT_ADDRESSES.paseo).toBeDefined();
-      expect(CONTRACT_ADDRESSES.paseo.bountyEscrow).toBeNull();
-      expect(CONTRACT_ADDRESSES.paseo.fireflyReputation).toBeNull();
+      expect(CONTRACT_ADDRESSES.paseo.bountyEscrow).toBe(
+        '0xAA3Db3F2BD6E5D0c7C44e8BFc51Ba79A6d65773A'
+      );
+      expect(CONTRACT_ADDRESSES.paseo.fireflyReputation).toBe(
+        '0xb630cB019b94b48aB27A2f61A31Ee5E220994047'
+      );
     });
 
     it('should have localhost addresses', () => {
@@ -80,9 +84,13 @@ describe('contract config', () => {
       expect(address).toBe('0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9');
     });
 
-    it('should return null for paseo (not deployed)', () => {
-      expect(getContractAddress('bountyEscrow', 'paseo')).toBeNull();
-      expect(getContractAddress('fireflyReputation', 'paseo')).toBeNull();
+    it('should return deployed addresses for paseo', () => {
+      expect(getContractAddress('bountyEscrow', 'paseo')).toBe(
+        '0xAA3Db3F2BD6E5D0c7C44e8BFc51Ba79A6d65773A'
+      );
+      expect(getContractAddress('fireflyReputation', 'paseo')).toBe(
+        '0xb630cB019b94b48aB27A2f61A31Ee5E220994047'
+      );
     });
 
     it('should use default network when not specified', () => {

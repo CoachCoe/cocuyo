@@ -27,9 +27,10 @@ export const CONTRACT_ADDRESSES: Record<NetworkName, {
   fireflyReputation: string | null;
 }> = {
   paseo: {
-    // TODO: Update after successful Paseo deployment
-    bountyEscrow: null,
-    fireflyReputation: null,
+    // Deployed 2026-04-03 via hardhat-polkadot
+    // Proxy addresses (UUPS upgradeable)
+    bountyEscrow: '0xAA3Db3F2BD6E5D0c7C44e8BFc51Ba79A6d65773A',
+    fireflyReputation: '0xb630cB019b94b48aB27A2f61A31Ee5E220994047',
   },
   localhost: {
     // From local hardhat deployment

@@ -82,13 +82,13 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
     return <BountyNotFound locale={locale} />;
   }
 
-  // Fetch contributing signals
-  const contributingSignals = await Promise.all(
-    bounty.contributingSignals.map((signalId) =>
-      signalService.getSignal(signalId, locale)
+  // Fetch contributing posts
+  const contributingPosts = await Promise.all(
+    bounty.contributingPostIds.map((postId) =>
+      signalService.getPost(postId, locale)
     )
   );
-  const validSignals = contributingSignals.filter((s) => s !== null);
+  const validPosts = contributingPosts.filter((p) => p !== null);
 
   return (
     <main>
@@ -110,14 +110,14 @@ export default async function BountyPage({ params }: BountyPageProps): Promise<R
 
       <BountyDetailView
         bounty={bounty}
-        signals={validSignals}
+        posts={validPosts}
         translations={{
           fundingLabel: t('funding'),
           payoutModeLabel: t('payoutMode'),
           expiresLabel: t('expires'),
           expiredLabel: t('expired'),
-          contributingSignalsLabel: t('contributingSignals'),
-          noSignalsYet: t('noSignalsYet'),
+          contributingPostsLabel: t('contributingPosts'),
+          noPostsYet: t('noPostsYet'),
           illuminateLabel: t('illuminate'),
           fulfilledLabel: t('fulfilled'),
           cancelledLabel: t('cancelled'),

@@ -7,25 +7,25 @@
  */
 
 import type { ReactElement } from 'react';
-import type { Bounty, Signal } from '@cocuyo/types';
+import type { Bounty, Post } from '@cocuyo/types';
 import { formatPUSD } from '@cocuyo/types';
-import { BountyStatusBadge, PaymentModeBadge, SignalCard } from '@cocuyo/ui';
+import { BountyStatusBadge, PaymentModeBadge, FeedPostCard } from '@cocuyo/ui';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { useFormatters } from '@/lib/hooks/useFormatters';
 
 export interface BountyDetailViewProps {
   /** The bounty to display */
   bounty: Bounty;
-  /** Signals contributing to this bounty */
-  signals: Signal[];
+  /** Posts contributing to this bounty */
+  posts: Post[];
   /** Translation strings */
   translations: {
     fundingLabel: string;
     payoutModeLabel: string;
     expiresLabel: string;
     expiredLabel: string;
-    contributingSignalsLabel: string;
-    noSignalsYet: string;
+    contributingPostsLabel: string;
+    noPostsYet: string;
     illuminateLabel: string;
     fulfilledLabel: string;
     cancelledLabel: string;
@@ -38,7 +38,7 @@ export interface BountyDetailViewProps {
 
 export function BountyDetailView({
   bounty,
-  signals,
+  posts,
   translations: t,
 }: BountyDetailViewProps): ReactElement {
   const { openModal } = useIlluminate();
@@ -132,11 +132,11 @@ export function BountyDetailView({
                   </div>
                 )}
 
-                {/* Contributing signals count */}
+                {/* Contributing posts count */}
                 <div className="flex justify-between items-center pt-3 border-t border-[var(--border-subtle)]">
-                  <dt className="text-[var(--fg-tertiary)]">{t.contributingSignalsLabel}</dt>
+                  <dt className="text-[var(--fg-tertiary)]">{t.contributingPostsLabel}</dt>
                   <dd className="text-[var(--fg-success)] font-medium">
-                    {bounty.contributingSignals.length}
+                    {bounty.contributingPostIds.length}
                   </dd>
                 </div>
 
@@ -178,23 +178,23 @@ export function BountyDetailView({
         </div>
       </section>
 
-      {/* Contributing Signals */}
+      {/* Contributing Posts */}
       <section className="py-8">
         <div className="container-wide">
           <h2 className="text-xl font-semibold text-primary mb-6">
-            {t.contributingSignalsLabel} ({signals.length})
+            {t.contributingPostsLabel} ({posts.length})
           </h2>
 
-          {signals.length > 0 ? (
+          {posts.length > 0 ? (
             <div className="space-y-4 max-w-2xl">
-              {signals.map((signal) => (
-                <SignalCard key={signal.id} signal={signal} />
+              {posts.map((post) => (
+                <FeedPostCard key={post.id} post={post} />
               ))}
             </div>
           ) : (
             <div className="py-12 bg-[var(--bg-surface-nested)] rounded-container border border-[var(--border-default)] text-center max-w-2xl">
               <p className="text-[var(--fg-secondary)] mb-4">
-                {t.noSignalsYet}
+                {t.noPostsYet}
               </p>
               {isOpen && (
                 <button

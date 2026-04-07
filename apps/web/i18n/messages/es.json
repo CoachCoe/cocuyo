@@ -29,19 +29,19 @@
       "howItWorks": "¿Cómo funciona?"
     },
     "preview": {
-      "title": "Señales Recientes"
+      "title": "Publicaciones Recientes"
     },
     "whatIs": {
       "title": "¿Qué es la Red Luciérnaga?",
       "p1": "En el Caribe, los pueblos indígenas usaban cocuyos — escarabajos bioluminiscentes — como lámparas naturales para guiarse en la oscuridad. Un solo cocuyo no ilumina un camino. Pero millones de pequeñas chispas, juntas, pueden iluminar una nación entera.",
-      "p2": "La Red Luciérnaga no es una plataforma de redes sociales. Es una red de inteligencia colectiva donde cada participante es sensor y analista, donde la información se propaga a través de la corroboración en lugar de la amplificación, y donde el valor de una señal está determinado por el peso criptográfico de la verificación humana — no por algoritmos o métricas de engagement.",
+      "p2": "La Red Luciérnaga no es una plataforma de redes sociales. Es una red de inteligencia colectiva donde cada participante es sensor y analista, donde la información se propaga a través de la corroboración en lugar de la amplificación, y donde el valor de una contribución está determinado por el peso criptográfico de la verificación humana — no por algoritmos o métricas de engagement.",
       "p3": "Aquí, no eres un usuario. Eres una luciérnaga — un ser humano verificado que contribuye luz al entendimiento colectivo."
     },
     "howItWorks": {
       "title": "Cómo Funciona",
       "illuminate": {
         "title": "Iluminar",
-        "description": "Comparte lo que observas. Una señal no es una publicación — es una observación, una pieza de evidencia, un dato. Cada señal está firmada por tu credencial anónima, demostrando que un humano verificado la creó."
+        "description": "Comparte lo que observas. Una publicación es una observación, una pieza de evidencia, un dato. Cada publicación está firmada por tu credencial anónima, demostrando que un humano verificado la creó."
       },
       "corroborate": {
         "title": "Corroborar",
@@ -49,7 +49,7 @@
       },
       "connect": {
         "title": "Conectar",
-        "description": "Las señales se enlazan en cadenas de historia — estructuras emergentes que se forman cuando las luciérnagas conectan sus observaciones. La cadena se vuelve más fuerte que cualquier señal individual a través de la verificación distribuida."
+        "description": "Las publicaciones se enlazan en cadenas de historia — estructuras emergentes que se forman cuando las luciérnagas conectan sus observaciones. La cadena se vuelve más fuerte que cualquier publicación individual a través de la verificación distribuida."
       }
     },
     "whatIsNot": {
@@ -73,7 +73,7 @@
     "fireflyPrinciple": {
       "title": "El Principio de la Luciérnaga",
       "p1": "En el Caribe, los pueblos indígenas usaban cocuyos — escarabajos bioluminiscentes — como lámparas naturales para guiarse en la oscuridad. Un solo cocuyo apenas emite luz suficiente para ver tu propia mano. Pero reúnelos, y se convierten en algo más.",
-      "p2": "Este es el principio detrás de la Red Luciérnaga: ningún observador individual ve el panorama completo. Pero cuando humanos verificados comparten lo que observan, corroboran lo que otros ven, y conectan sus señales en cadenas de evidencia — la oscuridad comienza a disiparse.",
+      "p2": "Este es el principio detrás de la Red Luciérnaga: ningún observador individual ve el panorama completo. Pero cuando humanos verificados comparten lo que observan, corroboran lo que otros ven, y conectan sus publicaciones en cadenas de evidencia — la oscuridad comienza a disiparse.",
       "p3": "Nos inspiramos en Efecto Cocuyo, una plataforma de medios independientes venezolana fundada en 2015 por periodistas que se negaron a dejar que la censura gubernamental silenciara la verdad. Demostraron que el periodismo comunitario podía sobrevivir y prosperar incluso bajo condiciones autoritarias. La imagen de la luciérnaga resonó porque habla de algo universal: pequeñas luces que juntas iluminan la oscuridad."
     },
     "threePillars": {
@@ -84,37 +84,37 @@
       },
       "verifiedButPrivate": {
         "title": "Verificado pero Privado",
-        "description": "Cada señal y corroboración lleva prueba criptográfica. Cada cadena tiene un rastro de verificación transparente. Pero nada de esto requiere exponer la identidad de nadie. La verificación es pública; el verificador es privado. Esto es verificación de hechos sin vigilancia."
+        "description": "Cada publicación y corroboración lleva prueba criptográfica. Cada cadena tiene un rastro de verificación transparente. Pero nada de esto requiere exponer la identidad de nadie. La verificación es pública; el verificador es privado. Esto es verificación de hechos sin vigilancia."
       },
       "distributedButConnected": {
         "title": "Distribuido pero Conectado",
-        "description": "Las señales y cadenas se almacenan en infraestructura descentralizada. Sin servidor central que confiscar, sin empresa a la que citar, sin punto único de fallo. Si el equipo fundador desapareciera mañana, la red continuaría. Ese es el punto."
+        "description": "Las publicaciones y cadenas se almacenan en infraestructura descentralizada. Sin servidor central que confiscar, sin empresa a la que citar, sin punto único de fallo. Si el equipo fundador desapareciera mañana, la red continuaría. Ese es el punto."
       }
     },
     "howItWorks": {
       "title": "Cómo Funciona",
-      "signals": {
-        "title": "Señales",
-        "description": "Una señal no es una publicación. Es una observación, una pieza de evidencia, un testimonio, un dato. Cuando iluminas una señal, estás contribuyendo una pieza discreta de información — firmada por tu credencial anónima, etiquetada con contexto opcional (tema, ubicación, período de tiempo), y lista para conectarse con otras señales."
+      "posts": {
+        "title": "Publicaciones",
+        "description": "Una publicación es una observación, una pieza de evidencia, un testimonio, un dato. Cuando iluminas una publicación, estás contribuyendo una pieza discreta de información — firmada por tu credencial anónima, etiquetada con contexto opcional (tema, ubicación, período de tiempo), y lista para conectarse con otras publicaciones."
       },
       "corroboration": {
         "title": "Corroboración",
-        "description": "La corroboración no es un \"me gusta\". Es un acto de verificación respaldado por tu reputación. Cuando corroboras una señal, estás haciendo una afirmación específica: \"Puedo confirmar esto de manera independiente\", o \"Tengo evidencia adicional\", o \"Esto es consistente con mi experiencia\". Tu corroboración se registra permanentemente, ponderada por tu reputación en el dominio relevante. Si la señal es posteriormente desmentida, tu reputación disminuye."
+        "description": "La corroboración no es un \"me gusta\". Es un acto de verificación respaldado por tu reputación. Cuando corroboras una publicación, estás haciendo una afirmación específica: \"Puedo confirmar esto de manera independiente\", o \"Tengo evidencia adicional\", o \"Esto es consistente con mi experiencia\". Tu corroboración se registra permanentemente, ponderada por tu reputación en el dominio relevante. Si la publicación es posteriormente desmentida, tu reputación disminuye."
       },
       "storyChains": {
         "title": "Cadenas de Historia",
-        "description": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una cadena — las cadenas cristalizan cuando las luciérnagas enlazan sus señales a observaciones relacionadas. Una cadena sobre calidad del agua podría comenzar con una persona notando un olor, crecer cuando otros corroboran y añaden fotos, y fortalecerse cuando alguien contribuye registros públicos sobre permisos. La cadena se convierte en más que la suma de sus señales."
+        "description": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una cadena — las cadenas cristalizan cuando las luciérnagas enlazan sus publicaciones a observaciones relacionadas. Una cadena sobre calidad del agua podría comenzar con una persona notando un olor, crecer cuando otros corroboran y añaden fotos, y fortalecerse cuando alguien contribuye registros públicos sobre permisos. La cadena se convierte en más que la suma de sus publicaciones."
       },
       "verificationTrails": {
         "title": "Rastros de Verificación",
-        "description": "Cada cadena lleva un rastro de verificación transparente — el historial completo de señales, corroboraciones, cuestionamientos y evidencia. No necesitas confiar en nosotros para saber que algo está verificado. Puedes rastrear el camino tú mismo y ver exactamente cuántos humanos independientes, con qué reputación, hicieron qué afirmaciones."
+        "description": "Cada cadena lleva un rastro de verificación transparente — el historial completo de publicaciones, corroboraciones, cuestionamientos y evidencia. No necesitas confiar en nosotros para saber que algo está verificado. Puedes rastrear el camino tú mismo y ver exactamente cuántos humanos independientes, con qué reputación, hicieron qué afirmaciones."
       }
     },
     "surveillanceResistance": {
       "title": "Resistencia a la Vigilancia",
-      "intro": "La red está diseñada para que ningún punto único de compromiso — ninguna confiscación de servidor, ninguna citación, ninguna amenaza interna — pueda exponer la identidad de cualquier luciérnaga o eliminar cualquier señal de la red.",
+      "intro": "La red está diseñada para que ningún punto único de compromiso — ninguna confiscación de servidor, ninguna citación, ninguna amenaza interna — pueda exponer la identidad de cualquier luciérnaga o eliminar cualquier publicación de la red.",
       "noUserDatabase": "Sin base de datos de usuarios. Las credenciales DIM se generan a través de prueba de humanidad y las guardas tú. No hay un registro central de participantes.",
-      "noContentServer": "Sin servidor de contenido. Las señales se almacenan en infraestructura descentralizada. No hay un servidor único que confiscar.",
+      "noContentServer": "Sin servidor de contenido. Las publicaciones se almacenan en infraestructura descentralizada. No hay un servidor único que confiscar.",
       "noMetadata": "Sin recolección de metadatos. No registramos direcciones IP, huellas digitales de dispositivos, ni patrones de acceso.",
       "noCookies": "Sin cookies. Ninguna. Cero. No recolectamos lo que no podemos ser forzados a revelar."
     },
@@ -137,28 +137,28 @@
     "description": "Investigaciones y verdades desde la red.",
     "illuminateNew": "Iluminar",
     "stories": "Cadenas de Historia",
-    "allSignals": "Todas las Señales",
-    "noStories": "No hay historias aún. Ilumina una señal para comenzar una.",
-    "recentSignals": "Señales Recientes",
-    "signals": "señales",
+    "allPosts": "Todas las Publicaciones",
+    "noStories": "No hay historias aún. Ilumina una publicación para comenzar una.",
+    "recentPosts": "Publicaciones Recientes",
+    "posts": "publicaciones",
     "corroborations": "corroboraciones",
     "linkToStory": "Vincular a historia",
     "startNewChain": "Iniciar nueva cadena",
     "storiesInfo": {
       "title": "¿Qué son las Historias?",
-      "body": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una historia — las historias cristalizan cuando las luciérnagas enlazan sus señales a observaciones relacionadas.\n\nAlgunas historias tienen recompensas adjuntas (marcadas con \"Gana $X\"). Estas son investigaciones financiadas — contribuye señales valiosas y gana una parte de la recompensa.\n\nLa historia se convierte en más que la suma de sus señales."
+      "body": "Las cadenas de historia son estructuras emergentes. Nadie \"crea\" una historia — las historias cristalizan cuando las luciérnagas enlazan sus publicaciones a observaciones relacionadas.\n\nAlgunas historias tienen recompensas adjuntas (marcadas con \"Gana $X\"). Estas son investigaciones financiadas — contribuye publicaciones valiosas y gana una parte de la recompensa.\n\nLa historia se convierte en más que la suma de sus publicaciones."
     },
-    "signalsInfo": {
-      "title": "¿Qué son las Señales?",
-      "body": "Una señal no es una publicación. Es una observación, una pieza de evidencia, un testimonio, un dato.\n\nCuando iluminas una señal, estás contribuyendo información firmada por tu credencial anónima — lista para conectarse con otras señales y formar cadenas de historia.\n\nLas señales ganan peso a través de la corroboración de otros humanos verificados."
+    "postsInfo": {
+      "title": "¿Qué son las Publicaciones?",
+      "body": "Una publicación es una observación, una pieza de evidencia, un testimonio, un dato.\n\nCuando iluminas una publicación, estás contribuyendo información firmada por tu credencial anónima — lista para conectarse con otras publicaciones y formar cadenas de historia.\n\nLas publicaciones ganan peso a través de la corroboración de otros humanos verificados."
     },
     "storiesLabel": "Cadenas de Historia",
     "openBountiesLabel": "Recompensas Abiertas",
     "openBountiesInfo": {
       "title": "¿Qué son las Recompensas Abiertas?",
-      "body": "Las recompensas son financiadas por miembros de la comunidad que necesitan información específica — periodistas, ONGs, comunidades de la diáspora, o cualquiera que busque la verdad sobre el terreno.\n\nLos fondos se mantienen en custodia hasta que se cumpla la recompensa. Cuando contribuyes señales valiosas, ganas una parte del premio.\n\nLos pagos pueden ser públicos (pUSD) o privados (Coinage) para proteger tu identidad. Las recompensas abiertas esperan sus primeras señales — sé el primero en iluminar."
+      "body": "Las recompensas son financiadas por miembros de la comunidad que necesitan información específica — periodistas, ONGs, comunidades de la diáspora, o cualquiera que busque la verdad sobre el terreno.\n\nLos fondos se mantienen en custodia hasta que se cumpla la recompensa. Cuando contribuyes publicaciones valiosas, ganas una parte del premio.\n\nLos pagos pueden ser públicos (pUSD) o privados (Coinage) para proteger tu identidad. Las recompensas abiertas esperan sus primeras publicaciones — sé el primero en iluminar."
     },
-    "noMatchingBountySignals": "Ninguna señal ha contribuido a esta recompensa aún.",
+    "noMatchingBountyPosts": "Ninguna publicación ha contribuido a esta recompensa aún.",
     "daysRemaining": "{count} días restantes",
     "hoursRemaining": "{count} horas restantes",
     "expiresSoon": "Expira pronto"
@@ -167,15 +167,15 @@
     "backToStories": "Historias",
     "storyChain": "Historia",
     "verificationSummary": "Resumen de Verificación",
-    "signals": "Señales",
+    "posts": "Publicaciones",
     "corroborations": "Corroboraciones",
     "challenges": "Desafíos",
     "contributors": "Contribuidores",
     "weight": "Peso",
     "chainStarted": "Historia iniciada",
-    "addSignalCta": "¿Tienes información para agregar a esta historia?",
+    "addPostCta": "¿Tienes información para agregar a esta historia?",
     "verificationTrail": "Rastro de Verificación",
-    "noSignals": "No hay señales en esta historia aún.",
+    "noPosts": "No hay publicaciones en esta historia aún.",
     "beFirstToIlluminate": "Sé el Primero en Iluminar",
     "tabs": {
       "whatsHappening": "Qué Pasa",
@@ -183,9 +183,9 @@
       "helpNeeded": "Ayuda"
     },
     "whatsHappening": {
-      "title": "Señales Recientes",
+      "title": "Publicaciones Recientes",
       "description": "Observaciones desde la red",
-      "noSignals": "No hay señales aún. Sé el primero en iluminar."
+      "noPosts": "No hay publicaciones aún. Sé el primero en iluminar."
     },
     "deepDives": {
       "title": "Análisis e Informes",
@@ -203,22 +203,22 @@
     "title": "Tu Feed",
     "following": "Siguiendo",
     "discover": "Descubrir",
-    "setupPrompt": "Completa la configuración de tu perfil para ver señales de los temas que sigues.",
+    "setupPrompt": "Completa la configuración de tu perfil para ver publicaciones de los temas que sigues.",
     "completeSetup": "Completar Configuración",
-    "noMatchingSignals": "Aún no hay señales que coincidan con tus temas seguidos.",
+    "noMatchingPosts": "Aún no hay publicaciones que coincidan con tus temas seguidos.",
     "tryFollowingMore": "Intenta seguir más temas en la configuración de tu perfil.",
-    "noSignalsYet": "Aún no hay señales. Sé el primero en iluminar."
+    "noPostsYet": "Aún no hay publicaciones. Sé el primero en iluminar."
   },
   "verify": {
     "title": "Mesa de Verificación",
-    "description": "Señales esperando verificación colectiva",
-    "noPending": "No hay señales pendientes de verificación.",
+    "description": "Publicaciones esperando verificación colectiva",
+    "noPending": "No hay publicaciones pendientes de verificación.",
     "evidence": "evidencia",
     "votes": "votos"
   },
   "collectives": {
     "title": "Colectivos",
-    "description": "Grupos de verificación de hechos que verifican señales colaborativamente",
+    "description": "Grupos de verificación de hechos que verifican publicaciones colaborativamente",
     "createCollective": "Crear Colectivo",
     "members": "miembros",
     "verifications": "verificaciones",
@@ -249,7 +249,7 @@
   },
   "bounties": {
     "title": "Recompensas",
-    "description": "Solicitudes de información financiadas por la comunidad. Contribuye señales para ganar recompensas.",
+    "description": "Solicitudes de información financiadas por la comunidad. Contribuye publicaciones para ganar recompensas.",
     "allBounties": "Todas",
     "filters": "Filtros",
     "status": "Estado",
@@ -270,23 +270,27 @@
       "label": "Temas",
       "crisis": "Crisis",
       "detention": "Detención",
+      "disinformation": "Desinformación",
       "documentation": "Documentación",
       "economy": "Economía",
+      "finance": "Finanzas",
       "food-security": "Seguridad Alimentaria",
       "governance": "Gobernanza",
       "health": "Salud",
       "human-rights": "Derechos Humanos",
       "inflation": "Inflación",
       "infrastructure": "Infraestructura",
+      "media": "Medios",
       "politics": "Política",
       "press-freedom": "Libertad de Prensa",
       "public-records": "Registros Públicos",
       "public-services": "Servicios Públicos",
-      "transparency": "Transparencia"
+      "transparency": "Transparencia",
+      "venezuela": "Venezuela"
     },
     "info": {
       "title": "¿Qué son las Recompensas?",
-      "body": "Las recompensas son solicitudes de información específica financiadas por la comunidad. Cuando tienes conocimiento que cumple con una recompensa, ilumina una señal y vincúlala a la recompensa.\n\nSi tu señal contribuye información valiosa, ganas una parte de la recompensa. Los pagos pueden hacerse públicamente vía pUSD o privadamente vía Coinage.\n\nLas recompensas crean un mercado funcional para información investigativa — financiado por las personas que la necesitan."
+      "body": "Las recompensas son solicitudes de información específica financiadas por la comunidad. Cuando tienes conocimiento que cumple con una recompensa, ilumina una publicación y vincúlala a la recompensa.\n\nSi tu publicación contribuye información valiosa, ganas una parte de la recompensa. Los pagos pueden hacerse públicamente vía pUSD o privadamente vía Coinage.\n\nLas recompensas crean un mercado funcional para información investigativa — financiado por las personas que la necesitan."
     },
     "create": {
       "title": "Crear Recompensa",
@@ -320,10 +324,10 @@
     "hoursLeftSuffix": "h restantes",
     "dayLeft": "1 día restante",
     "daysLeftSuffix": "días restantes",
-    "contributingSignals": "Señales Contribuyentes",
-    "noSignalsYet": "Ninguna señal ha contribuido a esta recompensa aún.",
-    "signalWord": "señal",
-    "signalsWord": "señales",
+    "contributingPosts": "Publicaciones Contribuyentes",
+    "noPostsYet": "Ninguna publicación ha contribuido a esta recompensa aún.",
+    "postWord": "publicación",
+    "postsWord": "publicaciones",
     "illuminate": "Iluminar",
     "fulfilled": "Esta recompensa ha sido cumplida",
     "cancelled": "Esta recompensa fue cancelada",
@@ -337,7 +341,7 @@
   },
   "corroboration": {
     "modal": {
-      "title": "Corroborar Señal",
+      "title": "Corroborar Publicación",
       "stakingWarning": "Estás apostando tu reputación en esta corroboración.",
       "noteLabel": "Agregar una nota (opcional)",
       "notePlaceholder": "Explica tu corroboración...",
@@ -359,7 +363,7 @@
     "source": "Fuente",
     "weight": "Peso"
   },
-  "signal": {
+  "post": {
     "topics": "Temas:",
     "location": "Ubicación:",
     "illuminated": "Iluminado:",
@@ -377,11 +381,11 @@
     "reasonForChallenge": "Razón de la objeción",
     "notePlaceholder": "Agrega contexto o detalles...",
     "challengePlaceholder": "Explica por qué esto es inexacto...",
-    "setupRequired": "Completa la configuración de tu perfil para {action} señales."
+    "setupRequired": "Completa la configuración de tu perfil para {action} publicaciones."
   },
   "posts": {
     "title": "Publicaciones",
-    "description": "Análisis e investigaciones de formato largo de la red.",
+    "description": "Observaciones, evidencia e investigaciones de la red.",
     "allPosts": "Todas",
     "filterByTopic": "Filtrar por Tema",
     "searchPlaceholder": "Buscar publicaciones...",
@@ -391,14 +395,17 @@
     "postsWord": "publicaciones",
     "ofWord": "de",
     "clearFilters": "Limpiar filtros",
-    "claimWord": "afirmación",
-    "claimsWord": "afirmaciones",
-    "signalWord": "señal",
-    "signalsWord": "señales",
+    "corroborationWord": "corroboración",
+    "corroborationsWord": "corroboraciones",
+    "challengeWord": "cuestionamiento",
+    "challengesWord": "cuestionamientos",
     "readMore": "Leer más",
     "backToPosts": "Volver a Publicaciones",
     "sources": "Fuentes",
-    "relatedSignals": "Señales Relacionadas",
+    "relatedPosts": "Publicaciones Relacionadas",
+    "corroborate": "Corroborar",
+    "dispute": "Disputar",
+    "viewTrust": "Ver Confianza",
     "topics": {
       "economy": "Economía",
       "inflation": "Inflación",
@@ -473,22 +480,22 @@
     "overallScore": "Puntuación General",
     "topicScores": "Reputación por Tema",
     "contributions": "Contribuciones",
-    "signals": "Señales",
+    "posts": "Publicaciones",
     "corroborations": "Corroboraciones",
     "challenges": "Cuestionamientos",
-    "noActivity": "Aún no tienes actividad. ¡Comienza iluminando una señal!"
+    "noActivity": "Aún no tienes actividad. ¡Comienza iluminando una publicación!"
   },
   "emptyStates": {
-    "signals": {
-      "title": "Aún no hay señales",
+    "posts": {
+      "title": "Aún no hay publicaciones",
       "description": "Sé el primero en iluminar. Comparte lo que observas para comenzar a construir entendimiento colectivo.",
       "filtered": {
-        "title": "No se encontraron señales",
-        "description": "Ninguna señal coincide con tus filtros. Intenta ajustar tu búsqueda."
+        "title": "No se encontraron publicaciones",
+        "description": "Ninguna publicación coincide con tus filtros. Intenta ajustar tu búsqueda."
       },
       "chain": {
-        "title": "No hay señales en esta historia",
-        "description": "Esta historia espera su primera señal. Contribuye tus observaciones."
+        "title": "No hay publicaciones en esta historia",
+        "description": "Esta historia espera su primera publicación. Contribuye tus observaciones."
       }
     },
     "bounties": {
@@ -501,7 +508,7 @@
     },
     "chains": {
       "title": "Aún no hay historias",
-      "description": "Las historias emergen cuando las luciérnagas conectan sus señales. Sé el primero en iluminar.",
+      "description": "Las historias emergen cuando las luciérnagas conectan sus publicaciones. Sé el primero en iluminar.",
       "filtered": {
         "title": "No hay historias coincidentes",
         "description": "Ninguna historia coincide con tus filtros actuales."
@@ -529,7 +536,7 @@
     },
     "profile": {
       "title": "Aún no hay contribuciones",
-      "description": "Comienza a iluminar señales y corroborar para construir tu reputación."
+      "description": "Comienza a iluminar publicaciones y corroborar para construir tu reputación."
     },
     "seedRequired": {
       "title": "No hay datos cargados",
