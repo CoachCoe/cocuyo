@@ -72,7 +72,7 @@ export function PostActions({
     openAddToStorySheet(post.id);
   };
 
-  const handleExtractClaim = (): void => {
+  const handleExtractClaim = async (): Promise<void> => {
     if (!isConnected) {
       addToast(t.signInToExtract, 'warning');
       return;
@@ -80,19 +80,23 @@ export function PostActions({
 
     setIsExtracting(true);
 
-    // Extract claim using in-memory AppStateProvider
-    const statement = post.content.title ?? post.content.text.slice(0, 200);
-    const claim = extractClaim(post.id, statement);
+    try {
+      // Extract claim and upload to Bulletin Chain
+      const statement = post.content.title ?? post.content.text.slice(0, 200);
+      const claim = await extractClaim(post.id, statement);
 
-    if (claim !== null) {
-      addToast(t.claimExtracted, 'success');
-      // Open trust drawer to show the extracted claim
-      openTrustDrawer(post.id);
-    } else {
-      addToast('Failed to extract claim', 'error');
+      if (claim !== null) {
+        addToast(t.claimExtracted, 'success');
+        // Open trust drawer to show the extracted claim
+        openTrustDrawer(post.id);
+      } else {
+        addToast(t.signInToExtract, 'error');
+      }
+    } catch {
+      addToast(t.signInToExtract, 'error');
+    } finally {
+      setIsExtracting(false);
     }
-
-    setIsExtracting(false);
   };
 
   return (
@@ -146,7 +150,7 @@ export function PostActions({
         {/* Extract Claim */}
         <button
           type="button"
-          onClick={handleExtractClaim}
+          onClick={() => { void handleExtractClaim(); }}
           disabled={isExtracting}
           className={`
             inline-flex items-center gap-2 px-4 py-2.5 rounded-nested

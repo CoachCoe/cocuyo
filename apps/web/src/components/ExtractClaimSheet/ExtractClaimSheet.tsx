@@ -91,16 +91,21 @@ export function ExtractClaimSheet(): ReactElement | null {
     return undefined;
   }, [isOpen, handleKeyDown]);
 
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     if (postId === null || statement.trim().length === 0) return;
 
     setIsSubmitting(true);
 
-    const result = extractClaim(postId, statement.trim());
+    try {
+      // Upload claim to Bulletin Chain
+      const result = await extractClaim(postId, statement.trim());
 
-    if (result !== null) {
-      closeSheet();
-    } else {
+      if (result !== null) {
+        closeSheet();
+      }
+    } catch {
+      // Silently handle errors - sheet will reset on close
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -182,7 +187,7 @@ export function ExtractClaimSheet(): ReactElement | null {
           </button>
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={() => { void handleSubmit(); }}
             disabled={statement.trim().length === 0 || isSubmitting}
             className="flex-1 py-3 px-4 rounded-nested text-sm font-medium bg-[var(--fg-accent)] text-[var(--bg-primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >

@@ -168,7 +168,7 @@ export class SignalServiceImpl implements PostService {
       createdAt: now,
     };
 
-    // Upload to Bulletin Chain (with local fallback)
+    // Upload to Bulletin Chain
     const uploadResult = await uploadToBulletin(fullPost);
     if (!uploadResult.ok) {
       return err(uploadResult.error);

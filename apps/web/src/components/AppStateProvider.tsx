@@ -56,6 +56,7 @@ import {
   emptyCorroborationSummary,
 } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
+import { uploadToBulletin } from '@/lib/services/service-utils';
 import {
   seedPosts,
   seedStoryChains,
@@ -137,14 +138,14 @@ interface AppState {
 interface AppStateActions {
   /** Create a new post */
   createPost: (input: NewPost) => Post | null;
-  /** Submit a corroboration or dispute with evidence */
+  /** Submit a corroboration or dispute with evidence (uploads to Bulletin Chain) */
   submitCorroboration: (
     postId: PostId,
     type: 'corroborate' | 'dispute',
     evidence?: EvidenceInput
-  ) => Corroboration | null;
-  /** Extract a claim from a post */
-  extractClaim: (postId: PostId, statement: string, topics?: string[]) => Claim | null;
+  ) => Promise<Corroboration | null>;
+  /** Extract a claim from a post (uploads to Bulletin Chain) */
+  extractClaim: (postId: PostId, statement: string, topics?: string[]) => Promise<Claim | null>;
   /** Create a bounty (requires outlet mode) */
   createBounty: (input: NewBountyInput, targetPostId?: PostId) => Bounty | null;
   /** Contribute a post to a bounty */
@@ -308,11 +309,11 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     return post;
   }, [currentUser, selectedAccount]);
 
-  const submitCorroboration = useCallback((
+  const submitCorroboration = useCallback(async (
     postId: PostId,
     type: 'corroborate' | 'dispute',
     evidence?: EvidenceInput
-  ): Corroboration | null => {
+  ): Promise<Corroboration | null> => {
     if (!currentUser.isConnected || !currentUser.credentialHash) {
       return null;
     }
@@ -323,13 +324,12 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     }
 
     const now = Date.now();
-    const id = createCorroborationId(generateId());
 
     const corroborationType: CorroborationType = type === 'dispute' ? 'challenge' :
       evidence?.type === 'observation' ? 'witness' : 'evidence';
 
-    const corroboration: Corroboration = {
-      id,
+    // Build corroboration without ID first (ID will be CID from Bulletin)
+    const corroborationData = {
       postId,
       type: corroborationType,
       dimSignature: currentUser.credentialHash,
@@ -341,6 +341,17 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
         ...(evidence.description !== undefined && { evidenceDescription: evidence.description }),
       }),
     };
+
+    // Upload to Bulletin Chain
+    const uploadResult = await uploadToBulletin(corroborationData);
+    if (!uploadResult.ok) {
+      // Bulletin upload failed - return null
+      return null;
+    }
+
+    // Use CID as the corroboration ID
+    const id = createCorroborationId(uploadResult.value.cid);
+    const corroboration: Corroboration = { id, ...corroborationData };
 
     setCorroborations(prev => new Map(prev).set(id, corroboration));
     setCorroborationIds(prev => [...prev, id]);
@@ -375,11 +386,11 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     return corroboration;
   }, [currentUser, posts]);
 
-  const extractClaim = useCallback((
+  const extractClaim = useCallback(async (
     postId: PostId,
     statement: string,
     topics?: string[]
-  ): Claim | null => {
+  ): Promise<Claim | null> => {
     if (!currentUser.isConnected || !currentUser.credentialHash) {
       return null;
     }
@@ -390,19 +401,29 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     }
 
     const now = Date.now();
-    const id = createClaimId(generateId());
 
-    const claim: Claim = {
-      id,
+    // Build claim without ID first (ID will be CID from Bulletin)
+    const claimData = {
       statement,
       sourcePostId: postId,
       extractedBy: currentUser.credentialHash,
       topics: topics ?? [...post.context.topics],
       evidence: [],
-      status: 'pending',
+      status: 'pending' as const,
       createdAt: now,
       updatedAt: now,
     };
+
+    // Upload to Bulletin Chain
+    const uploadResult = await uploadToBulletin(claimData);
+    if (!uploadResult.ok) {
+      // Bulletin upload failed - return null
+      return null;
+    }
+
+    // Use CID as the claim ID
+    const id = createClaimId(uploadResult.value.cid);
+    const claim: Claim = { id, ...claimData };
 
     setClaims(prev => new Map(prev).set(id, claim));
 

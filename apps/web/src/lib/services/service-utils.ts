@@ -9,8 +9,7 @@
  */
 
 import type { PaginatedResult, Result } from '@cocuyo/types';
-import { ok, createDIMCredential, type DIMCredential } from '@cocuyo/types';
-import { calculateCIDFromJSON } from '@cocuyo/bulletin';
+import { ok, err, createDIMCredential, type DIMCredential } from '@cocuyo/types';
 import { getBulletinClient } from '../chain/client';
 import { createLogger } from '../logging';
 
@@ -150,8 +149,9 @@ export interface UploadResult {
 }
 
 /**
- * Upload data to Bulletin Chain with local CID fallback.
- * Returns the CID (from Bulletin if available, calculated locally otherwise).
+ * Upload data to Bulletin Chain.
+ * Returns the CID on success, or an error message on failure.
+ * No silent fallback - callers should handle errors explicitly.
  */
 export async function uploadToBulletin(data: unknown): Promise<Result<UploadResult, string>> {
   try {
@@ -163,10 +163,9 @@ export async function uploadToBulletin(data: unknown): Promise<Result<UploadResu
     logger.debug('Uploaded to Bulletin Chain', 'uploadToBulletin', { cid: result.cid });
     return ok({ cid: result.cid, usedFallback: false });
   } catch (uploadError) {
-    // Fallback to local CID calculation
-    logger.swallowed('Bulletin upload failed, using local CID', 'uploadToBulletin', uploadError);
-    const cid = calculateCIDFromJSON(data);
-    return ok({ cid, usedFallback: true });
+    const message = uploadError instanceof Error ? uploadError.message : 'Bulletin upload failed';
+    logger.swallowed('Bulletin upload failed', 'uploadToBulletin', uploadError);
+    return err(message);
   }
 }
 
