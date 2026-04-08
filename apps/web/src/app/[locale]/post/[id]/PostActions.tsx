@@ -8,16 +8,15 @@
  */
 
 import { useState, type ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Post } from '@cocuyo/types';
 import { useSigner } from '@/hooks';
-import { useClaimService } from '@/lib/services/hooks';
 import { useToast } from '@cocuyo/ui';
 import { IlluminateFAB } from '@/components/IlluminateFAB';
 import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
 import { useTrustDrawer } from '@/components/TrustDrawer';
 import { useAddToStory } from '@/components/AddToStorySheet';
+import { useAppState } from '@/components/AppStateProvider';
 
 export interface PostActionsProps {
   post: Post;
@@ -38,14 +37,16 @@ export function PostActions({
   translations: t,
 }: PostActionsProps): ReactElement {
   const { isConnected } = useSigner();
-  const claimService = useClaimService();
+  const { extractClaim } = useAppState();
   const { addToast } = useToast();
-  const router = useRouter();
   const locale = useLocale();
   const [isExtracting, setIsExtracting] = useState(false);
   const { openSheet: openCorroborateSheet } = useCorroborateDispute();
   const { openDrawer: openTrustDrawer } = useTrustDrawer();
   const { openSheet: openAddToStorySheet } = useAddToStory();
+
+  // Suppress unused locale warning - kept for future i18n routing
+  void locale;
 
   const handleCorroborate = (): void => {
     if (!isConnected) {
@@ -71,7 +72,7 @@ export function PostActions({
     openAddToStorySheet(post.id);
   };
 
-  const handleExtractClaim = async (): Promise<void> => {
+  const handleExtractClaim = (): void => {
     if (!isConnected) {
       addToast(t.signInToExtract, 'warning');
       return;
@@ -79,16 +80,16 @@ export function PostActions({
 
     setIsExtracting(true);
 
-    const result = await claimService.extractClaim({
-      statement: post.content.title ?? post.content.text.slice(0, 200),
-      sourcePostId: post.id,
-    });
+    // Extract claim using in-memory AppStateProvider
+    const statement = post.content.title ?? post.content.text.slice(0, 200);
+    const claim = extractClaim(post.id, statement);
 
-    if (result.ok) {
+    if (claim !== null) {
       addToast(t.claimExtracted, 'success');
-      router.push(`/${locale}/claim/${result.value}`);
+      // Open trust drawer to show the extracted claim
+      openTrustDrawer(post.id);
     } else {
-      addToast(result.error, 'error');
+      addToast('Failed to extract claim', 'error');
     }
 
     setIsExtracting(false);
@@ -145,7 +146,7 @@ export function PostActions({
         {/* Extract Claim */}
         <button
           type="button"
-          onClick={() => { void handleExtractClaim(); }}
+          onClick={handleExtractClaim}
           disabled={isExtracting}
           className={`
             inline-flex items-center gap-2 px-4 py-2.5 rounded-nested
