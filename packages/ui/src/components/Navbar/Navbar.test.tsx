@@ -21,8 +21,8 @@ describe('Navbar', () => {
 
     it('renders default navigation links', () => {
       render(<Navbar />);
-      expect(screen.getByRole('link', { name: 'Signals' })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'Verify' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Explore' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Bounties' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
     });
 
@@ -52,14 +52,14 @@ describe('Navbar', () => {
   describe('active state', () => {
     it('marks current path as active', () => {
       render(<Navbar currentPath="/explore" />);
-      const signalsLink = screen.getByRole('link', { name: 'Signals' });
-      expect(signalsLink).toHaveAttribute('aria-current', 'page');
+      const exploreLink = screen.getByRole('link', { name: 'Explore' });
+      expect(exploreLink).toHaveAttribute('aria-current', 'page');
     });
 
     it('marks nested paths as active', () => {
       render(<Navbar currentPath="/explore/chain-001" />);
-      const signalsLink = screen.getByRole('link', { name: 'Signals' });
-      expect(signalsLink).toHaveAttribute('aria-current', 'page');
+      const exploreLink = screen.getByRole('link', { name: 'Explore' });
+      expect(exploreLink).toHaveAttribute('aria-current', 'page');
     });
 
     it('does not mark other paths as active', () => {

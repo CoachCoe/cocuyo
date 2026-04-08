@@ -142,9 +142,9 @@ export function CorroborateDisputeSheet(): ReactElement | null {
     return undefined;
   }, [isOpen, handleKeyDown]);
 
-  // Handle form submission
+  // Handle form submission - uploads to Bulletin Chain
   const handleSubmit = useCallback(
-    (e: React.FormEvent): void => {
+    async (e: React.FormEvent): Promise<void> => {
       e.preventDefault();
 
       if (post === null || content.trim().length === 0) {
@@ -153,17 +153,22 @@ export function CorroborateDisputeSheet(): ReactElement | null {
 
       setIsSubmitting(true);
 
-      const evidence: EvidenceInput = {
-        type: evidenceType,
-        content: content.trim(),
-        ...(description.trim().length > 0 && { description: description.trim() }),
-      };
+      try {
+        const evidence: EvidenceInput = {
+          type: evidenceType,
+          content: content.trim(),
+          ...(description.trim().length > 0 && { description: description.trim() }),
+        };
 
-      const result = submitCorroboration(post.id, mode, evidence);
+        // Upload corroboration to Bulletin Chain
+        const result = await submitCorroboration(post.id, mode, evidence);
 
-      if (result !== null) {
-        closeSheet();
-      } else {
+        if (result !== null) {
+          closeSheet();
+        }
+      } catch {
+        // Silently handle errors - sheet will reset on close
+      } finally {
         setIsSubmitting(false);
       }
     },
@@ -230,7 +235,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6">
+        <form onSubmit={(e) => { void handleSubmit(e); }} className="p-4 sm:p-6 space-y-6">
           {/* Bounty notice */}
           {bounty !== null && (
             <div className="p-4 rounded-nested bg-[var(--color-firefly-gold)]/10 border border-[var(--color-firefly-gold)]/30">

@@ -8,16 +8,15 @@
  */
 
 import { useState, type ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Post } from '@cocuyo/types';
 import { useSigner } from '@/hooks';
-import { useClaimService } from '@/lib/services/hooks';
 import { useToast } from '@cocuyo/ui';
 import { IlluminateFAB } from '@/components/IlluminateFAB';
 import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
 import { useTrustDrawer } from '@/components/TrustDrawer';
 import { useAddToStory } from '@/components/AddToStorySheet';
+import { useAppState } from '@/components/AppStateProvider';
 
 export interface PostActionsProps {
   post: Post;
@@ -38,14 +37,16 @@ export function PostActions({
   translations: t,
 }: PostActionsProps): ReactElement {
   const { isConnected } = useSigner();
-  const claimService = useClaimService();
+  const { extractClaim } = useAppState();
   const { addToast } = useToast();
-  const router = useRouter();
   const locale = useLocale();
   const [isExtracting, setIsExtracting] = useState(false);
   const { openSheet: openCorroborateSheet } = useCorroborateDispute();
   const { openDrawer: openTrustDrawer } = useTrustDrawer();
   const { openSheet: openAddToStorySheet } = useAddToStory();
+
+  // Suppress unused locale warning - kept for future i18n routing
+  void locale;
 
   const handleCorroborate = (): void => {
     if (!isConnected) {
@@ -79,19 +80,23 @@ export function PostActions({
 
     setIsExtracting(true);
 
-    const result = await claimService.extractClaim({
-      statement: post.content.title ?? post.content.text.slice(0, 200),
-      sourcePostId: post.id,
-    });
+    try {
+      // Extract claim and upload to Bulletin Chain
+      const statement = post.content.title ?? post.content.text.slice(0, 200);
+      const claim = await extractClaim(post.id, statement);
 
-    if (result.ok) {
-      addToast(t.claimExtracted, 'success');
-      router.push(`/${locale}/claim/${result.value}`);
-    } else {
-      addToast(result.error, 'error');
+      if (claim !== null) {
+        addToast(t.claimExtracted, 'success');
+        // Open trust drawer to show the extracted claim
+        openTrustDrawer(post.id);
+      } else {
+        addToast(t.signInToExtract, 'error');
+      }
+    } catch {
+      addToast(t.signInToExtract, 'error');
+    } finally {
+      setIsExtracting(false);
     }
-
-    setIsExtracting(false);
   };
 
   return (

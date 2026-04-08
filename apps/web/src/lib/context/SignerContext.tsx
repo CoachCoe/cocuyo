@@ -24,6 +24,7 @@ import {
   type SignerError as PolkadotSignerError,
   isInsideContainer,
 } from '@polkadot-apps/signer';
+import { requestExternalPermissions } from '../host/permissions';
 import type { PolkadotSigner } from 'polkadot-api';
 import type { Result } from '@cocuyo/types';
 import { SignerNotConnectedError, SigningFailedError } from '../errors';
@@ -56,6 +57,11 @@ export function SignerProvider({ children }: SignerProviderProps): ReactNode {
       extensionTimeout: 1_000,
     });
     managerRef.current = manager;
+
+    // Request external permissions for map tiles/geocoding when in Triangle
+    if (isInsideContainer()) {
+      void requestExternalPermissions();
+    }
 
     const unsubscribe = manager.subscribe(setState);
     void manager.connect();
