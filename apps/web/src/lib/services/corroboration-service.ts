@@ -10,6 +10,7 @@ import type {
   CorroborationId,
   PostId,
   NewCorroboration,
+  EvidenceQuality,
   Result,
 } from '@cocuyo/types';
 import {
@@ -17,6 +18,25 @@ import {
   err,
   createCorroborationId,
 } from '@cocuyo/types';
+
+/**
+ * Determine initial quality based on corroboration content.
+ * Called automatically during corroborate().
+ */
+function determineInitialQuality(input: NewCorroboration): EvidenceQuality {
+  // Witness accounts are observations
+  if (input.type === 'witness') {
+    return 'observation';
+  }
+
+  // Evidence with links/media is documented
+  if (input.evidenceContent || input.evidencePostId) {
+    return 'documented';
+  }
+
+  // Default
+  return 'unverified';
+}
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
 import { getConnectedCredential } from './service-utils';
 
@@ -56,13 +76,16 @@ export class CorroborationServiceImpl implements CorroborationService {
 
     const now = Date.now();
 
+    const quality = newCorroboration.quality ?? determineInitialQuality(newCorroboration);
+
     const corroboration: Corroboration = {
       id: '' as CorroborationId,
       postId: newCorroboration.postId,
       type: newCorroboration.type,
       dimSignature: dimCredential,
-      weight: 1.0, // Default weight, would be calculated from reputation
+      quality,
       createdAt: now,
+      ...(newCorroboration.claimId !== undefined && { claimId: newCorroboration.claimId }),
       ...(newCorroboration.note !== undefined && { note: newCorroboration.note }),
       ...(newCorroboration.evidencePostId !== undefined && {
         evidencePostId: newCorroboration.evidencePostId,

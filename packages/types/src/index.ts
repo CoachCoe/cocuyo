@@ -9,7 +9,7 @@
 export type {
   ChainId,
   CorroborationId,
-  BountyId,
+  CampaignId,
   FireflyId,
   CollectiveId,
   VerificationRequestId,
@@ -23,12 +23,14 @@ export type {
   PostId,
   ClaimId,
   VerdictId,
+  OutletId,
+  CommunityId,
 } from './brands';
 
 export {
   createChainId,
   createCorroborationId,
-  createBountyId,
+  createCampaignId,
   createFireflyId,
   createCollectiveId,
   createVerificationRequestId,
@@ -42,6 +44,8 @@ export {
   createPostId,
   createClaimId,
   createVerdictId,
+  createOutletId,
+  createCommunityId,
 } from './brands';
 
 // Post types (replaces Signal types)
@@ -125,12 +129,36 @@ export type {
 export type {
   CorroborationType,
   EvidenceType,
+  EvidenceQuality,
   Corroboration,
   CorroborationSummary,
   NewCorroboration,
 } from './corroboration';
 
 export { emptyCorroborationSummary } from './corroboration';
+
+// Campaign types
+export type {
+  CampaignStatus,
+  CampaignSponsor,
+  DeliverableType,
+  CampaignDeliverable,
+  Campaign,
+  CampaignPreview,
+  NewCampaign,
+  CampaignPayout,
+  PayoutDistribution,
+  CampaignContribution,
+  AllocationShare,
+  AllocationInput,
+  AllocationResult,
+} from './campaign';
+
+// Outlet types
+export type {
+  Outlet,
+  OutletPreview,
+} from './outlet';
 
 // Firefly types
 export type {
@@ -140,20 +168,6 @@ export type {
   WalletState,
   WalletActions,
 } from './firefly';
-
-// Bounty types
-export type {
-  BountyStatus,
-  Bounty,
-  BountyPreview,
-  NewBounty,
-  BountyPayout,
-  PayoutDistribution,
-  BountyContribution,
-  AllocationShare,
-  AllocationInput,
-  AllocationResult,
-} from './bounty';
 
 // Personhood types
 export type {
@@ -186,7 +200,8 @@ export type {
   PostService,
   ChainService,
   CorroborationService,
-  BountyService,
+  CampaignService,
+  OutletService,
   ClaimService,
   VerdictService,
   // Reputation services

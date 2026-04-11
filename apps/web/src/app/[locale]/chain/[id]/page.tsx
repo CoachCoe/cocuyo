@@ -110,9 +110,9 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
   // Deep dives (longer form posts) - for now same as chain posts
   const deepDives = posts.filter((p) => p.content.title !== undefined);
 
-  // Chain-linked bounties require indexing that doesn't exist yet.
-  // Return empty array to avoid showing incorrect/unrelated bounties.
-  const chainBounties: never[] = [];
+  // Chain-linked campaigns require indexing that doesn't exist yet.
+  // Return empty array to avoid showing incorrect/unrelated campaigns.
+  const chainCampaigns: never[] = [];
 
   const statusColor = getStatusColor(chain.status);
 
@@ -177,12 +177,12 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
     </div>
   );
 
-  // Bounties content
-  const bountiesContent = (
+  // Campaigns content
+  const campaignsContent = (
     <div>
       <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
         <p className="text-[var(--fg-secondary)]">
-          {t('helpNeeded.noBounties')}
+          {t('helpNeeded.noCampaigns')}
         </p>
       </div>
     </div>
@@ -258,7 +258,7 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
                   <div className="flex justify-between">
                     <dt className="text-[var(--fg-secondary)]">{t('corroborations')}</dt>
                     <dd className="text-[var(--fg-success)] font-medium">
-                      {chain.stats.totalCorroborations}
+                      {chain.stats.corroborationCount}
                     </dd>
                   </div>
                   <div className="flex justify-between">
@@ -267,23 +267,17 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
                       className="font-medium"
                       style={{
                         color:
-                          chain.stats.totalChallenges > 0
+                          chain.stats.challengeCount > 0
                             ? 'var(--fg-error)'
                             : 'var(--fg-secondary)',
                       }}
                     >
-                      {chain.stats.totalChallenges}
+                      {chain.stats.challengeCount}
                     </dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-[var(--fg-secondary)]">{t('contributors')}</dt>
                     <dd className="text-[var(--fg-primary)] font-medium">{chain.stats.contributorCount}</dd>
-                  </div>
-                  <div className="flex justify-between pt-3 border-t border-[var(--border-subtle)]">
-                    <dt className="text-[var(--fg-secondary)]">{t('weight')}</dt>
-                    <dd className="text-[var(--color-firefly-gold)] font-medium">
-                      {chain.stats.totalWeight.toFixed(1)}
-                    </dd>
                   </div>
                 </dl>
 
@@ -316,10 +310,10 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
             <ChainTabs
               signalsContent={postsContent1}
               postsContent={deepDivesContent}
-              bountiesContent={bountiesContent}
+              campaignsContent={campaignsContent}
               signalsCount={posts.length}
               postsCount={deepDives.length}
-              bountiesCount={chainBounties.length}
+              campaignsCount={chainCampaigns.length}
               translations={{
                 whatsHappening: t('tabs.whatsHappening'),
                 deepDives: t('tabs.deepDives'),

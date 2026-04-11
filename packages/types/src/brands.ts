@@ -9,8 +9,8 @@ export type ChainId = string & { readonly __brand: 'ChainId' };
 /** Unique identifier for a corroboration */
 export type CorroborationId = string & { readonly __brand: 'CorroborationId' };
 
-/** Unique identifier for a bounty */
-export type BountyId = string & { readonly __brand: 'BountyId' };
+/** Unique identifier for a campaign */
+export type CampaignId = string & { readonly __brand: 'CampaignId' };
 
 /** Unique identifier for a firefly (verified human) */
 export type FireflyId = string & { readonly __brand: 'FireflyId' };
@@ -33,7 +33,7 @@ export type PolkadotAddress = string & { readonly __brand: 'PolkadotAddress' };
 /** Transaction hash for on-chain transactions */
 export type TransactionHash = string & { readonly __brand: 'TransactionHash' };
 
-/** Unique identifier for a bounty escrow */
+/** Unique identifier for a campaign escrow */
 export type EscrowId = string & { readonly __brand: 'EscrowId' };
 
 /** Public key for a Coinage coin (single-use, never reused) */
@@ -51,6 +51,12 @@ export type ClaimId = string & { readonly __brand: 'ClaimId' };
 /** Unique identifier for a verdict (collective determination on a claim) */
 export type VerdictId = string & { readonly __brand: 'VerdictId' };
 
+/** Unique identifier for a news outlet */
+export type OutletId = string & { readonly __brand: 'OutletId' };
+
+/** Unique identifier for a community-funded campaign */
+export type CommunityId = string & { readonly __brand: 'CommunityId' };
+
 /**
  * Type guard utilities for branded types.
  * These are used to create branded values from raw strings.
@@ -64,8 +70,8 @@ export function createCorroborationId(id: string): CorroborationId {
   return id as CorroborationId;
 }
 
-export function createBountyId(id: string): BountyId {
-  return id as BountyId;
+export function createCampaignId(id: string): CampaignId {
+  return id as CampaignId;
 }
 
 export function createFireflyId(id: string): FireflyId {
@@ -118,4 +124,12 @@ export function createClaimId(id: string): ClaimId {
 
 export function createVerdictId(id: string): VerdictId {
   return id as VerdictId;
+}
+
+export function createOutletId(id: string): OutletId {
+  return id as OutletId;
+}
+
+export function createCommunityId(id: string): CommunityId {
+  return id as CommunityId;
 }

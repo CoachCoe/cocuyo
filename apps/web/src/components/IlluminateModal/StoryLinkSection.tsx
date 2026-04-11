@@ -78,7 +78,7 @@ export function StoryLinkSection({
     const bSelected = selectedChains.includes(b.id);
     if (aSelected && !bSelected) return -1;
     if (!aSelected && bSelected) return 1;
-    return b.totalCorroborations - a.totalCorroborations;
+    return b.corroborationCount - a.corroborationCount;
   });
 
   const hasSelectedChains = selectedChains.length > 0;
@@ -141,7 +141,7 @@ export function StoryLinkSection({
                   <div className="flex items-center gap-3 mt-1 text-xs text-tertiary">
                     <span>{chain.postCount} posts</span>
                     <span className="text-[var(--fg-success)]">
-                      {chain.totalCorroborations} corroborations
+                      {chain.corroborationCount} corroborations
                     </span>
                   </div>
                 </div>

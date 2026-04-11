@@ -1,19 +1,16 @@
 'use client';
 
 /**
- * useDebouncedSuggestions — Fetch related chains and bounties with debounce.
+ * useDebouncedSuggestions — Fetch related chains and campaigns with debounce.
  *
  * As the user enters topics and location, this hook fetches matching
- * story chains and open bounties to suggest linking the new signal to.
+ * story chains and open campaigns to suggest linking the new signal to.
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useLocale } from 'next-intl';
-import type { ChainPreview, BountyPreview } from '@cocuyo/types';
-import { chainService, bountyService } from '@/lib/services';
+import type { ChainPreview, CampaignPreview } from '@cocuyo/types';
+import { chainService, campaignService } from '@/lib/services';
 import { createLogger } from '@/lib/utils/logger';
-
-type Locale = 'en' | 'es';
 
 const log = createLogger('useDebouncedSuggestions');
 
@@ -21,7 +18,7 @@ const DEBOUNCE_MS = 300;
 
 interface SuggestionsResult {
   chains: ChainPreview[];
-  bounties: BountyPreview[];
+  campaigns: CampaignPreview[];
   isLoading: boolean;
 }
 
@@ -29,9 +26,8 @@ export function useDebouncedSuggestions(
   topics: string[],
   location: string
 ): SuggestionsResult {
-  const locale = useLocale() as Locale;
   const [chains, setChains] = useState<ChainPreview[]>([]);
-  const [bounties, setBounties] = useState<BountyPreview[]>([]);
+  const [campaigns, setCampaigns] = useState<CampaignPreview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   const abortController = useRef<AbortController | null>(null);
@@ -46,7 +42,7 @@ export function useDebouncedSuggestions(
     // If no topics and no location, clear suggestions
     if (topics.length === 0 && location.trim().length === 0) {
       setChains([]);
-      setBounties([]);
+      setCampaigns([]);
       setIsLoading(false);
       return;
     }
@@ -88,21 +84,20 @@ export function useDebouncedSuggestions(
         }
       });
 
-      // Get open bounties and filter by topic/location match
-      const bountyResult = await bountyService.getOpenBounties({
-        locale,
+      // Get active campaigns and filter by topic/location match
+      const campaignResult = await campaignService.getActiveCampaigns({
         pagination: { limit: 50, offset: 0 },
       });
       const trimmedLoc = location.trim().toLowerCase();
-      const matchingBounties = bountyResult.items.filter((bounty: BountyPreview): boolean => {
+      const matchingCampaigns = campaignResult.items.filter((campaign: CampaignPreview): boolean => {
         const topicMatch = topics.some((t) =>
-          bounty.topics.some((bt: string) =>
-            bt.toLowerCase().includes(t.toLowerCase())
+          campaign.topics.some((ct: string) =>
+            ct.toLowerCase().includes(t.toLowerCase())
           )
         );
         const locationMatch =
           trimmedLoc.length > 0 &&
-          (bounty.location?.toLowerCase().includes(trimmedLoc) === true);
+          (campaign.location?.toLowerCase().includes(trimmedLoc) === true);
 
         return topicMatch || locationMatch;
       });
@@ -113,7 +108,7 @@ export function useDebouncedSuggestions(
       }
 
       setChains(Array.from(chainMap.values()).slice(0, 10));
-      setBounties(matchingBounties.slice(0, 5));
+      setCampaigns(matchingCampaigns.slice(0, 5));
     } catch (error) {
       // Ignore abort errors
       if (error instanceof Error && error.name === 'AbortError') {
@@ -125,7 +120,7 @@ export function useDebouncedSuggestions(
         setIsLoading(false);
       }
     }
-  }, [topics, location, locale]);
+  }, [topics, location]);
 
   // Debounce the fetch
   useEffect(() => {
@@ -153,5 +148,5 @@ export function useDebouncedSuggestions(
     };
   }, []);
 
-  return { chains, bounties, isLoading };
+  return { chains, campaigns, isLoading };
 }

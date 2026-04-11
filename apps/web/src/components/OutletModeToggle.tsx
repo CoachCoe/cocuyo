@@ -3,7 +3,7 @@
 /**
  * OutletModeToggle — Toggle component for demo mode.
  *
- * Allows toggling outlet/collective mode to demo bounty creation
+ * Allows toggling outlet/collective mode to demo campaign creation
  * and verdict issuance without switching wallets.
  */
 

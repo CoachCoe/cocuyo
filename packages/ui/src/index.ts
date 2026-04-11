@@ -18,19 +18,13 @@ export { Footer } from './components/Footer';
 export type { FooterProps } from './components/Footer';
 
 export { FeedPostCard } from './components/FeedPostCard';
-export type { FeedPostCardProps, PostBountyInfo } from './components/FeedPostCard';
+export type { FeedPostCardProps, PostCampaignInfo } from './components/FeedPostCard';
 
 export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';
 
-export { BountyStatusBadge } from './components/BountyStatusBadge';
-export type { BountyStatusBadgeProps } from './components/BountyStatusBadge';
-
 export { PaymentModeBadge } from './components/PaymentModeBadge';
 export type { PaymentModeBadgeProps } from './components/PaymentModeBadge';
-
-export { BountyCard } from './components/BountyCard';
-export type { BountyCardProps } from './components/BountyCard';
 
 export { PostCard } from './components/PostCard';
 export type { PostCardProps, PostCardTranslations } from './components/PostCard';

@@ -54,7 +54,7 @@ export class ChainServiceImpl implements ChainService {
       topics: [...chain.topics],
       status: chain.status,
       postCount: chain.stats.postCount,
-      totalCorroborations: chain.stats.totalCorroborations,
+      corroborationCount: chain.stats.corroborationCount,
       updatedAt: chain.updatedAt,
     }));
 
@@ -75,7 +75,7 @@ export class ChainServiceImpl implements ChainService {
       topics: [...chain.topics],
       status: chain.status,
       postCount: chain.stats.postCount,
-      totalCorroborations: chain.stats.totalCorroborations,
+      corroborationCount: chain.stats.corroborationCount,
       updatedAt: chain.updatedAt,
     }));
 

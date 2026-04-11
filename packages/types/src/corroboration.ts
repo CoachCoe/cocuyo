@@ -1,16 +1,15 @@
 /**
  * Corroboration types — the core interaction in the Firefly Network.
  *
- * A corroboration is NOT a "like." It is a reputation-staked act of verification.
- * When you corroborate, you are putting your accumulated reputation behind
- * your assessment. If the post is later successfully challenged,
- * your reputation in that domain diminishes.
+ * A corroboration is NOT a "like." It is an evidence-based act of verification.
+ * When you corroborate, you are contributing evidence or witness testimony
+ * that supports or challenges a claim.
  */
 
-import type { CorroborationId, DIMCredential, PostId } from './brands';
+import type { ClaimId, CorroborationId, DIMCredential, PostId } from './brands';
 
 /**
- * Types of corroboration — each carries different meaning and weight.
+ * Types of corroboration — each carries different meaning.
  */
 export type CorroborationType =
   | 'witness'    // "I can independently confirm this observation"
@@ -28,28 +27,40 @@ export type EvidenceType =
   | 'observation';   // Free text firsthand account
 
 /**
+ * Evidence quality assessment — determined by content and review.
+ */
+export type EvidenceQuality =
+  | 'peer_reviewed'    // Reviewed by collective members
+  | 'source_verified'  // Original source confirmed
+  | 'documented'       // Has supporting documents/media
+  | 'observation'      // First-hand witness account
+  | 'unverified';      // Not yet reviewed (default)
+
+/**
  * A single corroboration record.
  *
  * Every corroboration is:
  * - Signed with a DIM credential (verified human)
  * - Recorded permanently on-chain
- * - Weighted by the contributor's topic reputation
+ * - Assessed by evidence quality, not stake weight
  */
 export interface Corroboration {
   /** Unique identifier */
   readonly id: CorroborationId;
   /** The post being corroborated */
   readonly postId: PostId;
+  /** Optional link to specific claim within post */
+  readonly claimId?: ClaimId;
   /** Type of corroboration */
   readonly type: CorroborationType;
   /** DIM credential of the corroborating firefly */
   readonly dimSignature: DIMCredential;
+  /** Evidence quality assessment */
+  readonly quality: EvidenceQuality;
   /** Optional explanation or evidence reference */
   readonly note?: string;
   /** If type is 'evidence', the supporting post ID */
   readonly evidencePostId?: PostId;
-  /** Reputation weight at time of corroboration */
-  readonly weight: number;
   /** When this corroboration was made (Unix timestamp) */
   readonly createdAt: number;
 
@@ -75,8 +86,6 @@ export interface CorroborationSummary {
   readonly expertiseCount: number;
   /** Number of challenges */
   readonly challengeCount: number;
-  /** Total reputation-weighted score */
-  readonly totalWeight: number;
 }
 
 /**
@@ -84,7 +93,10 @@ export interface CorroborationSummary {
  */
 export interface NewCorroboration {
   readonly postId: PostId;
+  readonly claimId?: ClaimId;
   readonly type: CorroborationType;
+  /** Quality defaults to 'unverified' if not specified */
+  readonly quality?: EvidenceQuality;
   readonly note?: string;
   /** Required if type is 'evidence' */
   readonly evidencePostId?: PostId;
@@ -104,6 +116,5 @@ export function emptyCorroborationSummary(): CorroborationSummary {
     evidenceCount: 0,
     expertiseCount: 0,
     challengeCount: 0,
-    totalWeight: 0,
   };
 }

@@ -116,9 +116,9 @@ export function EvidenceSection({ title, type, corroborations }: EvidenceSection
                 </p>
               )}
 
-              {/* Weight indicator */}
+              {/* Quality indicator */}
               <div className="mt-2 pt-2 border-t border-subtle flex items-center gap-2 text-xs text-tertiary">
-                <span>Weight: {corr.weight}</span>
+                <span>Quality: {corr.quality}</span>
               </div>
             </div>
           );

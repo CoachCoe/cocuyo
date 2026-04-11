@@ -1,24 +1,24 @@
 'use client';
 
 /**
- * SuggestionsList — Displays matching chains and bounties for linking.
+ * SuggestionsList — Displays matching chains and campaigns for linking.
  *
- * Shows selectable cards for story chains and bounties that match
+ * Shows selectable cards for story chains and campaigns that match
  * the signal's topics and location. Pre-selected items are shown first.
  */
 
 import type { ReactElement } from 'react';
-import type { ChainPreview, BountyPreview, ChainId, BountyId } from '@cocuyo/types';
+import type { ChainPreview, CampaignPreview, ChainId, CampaignId } from '@cocuyo/types';
 
-interface SuggestionsListProps {
+export interface SuggestionsListProps {
   chains: ChainPreview[];
-  bounties: BountyPreview[];
+  campaigns: CampaignPreview[];
   selectedChains: ChainId[];
-  selectedBounties: BountyId[];
+  selectedCampaigns: CampaignId[];
   preSelectedChainId: ChainId | null;
-  preSelectedBountyId: BountyId | null;
+  preSelectedCampaignId: CampaignId | null;
   onChainToggle: (chainId: ChainId) => void;
-  onBountyToggle: (bountyId: BountyId) => void;
+  onCampaignToggle: (campaignId: CampaignId) => void;
   isLoading: boolean;
 }
 
@@ -34,13 +34,13 @@ function formatFunding(amount: bigint): string {
 
 export function SuggestionsList({
   chains,
-  bounties,
+  campaigns,
   selectedChains,
-  selectedBounties,
+  selectedCampaigns,
   preSelectedChainId,
-  preSelectedBountyId,
+  preSelectedCampaignId,
   onChainToggle,
-  onBountyToggle,
+  onCampaignToggle,
   isLoading,
 }: SuggestionsListProps): ReactElement {
   // Sort chains: pre-selected first, then selected, then rest
@@ -57,12 +57,12 @@ export function SuggestionsList({
     return 0;
   });
 
-  // Sort bounties similarly
-  const sortedBounties = [...bounties].sort((a, b) => {
-    const aPreSelected = a.id === preSelectedBountyId;
-    const bPreSelected = b.id === preSelectedBountyId;
-    const aSelected = selectedBounties.includes(a.id);
-    const bSelected = selectedBounties.includes(b.id);
+  // Sort campaigns similarly
+  const sortedCampaigns = [...campaigns].sort((a, b) => {
+    const aPreSelected = a.id === preSelectedCampaignId;
+    const bPreSelected = b.id === preSelectedCampaignId;
+    const aSelected = selectedCampaigns.includes(a.id);
+    const bSelected = selectedCampaigns.includes(b.id);
 
     if (aPreSelected && !bPreSelected) return -1;
     if (!aPreSelected && bPreSelected) return 1;
@@ -71,8 +71,8 @@ export function SuggestionsList({
     return 0;
   });
 
-  const hasContent = chains.length > 0 || bounties.length > 0;
-  const hasPreSelected = preSelectedChainId != null || preSelectedBountyId != null;
+  const hasContent = chains.length > 0 || campaigns.length > 0;
+  const hasPreSelected = preSelectedChainId != null || preSelectedCampaignId != null;
 
   if (!hasContent && !hasPreSelected && !isLoading) {
     return <></>;
@@ -82,7 +82,7 @@ export function SuggestionsList({
     <div className="space-y-4">
       <div>
         <h3 className="text-sm font-medium text-white mb-2">
-          Link to Story Chains or Bounties
+          Link to Story Chains or Campaigns
         </h3>
         <p className="text-xs text-[var(--color-text-tertiary)]">
           Connect your signal to related conversations or earn rewards.
@@ -111,7 +111,7 @@ export function SuggestionsList({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          Finding related chains and bounties...
+          Finding related chains and campaigns...
         </div>
       )}
 
@@ -158,7 +158,7 @@ export function SuggestionsList({
                     <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-text-tertiary)]">
                       <span>{chain.postCount} posts</span>
                       <span className="text-[var(--color-corroborated)]">
-                        {chain.totalCorroborations} corroborations
+                        {chain.corroborationCount} corroborations
                       </span>
                       {chain.location != null && <span>{chain.location}</span>}
                     </div>
@@ -170,20 +170,20 @@ export function SuggestionsList({
         </div>
       )}
 
-      {/* Bounties */}
-      {sortedBounties.length > 0 && (
+      {/* Campaigns */}
+      {sortedCampaigns.length > 0 && (
         <div>
           <h4 className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
-            Open Bounties ({sortedBounties.length})
+            Open Campaigns ({sortedCampaigns.length})
           </h4>
           <div className="space-y-2">
-            {sortedBounties.map((bounty) => {
-              const isSelected = selectedBounties.includes(bounty.id);
-              const isPreSelected = bounty.id === preSelectedBountyId;
+            {sortedCampaigns.map((campaign) => {
+              const isSelected = selectedCampaigns.includes(campaign.id);
+              const isPreSelected = campaign.id === preSelectedCampaignId;
 
               return (
                 <label
-                  key={bounty.id}
+                  key={campaign.id}
                   className={`
                     flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all
                     ${
@@ -196,13 +196,13 @@ export function SuggestionsList({
                   <input
                     type="checkbox"
                     checked={isSelected}
-                    onChange={() => onBountyToggle(bounty.id)}
+                    onChange={() => onCampaignToggle(campaign.id)}
                     className="mt-1 w-4 h-4 rounded border-[var(--color-border-emphasis)] bg-[var(--color-bg-tertiary)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] focus:ring-offset-0"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-white truncate">
-                        {bounty.title}
+                        {campaign.title}
                       </span>
                       {isPreSelected && (
                         <span className="px-2 py-0.5 text-xs bg-[var(--color-accent-glow)] text-[var(--color-accent)] rounded">
@@ -212,14 +212,14 @@ export function SuggestionsList({
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-xs">
                       <span className="text-[var(--color-accent)] font-medium">
-                        {formatFunding(bounty.fundingAmount)} reward
+                        {formatFunding(campaign.fundingAmount)} reward
                       </span>
                       <span className="text-[var(--color-text-tertiary)]">
-                        {bounty.contributionCount} contributions
+                        {campaign.contributionCount} contributions
                       </span>
-                      {bounty.location != null && (
+                      {campaign.location != null && (
                         <span className="text-[var(--color-text-tertiary)]">
-                          {bounty.location}
+                          {campaign.location}
                         </span>
                       )}
                     </div>
@@ -233,7 +233,7 @@ export function SuggestionsList({
 
       {!isLoading && !hasContent && !hasPreSelected && (
         <p className="text-sm text-[var(--color-text-tertiary)]">
-          Add topics or location to see related chains and bounties.
+          Add topics or location to see related chains and campaigns.
         </p>
       )}
     </div>

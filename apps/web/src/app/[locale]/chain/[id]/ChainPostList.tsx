@@ -293,7 +293,7 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
                       </span>
                     )}
                     <span className="text-[var(--color-text-tertiary)]">
-                      {t('weight')}: {post.corroborations.totalWeight.toFixed(1)}
+                      {t('evidence')}: {post.corroborations.evidenceCount}
                     </span>
                   </div>
 

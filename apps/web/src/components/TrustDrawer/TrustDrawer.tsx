@@ -4,7 +4,7 @@
  * TrustDrawer — Detailed verification information for a post.
  *
  * Responsive: bottom sheet on mobile, side drawer on desktop.
- * Shows claims, evidence, verdicts, and bounty information.
+ * Shows claims, evidence, verdicts, and campaign information.
  */
 
 import { useEffect, useRef, useCallback, type ReactElement } from 'react';
@@ -20,7 +20,7 @@ const FOCUSABLE_SELECTOR =
 
 export function TrustDrawer(): ReactElement | null {
   const { isOpen, postId, closeDrawer } = useTrustDrawer();
-  const { getPost, getPostClaims, getPostCorroborations, getPostBounties, claimVerdicts, verdicts } = useAppState();
+  const { getPost, getPostClaims, getPostCorroborations, getPostCampaigns, claimVerdicts, verdicts } = useAppState();
   const drawerRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
 
@@ -28,7 +28,7 @@ export function TrustDrawer(): ReactElement | null {
   const post = postId !== null ? getPost(postId) : undefined;
   const claims = postId !== null ? getPostClaims(postId) : [];
   const corroborations = postId !== null ? getPostCorroborations(postId) : [];
-  const bounties = postId !== null ? getPostBounties(postId) : [];
+  const campaigns = postId !== null ? getPostCampaigns(postId) : [];
 
   // Get verdicts for claims
   const claimVerdictsData = claims.map((claim) => {
@@ -180,28 +180,28 @@ export function TrustDrawer(): ReactElement | null {
             </p>
           </div>
 
-          {/* Bounties */}
-          {bounties.length > 0 && (
+          {/* Campaigns */}
+          {campaigns.length > 0 && (
             <section>
               <h3 className="text-sm font-medium text-primary mb-3 flex items-center gap-2">
                 <span className="text-[var(--color-firefly-gold)]">💰</span>
-                Active Bounties
+                Active Campaigns
               </h3>
               <div className="space-y-3">
-                {bounties.map((bounty) => (
+                {campaigns.map((campaign) => (
                   <div
-                    key={bounty.id}
+                    key={campaign.id}
                     className="p-4 rounded-nested bg-[var(--color-firefly-gold)]/10 border border-[var(--color-firefly-gold)]/30"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-[var(--color-firefly-gold)]">
-                        {bounty.title}
+                        {campaign.title}
                       </span>
                       <span className="text-sm font-bold text-[var(--color-firefly-gold)]">
-                        {formatPUSDCompact(bounty.fundingAmount)}
+                        {formatPUSDCompact(campaign.fundingAmount)}
                       </span>
                     </div>
-                    <p className="text-xs text-secondary">{bounty.description}</p>
+                    <p className="text-xs text-secondary">{campaign.description}</p>
                   </div>
                 ))}
               </div>
@@ -230,7 +230,7 @@ export function TrustDrawer(): ReactElement | null {
           )}
 
           {/* Empty state */}
-          {claims.length === 0 && corroborations.length === 0 && bounties.length === 0 && (
+          {claims.length === 0 && corroborations.length === 0 && campaigns.length === 0 && (
             <div className="text-center py-8">
               <p className="text-secondary text-sm">
                 No verification activity yet

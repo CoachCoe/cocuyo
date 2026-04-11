@@ -25,10 +25,10 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { ChainService, BountyService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
+import type { ChainService, CampaignService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
 import { SignalServiceImpl } from './signal-service';
 import { ChainServiceImpl } from './chain-service';
-import { BountyServiceImpl } from './bounty-service';
+import { CampaignServiceImpl } from './campaign-service';
 import { ClaimServiceImpl } from './claim-service';
 import { CorroborationServiceImpl } from './corroboration-service';
 import { ChainSignalService } from './chain-signal-service';
@@ -68,15 +68,16 @@ export const chainService: ChainService = USE_CHAIN_SERVICES
   : new ChainServiceImpl();
 
 /**
- * Bounty service instance.
+ * Campaign service instance.
  *
- * Provides access to bounty data:
- * - getBounty: Fetch a single bounty by ID
- * - getOpenBounties: Paginated bounty listing with filters
- * - createBounty: Create a new bounty (requires wallet)
- * - contributeToBounty: Link a post to a bounty
+ * Provides access to campaign data:
+ * - getCampaign: Fetch a single campaign by ID
+ * - getCampaigns: Paginated campaign listing with filters
+ * - getActiveCampaigns: Active campaigns
+ * - createCampaign: Create a new campaign (requires wallet)
+ * - contributeToCampaign: Link a post to a campaign
  */
-export const bountyService: BountyService = new BountyServiceImpl();
+export const campaignService: CampaignService = new CampaignServiceImpl();
 
 /**
  * Post service instance.
@@ -111,7 +112,7 @@ export const corroborationService: CorroborationService = new CorroborationServi
 // Export classes for type checking and direct instantiation
 export { SignalServiceImpl, SignalServiceImpl as MockSignalService } from './signal-service';
 export { ChainServiceImpl, ChainServiceImpl as MockChainService } from './chain-service';
-export { BountyServiceImpl, BountyServiceImpl as MockBountyService } from './bounty-service';
+export { CampaignServiceImpl } from './campaign-service';
 export { SignalServiceImpl as PostServiceImpl, SignalServiceImpl as MockPostService } from './signal-service';
 export { ClaimServiceImpl, ClaimServiceImpl as MockClaimService } from './claim-service';
 export { CorroborationServiceImpl, CorroborationServiceImpl as MockCorroborationService } from './corroboration-service';
@@ -122,7 +123,7 @@ export { ChainChainService } from './chain-chain-service';
 export {
   useSignalService,
   useChainService,
-  useBountyService,
+  useCampaignService,
   useClaimService,
   useCorroborationService,
 } from './hooks';

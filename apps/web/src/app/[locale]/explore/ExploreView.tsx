@@ -4,12 +4,12 @@
  * ExploreView — Main client component for the explore page.
  *
  * Manages filter state and renders two-column layout:
- * - Left: Filters sidebar (story chains + bounties)
- * - Right: Signal feed (filtered by chain, bounty, or all)
+ * - Left: Filters sidebar (story chains + campaigns)
+ * - Right: Signal feed (filtered by chain, campaign, or all)
  */
 
 import { useState, useMemo, useCallback, type ReactElement, type ReactNode } from 'react';
-import type { ChainPreview, ChainId, Post, BountyPreview, BountyId } from '@cocuyo/types';
+import type { ChainPreview, ChainId, Post, CampaignPreview, CampaignId } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { ExploreFilters, type ExploreFilterType } from './ExploreFilters';
 import { FeedPostsList, type ViewMode } from './FeedPostsList';
@@ -17,12 +17,12 @@ import { FeedPostsList, type ViewMode } from './FeedPostsList';
 export interface ExploreViewProps {
   /** Available story chains */
   chains: readonly ChainPreview[];
-  /** Mapping of chain ID to bounty (for chains with funding) */
-  chainBountyMap: Record<string, BountyPreview[]>;
-  /** Orphan bounties - open questions without stories yet */
-  orphanBounties: readonly BountyPreview[];
-  /** Mapping of bounty ID to contributing post IDs */
-  bountyPostsMap: Record<string, readonly string[]>;
+  /** Mapping of chain ID to campaign (for chains with funding) */
+  chainCampaignMap: Record<string, CampaignPreview[]>;
+  /** Orphan campaigns - open questions without stories yet */
+  orphanCampaigns: readonly CampaignPreview[];
+  /** Mapping of campaign ID to contributing post IDs */
+  campaignPostsMap: Record<string, readonly string[]>;
   /** All posts */
   posts: Post[];
   /** Chain titles map for signal cards */
@@ -33,33 +33,33 @@ export interface ExploreViewProps {
   translations: {
     allPosts: string;
     storiesLabel: string;
-    openBountiesLabel: string;
+    openCampaignsLabel: string;
     recentPostsLabel: string;
     storiesInfoTitle: string;
     postsInfoTitle: string;
-    openBountiesInfoTitle: string;
-    noMatchingBountyPosts: string;
+    openCampaignsInfoTitle: string;
+    noMatchingCampaignPosts: string;
   };
   /** Info popover content for stories */
   storiesInfoBody?: ReactNode | undefined;
   /** Info popover content for posts */
   postsInfoBody?: ReactNode | undefined;
-  /** Info popover content for open bounties */
-  openBountiesInfoBody?: ReactNode | undefined;
+  /** Info popover content for open campaigns */
+  openCampaignsInfoBody?: ReactNode | undefined;
 }
 
 export function ExploreView({
   chains,
-  chainBountyMap,
-  orphanBounties,
-  bountyPostsMap,
+  chainCampaignMap,
+  orphanCampaigns,
+  campaignPostsMap,
   posts,
   chainTitles,
   hasMore,
   translations,
   storiesInfoBody,
   postsInfoBody,
-  openBountiesInfoBody,
+  openCampaignsInfoBody,
 }: ExploreViewProps): ReactElement {
   const [filterType, setFilterType] = useState<ExploreFilterType>(null);
   const [filterId, setFilterId] = useState<string | null>(null);
@@ -80,19 +80,19 @@ export function ExploreView({
     [openModal]
   );
 
-  // Handle illuminate button click on a bounty
-  const handleIlluminateBounty = useCallback(
-    (bountyId: BountyId) => {
-      openModal({ bountyId });
+  // Handle illuminate button click on a campaign
+  const handleIlluminateCampaign = useCallback(
+    (campaignId: CampaignId) => {
+      openModal({ campaignId });
     },
     [openModal]
   );
 
-  // Get the active bounty (if filtering by bounty)
-  const activeBounty = useMemo(() => {
-    if (filterType !== 'bounty' || filterId === null) return null;
-    return orphanBounties.find((b) => b.id === filterId) ?? null;
-  }, [filterType, filterId, orphanBounties]);
+  // Get the active campaign (if filtering by campaign)
+  const activeCampaign = useMemo(() => {
+    if (filterType !== 'campaign' || filterId === null) return null;
+    return orphanCampaigns.find((c) => c.id === filterId) ?? null;
+  }, [filterType, filterId, orphanCampaigns]);
 
   // Filter posts based on active filter
   const filteredPosts = useMemo(() => {
@@ -101,13 +101,13 @@ export function ExploreView({
         return posts;
       case 'chain':
         return posts.filter((post) => post.chainLinks.includes(filterId as ChainId));
-      case 'bounty': {
+      case 'campaign': {
         if (filterId === null) return posts;
-        const contributingPostIds = bountyPostsMap[filterId] ?? [];
+        const contributingPostIds = campaignPostsMap[filterId] ?? [];
         return posts.filter((post) => contributingPostIds.includes(post.id));
       }
     }
-  }, [posts, filterType, filterId, bountyPostsMap]);
+  }, [posts, filterType, filterId, campaignPostsMap]);
 
   // Determine the posts section title based on filter
   const postsSectionTitle = useMemo(() => {
@@ -118,18 +118,18 @@ export function ExploreView({
         const chain = chains.find((c) => c.id === filterId);
         return chain?.title ?? translations.recentPostsLabel;
       }
-      case 'bounty':
-        return activeBounty?.title ?? translations.recentPostsLabel;
+      case 'campaign':
+        return activeCampaign?.title ?? translations.recentPostsLabel;
     }
-  }, [filterType, filterId, chains, activeBounty, translations.recentPostsLabel]);
+  }, [filterType, filterId, chains, activeCampaign, translations.recentPostsLabel]);
 
   // Determine empty state message
   const emptyStateMessage = useMemo(() => {
-    if (filterType === 'bounty') {
-      return translations.noMatchingBountyPosts;
+    if (filterType === 'campaign') {
+      return translations.noMatchingCampaignPosts;
     }
     return undefined; // Use default
-  }, [filterType, translations.noMatchingBountyPosts]);
+  }, [filterType, translations.noMatchingCampaignPosts]);
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
@@ -138,22 +138,22 @@ export function ExploreView({
         <div className="md:sticky md:top-24">
           <ExploreFilters
             chains={chains}
-            chainBountyMap={chainBountyMap}
-            orphanBounties={orphanBounties}
+            chainCampaignMap={chainCampaignMap}
+            orphanCampaigns={orphanCampaigns}
             activeFilterType={filterType}
             activeFilterId={filterId}
             onFilterChange={handleFilterChange}
             onIlluminateChain={handleIlluminateChain}
-            onIlluminateBounty={handleIlluminateBounty}
+            onIlluminateCampaign={handleIlluminateCampaign}
             translations={{
               allPostsLabel: translations.allPosts,
               storiesLabel: translations.storiesLabel,
-              openBountiesLabel: translations.openBountiesLabel,
+              openCampaignsLabel: translations.openCampaignsLabel,
             }}
             storiesInfoTitle={translations.storiesInfoTitle}
             storiesInfoBody={storiesInfoBody}
-            openBountiesInfoTitle={translations.openBountiesInfoTitle}
-            openBountiesInfoBody={openBountiesInfoBody}
+            openCampaignsInfoTitle={translations.openCampaignsInfoTitle}
+            openCampaignsInfoBody={openCampaignsInfoBody}
           />
         </div>
       </aside>

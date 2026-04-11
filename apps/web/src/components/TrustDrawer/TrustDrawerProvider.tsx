@@ -7,7 +7,7 @@
  * - Claims extracted from the post
  * - Corroborations and disputes
  * - Verdicts
- * - Bounty information
+ * - Campaign information
  */
 
 import {

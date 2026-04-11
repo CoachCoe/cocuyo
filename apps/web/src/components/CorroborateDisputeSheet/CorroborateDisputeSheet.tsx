@@ -51,7 +51,7 @@ const EVIDENCE_TYPES: EvidenceTypeOption[] = [
 ];
 
 export function CorroborateDisputeSheet(): ReactElement | null {
-  const { isOpen, post, mode, bounty, closeSheet } = useCorroborateDispute();
+  const { isOpen, post, mode, campaign, closeSheet } = useCorroborateDispute();
   const { submitCorroboration } = useAppState();
   const sheetRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
@@ -236,8 +236,8 @@ export function CorroborateDisputeSheet(): ReactElement | null {
 
         {/* Content */}
         <form onSubmit={(e) => { void handleSubmit(e); }} className="p-4 sm:p-6 space-y-6">
-          {/* Bounty notice */}
-          {bounty !== null && (
+          {/* Campaign notice */}
+          {campaign !== null && (
             <div className="p-4 rounded-nested bg-[var(--color-firefly-gold)]/10 border border-[var(--color-firefly-gold)]/30">
               <p className="text-sm text-[var(--color-firefly-gold)] font-medium mb-1">
                 This post is under funded investigation
@@ -245,7 +245,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
               <p className="text-sm text-secondary">
                 Contributing evidence may earn you{' '}
                 <span className="text-[var(--color-firefly-gold)] font-medium">
-                  {formatPUSDCompact(bounty.fundingAmount)}
+                  {formatPUSDCompact(campaign.fundingAmount)}
                 </span>
               </p>
             </div>

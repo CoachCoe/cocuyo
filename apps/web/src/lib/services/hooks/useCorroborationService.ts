@@ -74,12 +74,18 @@ export function useCorroborationService(): CorroborationService {
       const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
       const now = Date.now();
 
+      // Determine quality based on evidence type
+      const quality = newCorroboration.quality ?? (
+        newCorroboration.type === 'witness' ? 'observation' :
+        newCorroboration.evidenceContent ? 'documented' : 'unverified'
+      );
+
       const corroboration: Corroboration = {
         id: '' as CorroborationId,
         postId: newCorroboration.postId,
         type: newCorroboration.type,
         dimSignature: dimCredential,
-        weight: 1.0, // Default weight, would be calculated from reputation
+        quality,
         createdAt: now,
         ...(newCorroboration.note !== undefined && { note: newCorroboration.note }),
         ...(newCorroboration.evidencePostId !== undefined && {

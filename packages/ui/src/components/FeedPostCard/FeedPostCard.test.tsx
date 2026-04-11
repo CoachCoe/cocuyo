@@ -30,7 +30,6 @@ const mockPost: Post = {
     evidenceCount: 2,
     expertiseCount: 1,
     challengeCount: 0,
-    totalWeight: 8.5,
   },
   verification: { status: 'unverified' },
   createdAt: Math.floor(Date.now() / 1000) - 3600, // 1 hour ago

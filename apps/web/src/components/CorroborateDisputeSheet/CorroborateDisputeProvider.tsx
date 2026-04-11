@@ -15,11 +15,11 @@ import {
   type ReactNode,
   type ReactElement,
 } from 'react';
-import type { Post, BountyId, PUSDAmount } from '@cocuyo/types';
+import type { Post, CampaignId, PUSDAmount } from '@cocuyo/types';
 
-/** Bounty info for display in the sheet */
-export interface SheetBountyInfo {
-  readonly id: BountyId;
+/** Campaign info for display in the sheet */
+export interface SheetCampaignInfo {
+  readonly id: CampaignId;
   readonly title: string;
   readonly fundingAmount: PUSDAmount;
 }
@@ -31,7 +31,7 @@ export type CorroborateDisputeMode = 'corroborate' | 'dispute';
 export interface OpenSheetOptions {
   post: Post;
   mode: CorroborateDisputeMode;
-  bounty?: SheetBountyInfo;
+  campaign?: SheetCampaignInfo;
 }
 
 interface CorroborateDisputeContextValue {
@@ -41,8 +41,8 @@ interface CorroborateDisputeContextValue {
   post: Post | null;
   /** The mode (corroborate or dispute) */
   mode: CorroborateDisputeMode;
-  /** Optional bounty info */
-  bounty: SheetBountyInfo | null;
+  /** Optional campaign info */
+  campaign: SheetCampaignInfo | null;
   /** Open the sheet */
   openSheet: (options: OpenSheetOptions) => void;
   /** Close the sheet */
@@ -59,12 +59,12 @@ export function CorroborateDisputeProvider({ children }: CorroborateDisputeProvi
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState<Post | null>(null);
   const [mode, setMode] = useState<CorroborateDisputeMode>('corroborate');
-  const [bounty, setBounty] = useState<SheetBountyInfo | null>(null);
+  const [campaign, setCampaign] = useState<SheetCampaignInfo | null>(null);
 
   const openSheet = useCallback((options: OpenSheetOptions): void => {
     setPost(options.post);
     setMode(options.mode);
-    setBounty(options.bounty ?? null);
+    setCampaign(options.campaign ?? null);
     setIsOpen(true);
   }, []);
 
@@ -73,7 +73,7 @@ export function CorroborateDisputeProvider({ children }: CorroborateDisputeProvi
     // Clear state after animation completes
     setTimeout(() => {
       setPost(null);
-      setBounty(null);
+      setCampaign(null);
     }, 200);
   }, []);
 
@@ -82,11 +82,11 @@ export function CorroborateDisputeProvider({ children }: CorroborateDisputeProvi
       isOpen,
       post,
       mode,
-      bounty,
+      campaign,
       openSheet,
       closeSheet,
     }),
-    [isOpen, post, mode, bounty, openSheet, closeSheet]
+    [isOpen, post, mode, campaign, openSheet, closeSheet]
   );
 
   return (

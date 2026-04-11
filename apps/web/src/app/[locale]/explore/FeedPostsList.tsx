@@ -9,8 +9,8 @@ import type { ReactElement, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import type { Post, ChainId, BountyId } from '@cocuyo/types';
-import { FeedPostCard, AnimatedList, EmptyState, SkeletonFeedPostCard, type PostBountyInfo } from '@cocuyo/ui';
+import type { Post, ChainId, CampaignId } from '@cocuyo/types';
+import { FeedPostCard, AnimatedList, EmptyState, SkeletonFeedPostCard, type PostCampaignInfo } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
 import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
 import { useTrustDrawer } from '@/components/TrustDrawer';
@@ -39,8 +39,8 @@ interface FeedPostsListProps {
   isLoading?: boolean | undefined;
   /** Custom empty state message */
   emptyStateMessage?: string | undefined;
-  /** Map of post IDs to bounty info (for display) */
-  postBountyMap?: Record<string, PostBountyInfo> | undefined;
+  /** Map of post IDs to campaign info (for display) */
+  postCampaignMap?: Record<string, PostCampaignInfo> | undefined;
   /** Current view mode */
   viewMode?: ViewMode | undefined;
   /** Callback when view mode changes */
@@ -57,7 +57,7 @@ export function FeedPostsList({
   isFiltered = false,
   isLoading = false,
   emptyStateMessage,
-  postBountyMap = {},
+  postCampaignMap = {},
   viewMode = 'list',
   onViewModeChange,
 }: FeedPostsListProps): ReactElement {
@@ -74,8 +74,8 @@ export function FeedPostsList({
     router.push(`/${locale}/chain/${chainId}`);
   };
 
-  const handleBountyClick = (bountyId: BountyId): void => {
-    router.push(`/${locale}/bounty/${bountyId}`);
+  const handleCampaignClick = (campaignId: CampaignId): void => {
+    router.push(`/${locale}/campaign/${campaignId}`);
   };
 
   const handleAuthorClick = (credentialHash: string): void => {
@@ -83,20 +83,20 @@ export function FeedPostsList({
   };
 
   const handleCorroborate = (post: Post): void => {
-    const bounty = postBountyMap[post.id];
+    const campaign = postCampaignMap[post.id];
     openCorroborateSheet({
       post,
       mode: 'corroborate',
-      ...(bounty !== undefined && { bounty }),
+      ...(campaign !== undefined && { campaign }),
     });
   };
 
   const handleDispute = (post: Post): void => {
-    const bounty = postBountyMap[post.id];
+    const campaign = postCampaignMap[post.id];
     openCorroborateSheet({
       post,
       mode: 'dispute',
-      ...(bounty !== undefined && { bounty }),
+      ...(campaign !== undefined && { campaign }),
     });
   };
 
@@ -177,16 +177,16 @@ export function FeedPostsList({
               post.chainLinks.length > 0
                 ? chainTitles[post.chainLinks[0] as string]
                 : undefined;
-            const bounty = postBountyMap[post.id];
+            const campaign = postCampaignMap[post.id];
             return (
               <FeedPostCard
                 key={post.id}
                 post={post}
                 {...(chainTitle !== undefined && { chainTitle })}
-                {...(bounty !== undefined && { bounty })}
+                {...(campaign !== undefined && { campaign })}
                 onClick={() => handlePostClick(post)}
                 onChainClick={handleChainClick}
-                onBountyClick={handleBountyClick}
+                onCampaignClick={handleCampaignClick}
                 onAuthorClick={handleAuthorClick}
                 onCorroborate={() => handleCorroborate(post)}
                 onDispute={() => handleDispute(post)}

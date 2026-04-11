@@ -146,19 +146,19 @@
     "startNewChain": "Start new chain",
     "storiesInfo": {
       "title": "What are Stories?",
-      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their posts to related observations.\n\nSome stories have bounties attached (marked with \"Earn $X\"). These are funded investigations — contribute valuable posts and earn a share of the reward.\n\nThe story becomes more than the sum of its posts."
+      "body": "Story chains are emergent structures. No one \"creates\" a story — stories crystallize as fireflies link their posts to related observations.\n\nSome stories have campaigns attached (marked with \"Earn $X\"). These are sponsored fact-checking efforts — contribute valuable evidence and earn a share of the reward.\n\nThe story becomes more than the sum of its posts."
     },
     "postsInfo": {
       "title": "What are Posts?",
       "body": "A post is an observation, a piece of evidence, a witness account, a data point.\n\nWhen you illuminate a post, you're contributing information signed by your anonymous credential — ready to connect with other posts and form story chains.\n\nPosts gain weight through corroboration from other verified humans."
     },
     "storiesLabel": "Story Chains",
-    "openBountiesLabel": "Open Bounties",
-    "openBountiesInfo": {
-      "title": "What are Open Bounties?",
-      "body": "Bounties are funded by community members who need specific information — journalists, NGOs, diaspora communities, or anyone seeking ground truth.\n\nThe funds are held in escrow until the bounty is fulfilled. When you contribute valuable posts, you earn a share of the reward.\n\nPayments can be public (pUSD) or private (Coinage) to protect your identity. Open bounties are waiting for their first posts — be the first to illuminate."
+    "openCampaignsLabel": "Open Campaigns",
+    "openCampaignsInfo": {
+      "title": "What are Open Campaigns?",
+      "body": "Campaigns are sponsored fact-checking efforts funded by news outlets, collectives, or community members who need specific information verified.\n\nThe funds are held in escrow until campaign deliverables are met. When you contribute valuable evidence, you earn a share of the reward.\n\nPayments can be public (pUSD) or private (Coinage) to protect your identity. Open campaigns are waiting for contributors — be the first to illuminate."
     },
-    "noMatchingBountyPosts": "No posts have contributed to this bounty yet.",
+    "noMatchingCampaignPosts": "No posts have contributed to this campaign yet.",
     "daysRemaining": "{count} days remaining",
     "hoursRemaining": "{count} hours remaining",
     "expiresSoon": "Expires soon"
@@ -193,10 +193,10 @@
       "noPosts": "No analysis posts yet for this story."
     },
     "helpNeeded": {
-      "title": "Open Bounties",
-      "description": "Funded requests for information",
-      "noBounties": "No open bounties for this story.",
-      "createBounty": "Fund a Bounty"
+      "title": "Open Campaigns",
+      "description": "Sponsored fact-checking efforts",
+      "noCampaigns": "No open campaigns for this story.",
+      "createCampaign": "Fund a Campaign"
     }
   },
   "feed": {
@@ -247,23 +247,23 @@
     "pending": "pending",
     "inReview": "in review"
   },
-  "bounties": {
-    "title": "Bounties",
-    "description": "Community-funded requests for information. Contribute posts to earn rewards.",
-    "allBounties": "All",
+  "campaigns": {
+    "title": "Campaigns",
+    "description": "Sponsored fact-checking efforts. Contribute evidence to earn rewards.",
+    "allCampaigns": "All",
     "filters": "Filters",
     "status": "Status",
-    "statusOpen": "Open",
-    "statusFulfilled": "Fulfilled",
+    "statusActive": "Active",
+    "statusCompleted": "Completed",
     "statusExpired": "Expired",
     "statusCancelled": "Cancelled",
-    "bountyWord": "bounty",
-    "bountiesWord": "bounties",
+    "campaignWord": "campaign",
+    "campaignsWord": "campaigns",
     "ofWord": "of",
     "clearFilters": "Clear filters",
     "statusLabel": "Status",
     "filterByTopic": "Filter by Topic",
-    "searchPlaceholder": "Search bounties...",
+    "searchPlaceholder": "Search campaigns...",
     "topicSelected": "topic",
     "topicsSelected": "topics",
     "topics": {
@@ -289,15 +289,15 @@
       "venezuela": "Venezuela"
     },
     "info": {
-      "title": "What are Bounties?",
-      "body": "Bounties are community-funded requests for specific information. When you have knowledge that fulfills a bounty, illuminate a post and link it to the bounty.\n\nIf your post contributes valuable information, you earn a share of the bounty reward. Payments can be made publicly via pUSD or privately via Coinage.\n\nBounties create a functioning market for investigative information — funded by the people who need it."
+      "title": "What are Campaigns?",
+      "body": "Campaigns are sponsored fact-checking efforts funded by news outlets, collectives, or community members. When you have evidence that supports a campaign, illuminate a post and link it.\n\nIf your post contributes valuable information, you earn a share of the campaign reward. Payments can be made publicly via pUSD or privately via Coinage.\n\nCampaigns create a functioning market for investigative journalism — funded by those who need verified information."
     },
     "create": {
-      "title": "Create Bounty",
+      "title": "Create Campaign",
       "titleLabel": "Title",
-      "titlePlaceholder": "What information are you looking for?",
+      "titlePlaceholder": "What information needs to be verified?",
       "descriptionLabel": "Description",
-      "descriptionPlaceholder": "Describe in detail what kind of information you need, where it might be found, and what would constitute a valuable contribution...",
+      "descriptionPlaceholder": "Describe in detail what kind of evidence you need, where it might be found, and what would constitute a valuable contribution...",
       "topicsLabel": "Topics",
       "topicsPlaceholder": "Add relevant topics",
       "locationLabel": "Location",
@@ -305,16 +305,16 @@
       "optional": "optional",
       "fundingLabel": "Funding Amount",
       "durationLabel": "Duration",
-      "submit": "Create Bounty",
+      "submit": "Create Campaign",
       "creating": "Creating...",
-      "signInRequired": "Sign in to create a bounty."
+      "signInRequired": "Sign in to create a campaign."
     },
-    "createButton": "Create Bounty"
+    "createButton": "Create Campaign"
   },
-  "bounty": {
+  "campaign": {
     "breadcrumb": {
-      "bounties": "Bounties",
-      "detail": "Bounty Details"
+      "campaigns": "Campaigns",
+      "detail": "Campaign Details"
     },
     "funding": "Funding",
     "payoutMode": "Payout Mode",
@@ -325,19 +325,22 @@
     "dayLeft": "1 day left",
     "daysLeftSuffix": "days left",
     "contributingPosts": "Contributing Posts",
-    "noPostsYet": "No posts have contributed to this bounty yet.",
+    "noPostsYet": "No posts have contributed to this campaign yet.",
     "postWord": "post",
     "postsWord": "posts",
     "illuminate": "Illuminate",
-    "fulfilled": "This bounty has been fulfilled",
-    "cancelled": "This bounty was cancelled",
+    "completed": "This campaign has been completed",
+    "cancelled": "This campaign was cancelled",
     "topics": "Topics",
     "location": "Location",
     "description": "What we're looking for",
     "paymentPublic": "Public pUSD",
     "paymentPrivate": "Private",
     "whatsThis": "What's this?",
-    "posted": "Posted"
+    "posted": "Posted",
+    "sponsor": "Sponsor",
+    "deliverables": "Deliverables",
+    "progress": "Progress"
   },
   "corroboration": {
     "modal": {
@@ -361,7 +364,7 @@
     },
     "referencedLinks": "Referenced links:",
     "source": "Source",
-    "weight": "Weight"
+    "evidence": "Evidence"
   },
   "post": {
     "topics": "Topics:",
@@ -504,12 +507,12 @@
         "description": "This story is waiting for its first post. Contribute your observations."
       }
     },
-    "bounties": {
-      "title": "No bounties yet",
-      "description": "No community members have posted bounties yet. Check back soon.",
+    "campaigns": {
+      "title": "No campaigns yet",
+      "description": "No sponsors have created campaigns yet. Check back soon.",
       "filtered": {
-        "title": "No matching bounties",
-        "description": "Try adjusting your filters to find bounties."
+        "title": "No matching campaigns",
+        "description": "Try adjusting your filters to find campaigns."
       }
     },
     "chains": {

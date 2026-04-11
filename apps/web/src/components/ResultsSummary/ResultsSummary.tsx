@@ -13,9 +13,9 @@ interface ResultsSummaryProps {
   filteredCount: number;
   /** Total count before filtering */
   totalCount: number;
-  /** Singular word for item (e.g., "bounty") */
+  /** Singular word for item (e.g., "campaign") */
   singularWord: string;
-  /** Plural word for items (e.g., "bounties") */
+  /** Plural word for items (e.g., "campaigns") */
   pluralWord: string;
   /** "of" connector word */
   ofWord: string;

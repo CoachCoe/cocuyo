@@ -19,7 +19,7 @@ import {
   type FormEvent,
 } from 'react';
 import { useSigner } from '@/lib/context/SignerContext';
-import type { ChainId, BountyId, NewPost, MediaAttachment } from '@cocuyo/types';
+import type { ChainId, CampaignId, NewPost, MediaAttachment } from '@cocuyo/types';
 import { createContentHash } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { useSignalService, useClaimService } from '@/lib/services/hooks';
@@ -43,7 +43,7 @@ interface FormState {
   links: string;
   photos: File[];
   selectedChains: ChainId[];
-  selectedBounties: BountyId[];
+  selectedCampaigns: CampaignId[];
   pendingNewStory: PendingNewStory | null;
   acknowledged: boolean;
 }
@@ -54,7 +54,7 @@ export function IlluminateForm(): ReactElement {
   const { isConnected, isInHost } = useSigner();
   const signalService = useSignalService();
   const claimService = useClaimService();
-  const { preSelectedChainId, preSelectedBountyId, evidenceClaimId, evidenceType, closeModal } = useIlluminate();
+  const { preSelectedChainId, preSelectedCampaignId, evidenceClaimId, evidenceType, closeModal } = useIlluminate();
 
   // Track if we're submitting evidence for a claim
   const isEvidenceSubmission = evidenceClaimId !== null && evidenceType !== null;
@@ -68,7 +68,7 @@ export function IlluminateForm(): ReactElement {
     links: '',
     photos: [],
     selectedChains: preSelectedChainId != null ? [preSelectedChainId] : [],
-    selectedBounties: preSelectedBountyId != null ? [preSelectedBountyId] : [],
+    selectedCampaigns: preSelectedCampaignId != null ? [preSelectedCampaignId] : [],
     pendingNewStory: null,
     acknowledged: false,
   }));
@@ -78,7 +78,7 @@ export function IlluminateForm(): ReactElement {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Get suggestions based on topics and location
-  const { chains: suggestedChains, bounties: suggestedBounties, isLoading: isSuggestionsLoading } =
+  const { chains: suggestedChains, campaigns: suggestedCampaigns, isLoading: isSuggestionsLoading } =
     useDebouncedSuggestions(formState.topics, formState.location);
 
   // Validation
@@ -129,12 +129,12 @@ export function IlluminateForm(): ReactElement {
     }));
   }, []);
 
-  const handleBountyToggle = useCallback((bountyId: BountyId): void => {
+  const handleCampaignToggle = useCallback((campaignId: CampaignId): void => {
     setFormState((prev) => ({
       ...prev,
-      selectedBounties: prev.selectedBounties.includes(bountyId)
-        ? prev.selectedBounties.filter((id) => id !== bountyId)
-        : [...prev.selectedBounties, bountyId],
+      selectedCampaigns: prev.selectedCampaigns.includes(campaignId)
+        ? prev.selectedCampaigns.filter((id) => id !== campaignId)
+        : [...prev.selectedCampaigns, campaignId],
     }));
   }, []);
 
@@ -430,17 +430,17 @@ export function IlluminateForm(): ReactElement {
         </div>
       )}
 
-      {/* Bounty suggestions */}
-      {suggestedBounties.length > 0 && (
+      {/* Campaign suggestions */}
+      {suggestedCampaigns.length > 0 && (
         <SuggestionsList
           chains={[]}
-          bounties={suggestedBounties}
+          campaigns={suggestedCampaigns}
           selectedChains={[]}
-          selectedBounties={formState.selectedBounties}
+          selectedCampaigns={formState.selectedCampaigns}
           preSelectedChainId={null}
-          preSelectedBountyId={preSelectedBountyId}
-          onChainToggle={(): void => { /* no-op: chains disabled in bounty mode */ }}
-          onBountyToggle={handleBountyToggle}
+          preSelectedCampaignId={preSelectedCampaignId}
+          onChainToggle={(): void => { /* no-op: chains disabled in campaign mode */ }}
+          onCampaignToggle={handleCampaignToggle}
           isLoading={false}
         />
       )}

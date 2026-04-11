@@ -7,18 +7,25 @@
  */
 
 import type {
-  BountyId,
+  CampaignId,
   ChainId,
   ClaimId,
   CorroborationId,
   DIMCredential,
   EscrowId,
+  OutletId,
   PolkadotAddress,
   PostId,
   TransactionHash,
   VerdictId,
 } from './brands';
-import type { Bounty, BountyPayout, BountyPreview, NewBounty } from './bounty';
+import type {
+  Campaign,
+  CampaignPayout,
+  CampaignPreview,
+  CampaignStatus,
+  NewCampaign,
+} from './campaign';
 import type { ChainPreview, StoryChain } from './chain';
 import type { Claim, ClaimPreview, ClaimStatus, NewClaim, NewClaimEvidence, NewVerdict, Verdict } from './claim';
 import type { NewPost, Post, PostPreview, PostStatus } from './post';
@@ -33,6 +40,7 @@ import type {
 } from './coinage';
 import type { Corroboration, NewCorroboration } from './corroboration';
 import type { PUSDAmount, PUSDBalance } from './currency';
+import type { Outlet, OutletPreview } from './outlet';
 import type { PaymentMode } from './payment-mode';
 import type { PersonhoodLevel, PersonhoodCapabilities } from './personhood';
 import type { ReputationTopic } from './reputation-topics';
@@ -149,28 +157,53 @@ export interface CorroborationService {
 }
 
 /**
- * Bounty service interface.
+ * Campaign service interface.
  */
-export interface BountyService {
-  /** Get a single bounty by ID */
-  getBounty(id: BountyId, locale?: string): Promise<Bounty | null>;
+export interface CampaignService {
+  /** Get a single campaign by ID */
+  getCampaign(id: CampaignId, locale?: string): Promise<Campaign | null>;
 
-  /** Get open bounties, optionally filtered */
-  getOpenBounties(params: {
+  /** Get campaigns, optionally filtered */
+  getCampaigns(params: {
+    status?: CampaignStatus;
+    topic?: string;
+    location?: string;
+    sponsorType?: 'outlet' | 'collective' | 'community';
+    locale?: string;
+    pagination: PaginationParams;
+  }): Promise<PaginatedResult<CampaignPreview>>;
+
+  /** Get active campaigns */
+  getActiveCampaigns(params: {
     topic?: string;
     location?: string;
     locale?: string;
     pagination: PaginationParams;
-  }): Promise<PaginatedResult<BountyPreview>>;
+  }): Promise<PaginatedResult<CampaignPreview>>;
 
-  /** Create a new bounty */
-  createBounty(bounty: NewBounty): Promise<Result<BountyId, string>>;
+  /** Create a new campaign */
+  createCampaign(campaign: NewCampaign): Promise<Result<CampaignId, string>>;
 
-  /** Contribute a post to a bounty */
-  contributeToBounty(
-    bountyId: BountyId,
+  /** Contribute a post to a campaign */
+  contributeToCampaign(
+    campaignId: CampaignId,
     postId: PostId
   ): Promise<Result<void, string>>;
+}
+
+/**
+ * Outlet service interface.
+ */
+export interface OutletService {
+  /** Get an outlet by ID */
+  getOutlet(id: OutletId): Promise<Outlet | null>;
+
+  /** Get outlets, optionally filtered */
+  getOutlets(params: {
+    country?: string;
+    topic?: string;
+    pagination: PaginationParams;
+  }): Promise<PaginatedResult<OutletPreview>>;
 }
 
 // ============================================================================
@@ -444,13 +477,13 @@ export type EscrowError =
   | { readonly type: 'TRANSACTION_FAILED'; readonly reason: string };
 
 /**
- * Escrow state for a bounty.
+ * Escrow state for a campaign.
  */
 export interface EscrowState {
   /** Escrow identifier */
   readonly id: EscrowId;
-  /** Associated bounty */
-  readonly bountyId: BountyId;
+  /** Associated campaign */
+  readonly campaignId: CampaignId;
   /** Funder's address */
   readonly funderAddress: PolkadotAddress;
   /** Funder's DIM credential */
@@ -470,12 +503,12 @@ export interface EscrowState {
 }
 
 /**
- * Escrow service for bounty fund management.
+ * Escrow service for campaign fund management.
  */
 export interface EscrowService {
-  /** Create a new escrow for a bounty */
+  /** Create a new escrow for a campaign */
   createEscrow(params: {
-    bountyId: BountyId;
+    campaignId: CampaignId;
     funderAddress: PolkadotAddress;
     funderCredential: DIMCredential;
     amount: PUSDAmount;
@@ -485,10 +518,10 @@ export interface EscrowService {
   /** Get escrow state */
   getEscrow(escrowId: EscrowId): Promise<EscrowState | null>;
 
-  /** Get escrow by bounty ID */
-  getEscrowByBounty(bountyId: BountyId): Promise<EscrowState | null>;
+  /** Get escrow by campaign ID */
+  getEscrowByCampaign(campaignId: CampaignId): Promise<EscrowState | null>;
 
-  /** Release funds to bounty contributors */
+  /** Release funds to campaign contributors */
   releaseFunds(params: {
     escrowId: EscrowId;
     distributions: readonly {
@@ -497,7 +530,7 @@ export interface EscrowService {
       postId: PostId;
       amount: PUSDAmount;
     }[];
-  }): Promise<Result<BountyPayout, EscrowError>>;
+  }): Promise<Result<CampaignPayout, EscrowError>>;
 
   /** Refund funds to funder */
   refundFunds(escrowId: EscrowId): Promise<Result<TransactionHash, EscrowError>>;

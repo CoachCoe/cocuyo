@@ -38,11 +38,11 @@ interface PostMapViewProps {
  */
 function getMarkerColor(
   status: VerificationStatus,
-  corroborationWeight: number
+  evidenceCount: number
 ): MarkerData['color'] {
   if (status === 'disputed' || status === 'false') return 'red';
-  if (status === 'verified' || corroborationWeight >= 5) return 'gold';
-  if (corroborationWeight >= 2) return 'green';
+  if (status === 'verified' || evidenceCount >= 5) return 'gold';
+  if (evidenceCount >= 2) return 'green';
   return 'gray';
 }
 
@@ -182,7 +182,7 @@ export function PostMapView({
       position: coords,
       color: getMarkerColor(
         post.verification.status,
-        post.corroborations.totalWeight
+        post.corroborations.evidenceCount
       ),
       popup: <PostPopup post={post} locale={locale} />,
     };

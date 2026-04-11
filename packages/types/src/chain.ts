@@ -20,13 +20,11 @@ export interface ChainStats {
   /** Total number of posts in this chain */
   readonly postCount: number;
   /** Total corroborations across all posts */
-  readonly totalCorroborations: number;
+  readonly corroborationCount: number;
   /** Total challenges across all posts */
-  readonly totalChallenges: number;
+  readonly challengeCount: number;
   /** Number of unique fireflies who contributed */
   readonly contributorCount: number;
-  /** Aggregate reputation weight of all corroborations */
-  readonly totalWeight: number;
 }
 
 /**
@@ -68,6 +66,6 @@ export interface ChainPreview {
   readonly location?: string;
   readonly status: ChainStatus;
   readonly postCount: number;
-  readonly totalCorroborations: number;
+  readonly corroborationCount: number;
   readonly updatedAt: number;
 }

@@ -3,14 +3,14 @@ import {
   createPostId,
   createChainId,
   createCorroborationId,
-  createBountyId,
+  createCampaignId,
   createDIMCredential,
   createContentHash,
   createVerdictId,
   type PostId,
   type ChainId,
   type CorroborationId,
-  type BountyId,
+  type CampaignId,
   type DIMCredential,
   type ContentHash,
   type VerdictId,
@@ -65,14 +65,14 @@ describe('Branded Types', () => {
     });
   });
 
-  describe('createBountyId', () => {
-    it('creates a BountyId from a valid string', () => {
-      const id = createBountyId('bounty-101');
-      expect(id).toBe('bounty-101');
+  describe('createCampaignId', () => {
+    it('creates a CampaignId from a valid string', () => {
+      const id = createCampaignId('campaign-101');
+      expect(id).toBe('campaign-101');
     });
 
     it('preserves the branded type', () => {
-      const id: BountyId = createBountyId('bounty-test');
+      const id: CampaignId = createCampaignId('campaign-test');
       expect(typeof id).toBe('string');
     });
   });

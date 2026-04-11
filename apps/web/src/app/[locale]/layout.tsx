@@ -9,8 +9,6 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { AppStateProvider } from '@/components/AppStateProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
 import { IlluminateModal } from '@/components/IlluminateModal';
-import { CreateBountyProvider } from '@/components/CreateBountyProvider';
-import { CreateBountyModal } from '@/components/CreateBountyModal';
 import { CorroborateDisputeProvider, CorroborateDisputeSheet } from '@/components/CorroborateDisputeSheet';
 import { TrustDrawerProvider, TrustDrawer } from '@/components/TrustDrawer';
 import { AddToStoryProvider, AddToStorySheet } from '@/components/AddToStorySheet';
@@ -55,25 +53,22 @@ export default async function LocaleLayout({
                 <SignerProvider>
                   <AppStateProvider>
                     <IlluminateProvider>
-                      <CreateBountyProvider>
-                        <CorroborateDisputeProvider>
-                          <TrustDrawerProvider>
-                            <AddToStoryProvider>
-                              <ExtractClaimProvider>
-                                <AppNavbar />
-                                <div className="pt-16 min-h-screen">{children}</div>
-                                <AppFooter />
-                                <IlluminateModal />
-                                <CreateBountyModal />
-                                <CorroborateDisputeSheet />
-                                <TrustDrawer />
-                                <AddToStorySheet />
-                                <ExtractClaimSheet />
-                              </ExtractClaimProvider>
-                            </AddToStoryProvider>
-                          </TrustDrawerProvider>
-                        </CorroborateDisputeProvider>
-                      </CreateBountyProvider>
+                      <CorroborateDisputeProvider>
+                        <TrustDrawerProvider>
+                          <AddToStoryProvider>
+                            <ExtractClaimProvider>
+                              <AppNavbar />
+                              <div className="pt-16 min-h-screen">{children}</div>
+                              <AppFooter />
+                              <IlluminateModal />
+                              <CorroborateDisputeSheet />
+                              <TrustDrawer />
+                              <AddToStorySheet />
+                              <ExtractClaimSheet />
+                            </ExtractClaimProvider>
+                          </AddToStoryProvider>
+                        </TrustDrawerProvider>
+                      </CorroborateDisputeProvider>
                     </IlluminateProvider>
                   </AppStateProvider>
                 </SignerProvider>
