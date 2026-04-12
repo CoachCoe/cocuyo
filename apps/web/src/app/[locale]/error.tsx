@@ -24,10 +24,10 @@ export default function Error({ error, reset }: ErrorPageProps): ReactElement {
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
-      <div className="w-20 h-20 mb-8 rounded-full bg-[var(--bg-surface-container)] flex items-center justify-center">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center p-8 text-center">
+      <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--bg-surface-container)]">
         <svg
-          className="w-10 h-10 text-[var(--fg-error)]"
+          className="h-10 w-10 text-[var(--fg-error)]"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -41,22 +41,19 @@ export default function Error({ error, reset }: ErrorPageProps): ReactElement {
           />
         </svg>
       </div>
-      <h1 className="text-2xl font-bold text-[var(--fg-primary)] mb-2">
-        Something went wrong
-      </h1>
-      <p className="text-[var(--fg-secondary)] mb-8 max-w-md">
-        We encountered an unexpected error. This has been noted and we&apos;re
-        working on it.
+      <h1 className="mb-2 text-2xl font-bold text-[var(--fg-primary)]">Something went wrong</h1>
+      <p className="mb-8 max-w-md text-[var(--fg-secondary)]">
+        We encountered an unexpected error. This has been noted and we&apos;re working on it.
       </p>
       <Button variant="primary" onClick={reset}>
         Try again
       </Button>
       {process.env.NODE_ENV === 'development' && (
-        <details className="mt-8 text-left w-full max-w-lg">
+        <details className="mt-8 w-full max-w-lg text-left">
           <summary className="cursor-pointer text-sm text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]">
             Error details
           </summary>
-          <pre className="mt-2 p-4 bg-[var(--bg-surface-container)] rounded-nested text-xs text-[var(--fg-error)] overflow-x-auto">
+          <pre className="mt-2 overflow-x-auto rounded-nested bg-[var(--bg-surface-container)] p-4 text-xs text-[var(--fg-error)]">
             {error.message}
             {'\n\n'}
             {error.stack}

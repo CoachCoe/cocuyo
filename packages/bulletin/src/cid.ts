@@ -43,9 +43,7 @@ export function calculateCID(fileBytes: Uint8Array): ContentHash {
   const codeBytes = encodeVarint(BLAKE2B_256_CODE);
   const lengthBytes = encodeVarint(hash.length);
 
-  const multihashBytes = new Uint8Array(
-    codeBytes.length + lengthBytes.length + hash.length
-  );
+  const multihashBytes = new Uint8Array(codeBytes.length + lengthBytes.length + hash.length);
   multihashBytes.set(codeBytes, 0);
   multihashBytes.set(lengthBytes, codeBytes.length);
   multihashBytes.set(hash, codeBytes.length + lengthBytes.length);

@@ -16,25 +16,20 @@ export interface ReputationRadarProps {
   topicTranslations: Record<string, string>;
 }
 
-export function ReputationRadar({
-  scores,
-  topicTranslations,
-}: ReputationRadarProps): ReactElement {
+export function ReputationRadar({ scores, topicTranslations }: ReputationRadarProps): ReactElement {
   const topics = Object.entries(scores).sort(([, a], [, b]) => b - a);
 
   return (
     <div className="space-y-4">
       {topics.map(([topic, score]) => (
         <div key={topic}>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-[var(--fg-secondary)] capitalize">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-sm capitalize text-[var(--fg-secondary)]">
               {topicTranslations[topic] ?? topic.replace(/-/g, ' ')}
             </span>
-            <span className="text-sm font-medium text-[var(--fg-primary)]">
-              {score}
-            </span>
+            <span className="text-sm font-medium text-[var(--fg-primary)]">{score}</span>
           </div>
-          <div className="h-2 bg-[var(--bg-surface-container)] rounded-full overflow-hidden">
+          <div className="h-2 overflow-hidden rounded-full bg-[var(--bg-surface-container)]">
             <div
               className="h-full rounded-full transition-all duration-500 ease-out"
               style={{

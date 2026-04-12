@@ -81,9 +81,7 @@ export function SuggestionsList({
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-medium text-white mb-2">
-          Link to Story Chains or Campaigns
-        </h3>
+        <h3 className="mb-2 text-sm font-medium text-white">Link to Story Chains or Campaigns</h3>
         <p className="text-xs text-[var(--color-text-tertiary)]">
           Connect your signal to related conversations or earn rewards.
         </p>
@@ -91,12 +89,7 @@ export function SuggestionsList({
 
       {isLoading && (
         <div className="flex items-center gap-2 text-sm text-[var(--color-text-tertiary)]">
-          <svg
-            className="w-4 h-4 animate-spin"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
+          <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
             <circle
               className="opacity-25"
               cx="12"
@@ -118,7 +111,7 @@ export function SuggestionsList({
       {/* Story Chains */}
       {sortedChains.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
+          <h4 className="mb-2 text-xs font-medium uppercase tracking-wide text-[var(--color-text-secondary)]">
             Story Chains ({sortedChains.length})
           </h4>
           <div className="space-y-2">
@@ -129,33 +122,28 @@ export function SuggestionsList({
               return (
                 <label
                   key={chain.id}
-                  className={`
-                    flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all
-                    ${
-                      isSelected
-                        ? 'bg-[var(--color-bg-elevated)] border-[var(--color-accent)] border-opacity-50'
-                        : 'bg-[var(--color-bg-elevated)] border-[var(--color-border-default)] hover:border-[var(--color-border-emphasis)]'
-                    }
-                  `}
+                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-all ${
+                    isSelected
+                      ? 'border-[var(--color-accent)] border-opacity-50 bg-[var(--color-bg-elevated)]'
+                      : 'border-[var(--color-border-default)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-border-emphasis)]'
+                  } `}
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => onChainToggle(chain.id)}
-                    className="mt-1 w-4 h-4 rounded border-[var(--color-border-emphasis)] bg-[var(--color-bg-tertiary)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] focus:ring-offset-0"
+                    className="mt-1 h-4 w-4 rounded border-[var(--color-border-emphasis)] bg-[var(--color-bg-tertiary)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] focus:ring-offset-0"
                   />
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-white truncate">
-                        {chain.title}
-                      </span>
+                      <span className="truncate text-sm font-medium text-white">{chain.title}</span>
                       {isPreSelected && (
-                        <span className="px-2 py-0.5 text-xs bg-[var(--color-accent-glow)] text-[var(--color-accent)] rounded">
+                        <span className="rounded bg-[var(--color-accent-glow)] px-2 py-0.5 text-xs text-[var(--color-accent)]">
                           Pre-selected
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-text-tertiary)]">
+                    <div className="mt-1 flex items-center gap-3 text-xs text-[var(--color-text-tertiary)]">
                       <span>{chain.postCount} posts</span>
                       <span className="text-[var(--color-corroborated)]">
                         {chain.corroborationCount} corroborations
@@ -173,7 +161,7 @@ export function SuggestionsList({
       {/* Campaigns */}
       {sortedCampaigns.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
+          <h4 className="mb-2 text-xs font-medium uppercase tracking-wide text-[var(--color-text-secondary)]">
             Open Campaigns ({sortedCampaigns.length})
           </h4>
           <div className="space-y-2">
@@ -184,34 +172,31 @@ export function SuggestionsList({
               return (
                 <label
                   key={campaign.id}
-                  className={`
-                    flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all
-                    ${
-                      isSelected
-                        ? 'bg-[var(--color-bg-elevated)] border-[var(--color-accent)] border-opacity-50'
-                        : 'bg-[var(--color-bg-elevated)] border-[var(--color-border-default)] hover:border-[var(--color-border-emphasis)]'
-                    }
-                  `}
+                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-all ${
+                    isSelected
+                      ? 'border-[var(--color-accent)] border-opacity-50 bg-[var(--color-bg-elevated)]'
+                      : 'border-[var(--color-border-default)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-border-emphasis)]'
+                  } `}
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => onCampaignToggle(campaign.id)}
-                    className="mt-1 w-4 h-4 rounded border-[var(--color-border-emphasis)] bg-[var(--color-bg-tertiary)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] focus:ring-offset-0"
+                    className="mt-1 h-4 w-4 rounded border-[var(--color-border-emphasis)] bg-[var(--color-bg-tertiary)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] focus:ring-offset-0"
                   />
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-white truncate">
+                      <span className="truncate text-sm font-medium text-white">
                         {campaign.title}
                       </span>
                       {isPreSelected && (
-                        <span className="px-2 py-0.5 text-xs bg-[var(--color-accent-glow)] text-[var(--color-accent)] rounded">
+                        <span className="rounded bg-[var(--color-accent-glow)] px-2 py-0.5 text-xs text-[var(--color-accent)]">
                           Pre-selected
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-xs">
-                      <span className="text-[var(--color-accent)] font-medium">
+                    <div className="mt-1 flex items-center gap-3 text-xs">
+                      <span className="font-medium text-[var(--color-accent)]">
                         {formatFunding(campaign.fundingAmount)} reward
                       </span>
                       <span className="text-[var(--color-text-tertiary)]">

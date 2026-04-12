@@ -108,18 +108,18 @@ cocuyo/
 
 ### Technology Stack
 
-| Layer | Technology | Rationale |
-|-------|-----------|-----------|
-| Framework | Next.js 14+ (App Router) | SSR, RSC, excellent DX, Vercel deployment |
-| Language | TypeScript (strict mode) | Type safety is non-negotiable |
-| Styling | Tailwind CSS + CSS custom properties | Utility-first with design token control |
-| Font | Unbounded (Google Fonts, Polkadot ecosystem font) | Polkadot brand alignment |
-| Body Font | Inter | Clean, readable, pairs well with Unbounded |
-| Monorepo | pnpm workspaces + Turborepo | Fast, strict, deterministic |
-| Testing | Vitest + React Testing Library + Playwright | Unit, component, and E2E |
-| Linting | ESLint (strict) + Prettier + stylelint | Zero tolerance for lint warnings |
-| CI | GitHub Actions | Standard, Polkadot ecosystem norm |
-| Web3 (future) | Polkadot.js API, @polkadot/* packages | Native Polkadot integration |
+| Layer         | Technology                                        | Rationale                                  |
+| ------------- | ------------------------------------------------- | ------------------------------------------ |
+| Framework     | Next.js 14+ (App Router)                          | SSR, RSC, excellent DX, Vercel deployment  |
+| Language      | TypeScript (strict mode)                          | Type safety is non-negotiable              |
+| Styling       | Tailwind CSS + CSS custom properties              | Utility-first with design token control    |
+| Font          | Unbounded (Google Fonts, Polkadot ecosystem font) | Polkadot brand alignment                   |
+| Body Font     | Inter                                             | Clean, readable, pairs well with Unbounded |
+| Monorepo      | pnpm workspaces + Turborepo                       | Fast, strict, deterministic                |
+| Testing       | Vitest + React Testing Library + Playwright       | Unit, component, and E2E                   |
+| Linting       | ESLint (strict) + Prettier + stylelint            | Zero tolerance for lint warnings           |
+| CI            | GitHub Actions                                    | Standard, Polkadot ecosystem norm          |
+| Web3 (future) | Polkadot.js API, @polkadot/\* packages            | Native Polkadot integration                |
 
 ---
 
@@ -135,31 +135,31 @@ The design is **minimal, high-contrast, and intentionally anti-social-media.** N
 
 ```css
 /* Primary palette — black and white, Polkadot style */
---color-bg-primary: #000000;           /* Deep black background */
---color-bg-secondary: #0A0A0A;         /* Slightly lifted black */
---color-bg-tertiary: #141414;          /* Card/surface background */
---color-bg-elevated: #1A1A1A;          /* Elevated surfaces */
+--color-bg-primary: #000000; /* Deep black background */
+--color-bg-secondary: #0a0a0a; /* Slightly lifted black */
+--color-bg-tertiary: #141414; /* Card/surface background */
+--color-bg-elevated: #1a1a1a; /* Elevated surfaces */
 
---color-text-primary: #FFFFFF;          /* Primary text */
---color-text-secondary: #A0A0A0;       /* Secondary/muted text */
---color-text-tertiary: #666666;         /* Tertiary/disabled text */
+--color-text-primary: #ffffff; /* Primary text */
+--color-text-secondary: #a0a0a0; /* Secondary/muted text */
+--color-text-tertiary: #666666; /* Tertiary/disabled text */
 
---color-border-default: #222222;        /* Default borders */
---color-border-subtle: #1A1A1A;         /* Subtle borders */
---color-border-emphasis: #333333;       /* Emphasized borders */
+--color-border-default: #222222; /* Default borders */
+--color-border-subtle: #1a1a1a; /* Subtle borders */
+--color-border-emphasis: #333333; /* Emphasized borders */
 
 /* Accent — firefly gold, used sparingly for illumination moments */
---color-accent: #E8B931;               /* Firefly gold */
---color-accent-dim: #C49A1C;           /* Dimmed accent */
+--color-accent: #e8b931; /* Firefly gold */
+--color-accent-dim: #c49a1c; /* Dimmed accent */
 --color-accent-glow: rgba(232, 185, 49, 0.15); /* Glow effect */
 
 /* Semantic */
---color-corroborated: #4ADE80;         /* Corroboration indicators (green) */
---color-challenged: #F87171;           /* Challenge indicators (red) */
---color-pending: #A0A0A0;              /* Pending/unverified (gray) */
+--color-corroborated: #4ade80; /* Corroboration indicators (green) */
+--color-challenged: #f87171; /* Challenge indicators (red) */
+--color-pending: #a0a0a0; /* Pending/unverified (gray) */
 
 /* Polkadot ecosystem nod */
---color-polkadot-pink: #E6007A;        /* Used ONLY for Polkadot branding/attribution */
+--color-polkadot-pink: #e6007a; /* Used ONLY for Polkadot branding/attribution */
 ```
 
 ### Typography
@@ -175,14 +175,14 @@ The design is **minimal, high-contrast, and intentionally anti-social-media.** N
 --font-mono: 'JetBrains Mono', monospace;
 
 /* Scale */
---text-xs: 0.75rem;     /* 12px — metadata, timestamps */
---text-sm: 0.875rem;    /* 14px — secondary text */
---text-base: 1rem;      /* 16px — body text */
---text-lg: 1.125rem;    /* 18px — emphasis */
---text-xl: 1.25rem;     /* 20px — section headers */
---text-2xl: 1.5rem;     /* 24px — page headers */
---text-3xl: 2rem;       /* 32px — hero text */
---text-4xl: 2.5rem;     /* 40px — landing hero */
+--text-xs: 0.75rem; /* 12px — metadata, timestamps */
+--text-sm: 0.875rem; /* 14px — secondary text */
+--text-base: 1rem; /* 16px — body text */
+--text-lg: 1.125rem; /* 18px — emphasis */
+--text-xl: 1.25rem; /* 20px — section headers */
+--text-2xl: 1.5rem; /* 24px — page headers */
+--text-3xl: 2rem; /* 32px — hero text */
+--text-4xl: 2.5rem; /* 40px — landing hero */
 ```
 
 ### Component Guidelines
@@ -343,7 +343,7 @@ This is a surveillance-resistant platform. Security is not a feature — it is t
 
 - **All exported functions/types** must have JSDoc comments
 - **All components** must have a brief description of purpose and usage
-- **Complex logic** must have inline comments explaining *why*, not *what*
+- **Complex logic** must have inline comments explaining _why_, not _what_
 - **ADRs** (Architecture Decision Records) for significant decisions in `docs/ADR/`
 
 ### Project Documentation
@@ -356,6 +356,7 @@ This is a surveillance-resistant platform. Security is not a feature — it is t
 ### About Page Content
 
 The About page should cover:
+
 - The Firefly metaphor and its origin (Efecto Cocuyo / Caribbean cocuyos)
 - What the network is (and explicitly what it is NOT — not social media)
 - The three pillars: Anonymous but Human, Verified but Private, Distributed but Connected
@@ -411,20 +412,21 @@ pnpm check                      # lint + typecheck + test + format:check
 
 Development skill files are located in `.claude/skills/` and contain detailed guidance for specific development areas:
 
-| Skill | Purpose | Triggers |
-|-------|---------|----------|
-| `design-system.md` | Visual identity, components, animations | UI, design, styling, color |
-| `polkadot-web3.md` | Polkadot integration, Web3 patterns | polkadot, wallet, chain, crypto |
-| `security.md` | Surveillance resistance, privacy | security, CSP, validation, audit |
-| `personhood-lite.md` | DIM identity verification | DIM, personhood, credential |
-| `dotns-integration.md` | Name resolution, wallet permissions | dotns, name, domain, permission |
-| `dotns-cli.md` | Frontend deployment via CLI | deploy, bulletin, upload, register |
-| `bulletin-chain.md` | Decentralized signal storage | bulletin, storage, IPFS, hash |
-| `code-quality.md` | Minimal code philosophy | quality, refactor, YAGNI, bloat |
-| `mutation-testing.md` | Test quality with Stryker | mutation, stryker, test quality |
-| `monorepo.md` | pnpm workspace, Turborepo | workspace, turborepo, package, filter |
+| Skill                  | Purpose                                 | Triggers                              |
+| ---------------------- | --------------------------------------- | ------------------------------------- |
+| `design-system.md`     | Visual identity, components, animations | UI, design, styling, color            |
+| `polkadot-web3.md`     | Polkadot integration, Web3 patterns     | polkadot, wallet, chain, crypto       |
+| `security.md`          | Surveillance resistance, privacy        | security, CSP, validation, audit      |
+| `personhood-lite.md`   | DIM identity verification               | DIM, personhood, credential           |
+| `dotns-integration.md` | Name resolution, wallet permissions     | dotns, name, domain, permission       |
+| `dotns-cli.md`         | Frontend deployment via CLI             | deploy, bulletin, upload, register    |
+| `bulletin-chain.md`    | Decentralized signal storage            | bulletin, storage, IPFS, hash         |
+| `code-quality.md`      | Minimal code philosophy                 | quality, refactor, YAGNI, bloat       |
+| `mutation-testing.md`  | Test quality with Stryker               | mutation, stryker, test quality       |
+| `monorepo.md`          | pnpm workspace, Turborepo               | workspace, turborepo, package, filter |
 
 **Usage**: Load relevant skills before implementing features in that domain. Skills follow the atomic skill pattern with:
+
 - YAML frontmatter (name, description, triggers)
 - "When to Activate" section
 - Global invariants table

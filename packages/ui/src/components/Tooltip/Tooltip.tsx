@@ -43,27 +43,15 @@ export function Tooltip({
   className = '',
 }: TooltipProps): ReactElement {
   return (
-    <div className={`relative inline-block group ${className}`}>
+    <div className={`group relative inline-block ${className}`}>
       {children}
       <div
-        className={`
-          absolute z-50 px-2 py-1 text-xs font-medium
-          bg-[var(--bg-surface-container)] text-[var(--fg-primary)]
-          border border-[var(--border-default)] rounded-nested
-          shadow-2 whitespace-nowrap
-          opacity-0 invisible group-hover:opacity-100 group-hover:visible
-          transition-opacity duration-150
-          ${positionClasses[position]}
-        `}
+        className={`rounded-nested shadow-2 invisible absolute z-50 border border-[var(--border-default)] bg-[var(--bg-surface-container)] px-2 py-1 text-xs font-medium whitespace-nowrap text-[var(--fg-primary)] opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 ${positionClasses[position]} `}
         role="tooltip"
       >
         {content}
         <span
-          className={`
-            absolute w-0 h-0 border-4
-            border-[var(--bg-surface-container)]
-            ${arrowClasses[position]}
-          `}
+          className={`absolute h-0 w-0 border-4 border-[var(--bg-surface-container)] ${arrowClasses[position]} `}
           aria-hidden="true"
         />
       </div>

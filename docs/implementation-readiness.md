@@ -6,19 +6,20 @@
 
 **Can we make a detailed plan?** Partially. We can plan Phases 1-2 in detail, but Phases 3-5 have blocking dependencies.
 
-| Phase | Readiness | Blocker |
-|-------|-----------|---------|
-| 1. Currency Foundation | Ready | None |
-| 2. Public pUSD (Bounties) | Blocked | Need pUSD Asset ID |
-| 3. Treasury Infrastructure | Blocked | Need multi-sig design decisions |
-| 4. Coinage Integration | Blocked | Coinage not deployed, API may change |
-| 5. Full Payment System | Blocked | Depends on Phases 2-4 |
+| Phase                      | Readiness | Blocker                              |
+| -------------------------- | --------- | ------------------------------------ |
+| 1. Currency Foundation     | Ready     | None                                 |
+| 2. Public pUSD (Bounties)  | Blocked   | Need pUSD Asset ID                   |
+| 3. Treasury Infrastructure | Blocked   | Need multi-sig design decisions      |
+| 4. Coinage Integration     | Blocked   | Coinage not deployed, API may change |
+| 5. Full Payment System     | Blocked   | Depends on Phases 2-4                |
 
 ---
 
 ## What We Know (Sufficient Information)
 
 ### 1. Architecture & Infrastructure
+
 - Wallet integration via `@polkadot-apps/signer`
 - DIM client structure (mock implemented, production scaffolded)
 - Bulletin Chain for content storage
@@ -26,6 +27,7 @@
 - Type system patterns (branded types, service interfaces)
 
 ### 2. Use Cases (Well-Defined)
+
 - Information bounties with escrow
 - Crowdstacking treasury contributions
 - Journalist compensation
@@ -33,6 +35,7 @@
 - Alliance settlements
 
 ### 3. Coinage Design (Detailed but Not Final)
+
 - Coin denomination system (powers of 2)
 - Age-based transfer limits
 - Recycler anonymization mechanism
@@ -40,6 +43,7 @@
 - Pull-based transfer mechanic
 
 ### 4. Privacy Model
+
 - When to use public vs private payments
 - Threat model for journalists
 - Information leakage points
@@ -51,15 +55,18 @@
 ### Critical Blockers (Cannot Proceed Without)
 
 #### 1. pUSD Asset ID on Asset Hub
+
 **Status:** Unknown
 **Impact:** Cannot implement any pUSD transfer logic
 **Question:** What is the Asset Hub asset ID for pUSD?
 **Who to ask:** Polkadot/Parity team
 
 #### 2. Coinage Deployment Timeline
+
 **Status:** Design doc "under review"
 **Impact:** Cannot implement private payments
 **Questions:**
+
 - When will Coinage be deployed?
 - Will it be on People Chain or Asset Hub? (doc says "probably People Chain")
 - What testnets are available for development?
@@ -67,9 +74,11 @@
 **Who to ask:** Guillaume Thiolliere, George Pisaltu (design doc authors)
 
 #### 3. Coinage API Stability
+
 **Status:** Design doc shows API signatures, but may change
 **Impact:** Code written now may need rewriting
 **Questions:**
+
 - Are the pallet call signatures finalized?
 - Are the ring-VRF proof formats finalized?
 - Will there be an SDK/client library?
@@ -79,31 +88,39 @@
 ### Major Dependencies (Needed Before Production)
 
 #### 4. DIM → Coinage Integration Path
+
 **Status:** Conceptually understood, not specified
 **Impact:** Cannot implement free usage tier
 **Questions:**
+
 - How do we query a user's available free claim tokens?
 - What's the exact ring context for People vs Lite People?
 - How do we generate the ring-VRF proofs?
 
 **Current understanding:**
+
 ```
 DIM Credential → Ring membership → Context-specific alias → Claim token
 ```
+
 But the exact API calls are not specified.
 
 #### 5. XCM Flow: Asset Hub ↔ People Chain
+
 **Status:** Not specified
 **Impact:** Cannot move pUSD into Coinage recycler
 **Questions:**
+
 - How do we transfer pUSD from Asset Hub to People Chain?
 - Is this automatic when loading the recycler?
 - Are there fees for cross-chain transfers?
 
 #### 6. Chat Integration for Key Sharing
+
 **Status:** Coinage requires off-chain key exchange
 **Impact:** Core transfer UX depends on this
 **Questions:**
+
 - Does Firefly Network have existing E2E encrypted chat?
 - How do we handle offline recipients?
 - What's the key format for sharing?
@@ -111,9 +128,11 @@ But the exact API calls are not specified.
 **From codebase exploration:** No chat implementation found. This is a significant gap.
 
 #### 7. On/Off Ramp Partners
+
 **Status:** User said "coming"
 **Impact:** Limits adoption to crypto-native users
 **Questions:**
+
 - Which partners are being pursued?
 - What's the timeline?
 - Will they support direct pUSD, or only DOT?
@@ -121,14 +140,17 @@ But the exact API calls are not specified.
 ### Design Decisions Needed
 
 #### 8. Treasury Multi-Sig Structure
+
 **Status:** Conceptual only
 **Questions:**
+
 - Who are the signers? (Founding outlets? Elected representatives?)
 - What's the threshold? (2-of-3? 3-of-5?)
 - How do we handle signer rotation?
 - Is this a Polkadot native multi-sig or a smart contract?
 
 #### 9. Bounty Escrow Mechanism
+
 **Status:** Types defined, implementation not designed
 **Options:**
 a. Multi-sig account per bounty (simple but expensive)
@@ -138,16 +160,20 @@ c. Smart contract (most flexible but requires ink! development)
 **Question:** Which approach?
 
 #### 10. Compliance Requirements
+
 **Status:** Coinage doc says "compliance not enforced on chain"
 **Questions:**
+
 - What are the actual legal requirements for the target jurisdictions?
 - Do we need KYC at any point?
 - Are there transaction limits we need to enforce?
 - Has Parity legal team reviewed the Firefly use case?
 
 #### 11. Ring Size Minimums
+
 **Status:** Privacy depends on ring size, but no guarantees
 **Questions:**
+
 - What's the minimum ring size for acceptable privacy?
 - How do we handle low-traffic scenarios?
 - Should we delay transactions until ring is sufficient?
@@ -275,6 +301,7 @@ Tasks (outline only):
 ```
 
 **Cannot estimate** until we know:
+
 - pUSD asset ID
 - Escrow mechanism choice
 - Multi-sig structure (if applicable)
@@ -302,6 +329,7 @@ Tasks (outline only):
 ```
 
 **Cannot estimate** until we have:
+
 - Deployed Coinage testnet
 - Finalized API signatures
 - DIM integration documentation
@@ -334,14 +362,14 @@ This gives us a working prototype to demonstrate, even without real chain integr
 
 ### Questions to Resolve (Priority Order)
 
-| # | Question | Who to Ask | Impact |
-|---|----------|------------|--------|
-| 1 | What is the pUSD Asset ID? | Polkadot/Parity | Blocks Phase 3 |
-| 2 | When will Coinage be on testnet? | Coinage team | Blocks Phase 4 |
-| 3 | Is there an existing chat system we should use? | Team decision | Blocks transfer UX |
-| 4 | What escrow mechanism should we use? | Architecture decision | Blocks bounty payouts |
-| 5 | Who are the treasury signers? | Governance decision | Blocks treasury |
-| 6 | What are the compliance requirements? | Legal team | Blocks production |
+| #   | Question                                        | Who to Ask            | Impact                |
+| --- | ----------------------------------------------- | --------------------- | --------------------- |
+| 1   | What is the pUSD Asset ID?                      | Polkadot/Parity       | Blocks Phase 3        |
+| 2   | When will Coinage be on testnet?                | Coinage team          | Blocks Phase 4        |
+| 3   | Is there an existing chat system we should use? | Team decision         | Blocks transfer UX    |
+| 4   | What escrow mechanism should we use?            | Architecture decision | Blocks bounty payouts |
+| 5   | Who are the treasury signers?                   | Governance decision   | Blocks treasury       |
+| 6   | What are the compliance requirements?           | Legal team            | Blocks production     |
 
 ### Proposed Timeline (Optimistic)
 
@@ -365,25 +393,25 @@ Month 6+:  Phase 4-5 (Coinage, Treasury)
 
 ### High Risk
 
-| Risk | Mitigation |
-|------|------------|
-| Coinage deployment delayed | Build public-only MVP first; add privacy later |
-| pUSD not available | Use USDC or DOT as interim stablecoin |
-| Chat infrastructure gap | Evaluate existing solutions (Matrix, XMTP, etc.) |
+| Risk                       | Mitigation                                       |
+| -------------------------- | ------------------------------------------------ |
+| Coinage deployment delayed | Build public-only MVP first; add privacy later   |
+| pUSD not available         | Use USDC or DOT as interim stablecoin            |
+| Chat infrastructure gap    | Evaluate existing solutions (Matrix, XMTP, etc.) |
 
 ### Medium Risk
 
-| Risk | Mitigation |
-|------|------------|
-| API changes after implementation | Build abstraction layers; minimize direct coupling |
-| Ring sizes too small for privacy | Coordinate with other Coinage users; accept lower privacy initially |
-| Compliance issues discovered late | Engage legal early; build with compliance hooks |
+| Risk                              | Mitigation                                                          |
+| --------------------------------- | ------------------------------------------------------------------- |
+| API changes after implementation  | Build abstraction layers; minimize direct coupling                  |
+| Ring sizes too small for privacy  | Coordinate with other Coinage users; accept lower privacy initially |
+| Compliance issues discovered late | Engage legal early; build with compliance hooks                     |
 
 ### Low Risk
 
-| Risk | Mitigation |
-|------|------------|
-| Type system changes | Well-tested foundation; migration scripts |
+| Risk                   | Mitigation                                     |
+| ---------------------- | ---------------------------------------------- |
+| Type system changes    | Well-tested foundation; migration scripts      |
 | UI requirements change | Component-based architecture; easy to refactor |
 
 ---
@@ -393,6 +421,7 @@ Month 6+:  Phase 4-5 (Coinage, Treasury)
 **We can start implementation now** with Phases 1-2b, which have no external dependencies and will produce a working prototype.
 
 **We cannot create a detailed end-to-end plan** until we resolve the blocking questions, particularly:
+
 1. pUSD Asset ID
 2. Coinage deployment timeline
 3. Escrow mechanism decision

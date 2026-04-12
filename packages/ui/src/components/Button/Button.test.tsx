@@ -48,7 +48,11 @@ describe('Button', () => {
     });
 
     it('hides firefly symbol when loading illuminate button', () => {
-      render(<Button variant="illuminate" isLoading>Illuminate</Button>);
+      render(
+        <Button variant="illuminate" isLoading>
+          Illuminate
+        </Button>
+      );
       expect(screen.queryByLabelText('Firefly')).not.toBeInTheDocument();
     });
 
@@ -68,14 +72,22 @@ describe('Button', () => {
 
     it('does not call onClick when disabled', () => {
       const handleClick = vi.fn();
-      render(<Button disabled onClick={handleClick}>Click me</Button>);
+      render(
+        <Button disabled onClick={handleClick}>
+          Click me
+        </Button>
+      );
       fireEvent.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();
     });
 
     it('does not call onClick when loading', () => {
       const handleClick = vi.fn();
-      render(<Button isLoading onClick={handleClick}>Click me</Button>);
+      render(
+        <Button isLoading onClick={handleClick}>
+          Click me
+        </Button>
+      );
       fireEvent.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();
     });

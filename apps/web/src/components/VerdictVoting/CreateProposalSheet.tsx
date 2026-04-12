@@ -53,7 +53,7 @@ export function CreateProposalSheet({
   translations: t = {},
 }: CreateProposalSheetProps): ReactElement {
   const [selectedCollective, setSelectedCollective] = useState<CollectiveId | null>(
-    collectives.length === 1 ? collectives[0]?.id ?? null : null
+    collectives.length === 1 ? (collectives[0]?.id ?? null) : null
   );
   const [selectedStatus, setSelectedStatus] = useState<VerdictStatus | null>(null);
   const [rationale, setRationale] = useState('');
@@ -92,7 +92,7 @@ export function CreateProposalSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -101,52 +101,55 @@ export function CreateProposalSheet({
       />
 
       {/* Sheet */}
-      <div className="relative w-full max-w-lg bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-auto">
+      <div className="relative max-h-[90vh] w-full max-w-lg overflow-auto rounded-t-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] sm:rounded-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] px-6 py-4">
+        <div className="sticky top-0 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-display font-medium text-[var(--fg-primary)]">
+            <h2 className="font-display text-lg font-medium text-[var(--fg-primary)]">
               {t.title ?? 'Propose Verdict'}
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 text-[var(--fg-tertiary)] hover:text-[var(--fg-primary)] transition-colors"
+              className="p-2 text-[var(--fg-tertiary)] transition-colors hover:text-[var(--fg-primary)]"
               aria-label="Close"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={(e) => void handleSubmit(e)} className="p-6 space-y-6">
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-6 p-6">
           {/* Claim context */}
           <div>
-            <label className="block text-sm font-medium text-[var(--fg-secondary)] mb-2">
+            <label className="mb-2 block text-sm font-medium text-[var(--fg-secondary)]">
               {t.claimLabel ?? 'Claim'}
             </label>
-            <blockquote className="text-sm text-[var(--fg-primary)] pl-3 border-l-2 border-[var(--border-emphasis)]">
+            <blockquote className="border-l-2 border-[var(--border-emphasis)] pl-3 text-sm text-[var(--fg-primary)]">
               &ldquo;{claimStatement}&rdquo;
             </blockquote>
           </div>
 
           {/* Collective selection */}
           <div>
-            <label className="block text-sm font-medium text-[var(--fg-secondary)] mb-2">
+            <label className="mb-2 block text-sm font-medium text-[var(--fg-secondary)]">
               {t.collectiveLabel ?? 'Collective'}
             </label>
             {collectives.length === 1 ? (
-              <div className="text-sm text-[var(--fg-primary)]">
-                {collectives[0]?.name}
-              </div>
+              <div className="text-sm text-[var(--fg-primary)]">{collectives[0]?.name}</div>
             ) : (
               <select
                 value={selectedCollective ?? ''}
                 onChange={(e) => setSelectedCollective(e.target.value as CollectiveId)}
-                className="w-full px-3 py-2 bg-[var(--bg-default)] border border-[var(--border-default)] rounded-lg text-sm text-[var(--fg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-firefly-gold)]"
+                className="w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-default)] px-3 py-2 text-sm text-[var(--fg-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-firefly-gold)]"
               >
                 <option value="">{t.selectCollective ?? 'Select a collective...'}</option>
                 {collectives.map((c) => (
@@ -160,7 +163,7 @@ export function CreateProposalSheet({
 
           {/* Verdict selection */}
           <div>
-            <label className="block text-sm font-medium text-[var(--fg-secondary)] mb-3">
+            <label className="mb-3 block text-sm font-medium text-[var(--fg-secondary)]">
               {t.verdictLabel ?? 'Proposed Verdict'}
             </label>
             <VoteButtons
@@ -172,21 +175,21 @@ export function CreateProposalSheet({
 
           {/* Rationale */}
           <div>
-            <label className="block text-sm font-medium text-[var(--fg-secondary)] mb-2">
+            <label className="mb-2 block text-sm font-medium text-[var(--fg-secondary)]">
               {t.rationaleLabel ?? 'Rationale'}
             </label>
             <textarea
               value={rationale}
               onChange={(e) => setRationale(e.target.value)}
               placeholder={t.rationalePlaceholder ?? 'Explain why this verdict is appropriate...'}
-              className="w-full px-3 py-2 bg-[var(--bg-default)] border border-[var(--border-default)] rounded-lg text-sm text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-firefly-gold)] resize-none h-24"
+              className="h-24 w-full resize-none rounded-lg border border-[var(--border-default)] bg-[var(--bg-default)] px-3 py-2 text-sm text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-firefly-gold)]"
               disabled={loading}
             />
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="text-sm text-[var(--fg-error)] bg-[var(--fg-error)]/10 px-3 py-2 rounded-lg">
+            <div className="bg-[var(--fg-error)]/10 rounded-lg px-3 py-2 text-sm text-[var(--fg-error)]">
               {error}
             </div>
           )}
@@ -197,25 +200,38 @@ export function CreateProposalSheet({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="flex-1 px-4 py-2.5 text-sm font-medium text-[var(--fg-secondary)] bg-[var(--bg-default)] border border-[var(--border-default)] rounded-lg hover:bg-[var(--bg-surface-nested)] transition-colors"
+              className="flex-1 rounded-lg border border-[var(--border-default)] bg-[var(--bg-default)] px-4 py-2.5 text-sm font-medium text-[var(--fg-secondary)] transition-colors hover:bg-[var(--bg-surface-nested)]"
             >
               {t.cancel ?? 'Cancel'}
             </button>
             <button
               type="submit"
-              disabled={loading || !selectedCollective || !selectedStatus || rationale.trim().length < 10}
-              className="flex-1 px-4 py-2.5 text-sm font-medium text-[var(--bg-default)] bg-[var(--color-firefly-gold)] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={
+                loading || !selectedCollective || !selectedStatus || rationale.trim().length < 10
+              }
+              className="flex-1 rounded-lg bg-[var(--color-firefly-gold)] px-4 py-2.5 text-sm font-medium text-[var(--bg-default)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
                   </svg>
                   Creating...
                 </span>
               ) : (
-                t.submit ?? 'Create Proposal'
+                (t.submit ?? 'Create Proposal')
               )}
             </button>
           </div>

@@ -57,10 +57,10 @@ function ChainNotFound({ locale }: { locale: string }): ReactNode {
   return (
     <main className="min-h-screen bg-[var(--bg-default)]">
       <div className="border-b border-[var(--border-default)]">
-        <div className="container max-w-3xl mx-auto px-4 py-4">
+        <div className="container mx-auto max-w-3xl px-4 py-4">
           <Link
             href={`/${locale}/explore`}
-            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
           >
             <span aria-hidden="true">&larr;</span>
             <span>Back to Explore</span>
@@ -68,16 +68,16 @@ function ChainNotFound({ locale }: { locale: string }): ReactNode {
         </div>
       </div>
 
-      <div className="container max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-display text-[var(--fg-primary)] mb-4">
+      <div className="container mx-auto max-w-3xl px-4 py-16 text-center">
+        <h1 className="mb-4 font-display text-2xl text-[var(--fg-primary)]">
           Story Chain Not Found
         </h1>
-        <p className="text-[var(--fg-secondary)] mb-8">
+        <p className="mb-8 text-[var(--fg-secondary)]">
           This story chain doesn&apos;t exist or hasn&apos;t been created yet.
         </p>
         <Link
           href={`/${locale}/explore`}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--bg-default)] font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2 font-medium text-[var(--bg-default)] transition-opacity hover:opacity-90"
         >
           Explore Stories
         </Link>
@@ -85,7 +85,6 @@ function ChainNotFound({ locale }: { locale: string }): ReactNode {
     </main>
   );
 }
-
 
 export default async function ChainPage({ params }: ChainPageProps): Promise<ReactElement> {
   const { locale, id } = await params;
@@ -127,13 +126,9 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
           <ChainPostList posts={[...posts]} />
         </>
       ) : (
-        <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
-          <p className="text-[var(--fg-secondary)] mb-4">
-            {t('whatsHappening.noPosts')}
-          </p>
-          <AddPostButton chainId={createChainId(id)}>
-            {t('beFirstToIlluminate')}
-          </AddPostButton>
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] py-12 text-center">
+          <p className="mb-4 text-[var(--fg-secondary)]">{t('whatsHappening.noPosts')}</p>
+          <AddPostButton chainId={createChainId(id)}>{t('beFirstToIlluminate')}</AddPostButton>
         </div>
       )}
     </div>
@@ -152,12 +147,10 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
               <Link
                 key={post.id}
                 href={`/${locale}/post/${post.id}`}
-                className="block p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg hover:border-[var(--color-firefly-gold)]/40 transition-colors"
+                className="hover:border-[var(--color-firefly-gold)]/40 block rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 transition-colors"
               >
-                <h3 className="font-medium text-[var(--fg-primary)] mb-2">
-                  {post.content.title}
-                </h3>
-                <p className="text-sm text-[var(--fg-secondary)] line-clamp-2">
+                <h3 className="mb-2 font-medium text-[var(--fg-primary)]">{post.content.title}</h3>
+                <p className="line-clamp-2 text-sm text-[var(--fg-secondary)]">
                   {post.content.text.slice(0, 200)}...
                 </p>
                 <div className="mt-2 text-xs text-[var(--fg-tertiary)]">
@@ -168,10 +161,8 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
           </div>
         </>
       ) : (
-        <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
-          <p className="text-[var(--fg-secondary)]">
-            {t('deepDives.noPosts')}
-          </p>
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] py-12 text-center">
+          <p className="text-[var(--fg-secondary)]">{t('deepDives.noPosts')}</p>
         </div>
       )}
     </div>
@@ -180,10 +171,8 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
   // Campaigns content
   const campaignsContent = (
     <div>
-      <div className="text-center py-12 bg-[var(--bg-surface-nested)] rounded-lg border border-[var(--border-default)]">
-        <p className="text-[var(--fg-secondary)]">
-          {t('helpNeeded.noCampaigns')}
-        </p>
+      <div className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] py-12 text-center">
+        <p className="text-[var(--fg-secondary)]">{t('helpNeeded.noCampaigns')}</p>
       </div>
     </div>
   );
@@ -192,13 +181,13 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
     <>
       <main>
         {/* Header */}
-        <section className="py-12 border-b border-[var(--border-default)]">
+        <section className="border-b border-[var(--border-default)] py-12">
           <div className="container-wide">
             {/* Breadcrumb */}
             <nav className="mb-6 text-sm">
               <Link
                 href={`/${locale}/explore`}
-                className="text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+                className="text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
               >
                 {t('backToStories')}
               </Link>
@@ -206,12 +195,12 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
               <span className="text-[var(--fg-primary)]">{t('storyChain')}</span>
             </nav>
 
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex-1">
                 {/* Status badge */}
-                <div className="flex items-center gap-3 mb-4">
+                <div className="mb-4 flex items-center gap-3">
                   <span
-                    className="px-3 py-1 text-sm rounded-full capitalize"
+                    className="rounded-full px-3 py-1 text-sm capitalize"
                     style={{
                       color: statusColor,
                       border: `1px solid ${statusColor}`,
@@ -220,26 +209,24 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
                     {chain.status}
                   </span>
                   {chain.location != null && (
-                    <span className="text-sm text-[var(--fg-tertiary)]">
-                      {chain.location}
-                    </span>
+                    <span className="text-sm text-[var(--fg-tertiary)]">{chain.location}</span>
                   )}
                 </div>
 
                 {/* Title */}
-                <h1 className="text-3xl font-bold mb-4">{chain.title}</h1>
+                <h1 className="mb-4 text-3xl font-bold">{chain.title}</h1>
 
                 {/* Description */}
-                <p className="text-[var(--fg-secondary)] max-w-2xl leading-relaxed">
+                <p className="max-w-2xl leading-relaxed text-[var(--fg-secondary)]">
                   {chain.description}
                 </p>
 
                 {/* Topics */}
-                <div className="flex flex-wrap gap-2 mt-6">
+                <div className="mt-6 flex flex-wrap gap-2">
                   {chain.topics.map((topic) => (
                     <span
                       key={topic}
-                      className="px-3 py-1 text-sm bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)] rounded-full"
+                      className="rounded-full bg-[var(--bg-surface-nested)] px-3 py-1 text-sm text-[var(--fg-secondary)]"
                     >
                       {topic}
                     </span>
@@ -248,16 +235,18 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
               </div>
 
               {/* Stats card */}
-              <div className="lg:w-72 p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg">
-                <h3 className="font-semibold mb-4">{t('verificationSummary')}</h3>
+              <div className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6 lg:w-72">
+                <h3 className="mb-4 font-semibold">{t('verificationSummary')}</h3>
                 <dl className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <dt className="text-[var(--fg-secondary)]">{t('posts')}</dt>
-                    <dd className="text-[var(--fg-primary)] font-medium">{chain.stats.postCount}</dd>
+                    <dd className="font-medium text-[var(--fg-primary)]">
+                      {chain.stats.postCount}
+                    </dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-[var(--fg-secondary)]">{t('corroborations')}</dt>
-                    <dd className="text-[var(--fg-success)] font-medium">
+                    <dd className="font-medium text-[var(--fg-success)]">
                       {chain.stats.corroborationCount}
                     </dd>
                   </div>
@@ -277,14 +266,14 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-[var(--fg-secondary)]">{t('contributors')}</dt>
-                    <dd className="text-[var(--fg-primary)] font-medium">{chain.stats.contributorCount}</dd>
+                    <dd className="font-medium text-[var(--fg-primary)]">
+                      {chain.stats.contributorCount}
+                    </dd>
                   </div>
                 </dl>
 
-                <div className="mt-6 pt-4 border-t border-[var(--border-subtle)]">
-                  <p className="text-xs text-[var(--fg-tertiary)] mb-1">
-                    {t('chainStarted')}
-                  </p>
+                <div className="mt-6 border-t border-[var(--border-subtle)] pt-4">
+                  <p className="mb-1 text-xs text-[var(--fg-tertiary)]">{t('chainStarted')}</p>
                   <p className="text-sm text-[var(--fg-secondary)]">
                     {formatDate(chain.createdAt)}
                   </p>
@@ -295,11 +284,9 @@ export default async function ChainPage({ params }: ChainPageProps): Promise<Rea
         </section>
 
         {/* Add to Chain CTA */}
-        <section className="py-6 bg-[var(--bg-surface-raised)] border-b border-[var(--border-default)]">
-          <div className="container-wide flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[var(--fg-secondary)]">
-              {t('addPostCta')}
-            </p>
+        <section className="border-b border-[var(--border-default)] bg-[var(--bg-surface-raised)] py-6">
+          <div className="container-wide flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-[var(--fg-secondary)]">{t('addPostCta')}</p>
             <AddPostButton chainId={createChainId(id)} />
           </div>
         </section>

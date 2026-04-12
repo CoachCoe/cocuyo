@@ -29,22 +29,19 @@ const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
  * All operations are read-only and work without wallet connection.
  */
 export function useChainService(): ChainService {
-  const getChain = useCallback(
-    async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
-      if (USE_CHAIN) {
-        try {
-          const bulletin = await getBulletinClient();
-          return await bulletin.fetchJson<StoryChain>(id);
-        } catch {
-          return null;
-        }
+  const getChain = useCallback(async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
+    if (USE_CHAIN) {
+      try {
+        const bulletin = await getBulletinClient();
+        return await bulletin.fetchJson<StoryChain>(id);
+      } catch {
+        return null;
       }
+    }
 
-      // Try fetching from Bulletin Chain
-      return fetchFromBulletin<StoryChain>(id);
-    },
-    []
-  );
+    // Try fetching from Bulletin Chain
+    return fetchFromBulletin<StoryChain>(id);
+  }, []);
 
   const getChains = useCallback(
     async (_params: {

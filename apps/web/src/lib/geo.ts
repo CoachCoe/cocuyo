@@ -61,11 +61,7 @@ export async function reverseGeocode(
 
     const address = data.address;
     const city =
-      address?.city ??
-      address?.town ??
-      address?.village ??
-      address?.municipality ??
-      null;
+      address?.city ?? address?.town ?? address?.village ?? address?.municipality ?? null;
 
     return {
       city,
@@ -81,10 +77,7 @@ export async function reverseGeocode(
  * Calculate distance between two points using Haversine formula.
  * Returns distance in kilometers.
  */
-export function calculateDistance(
-  point1: GeoLocation,
-  point2: GeoLocation
-): number {
+export function calculateDistance(point1: GeoLocation, point2: GeoLocation): number {
   const R = 6371; // Earth's radius in km
   const dLat = toRadians(point2.lat - point1.lat);
   const dLon = toRadians(point2.lon - point1.lon);

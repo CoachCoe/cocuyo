@@ -10,12 +10,7 @@ export {
   type AccountConnectionStatus,
 } from './detect';
 
-export {
-  CHAINS,
-  type ChainId,
-  createChainClient,
-  createKnownChainClient,
-} from './chain';
+export { CHAINS, type ChainId, createChainClient, createKnownChainClient } from './chain';
 
 export { storage, read, write, clear } from './storage';
 

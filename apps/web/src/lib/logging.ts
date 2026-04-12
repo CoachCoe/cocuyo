@@ -35,10 +35,14 @@ function log(level: LogLevel, message: string, ctx: LogContext): void {
   const timestamp = new Date().toISOString();
   const prefix = `[${timestamp}] [${level.toUpperCase()}] [${ctx.module}:${ctx.operation}]`;
 
-  const logFn = level === 'error' ? console.error
-    : level === 'warn' ? console.warn
-    : level === 'debug' ? console.debug
-    : console.info;
+  const logFn =
+    level === 'error'
+      ? console.error
+      : level === 'warn'
+        ? console.warn
+        : level === 'debug'
+          ? console.debug
+          : console.info;
 
   if (ctx.context !== undefined) {
     logFn(prefix, message, ctx.context);
@@ -86,9 +90,8 @@ function stringifyError(error: unknown): string {
 
 export function logError(message: string, ctx: LogContext, error?: unknown): void {
   const baseContext = ctx.context ?? {};
-  const errorContext = error !== undefined
-    ? { ...baseContext, error: stringifyError(error) }
-    : baseContext;
+  const errorContext =
+    error !== undefined ? { ...baseContext, error: stringifyError(error) } : baseContext;
 
   log('error', message, { module: ctx.module, operation: ctx.operation, context: errorContext });
 }
@@ -97,27 +100,36 @@ export function logError(message: string, ctx: LogContext, error?: unknown): voi
  * Log a swallowed error - an error that was caught but where we're
  * proceeding with fallback behavior. Only logs in development.
  */
-export function logSwallowedError(
-  message: string,
-  ctx: LogContext,
-  error?: unknown
-): void {
+export function logSwallowedError(message: string, ctx: LogContext, error?: unknown): void {
   if (!isDev) return;
 
   const baseContext = ctx.context ?? {};
-  const errorContext = error !== undefined
-    ? { ...baseContext, error: stringifyError(error) }
-    : baseContext;
+  const errorContext =
+    error !== undefined ? { ...baseContext, error: stringifyError(error) } : baseContext;
 
-  log('debug', `[Swallowed] ${message}`, { module: ctx.module, operation: ctx.operation, context: errorContext });
+  log('debug', `[Swallowed] ${message}`, {
+    module: ctx.module,
+    operation: ctx.operation,
+    context: errorContext,
+  });
 }
 
 interface Logger {
   debug: (message: string, operation: string, context?: Record<string, unknown>) => void;
   info: (message: string, operation: string, context?: Record<string, unknown>) => void;
   warn: (message: string, operation: string, context?: Record<string, unknown>) => void;
-  error: (message: string, operation: string, error?: unknown, context?: Record<string, unknown>) => void;
-  swallowed: (message: string, operation: string, error?: unknown, context?: Record<string, unknown>) => void;
+  error: (
+    message: string,
+    operation: string,
+    error?: unknown,
+    context?: Record<string, unknown>
+  ) => void;
+  swallowed: (
+    message: string,
+    operation: string,
+    error?: unknown,
+    context?: Record<string, unknown>
+  ) => void;
 }
 
 /**
@@ -131,9 +143,22 @@ export function createLogger(module: string): Logger {
       logInfo(message, { module, operation, ...(context !== undefined && { context }) }),
     warn: (message: string, operation: string, context?: Record<string, unknown>) =>
       logWarn(message, { module, operation, ...(context !== undefined && { context }) }),
-    error: (message: string, operation: string, error?: unknown, context?: Record<string, unknown>) =>
-      logError(message, { module, operation, ...(context !== undefined && { context }) }, error),
-    swallowed: (message: string, operation: string, error?: unknown, context?: Record<string, unknown>) =>
-      logSwallowedError(message, { module, operation, ...(context !== undefined && { context }) }, error),
+    error: (
+      message: string,
+      operation: string,
+      error?: unknown,
+      context?: Record<string, unknown>
+    ) => logError(message, { module, operation, ...(context !== undefined && { context }) }, error),
+    swallowed: (
+      message: string,
+      operation: string,
+      error?: unknown,
+      context?: Record<string, unknown>
+    ) =>
+      logSwallowedError(
+        message,
+        { module, operation, ...(context !== undefined && { context }) },
+        error
+      ),
   };
 }

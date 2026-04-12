@@ -7,7 +7,7 @@
  * Only visible to members of collectives with jurisdiction over the claim's topics.
  */
 
-import { useState, useEffect, useCallback, type ReactElement } from 'react';
+import { useState, useEffect, useCallback, useRef, type ReactElement } from 'react';
 import type {
   ClaimId,
   VerdictProposal,
@@ -17,10 +17,7 @@ import type {
 } from '@cocuyo/types';
 import { calculateVotingProgress, hasVoted } from '@cocuyo/types';
 import { useSigner } from '@/hooks';
-import {
-  collectiveService,
-  verdictProposalService,
-} from '@/lib/services';
+import { collectiveService, verdictProposalService } from '@/lib/services';
 import { getConnectedCredential } from '@/lib/services/service-utils';
 import { VerdictProposalCard } from './VerdictProposalCard';
 import { VoteProgress } from './VoteProgress';
@@ -61,16 +58,26 @@ export function VerdictVotingPanel({
   const credential = getConnectedCredential();
   const isMember = userCollectives.length > 0;
 
+  // Track mounted state to prevent state updates after unmount
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   // Load proposals and user's collectives
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [proposalsData, collectivesData] = await Promise.all([
         verdictProposalService.getProposalsForClaim(claimId),
-        credential
-          ? collectiveService.getCollectivesForMember(credential)
-          : Promise.resolve([]),
+        credential ? collectiveService.getCollectivesForMember(credential) : Promise.resolve([]),
       ]);
+
+      // Guard: don't update state if unmounted
+      if (!mountedRef.current) return;
 
       setProposals(proposalsData);
       setUserCollectives(collectivesData);
@@ -81,7 +88,9 @@ export function VerdictVotingPanel({
         setSelectedProposal(activeProposal);
       }
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, [claimId, credential]);
 
@@ -116,7 +125,9 @@ export function VerdictVotingPanel({
   }): Promise<void> => {
     const result = await verdictProposalService.createProposal({
       claimId: params.claimId,
-      collectiveId: params.collectiveId as Parameters<typeof verdictProposalService.createProposal>[0]['collectiveId'],
+      collectiveId: params.collectiveId as Parameters<
+        typeof verdictProposalService.createProposal
+      >[0]['collectiveId'],
       proposedStatus: params.proposedStatus,
       rationale: params.rationale,
     });
@@ -131,7 +142,7 @@ export function VerdictVotingPanel({
   // Don't render if not connected
   if (!isConnected) {
     return (
-      <div className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
+      <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 text-center">
         <p className="text-sm text-[var(--fg-secondary)]">
           {t.connectWallet ?? 'Connect your wallet to participate in verdict voting'}
         </p>
@@ -142,7 +153,7 @@ export function VerdictVotingPanel({
   // Don't render if not a member of any collective
   if (!loading && !isMember) {
     return (
-      <div className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
+      <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 text-center">
         <p className="text-sm text-[var(--fg-secondary)]">
           {t.notAMember ?? 'Join a collective to participate in verdict voting'}
         </p>
@@ -153,8 +164,8 @@ export function VerdictVotingPanel({
   // Loading state
   if (loading) {
     return (
-      <div className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
-        <p className="text-sm text-[var(--fg-tertiary)] animate-pulse">
+      <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 text-center">
+        <p className="animate-pulse text-sm text-[var(--fg-tertiary)]">
           {t.loading ?? 'Loading...'}
         </p>
       </div>
@@ -168,7 +179,7 @@ export function VerdictVotingPanel({
     <section className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-display font-medium text-[var(--fg-primary)]">
+        <h3 className="font-display text-lg font-medium text-[var(--fg-primary)]">
           {t.title ?? 'Collective Verification'}
         </h3>
         {userCollectives.length > 0 && (
@@ -188,7 +199,7 @@ export function VerdictVotingPanel({
           {activeProposals.map((proposal) => (
             <div
               key={proposal.id}
-              className={`p-4 bg-[var(--bg-surface-nested)] border rounded-container transition-colors ${
+              className={`rounded-container border bg-[var(--bg-surface-nested)] p-4 transition-colors ${
                 selectedProposal?.id === proposal.id
                   ? 'border-[var(--color-firefly-gold)]'
                   : 'border-[var(--border-default)]'
@@ -201,12 +212,12 @@ export function VerdictVotingPanel({
 
               {/* Expanded voting section */}
               {selectedProposal?.id === proposal.id && (
-                <div className="mt-4 pt-4 border-t border-[var(--border-subtle)] space-y-4">
+                <div className="mt-4 space-y-4 border-t border-[var(--border-subtle)] pt-4">
                   <VoteProgress progress={calculateVotingProgress(proposal)} />
 
                   {credential && !hasVoted(proposal, credential) ? (
                     <div>
-                      <p className="text-sm text-[var(--fg-secondary)] mb-3">
+                      <p className="mb-3 text-sm text-[var(--fg-secondary)]">
                         {t.castYourVote ?? 'Cast your vote:'}
                       </p>
                       <VoteButtons
@@ -216,7 +227,7 @@ export function VerdictVotingPanel({
                       />
                     </div>
                   ) : (
-                    <p className="text-sm text-[var(--fg-tertiary)] italic">
+                    <p className="text-sm italic text-[var(--fg-tertiary)]">
                       {t.alreadyVoted ?? 'You have already voted on this proposal'}
                     </p>
                   )}
@@ -226,17 +237,22 @@ export function VerdictVotingPanel({
           ))}
         </div>
       ) : (
-        <div className="p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container text-center">
-          <p className="text-sm text-[var(--fg-secondary)] mb-4">
+        <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6 text-center">
+          <p className="mb-4 text-sm text-[var(--fg-secondary)]">
             {t.noProposals ?? 'No active proposals for this claim'}
           </p>
           <button
             type="button"
             onClick={() => setShowCreateSheet(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--bg-default)] bg-[var(--color-firefly-gold)] rounded-lg hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-firefly-gold)] px-4 py-2 text-sm font-medium text-[var(--bg-default)] transition-opacity hover:opacity-90"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             {t.createProposal ?? 'Create Proposal'}
           </button>
@@ -246,7 +262,7 @@ export function VerdictVotingPanel({
       {/* Past proposals (collapsed) */}
       {pastProposals.length > 0 && (
         <details className="group">
-          <summary className="text-sm text-[var(--fg-tertiary)] cursor-pointer hover:text-[var(--fg-secondary)]">
+          <summary className="cursor-pointer text-sm text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]">
             {pastProposals.length} past proposal{pastProposals.length !== 1 ? 's' : ''}
           </summary>
           <div className="mt-2 space-y-2">

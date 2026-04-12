@@ -35,14 +35,7 @@ export function StoryIlluminateButton({
     <button
       type="button"
       onClick={handleClick}
-      className="
-        p-2 rounded-nested
-        text-tertiary hover:text-[var(--fg-accent)]
-        opacity-0 group-hover:opacity-100 sm:opacity-100 md:opacity-0 md:group-hover:opacity-100
-        hover:bg-[var(--bg-accent-firefly)]/10
-        transition-all duration-150
-        focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--fg-accent)]
-      "
+      className="hover:bg-[var(--bg-accent-firefly)]/10 rounded-nested p-2 text-tertiary opacity-0 transition-all duration-150 hover:text-[var(--fg-accent)] focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--fg-accent)] group-hover:opacity-100 sm:opacity-100 md:opacity-0 md:group-hover:opacity-100"
       aria-label={ariaLabel}
     >
       <FireflySymbol size={14} color="inherit" aria-hidden="true" />

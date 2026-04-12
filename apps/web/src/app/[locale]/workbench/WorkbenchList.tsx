@@ -68,9 +68,7 @@ export function WorkbenchList({
         <EmptyState
           title={isFiltered ? 'No matching claims' : t.noClaims}
           description={
-            isFiltered
-              ? 'Try adjusting your filters or search query.'
-              : t.noClaimsDescription
+            isFiltered ? 'Try adjusting your filters or search query.' : t.noClaimsDescription
           }
         />
       </div>

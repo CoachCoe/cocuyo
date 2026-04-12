@@ -28,7 +28,10 @@ export interface VerdictProposalCardProps {
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   voting: { label: 'Voting', className: 'bg-blue-500/15 text-blue-400' },
-  approved: { label: 'Approved', className: 'bg-[var(--color-firefly-gold)]/15 text-[var(--color-firefly-gold)]' },
+  approved: {
+    label: 'Approved',
+    className: 'bg-[var(--color-firefly-gold)]/15 text-[var(--color-firefly-gold)]',
+  },
   rejected: { label: 'Rejected', className: 'bg-[var(--fg-error)]/15 text-[var(--fg-error)]' },
   expired: { label: 'Expired', className: 'bg-[var(--fg-tertiary)]/15 text-[var(--fg-tertiary)]' },
 };
@@ -65,18 +68,16 @@ export function VerdictProposalCard({
     <button
       type="button"
       onClick={onClick}
-      className={`
-        w-full text-left p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)]
-        rounded-container hover:border-[var(--border-emphasis)] transition-colors
-        ${onClick ? 'cursor-pointer' : 'cursor-default'}
-      `}
+      className={`w-full rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 text-left transition-colors hover:border-[var(--border-emphasis)] ${onClick ? 'cursor-pointer' : 'cursor-default'} `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <span className={`text-xs px-2 py-0.5 rounded-full ${badgeClassName}`}>
+      <div className="mb-3 flex items-center justify-between">
+        <span className={`rounded-full px-2 py-0.5 text-xs ${badgeClassName}`}>
           {translations[proposal.status as keyof typeof translations] ?? badgeLabel}
         </span>
-        <span className={`text-xs ${isExpired ? 'text-[var(--fg-error)]' : 'text-[var(--fg-tertiary)]'}`}>
+        <span
+          className={`text-xs ${isExpired ? 'text-[var(--fg-error)]' : 'text-[var(--fg-tertiary)]'}`}
+        >
           {isExpired
             ? (translations.expired ?? 'Expired')
             : `${translations.expiresIn ?? 'Expires in'} ${timeRemaining}`}
@@ -88,22 +89,22 @@ export function VerdictProposalCard({
         <span className="text-xs text-[var(--fg-tertiary)]">
           {translations.proposed ?? 'Proposed'}:
         </span>
-        <span className="ml-2 text-sm font-medium text-[var(--fg-primary)] capitalize">
+        <span className="ml-2 text-sm font-medium capitalize text-[var(--fg-primary)]">
           {proposal.proposedStatus}
         </span>
       </div>
 
       {/* Rationale (truncated) */}
-      <p className="text-sm text-[var(--fg-secondary)] line-clamp-2 mb-3">
-        {proposal.rationale}
-      </p>
+      <p className="mb-3 line-clamp-2 text-sm text-[var(--fg-secondary)]">{proposal.rationale}</p>
 
       {/* Vote progress bar */}
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-1.5 bg-[var(--bg-default)] rounded-full overflow-hidden">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--bg-default)]">
           <div
             className="h-full bg-[var(--fg-secondary)] transition-all duration-300"
-            style={{ width: `${Math.min((progress.totalVotes / proposal.requiredVotes) * 100, 100)}%` }}
+            style={{
+              width: `${Math.min((progress.totalVotes / proposal.requiredVotes) * 100, 100)}%`,
+            }}
           />
         </div>
         <span className="text-xs text-[var(--fg-tertiary)]">

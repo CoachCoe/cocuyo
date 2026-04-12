@@ -2,8 +2,4 @@
  * Chain Module Exports
  */
 
-export {
-  getFireflyChainAPI,
-  getBulletinClient,
-  clearChainCache,
-} from './client';
+export { getFireflyChainAPI, getBulletinClient, clearChainCache } from './client';

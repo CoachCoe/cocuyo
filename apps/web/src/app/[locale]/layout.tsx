@@ -9,7 +9,10 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { AppStateProvider } from '@/components/AppStateProvider';
 import { IlluminateProvider } from '@/components/IlluminateProvider';
 import { IlluminateModal } from '@/components/IlluminateModal';
-import { CorroborateDisputeProvider, CorroborateDisputeSheet } from '@/components/CorroborateDisputeSheet';
+import {
+  CorroborateDisputeProvider,
+  CorroborateDisputeSheet,
+} from '@/components/CorroborateDisputeSheet';
 import { TrustDrawerProvider, TrustDrawer } from '@/components/TrustDrawer';
 import { AddToStoryProvider, AddToStorySheet } from '@/components/AddToStorySheet';
 import { ExtractClaimProvider, ExtractClaimSheet } from '@/components/ExtractClaimSheet';
@@ -33,7 +36,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Validate that the incoming locale is valid
-  if (!routing.locales.includes(locale as typeof routing.locales[number])) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 
@@ -58,7 +61,7 @@ export default async function LocaleLayout({
                           <AddToStoryProvider>
                             <ExtractClaimProvider>
                               <AppNavbar />
-                              <div className="pt-16 min-h-screen">{children}</div>
+                              <div className="min-h-screen pt-16">{children}</div>
                               <AppFooter />
                               <IlluminateModal />
                               <CorroborateDisputeSheet />

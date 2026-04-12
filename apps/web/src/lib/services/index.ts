@@ -25,7 +25,16 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { ChainService, CampaignService, PostService, ClaimService, CorroborationService, VerdictService, CollectiveService, VerdictProposalService } from '@cocuyo/types';
+import type {
+  ChainService,
+  CampaignService,
+  PostService,
+  ClaimService,
+  CorroborationService,
+  VerdictService,
+  CollectiveService,
+  VerdictProposalService,
+} from '@cocuyo/types';
 import { SignalServiceImpl } from './signal-service';
 import { ChainServiceImpl } from './chain-service';
 import { CampaignServiceImpl } from './campaign-service';
@@ -34,7 +43,10 @@ import { CorroborationServiceImpl } from './corroboration-service';
 import { ChainSignalService } from './chain-signal-service';
 import { ChainChainService } from './chain-chain-service';
 import { collectiveService as collectiveServiceInstance } from './collective-service';
-import { verdictService as verdictServiceInstance, verdictProposalService as verdictProposalServiceInstance } from './verdict-service';
+import {
+  verdictService as verdictServiceInstance,
+  verdictProposalService as verdictProposalServiceInstance,
+} from './verdict-service';
 
 /**
  * Whether to use chain-backed services.
@@ -147,9 +159,15 @@ export const verdictProposalService: VerdictProposalService = verdictProposalSer
 export { SignalServiceImpl, SignalServiceImpl as MockSignalService } from './signal-service';
 export { ChainServiceImpl, ChainServiceImpl as MockChainService } from './chain-service';
 export { CampaignServiceImpl } from './campaign-service';
-export { SignalServiceImpl as PostServiceImpl, SignalServiceImpl as MockPostService } from './signal-service';
+export {
+  SignalServiceImpl as PostServiceImpl,
+  SignalServiceImpl as MockPostService,
+} from './signal-service';
 export { ClaimServiceImpl, ClaimServiceImpl as MockClaimService } from './claim-service';
-export { CorroborationServiceImpl, CorroborationServiceImpl as MockCorroborationService } from './corroboration-service';
+export {
+  CorroborationServiceImpl,
+  CorroborationServiceImpl as MockCorroborationService,
+} from './corroboration-service';
 export { ChainSignalService } from './chain-signal-service';
 export { ChainChainService } from './chain-chain-service';
 export { CollectiveServiceImpl } from './collective-service';
@@ -163,3 +181,6 @@ export {
   useClaimService,
   useCorroborationService,
 } from './hooks';
+
+// Export wallet state management
+export { setConnectedWallet, getConnectedWallet, isWalletConnected } from './service-utils';

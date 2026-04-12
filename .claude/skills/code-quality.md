@@ -1,6 +1,6 @@
 ---
 name: code-quality
-description: "Enforce minimal code philosophy and exceptional code quality. Triggers: quality, refactor, clean, minimal, bloat, simplify, YAGNI, over-engineering"
+description: 'Enforce minimal code philosophy and exceptional code quality. Triggers: quality, refactor, clean, minimal, bloat, simplify, YAGNI, over-engineering'
 ---
 
 # Code Quality Skill — Minimal Code Philosophy
@@ -17,13 +17,13 @@ description: "Enforce minimal code philosophy and exceptional code quality. Trig
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| Build only what's requested | No speculative features | MANDATORY |
-| Delete unused code | Don't comment out | MANDATORY |
-| Three lines > premature abstraction | Keep it simple | MANDATORY |
-| No backwards-compatibility hacks | Just change the code | MANDATORY |
-| Self-documenting code | Comments explain WHY, not WHAT | MANDATORY |
+| Rule                                | Enforcement                    | Status    |
+| ----------------------------------- | ------------------------------ | --------- |
+| Build only what's requested         | No speculative features        | MANDATORY |
+| Delete unused code                  | Don't comment out              | MANDATORY |
+| Three lines > premature abstraction | Keep it simple                 | MANDATORY |
+| No backwards-compatibility hacks    | Just change the code           | MANDATORY |
+| Self-documenting code               | Comments explain WHY, not WHAT | MANDATORY |
 
 ---
 
@@ -33,31 +33,31 @@ description: "Enforce minimal code philosophy and exceptional code quality. Trig
 
 Only build what's explicitly requested or clearly necessary.
 
-| ✅ DO | ❌ DON'T |
-|-------|---------|
-| Implement the requested feature | Add "configurable" options |
-| Solve the specific problem | Design for hypothetical futures |
-| Write minimal working code | Build "extensible" frameworks |
+| ✅ DO                           | ❌ DON'T                        |
+| ------------------------------- | ------------------------------- |
+| Implement the requested feature | Add "configurable" options      |
+| Solve the specific problem      | Design for hypothetical futures |
+| Write minimal working code      | Build "extensible" frameworks   |
 
 ### 2. The Right Amount of Complexity
 
 The minimum complexity needed for the current task.
 
-| ✅ DO | ❌ DON'T |
-|-------|---------|
-| Three similar lines of code | Premature helper function |
-| Direct implementation | Factory pattern for one class |
-| Inline logic where clear | Utility function used once |
+| ✅ DO                       | ❌ DON'T                      |
+| --------------------------- | ----------------------------- |
+| Three similar lines of code | Premature helper function     |
+| Direct implementation       | Factory pattern for one class |
+| Inline logic where clear    | Utility function used once    |
 
 ### 3. Delete, Don't Comment
 
 If code is unused, remove it. Git has history.
 
-| ✅ DO | ❌ DON'T |
-|-------|---------|
-| `git rm unused-file.ts` | `// TODO: remove later` |
-| Remove unused imports | `_unusedVariable` renaming |
-| Delete dead branches | `// OLD: previous implementation` |
+| ✅ DO                   | ❌ DON'T                          |
+| ----------------------- | --------------------------------- |
+| `git rm unused-file.ts` | `// TODO: remove later`           |
+| Remove unused imports   | `_unusedVariable` renaming        |
+| Delete dead branches    | `// OLD: previous implementation` |
 
 ---
 
@@ -66,6 +66,7 @@ If code is unused, remove it. Git has history.
 ### Feature Scope
 
 ✅ CORRECT:
+
 ```typescript
 // User asked: "Add a loading state to the button"
 function Button({ loading, children }: { loading?: boolean; children: React.ReactNode }) {
@@ -78,6 +79,7 @@ function Button({ loading, children }: { loading?: boolean; children: React.Reac
 ```
 
 ❌ FAIL:
+
 ```typescript
 // User asked: "Add a loading state to the button"
 // OVER-ENGINEERED: Added size, variant, icon, animation options
@@ -98,6 +100,7 @@ function Button({
 ### Abstraction Timing
 
 ✅ CORRECT:
+
 ```typescript
 // First occurrence - just write it
 const formattedDate1 = new Date(signal1.createdAt).toLocaleDateString();
@@ -112,18 +115,20 @@ function formatSignalDate(timestamp: number): string {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // First occurrence - premature abstraction
 const DateFormatter = {
   format: (timestamp: number, options?: DateFormatOptions) => {
     // 30 lines of configurability for a single use case
-  }
+  },
 };
 ```
 
 ### Error Handling
 
 ✅ CORRECT:
+
 ```typescript
 // Handle errors at system boundaries
 async function fetchSignal(id: SignalId): Promise<Signal | null> {
@@ -137,6 +142,7 @@ async function fetchSignal(id: SignalId): Promise<Signal | null> {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Over-defensive internal code
 function processSignal(signal: Signal) {
@@ -151,6 +157,7 @@ function processSignal(signal: Signal) {
 ### Comments
 
 ✅ CORRECT:
+
 ```typescript
 // Explain WHY, not WHAT
 // Using 2-second debounce because the DIM oracle has rate limiting
@@ -158,6 +165,7 @@ const debouncedVerify = debounce(verifyCredential, 2000);
 ```
 
 ❌ FAIL:
+
 ```typescript
 // WRONG: Explains what the code obviously does
 // Increment counter by 1
@@ -174,21 +182,23 @@ function fetchSignalById(id: SignalId) { ... }
 
 ### File Size Limits
 
-| File Type | Target Lines | Max Lines |
-|-----------|--------------|-----------|
-| Component | 50-150 | 300 |
-| Utility | 20-50 | 100 |
-| Service | 100-200 | 400 |
-| Type definitions | 20-100 | 200 |
+| File Type        | Target Lines | Max Lines |
+| ---------------- | ------------ | --------- |
+| Component        | 50-150       | 300       |
+| Utility          | 20-50        | 100       |
+| Service          | 100-200      | 400       |
+| Type definitions | 20-100       | 200       |
 
 ### When to Split
 
 Split when:
+
 - File exceeds max lines
 - Multiple unrelated concerns
 - Natural module boundary exists
 
 Don't split:
+
 - Just to reduce line count
 - When it increases complexity
 - For single-use helpers
@@ -200,6 +210,7 @@ Don't split:
 ### Type Precision
 
 ✅ CORRECT:
+
 ```typescript
 // Precise types
 function getSignal(id: SignalId): Promise<Signal | null> { ... }
@@ -209,6 +220,7 @@ type SignalId = string & { readonly __brand: 'SignalId' };
 ```
 
 ❌ FAIL:
+
 ```typescript
 // WRONG: Too loose
 function getSignal(id: any): any { ... }
@@ -220,6 +232,7 @@ function getSignal(id: string): Signal { ... }  // What if not found?
 ### Explicit Over Implicit
 
 ✅ CORRECT:
+
 ```typescript
 // Explicit return types on exports
 export function calculateReputationWeight(corroborations: Corroboration[]): number {
@@ -228,6 +241,7 @@ export function calculateReputationWeight(corroborations: Corroboration[]): numb
 ```
 
 ❌ FAIL:
+
 ```typescript
 // WRONG: Implicit return type
 export function calculateReputationWeight(corroborations: Corroboration[]) {
@@ -242,11 +256,12 @@ export function calculateReputationWeight(corroborations: Corroboration[]) {
 ### Component Simplicity
 
 ✅ CORRECT:
+
 ```tsx
 // Single responsibility, minimal props
 function SignalCard({ signal }: { signal: Signal }) {
   return (
-    <article className="bg-tertiary border border-default rounded-lg p-6">
+    <article className="bg-tertiary border-default rounded-lg border p-6">
       <SignalMeta signal={signal} />
       <SignalContent content={signal.content} />
       <CorroborationSummary counts={signal.corroborations} />
@@ -256,6 +271,7 @@ function SignalCard({ signal }: { signal: Signal }) {
 ```
 
 ❌ FAIL:
+
 ```tsx
 // WRONG: Kitchen sink component
 function SignalCard({
@@ -278,6 +294,7 @@ function SignalCard({
 ### Hook Simplicity
 
 ✅ CORRECT:
+
 ```typescript
 // Simple, single-purpose hook
 function useSignal(id: SignalId) {
@@ -286,6 +303,7 @@ function useSignal(id: SignalId) {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // WRONG: Over-abstracted
 function useSignal(id: SignalId, options?: UseSignalOptions) {
@@ -300,20 +318,20 @@ function useSignal(id: SignalId, options?: UseSignalOptions) {
 
 ### When to Refactor
 
-| Refactor When | Don't Refactor When |
-|---------------|---------------------|
-| Bug fix requires it | Just to "clean up" |
-| Feature blocked by structure | Surrounding code works |
-| Repeated pattern (3+ times) | Pattern occurs twice |
-| Explicit user request | Anticipating future needs |
+| Refactor When                | Don't Refactor When       |
+| ---------------------------- | ------------------------- |
+| Bug fix requires it          | Just to "clean up"        |
+| Feature blocked by structure | Surrounding code works    |
+| Repeated pattern (3+ times)  | Pattern occurs twice      |
+| Explicit user request        | Anticipating future needs |
 
 ### Refactoring Scope
 
-| ✅ DO | ❌ DON'T |
-|-------|---------|
+| ✅ DO                  | ❌ DON'T                      |
+| ---------------------- | ----------------------------- |
 | Fix the specific issue | "While I'm here" improvements |
-| Minimal changes needed | Rewrite entire file |
-| Keep PR focused | Mix refactoring with features |
+| Minimal changes needed | Rewrite entire file           |
+| Keep PR focused        | Mix refactoring with features |
 
 ---
 
@@ -321,24 +339,26 @@ function useSignal(id: SignalId, options?: UseSignalOptions) {
 
 ### Optimize When
 
-| Optimize | Don't Optimize |
-|----------|----------------|
+| Optimize            | Don't Optimize        |
+| ------------------- | --------------------- |
 | Measured bottleneck | Hypothetical slowness |
-| User-facing latency | Internal tooling |
-| Data shows problem | Premature concern |
+| User-facing latency | Internal tooling      |
+| Data shows problem  | Premature concern     |
 
 ### Premature Optimization Examples
 
 ❌ DON'T:
+
 ```typescript
 // Premature memoization
 const memoizedFormat = useMemo(() => formatDate(date), [date]);
 
 // Premature caching
-const signalCache = new Map();  // Before knowing if needed
+const signalCache = new Map(); // Before knowing if needed
 ```
 
 ✅ DO:
+
 ```typescript
 // Just call the function
 const formatted = formatDate(date);
@@ -364,15 +384,15 @@ Before considering code complete, verify:
 
 ## Anti-Patterns
 
-| Pattern | Status | Instead |
-|---------|--------|---------|
-| Speculative features | FORBIDDEN | Build what's requested |
-| Commented-out code | FORBIDDEN | Delete it (git has history) |
-| `_unusedVar` naming | FORBIDDEN | Remove the variable |
-| Premature abstraction | FORBIDDEN | Duplicate until pattern is clear |
-| Feature flags for dead code | FORBIDDEN | Delete dead code |
-| "Extensible" one-time code | FORBIDDEN | Write simple code |
-| `// TODO: refactor later` | FORBIDDEN | Either do it or create issue |
-| Docs for obvious code | FORBIDDEN | Self-documenting code |
-| Wrapper functions with no logic | FORBIDDEN | Call directly |
-| Configuration for single value | FORBIDDEN | Hardcode it |
+| Pattern                         | Status    | Instead                          |
+| ------------------------------- | --------- | -------------------------------- |
+| Speculative features            | FORBIDDEN | Build what's requested           |
+| Commented-out code              | FORBIDDEN | Delete it (git has history)      |
+| `_unusedVar` naming             | FORBIDDEN | Remove the variable              |
+| Premature abstraction           | FORBIDDEN | Duplicate until pattern is clear |
+| Feature flags for dead code     | FORBIDDEN | Delete dead code                 |
+| "Extensible" one-time code      | FORBIDDEN | Write simple code                |
+| `// TODO: refactor later`       | FORBIDDEN | Either do it or create issue     |
+| Docs for obvious code           | FORBIDDEN | Self-documenting code            |
+| Wrapper functions with no logic | FORBIDDEN | Call directly                    |
+| Configuration for single value  | FORBIDDEN | Hardcode it                      |

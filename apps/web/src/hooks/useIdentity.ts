@@ -16,21 +16,18 @@ import {
   type DIMCredentialInfo,
   type DIMStatus,
 } from '@cocuyo/identity';
-import type {
-  FireflyProfile,
-  NewFireflyProfile,
-} from '@cocuyo/types';
+import type { FireflyProfile, NewFireflyProfile } from '@cocuyo/types';
 import { createFireflyId, createDIMCredential } from '@cocuyo/types';
 
 /**
  * Overall identity status.
  */
 export type IdentityStatus =
-  | 'loading'        // Checking state
-  | 'no-wallet'      // No wallet connected
-  | 'no-credential'  // Wallet connected, no DIM credential
-  | 'no-profile'     // Has credential, no profile created
-  | 'ready';         // Fully set up
+  | 'loading' // Checking state
+  | 'no-wallet' // No wallet connected
+  | 'no-credential' // Wallet connected, no DIM credential
+  | 'no-profile' // Has credential, no profile created
+  | 'ready'; // Fully set up
 
 /**
  * Identity state returned by the hook.
@@ -160,9 +157,7 @@ export function useIdentity(): IdentityState {
   }, [isConnected, isInHost]);
 
   // Generate suggested pseudonym from credential
-  const suggestedPseudonym = credential !== null
-    ? generatePseudonym(credential.hash)
-    : null;
+  const suggestedPseudonym = credential !== null ? generatePseudonym(credential.hash) : null;
 
   // Verify personhood action
   const verifyPersonhood = useCallback(async () => {

@@ -12,6 +12,8 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
@@ -38,7 +40,24 @@ export function ExtractClaimProvider({ children }: ExtractClaimProviderProps): R
   const [isOpen, setIsOpen] = useState(false);
   const [postId, setPostId] = useState<PostId | null>(null);
 
+  // Track timeout for cleanup
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clearTimeoutRef.current !== null) {
+        clearTimeout(clearTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const openSheet = useCallback((id: PostId): void => {
+    // Cancel any pending clear timeout when reopening
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
     setPostId(id);
     setIsOpen(true);
   }, []);
@@ -46,8 +65,9 @@ export function ExtractClaimProvider({ children }: ExtractClaimProviderProps): R
   const closeSheet = useCallback((): void => {
     setIsOpen(false);
     // Clear state after animation completes
-    setTimeout(() => {
+    clearTimeoutRef.current = setTimeout(() => {
       setPostId(null);
+      clearTimeoutRef.current = null;
     }, 200);
   }, []);
 
@@ -61,11 +81,7 @@ export function ExtractClaimProvider({ children }: ExtractClaimProviderProps): R
     [isOpen, postId, openSheet, closeSheet]
   );
 
-  return (
-    <ExtractClaimContext.Provider value={value}>
-      {children}
-    </ExtractClaimContext.Provider>
-  );
+  return <ExtractClaimContext.Provider value={value}>{children}</ExtractClaimContext.Provider>;
 }
 
 /**

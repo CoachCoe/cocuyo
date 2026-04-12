@@ -32,7 +32,8 @@ export interface VoteButtonsProps {
 const STATUS_CONFIG: Record<VerdictStatus, { label: string; colorClass: string; icon: string }> = {
   confirmed: {
     label: 'Confirmed',
-    colorClass: 'bg-[var(--color-firefly-gold)]/15 text-[var(--color-firefly-gold)] border-[var(--color-firefly-gold)]/30 hover:bg-[var(--color-firefly-gold)]/25',
+    colorClass:
+      'bg-[var(--color-firefly-gold)]/15 text-[var(--color-firefly-gold)] border-[var(--color-firefly-gold)]/30 hover:bg-[var(--color-firefly-gold)]/25',
     icon: '✓',
   },
   disputed: {
@@ -42,7 +43,8 @@ const STATUS_CONFIG: Record<VerdictStatus, { label: string; colorClass: string; 
   },
   false: {
     label: 'False',
-    colorClass: 'bg-[var(--fg-error)]/15 text-[var(--fg-error)] border-[var(--fg-error)]/30 hover:bg-[var(--fg-error)]/25',
+    colorClass:
+      'bg-[var(--fg-error)]/15 text-[var(--fg-error)] border-[var(--fg-error)]/30 hover:bg-[var(--fg-error)]/25',
     icon: '✗',
   },
   synthetic: {
@@ -52,7 +54,8 @@ const STATUS_CONFIG: Record<VerdictStatus, { label: string; colorClass: string; 
   },
   inconclusive: {
     label: 'Inconclusive',
-    colorClass: 'bg-[var(--fg-tertiary)]/15 text-[var(--fg-tertiary)] border-[var(--fg-tertiary)]/30 hover:bg-[var(--fg-tertiary)]/25',
+    colorClass:
+      'bg-[var(--fg-tertiary)]/15 text-[var(--fg-tertiary)] border-[var(--fg-tertiary)]/30 hover:bg-[var(--fg-tertiary)]/25',
     icon: '—',
   },
 };
@@ -79,20 +82,12 @@ export function VoteButtons({
             type="button"
             onClick={() => onVote(status)}
             disabled={disabled || loading || isSelected}
-            className={`
-              inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-              text-sm font-medium border transition-all duration-200
-              ${config.colorClass}
-              ${isSelected ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-default)]' : ''}
-              ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-            `}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-200 ${config.colorClass} ${isSelected ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-default)]' : ''} ${disabled || loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} `}
             aria-pressed={isSelected}
           >
             <span aria-hidden="true">{config.icon}</span>
             <span>{label}</span>
-            {isSelected && (
-              <span className="text-xs ml-1">(voted)</span>
-            )}
+            {isSelected && <span className="ml-1 text-xs">(voted)</span>}
           </button>
         );
       })}

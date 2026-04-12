@@ -118,12 +118,18 @@ export class CollectiveServiceImpl implements CollectiveService {
     return collective.members.some((m) => m.credentialHash === credential);
   }
 
-  async getMemberRole(collectiveId: CollectiveId, credential: DIMCredential): Promise<MemberRole | null> {
+  async getMemberRole(
+    collectiveId: CollectiveId,
+    credential: DIMCredential
+  ): Promise<MemberRole | null> {
     const member = await this.getMember(collectiveId, credential);
     return member?.role ?? null;
   }
 
-  async getMember(collectiveId: CollectiveId, credential: DIMCredential): Promise<CollectiveMember | null> {
+  async getMember(
+    collectiveId: CollectiveId,
+    credential: DIMCredential
+  ): Promise<CollectiveMember | null> {
     const collective = await this.getCollective(collectiveId);
     if (!collective) return null;
 

@@ -48,14 +48,14 @@ Coinage is Polkadot's native private payment system that enables anonymous trans
 
 ### Key Properties
 
-| Property | Public pUSD | Private Coinage |
-|----------|-------------|-----------------|
-| Balances | Visible | Hidden |
-| Transfers | Traceable | Anonymous |
-| Sender/Receiver | Known | Unknown |
-| Transaction Fees | Standard | Free for verified humans |
-| Denomination | Any amount | Powers of 2 ($0.01 - $163.84) |
-| Compliance | Easy | Requires design |
+| Property         | Public pUSD | Private Coinage               |
+| ---------------- | ----------- | ----------------------------- |
+| Balances         | Visible     | Hidden                        |
+| Transfers        | Traceable   | Anonymous                     |
+| Sender/Receiver  | Known       | Unknown                       |
+| Transaction Fees | Standard    | Free for verified humans      |
+| Denomination     | Any amount  | Powers of 2 ($0.01 - $163.84) |
+| Compliance       | Easy        | Requires design               |
 
 ---
 
@@ -92,6 +92,7 @@ Journalists in hostile environments face multiple adversaries:
 ### Real-World Scenarios
 
 **Scenario 1: Bounty Payout**
+
 ```
 WITHOUT COINAGE:
   Bounty escrow (public) → Journalist wallet (public)
@@ -108,6 +109,7 @@ WITH COINAGE:
 ```
 
 **Scenario 2: Diaspora Contribution**
+
 ```
 WITHOUT COINAGE:
   Diaspora wallet (USA) → Treasury (public)
@@ -124,6 +126,7 @@ WITH COINAGE:
 ```
 
 **Scenario 3: Source Payment**
+
 ```
 WITHOUT COINAGE:
   Outlet wallet → Source wallet (public)
@@ -145,6 +148,7 @@ WITH COINAGE:
 ### Core Concepts
 
 #### 1. Private Coins
+
 Coins are held in single-use public keys derived from the user's mnemonic:
 
 ```
@@ -162,6 +166,7 @@ Keys are never reused after spending.
 ```
 
 #### 2. Coin Denominations
+
 Values follow powers of 2 for efficient splitting:
 
 ```
@@ -184,6 +189,7 @@ Exponent  Value
 ```
 
 #### 3. Coin Age
+
 Each coin has an "age" that increments with each transfer:
 
 ```
@@ -194,6 +200,7 @@ Age > A2: Must be recycled (cannot transfer)
 ```
 
 #### 4. The Recycler
+
 The recycler is the anonymization mechanism:
 
 ```
@@ -217,6 +224,7 @@ The recycler is the anonymization mechanism:
 ```
 
 #### 5. Transfers (Pull Mechanic)
+
 Transfers happen in two steps:
 
 ```
@@ -230,6 +238,7 @@ Step 2: ON-CHAIN
 ```
 
 This "pull" mechanic means:
+
 - Receiver doesn't need to be online when sender initiates
 - Receiver can refuse payment (just don't pull)
 - Sender can cancel by transferring to self if receiver doesn't claim
@@ -262,6 +271,7 @@ Coinage leverages DIM (proof-of-personhood) for free transactions:
 ```
 
 **Alignment with Firefly Network:**
+
 - Fireflies are already verified via DIM
 - Free Coinage usage is automatic for verified fireflies
 - Non-verified users can still participate (paid tier)
@@ -474,21 +484,21 @@ export type CoinExponent = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 
  * Coin denomination values in cents.
  */
 export const COIN_VALUES: Record<CoinExponent, number> = {
-  0: 1,       // $0.01
-  1: 2,       // $0.02
-  2: 4,       // $0.04
-  3: 8,       // $0.08
-  4: 16,      // $0.16
-  5: 32,      // $0.32
-  6: 64,      // $0.64
-  7: 128,     // $1.28
-  8: 256,     // $2.56
-  9: 512,     // $5.12
-  10: 1024,   // $10.24
-  11: 2048,   // $20.48
-  12: 4096,   // $40.96
-  13: 8192,   // $81.92
-  14: 16384,  // $163.84
+  0: 1, // $0.01
+  1: 2, // $0.02
+  2: 4, // $0.04
+  3: 8, // $0.08
+  4: 16, // $0.16
+  5: 32, // $0.32
+  6: 64, // $0.64
+  7: 128, // $1.28
+  8: 256, // $2.56
+  9: 512, // $5.12
+  10: 1024, // $10.24
+  11: 2048, // $20.48
+  12: 4096, // $40.96
+  13: 8192, // $81.92
+  14: 16384, // $163.84
 };
 
 /**
@@ -528,7 +538,13 @@ export interface RecyclerVoucher {
  */
 export type RecyclerClaimToken =
   | { type: 'free_person'; ringIndex: number; counter: number; period: number; proof: Uint8Array }
-  | { type: 'free_lite_person'; ringIndex: number; counter: number; period: number; proof: Uint8Array }
+  | {
+      type: 'free_lite_person';
+      ringIndex: number;
+      counter: number;
+      period: number;
+      proof: Uint8Array;
+    }
   | { type: 'paid'; paidRingIndex: number; proof: Uint8Array };
 
 /**
@@ -681,10 +697,7 @@ export function createCoinageClient(config: CoinageConfig) {
     /**
      * Split a coin into smaller denominations.
      */
-    async splitCoin(params: {
-      coin: Coin;
-      into: CoinExponent[];
-    }): Promise<Coin[]> {
+    async splitCoin(params: { coin: Coin; into: CoinExponent[] }): Promise<Coin[]> {
       // 1. Validate split (sum must equal original)
       // 2. Derive fresh keys for new coins
       // 3. Submit split transaction
@@ -708,9 +721,7 @@ export function createCoinageClient(config: CoinageConfig) {
     /**
      * Claim incoming transfer.
      */
-    async claimTransfer(params: {
-      keys: string[];
-    }): Promise<Coin[]> {
+    async claimTransfer(params: { keys: string[] }): Promise<Coin[]> {
       // 1. Derive fresh destination keys
       // 2. Submit transfer transactions
       // 3. Return claimed coins
@@ -728,10 +739,7 @@ export function createCoinageClient(config: CoinageConfig) {
     /**
      * Recycle coins to reset age.
      */
-    async recycleCoin(params: {
-      coins: Coin[];
-      claimToken: RecyclerClaimToken;
-    }): Promise<Coin[]> {
+    async recycleCoin(params: { coins: Coin[]; claimToken: RecyclerClaimToken }): Promise<Coin[]> {
       // 1. Load coins into recycler
       // 2. Wait for ring to fill (privacy)
       // 3. Claim new coins with age 0
@@ -887,14 +895,14 @@ export function createPaymentRouter(config: PaymentRouterConfig) {
 
 Even with Coinage, some information can leak:
 
-| Operation | Information Leaked |
-|-----------|-------------------|
-| Onboarding | Someone with this pUSD address converted to private coins |
-| Split | Someone split a coin of value X into Y coins (likely same owner) |
-| Transfer | A coin was transferred (but sender/receiver unknown) |
-| Recycler Load | Someone with this coin loaded the recycler |
-| Recycler Claim | One of N ring members claimed coins |
-| Offboarding | Someone converted private coins to this pUSD address |
+| Operation      | Information Leaked                                               |
+| -------------- | ---------------------------------------------------------------- |
+| Onboarding     | Someone with this pUSD address converted to private coins        |
+| Split          | Someone split a coin of value X into Y coins (likely same owner) |
+| Transfer       | A coin was transferred (but sender/receiver unknown)             |
+| Recycler Load  | Someone with this coin loaded the recycler                       |
+| Recycler Claim | One of N ring members claimed coins                              |
+| Offboarding    | Someone converted private coins to this pUSD address             |
 
 ### Privacy Best Practices
 
@@ -931,6 +939,7 @@ Coinage integration transforms the Firefly Network from "censorship-resistant pa
 - **Outlets** paying staff without creating traceable records
 
 The integration leverages existing infrastructure:
+
 - **DIM credentials** enable free Coinage usage
 - **Firefly chat** enables off-chain key exchange
 - **pUSD foundation** provides stable value

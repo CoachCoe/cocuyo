@@ -30,7 +30,7 @@ export function Footer({
 
   return (
     <footer
-      className="bg-[var(--bg-surface-main)] border-t border-[var(--border-default)] py-6"
+      className="border-t border-[var(--border-default)] bg-[var(--bg-surface-main)] py-6"
       role="contentinfo"
     >
       <div className="container-wide">
@@ -39,7 +39,7 @@ export function Footer({
           <span className="flex items-center gap-1.5">
             {builtOn}
             <span
-              className="inline-block w-2 h-2 rounded-full bg-[var(--color-polkadot-pink)]"
+              className="inline-block h-2 w-2 rounded-full bg-[var(--color-polkadot-pink)]"
               aria-hidden="true"
             />
           </span>
@@ -48,7 +48,9 @@ export function Footer({
           <span className="italic">{tagline}</span>
           <span aria-hidden="true">·</span>
           {/* Copyright */}
-          <span>&copy; {year} {copyright}</span>
+          <span>
+            &copy; {year} {copyright}
+          </span>
         </div>
       </div>
     </footer>

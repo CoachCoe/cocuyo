@@ -12,10 +12,10 @@ export default function NotFound(): ReactElement {
   return (
     <html lang="en">
       <body className="min-h-screen bg-[var(--bg-default)] text-[var(--fg-primary)]">
-        <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center">
-          <div className="w-20 h-20 mb-8 rounded-full bg-[var(--bg-surface-container)] flex items-center justify-center">
+        <div className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
+          <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--bg-surface-container)]">
             <svg
-              className="w-10 h-10 text-[var(--fg-tertiary)]"
+              className="h-10 w-10 text-[var(--fg-tertiary)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -29,15 +29,11 @@ export default function NotFound(): ReactElement {
               />
             </svg>
           </div>
-          <h1 className="text-6xl font-bold text-[var(--fg-primary)] mb-4">
-            404
-          </h1>
-          <h2 className="text-xl font-semibold text-[var(--fg-primary)] mb-2">
-            Page not found
-          </h2>
-          <p className="text-[var(--fg-secondary)] mb-8 max-w-md">
-            The signal you&apos;re looking for has faded into the dark. It may
-            have been moved or no longer exists.
+          <h1 className="mb-4 text-6xl font-bold text-[var(--fg-primary)]">404</h1>
+          <h2 className="mb-2 text-xl font-semibold text-[var(--fg-primary)]">Page not found</h2>
+          <p className="mb-8 max-w-md text-[var(--fg-secondary)]">
+            The signal you&apos;re looking for has faded into the dark. It may have been moved or no
+            longer exists.
           </p>
           <Link href="/">
             <Button variant="primary">Return home</Button>

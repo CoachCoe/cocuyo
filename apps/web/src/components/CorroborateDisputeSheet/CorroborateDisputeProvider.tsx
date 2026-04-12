@@ -12,6 +12,8 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
@@ -55,13 +57,32 @@ interface CorroborateDisputeProviderProps {
   children: ReactNode;
 }
 
-export function CorroborateDisputeProvider({ children }: CorroborateDisputeProviderProps): ReactElement {
+export function CorroborateDisputeProvider({
+  children,
+}: CorroborateDisputeProviderProps): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState<Post | null>(null);
   const [mode, setMode] = useState<CorroborateDisputeMode>('corroborate');
   const [campaign, setCampaign] = useState<SheetCampaignInfo | null>(null);
 
+  // Track timeout for cleanup
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clearTimeoutRef.current !== null) {
+        clearTimeout(clearTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const openSheet = useCallback((options: OpenSheetOptions): void => {
+    // Cancel any pending clear timeout when reopening
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
     setPost(options.post);
     setMode(options.mode);
     setCampaign(options.campaign ?? null);
@@ -71,9 +92,10 @@ export function CorroborateDisputeProvider({ children }: CorroborateDisputeProvi
   const closeSheet = useCallback((): void => {
     setIsOpen(false);
     // Clear state after animation completes
-    setTimeout(() => {
+    clearTimeoutRef.current = setTimeout(() => {
       setPost(null);
       setCampaign(null);
+      clearTimeoutRef.current = null;
     }, 200);
   }, []);
 

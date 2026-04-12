@@ -19,25 +19,17 @@ export function OutletModeToggle(): ReactElement {
       <button
         type="button"
         onClick={toggleOutletMode}
-        className={`
-          relative w-12 h-6 rounded-full transition-colors
-          ${currentUser.isOutletAccount ? 'bg-[var(--color-firefly-gold)]' : 'bg-[var(--bg-surface-container)]'}
-        `}
+        className={`relative h-6 w-12 rounded-full transition-colors ${currentUser.isOutletAccount ? 'bg-[var(--color-firefly-gold)]' : 'bg-[var(--bg-surface-container)]'} `}
         role="switch"
         aria-checked={currentUser.isOutletAccount}
         aria-label="Toggle outlet mode"
       >
         <span
-          className={`
-            absolute top-1 w-4 h-4 rounded-full bg-white transition-transform
-            ${currentUser.isOutletAccount ? 'left-7' : 'left-1'}
-          `}
+          className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${currentUser.isOutletAccount ? 'left-7' : 'left-1'} `}
         />
       </button>
       {currentUser.isOutletAccount && (
-        <span className="text-xs text-[var(--color-firefly-gold)] font-medium">
-          Active
-        </span>
+        <span className="text-xs font-medium text-[var(--color-firefly-gold)]">Active</span>
       )}
     </div>
   );

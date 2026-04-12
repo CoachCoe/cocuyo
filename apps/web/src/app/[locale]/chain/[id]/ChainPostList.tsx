@@ -39,7 +39,12 @@ interface CorroborationModalProps {
   };
 }
 
-function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }: CorroborationModalProps): ReactElement {
+function CorroborationModal({
+  post: _post,
+  onClose,
+  onSubmit,
+  translations: t,
+}: CorroborationModalProps): ReactElement {
   const [selectedType, setSelectedType] = useState<CorroborationType | null>(null);
   const [note, setNote] = useState('');
 
@@ -73,20 +78,18 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-      <div className="w-full max-w-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg p-6">
-        <h3 className="text-xl font-semibold mb-2">{t.title}</h3>
-        <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-          {t.stakingWarning}
-        </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+      <div className="w-full max-w-lg rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-tertiary)] p-6">
+        <h3 className="mb-2 text-xl font-semibold">{t.title}</h3>
+        <p className="mb-6 text-sm text-[var(--color-text-secondary)]">{t.stakingWarning}</p>
 
-        <div className="space-y-3 mb-6">
+        <div className="mb-6 space-y-3">
           {corroborationTypes.map((ct) => (
             <button
               key={ct.type}
               type="button"
               onClick={() => setSelectedType(ct.type)}
-              className={`w-full text-left p-4 rounded-lg border transition-colors ${
+              className={`w-full rounded-lg border p-4 text-left transition-colors ${
                 selectedType === ct.type
                   ? ct.type === 'challenge'
                     ? 'border-[var(--color-challenged)] bg-[rgba(248,113,113,0.1)]'
@@ -100,8 +103,8 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
                     ct.type === 'challenge'
                       ? 'text-[var(--color-challenged)]'
                       : selectedType === ct.type
-                      ? 'text-[var(--color-accent)]'
-                      : 'text-[var(--color-text-secondary)]'
+                        ? 'text-[var(--color-accent)]'
+                        : 'text-[var(--color-text-secondary)]'
                   }`}
                 >
                   {ct.type === 'witness' && '◉'}
@@ -111,9 +114,7 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
                 </span>
                 <div>
                   <p className="font-medium text-[var(--color-text-primary)]">{ct.label}</p>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    {ct.description}
-                  </p>
+                  <p className="text-sm text-[var(--color-text-secondary)]">{ct.description}</p>
                 </div>
               </div>
             </button>
@@ -123,7 +124,7 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
         <div className="mb-6">
           <label
             htmlFor="corroboration-note"
-            className="block text-sm text-[var(--color-text-secondary)] mb-2"
+            className="mb-2 block text-sm text-[var(--color-text-secondary)]"
           >
             {t.noteLabel}
           </label>
@@ -132,7 +133,7 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder={t.notePlaceholder}
-            className="w-full p-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-accent)]"
+            className="w-full rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-elevated)] p-3 text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:border-[var(--color-accent)] focus:outline-none"
             rows={3}
           />
         </div>
@@ -141,7 +142,7 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 text-sm border border-[var(--color-border-default)] rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-emphasis)] transition-colors"
+            className="flex-1 rounded-md border border-[var(--color-border-default)] px-4 py-2 text-sm text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-emphasis)] hover:text-[var(--color-text-primary)]"
           >
             {t.cancel}
           </button>
@@ -149,12 +150,12 @@ function CorroborationModal({ post: _post, onClose, onSubmit, translations: t }:
             type="button"
             onClick={handleSubmit}
             disabled={selectedType == null}
-            className={`flex-1 px-4 py-2 text-sm rounded-md transition-colors ${
+            className={`flex-1 rounded-md px-4 py-2 text-sm transition-colors ${
               selectedType == null
-                ? 'bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] cursor-not-allowed'
+                ? 'cursor-not-allowed bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)]'
                 : selectedType === 'challenge'
-                ? 'bg-[var(--color-challenged)] text-[var(--color-text-primary)] hover:opacity-90'
-                : 'bg-[var(--color-accent)] text-black hover:opacity-90'
+                  ? 'bg-[var(--color-challenged)] text-[var(--color-text-primary)] hover:opacity-90'
+                  : 'bg-[var(--color-accent)] text-black hover:opacity-90'
             }`}
           >
             {selectedType === 'challenge' ? t.submitChallenge : t.corroborate}
@@ -199,7 +200,7 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
       <div className="relative">
         {/* Timeline line */}
         <div
-          className="absolute left-4 top-0 bottom-0 w-px bg-[var(--color-border-default)]"
+          className="absolute bottom-0 left-4 top-0 w-px bg-[var(--color-border-default)]"
           aria-hidden="true"
         />
 
@@ -213,20 +214,17 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
             >
               {/* Timeline dot */}
               <div
-                className="absolute left-2 top-6 w-5 h-5 rounded-full bg-[var(--color-bg-primary)] border-2 border-[var(--color-border-emphasis)] flex items-center justify-center"
+                className="absolute left-2 top-6 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[var(--color-border-emphasis)] bg-[var(--color-bg-primary)]"
                 aria-hidden="true"
               >
-                <span
-                  className="text-xs"
-                  style={{ color: 'var(--color-accent)' }}
-                >
+                <span className="text-xs" style={{ color: 'var(--color-accent)' }}>
                   {index + 1}
                 </span>
               </div>
 
-              <div className="bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)] rounded-lg p-6">
+              <div className="rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-tertiary)] p-6">
                 {/* Context */}
-                <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)] mb-3">
+                <div className="mb-3 flex items-center gap-2 text-xs text-[var(--color-text-tertiary)]">
                   {post.context.topics.length > 0 && (
                     <span className="capitalize">{post.context.topics[0]}</span>
                   )}
@@ -243,14 +241,14 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
                 </div>
 
                 {/* Content */}
-                <p className="text-base text-[var(--color-text-primary)] leading-relaxed mb-4">
+                <p className="mb-4 text-base leading-relaxed text-[var(--color-text-primary)]">
                   {post.content.text}
                 </p>
 
                 {/* Links if any */}
                 {post.content.links != null && post.content.links.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-xs text-[var(--color-text-tertiary)] mb-1">
+                    <p className="mb-1 text-xs text-[var(--color-text-tertiary)]">
                       {t('referencedLinks')}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -268,7 +266,7 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
                 )}
 
                 {/* Corroboration stats */}
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--color-border-subtle)]">
+                <div className="flex items-center justify-between border-t border-[var(--color-border-subtle)] pt-4">
                   <div className="flex items-center gap-4 text-sm text-[var(--color-text-secondary)]">
                     <span className="flex items-center gap-1">
                       <span className="text-[var(--color-corroborated)]">◉</span>
@@ -300,7 +298,7 @@ export function ChainPostList({ posts }: ChainPostListProps): ReactElement {
                   <button
                     type="button"
                     onClick={() => setCorroboratingPost(post)}
-                    className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                    className="text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-accent)]"
                   >
                     {t('modal.corroborate')}
                   </button>

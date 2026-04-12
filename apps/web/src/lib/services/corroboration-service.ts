@@ -13,11 +13,7 @@ import type {
   EvidenceQuality,
   Result,
 } from '@cocuyo/types';
-import {
-  ok,
-  err,
-  createCorroborationId,
-} from '@cocuyo/types';
+import { ok, err, createCorroborationId } from '@cocuyo/types';
 
 /**
  * Determine initial quality based on corroboration content.
@@ -48,9 +44,7 @@ export class CorroborationServiceImpl implements CorroborationService {
    * Get all corroborations for a post.
    */
   getPostCorroborations(postId: PostId): Promise<readonly Corroboration[]> {
-    const corroborations = userCorroborations.filter(
-      (c) => c.postId === postId
-    );
+    const corroborations = userCorroborations.filter((c) => c.postId === postId);
     return Promise.resolve(corroborations);
   }
 
@@ -64,14 +58,10 @@ export class CorroborationServiceImpl implements CorroborationService {
   /**
    * Submit a corroboration.
    */
-  corroborate(
-    newCorroboration: NewCorroboration
-  ): Promise<Result<CorroborationId, string>> {
+  corroborate(newCorroboration: NewCorroboration): Promise<Result<CorroborationId, string>> {
     const dimCredential = getConnectedCredential();
     if (dimCredential === null) {
-      return Promise.resolve(
-        err('Wallet not connected. Please connect to corroborate.')
-      );
+      return Promise.resolve(err('Wallet not connected. Please connect to corroborate.'));
     }
 
     const now = Date.now();

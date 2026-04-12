@@ -22,10 +22,7 @@ interface SuggestionsResult {
   isLoading: boolean;
 }
 
-export function useDebouncedSuggestions(
-  topics: string[],
-  location: string
-): SuggestionsResult {
+export function useDebouncedSuggestions(topics: string[], location: string): SuggestionsResult {
   const [chains, setChains] = useState<ChainPreview[]>([]);
   const [campaigns, setCampaigns] = useState<CampaignPreview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,18 +86,17 @@ export function useDebouncedSuggestions(
         pagination: { limit: 50, offset: 0 },
       });
       const trimmedLoc = location.trim().toLowerCase();
-      const matchingCampaigns = campaignResult.items.filter((campaign: CampaignPreview): boolean => {
-        const topicMatch = topics.some((t) =>
-          campaign.topics.some((ct: string) =>
-            ct.toLowerCase().includes(t.toLowerCase())
-          )
-        );
-        const locationMatch =
-          trimmedLoc.length > 0 &&
-          (campaign.location?.toLowerCase().includes(trimmedLoc) === true);
+      const matchingCampaigns = campaignResult.items.filter(
+        (campaign: CampaignPreview): boolean => {
+          const topicMatch = topics.some((t) =>
+            campaign.topics.some((ct: string) => ct.toLowerCase().includes(t.toLowerCase()))
+          );
+          const locationMatch =
+            trimmedLoc.length > 0 && campaign.location?.toLowerCase().includes(trimmedLoc) === true;
 
-        return topicMatch || locationMatch;
-      });
+          return topicMatch || locationMatch;
+        }
+      );
 
       // Check if request was aborted (controller is set at line 38)
       if (abortController.current.signal.aborted) {

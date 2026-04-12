@@ -21,15 +21,13 @@ export const metadata: Metadata = {
   authors: [{ name: 'Firefly Network' }],
   openGraph: {
     title: 'Firefly Network — Lights in the Dark',
-    description:
-      'A surveillance-resistant network for collective intelligence.',
+    description: 'A surveillance-resistant network for collective intelligence.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Firefly Network — Lights in the Dark',
-    description:
-      'A surveillance-resistant network for collective intelligence.',
+    description: 'A surveillance-resistant network for collective intelligence.',
   },
   robots: {
     index: true,
@@ -37,10 +35,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}): ReactNode {
+export default function RootLayout({ children }: { children: ReactNode }): ReactNode {
   return children;
 }

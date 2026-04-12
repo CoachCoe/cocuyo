@@ -78,22 +78,16 @@ export function Button({
     ${sizeStyles[size]}
     ${variantStyles[variant]}
     ${className}
-  `.trim().replace(/\s+/g, ' ');
+  `
+    .trim()
+    .replace(/\s+/g, ' ');
 
   return (
-    <button
-      className={combinedClassName}
-      disabled={isDisabled}
-      {...props}
-    >
+    <button className={combinedClassName} disabled={isDisabled} {...props}>
       {variant === 'illuminate' && !isLoading && (
         <FireflySymbol size={14} color="inherit" aria-hidden="true" />
       )}
-      {isLoading ? (
-        <span className="animate-pulse">Loading...</span>
-      ) : (
-        children
-      )}
+      {isLoading ? <span className="animate-pulse">Loading...</span> : children}
     </button>
   );
 }

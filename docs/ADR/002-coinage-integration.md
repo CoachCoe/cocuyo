@@ -7,18 +7,21 @@ Proposed
 ## Context
 
 ADR-001 established pUSD as the primary currency for the Firefly Network. However, pUSD transactions on Asset Hub are **publicly visible** — anyone can see:
+
 - Who sent funds
 - Who received funds
 - The amount transferred
 - The timestamp
 
 For journalists in hostile environments, this transparency creates serious risks:
+
 - Governments can identify who funds independent media
 - Journalists receiving payments can be targeted
 - Contribution patterns can reveal sources
 - Diaspora supporters can face retaliation against family back home
 
 **Coinage** is Polkadot's native private payment system that solves this problem. It provides:
+
 - Anonymous coin holding (balances are private)
 - Private transfers (sender/receiver identities hidden)
 - Minimal information leakage (ZK proofs + ring signatures)
@@ -34,6 +37,7 @@ For journalists in hostile environments, this transparency creates serious risks
 5. **Offboarding**: Convert private coins → pUSD via recycler
 
 Key properties:
+
 - Coin denominations: $0.01, $0.02, $0.04, ... $163.84 (powers of 2)
 - Coins have "age" — number of times transferred
 - Age limits enforce recycling, which resets anonymity
@@ -41,13 +45,13 @@ Key properties:
 
 ### Alignment with Firefly Network
 
-| Firefly Concept | Coinage Alignment |
-|-----------------|-------------------|
-| DIM Credentials (proof-of-personhood) | Required for free Coinage usage |
-| Anonymous but Human | Coinage preserves both properties |
-| Surveillance Resistance | Core design goal of Coinage |
-| Information Bounties | Can be paid in private coins |
-| Diaspora Contributions | Protected from government surveillance |
+| Firefly Concept                       | Coinage Alignment                      |
+| ------------------------------------- | -------------------------------------- |
+| DIM Credentials (proof-of-personhood) | Required for free Coinage usage        |
+| Anonymous but Human                   | Coinage preserves both properties      |
+| Surveillance Resistance               | Core design goal of Coinage            |
+| Information Bounties                  | Can be paid in private coins           |
+| Diaspora Contributions                | Protected from government surveillance |
 
 ## Decision
 
@@ -60,15 +64,15 @@ We will integrate Coinage as the **privacy layer** for the Firefly Network's pay
 
 ### Payment Matrix
 
-| Use Case | Default Mode | Rationale |
-|----------|--------------|-----------|
-| Bounty Payouts | Private (Coinage) | Protect journalist identity |
-| Journalist Salaries | Private (Coinage) | Protect recipient from targeting |
-| Diaspora Contributions | Private (Coinage) | Protect contributor's family |
-| Treasury Holdings | Public (pUSD) | Transparency for governance |
-| Membership Fees | Public (pUSD) | Lower complexity, compliance |
-| Alliance Settlements | Configurable | Outlet preference |
-| Off-ramping | Public (pUSD) | Required for fiat conversion |
+| Use Case               | Default Mode      | Rationale                        |
+| ---------------------- | ----------------- | -------------------------------- |
+| Bounty Payouts         | Private (Coinage) | Protect journalist identity      |
+| Journalist Salaries    | Private (Coinage) | Protect recipient from targeting |
+| Diaspora Contributions | Private (Coinage) | Protect contributor's family     |
+| Treasury Holdings      | Public (pUSD)     | Transparency for governance      |
+| Membership Fees        | Public (pUSD)     | Lower complexity, compliance     |
+| Alliance Settlements   | Configurable      | Outlet preference                |
+| Off-ramping            | Public (pUSD)     | Required for fiat conversion     |
 
 ### Technical Integration
 
@@ -121,21 +125,25 @@ We will integrate Coinage as the **privacy layer** for the Firefly Network's pay
 ## Implementation Notes
 
 ### Phase 1: Foundation
+
 - Add Coinage types to `@cocuyo/types`
 - Integrate with existing DIM client for People/Lite People status
 - Create `CoinageClient` abstraction
 
 ### Phase 2: Bounty Integration
+
 - Offer private payout option for bounties
 - Generate ephemeral keys for bounty escrow
 - Implement off-chain key sharing via chat
 
 ### Phase 3: Journalist Payments
+
 - Add private payment option for outlets
 - Batch payment support with coin splitting
 - Recovery flow for lost keys
 
 ### Phase 4: Full Integration
+
 - Configurable privacy preferences per user
 - Automatic public ↔ private conversion
 - Privacy-preserving analytics

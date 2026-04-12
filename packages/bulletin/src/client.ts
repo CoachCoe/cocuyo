@@ -128,10 +128,6 @@ function createLocalClient(inMemory: boolean): BulletinClient {
 
 // --- Helpers ---
 
-export function createRecord<T>(
-  type: RecordType,
-  data: T,
-  version = 1
-): BulletinRecord<T> {
+export function createRecord<T>(type: RecordType, data: T, version = 1): BulletinRecord<T> {
   return { type, data, version, timestamp: Date.now() };
 }

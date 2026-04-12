@@ -132,9 +132,9 @@ export function ExploreView({
   }, [filterType, translations.noMatchingCampaignPosts]);
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
+    <div className="flex flex-col gap-8 md:flex-row">
       {/* Sidebar - Filters */}
-      <aside className="md:w-72 lg:w-80 shrink-0">
+      <aside className="shrink-0 md:w-72 lg:w-80">
         <div className="md:sticky md:top-24">
           <ExploreFilters
             chains={chains}
@@ -159,7 +159,7 @@ export function ExploreView({
       </aside>
 
       {/* Main content - Post Feed */}
-      <main className="flex-1 min-w-0">
+      <main className="min-w-0 flex-1">
         <FeedPostsList
           posts={filteredPosts}
           chainTitles={chainTitles}

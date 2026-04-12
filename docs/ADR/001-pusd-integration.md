@@ -9,6 +9,7 @@ Proposed
 The Firefly Network and Cocuyo Alliance face a fundamental challenge: independent media outlets in repressive or economically collapsed environments (Venezuela, Nicaragua, Cuba, etc.) cannot rely on traditional financial rails.
 
 **Current problems:**
+
 - Bank accounts can be frozen by hostile governments
 - Payment processors (PayPal, Stripe) block transactions to sanctioned regions
 - Local currencies are worthless due to hyperinflation
@@ -16,12 +17,14 @@ The Firefly Network and Cocuyo Alliance face a fundamental challenge: independen
 - Grant funding is unpredictable and short-term
 
 **The Cocuyo Alliance vision** requires:
+
 - Censorship-resistant contribution rails for diaspora supporters
 - Stable-value payments for journalists
 - Transparent treasury management
 - Cross-border settlement between alliance outlets
 
 **pUSD (Polkadot USD)** is a native Polkadot stablecoin that can solve these problems:
+
 - Lives on Polkadot Asset Hub — same ecosystem as our infrastructure
 - Cannot be frozen by banks or payment processors
 - Stable value (pegged to USD)

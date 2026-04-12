@@ -23,9 +23,9 @@ import type { PaymentMode } from './payment-mode';
 
 /** Status of a campaign */
 export type CampaignStatus =
-  | 'active'     // Accepting contributions
-  | 'completed'  // Deliverables met
-  | 'expired'    // Time limit reached
+  | 'active' // Accepting contributions
+  | 'completed' // Deliverables met
+  | 'expired' // Time limit reached
   | 'cancelled'; // Cancelled by sponsor
 
 /** Discriminated union for type-safe sponsors */

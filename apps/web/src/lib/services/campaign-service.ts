@@ -19,18 +19,9 @@ import type {
   Result,
   PostId,
 } from '@cocuyo/types';
-import {
-  ok,
-  err,
-  createCampaignId,
-  createEscrowId,
-  createTransactionHash,
-} from '@cocuyo/types';
+import { ok, err, createCampaignId, createEscrowId, createTransactionHash } from '@cocuyo/types';
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
-import {
-  getConnectedWallet,
-  fetchFromBulletin,
-} from './service-utils';
+import { getConnectedWallet, fetchFromBulletin } from './service-utils';
 import { getSeedCampaignsForLocale } from '@/lib/seed-data';
 
 export type Locale = 'en' | 'es';
@@ -153,9 +144,7 @@ export class CampaignServiceImpl implements CampaignService {
    */
   createCampaign(newCampaign: NewCampaign): Promise<Result<CampaignId, string>> {
     if (getConnectedWallet() === null) {
-      return Promise.resolve(
-        err('Wallet not connected. Please connect to create a campaign.')
-      );
+      return Promise.resolve(err('Wallet not connected. Please connect to create a campaign.'));
     }
 
     const now = Date.now();
@@ -174,7 +163,9 @@ export class CampaignServiceImpl implements CampaignService {
       payoutMode: newCampaign.payoutMode ?? 'private',
       deliverables: newCampaign.deliverables.map((d) => ({ ...d, current: 0 })),
       contributingPostIds: [],
-      ...(newCampaign.targetClaimIds !== undefined && { targetClaimIds: newCampaign.targetClaimIds }),
+      ...(newCampaign.targetClaimIds !== undefined && {
+        targetClaimIds: newCampaign.targetClaimIds,
+      }),
       createdAt: now,
       expiresAt: now + newCampaign.duration * 1000,
     };
@@ -192,14 +183,9 @@ export class CampaignServiceImpl implements CampaignService {
   /**
    * Contribute a post to a campaign.
    */
-  contributeToCampaign(
-    campaignId: CampaignId,
-    postId: PostId
-  ): Promise<Result<void, string>> {
+  contributeToCampaign(campaignId: CampaignId, postId: PostId): Promise<Result<void, string>> {
     if (getConnectedWallet() === null) {
-      return Promise.resolve(
-        err('Wallet not connected. Please connect to contribute.')
-      );
+      return Promise.resolve(err('Wallet not connected. Please connect to contribute.'));
     }
 
     // Find campaign in user cache

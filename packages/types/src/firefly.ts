@@ -50,11 +50,11 @@ export interface FireflyState {
  * Wallet connection status.
  */
 export type WalletStatus =
-  | 'disconnected'  // No wallet connected
-  | 'connecting'    // Connection in progress
-  | 'verifying'     // DIM verification in progress
-  | 'connected'     // Connected with valid DIM credential
-  | 'error';        // Connection or verification failed
+  | 'disconnected' // No wallet connected
+  | 'connecting' // Connection in progress
+  | 'verifying' // DIM verification in progress
+  | 'connected' // Connected with valid DIM credential
+  | 'error'; // Connection or verification failed
 
 /**
  * The wallet state for the current session.

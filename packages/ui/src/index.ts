@@ -50,7 +50,14 @@ export type { ToastProviderProps, ToastData, ToastVariant } from './components/T
 export { ErrorBoundary } from './components/ErrorBoundary';
 export type { ErrorBoundaryProps } from './components/ErrorBoundary';
 
-export { Skeleton, SkeletonText, SkeletonCard, SkeletonPostCard, SkeletonClaimCard, SkeletonFeedPostCard } from './components/Skeleton';
+export {
+  Skeleton,
+  SkeletonText,
+  SkeletonCard,
+  SkeletonPostCard,
+  SkeletonClaimCard,
+  SkeletonFeedPostCard,
+} from './components/Skeleton';
 export type { SkeletonProps } from './components/Skeleton';
 
 export { Breadcrumb } from './components/Breadcrumb';

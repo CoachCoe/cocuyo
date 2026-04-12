@@ -69,22 +69,27 @@ function ToastItem({
 
   return (
     <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-nested shadow-2 animate-slide-up ${styles.bg}`}
+      className={`rounded-nested shadow-2 animate-slide-up flex items-center gap-3 px-4 py-3 ${styles.bg}`}
       role="status"
       aria-live="polite"
     >
-      <span className="text-[var(--fg-primary)] font-medium" aria-hidden="true">
+      <span className="font-medium text-[var(--fg-primary)]" aria-hidden="true">
         {styles.icon}
       </span>
-      <p className="text-sm text-[var(--fg-primary)] flex-1">{toast.message}</p>
+      <p className="flex-1 text-sm text-[var(--fg-primary)]">{toast.message}</p>
       <button
         type="button"
         onClick={onDismiss}
-        className="text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors p-1"
+        className="p-1 text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
         aria-label="Dismiss"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     </div>
@@ -102,9 +107,7 @@ export function ToastProvider({ children }: ToastProviderProps): ReactElement {
     (message: string, variant: ToastVariant = 'info', duration?: number) => {
       const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const toast: ToastData =
-        duration !== undefined
-          ? { id, message, variant, duration }
-          : { id, message, variant };
+        duration !== undefined ? { id, message, variant, duration } : { id, message, variant };
       setToasts((prev) => [...prev, toast]);
     },
     []
@@ -119,7 +122,7 @@ export function ToastProvider({ children }: ToastProviderProps): ReactElement {
       {children}
       {/* Toast container */}
       <div
-        className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-[var(--z-toast)] flex flex-col gap-2 max-w-sm sm:w-full mx-auto sm:mx-0 pointer-events-none"
+        className="pointer-events-none fixed right-4 bottom-4 left-4 z-[var(--z-toast)] mx-auto flex max-w-sm flex-col gap-2 sm:right-4 sm:left-auto sm:mx-0 sm:w-full"
         aria-label="Notifications"
       >
         {toasts.map((toast) => (

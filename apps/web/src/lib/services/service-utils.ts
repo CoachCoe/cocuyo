@@ -56,15 +56,39 @@ export function getConnectedCredential(): DIMCredential | null {
 // ============================================================
 
 const ADJECTIVES = [
-  'Swift', 'Bright', 'Silent', 'Golden', 'Crystal',
-  'Shadow', 'Thunder', 'Cosmic', 'Ember', 'Frost',
-  'Mystic', 'Lunar', 'Solar', 'Wild', 'Ancient',
+  'Swift',
+  'Bright',
+  'Silent',
+  'Golden',
+  'Crystal',
+  'Shadow',
+  'Thunder',
+  'Cosmic',
+  'Ember',
+  'Frost',
+  'Mystic',
+  'Lunar',
+  'Solar',
+  'Wild',
+  'Ancient',
 ];
 
 const NOUNS = [
-  'Firefly', 'Phoenix', 'Condor', 'Jaguar', 'Quetzal',
-  'Orchid', 'Ceiba', 'Cacao', 'Ocelot', 'Toucan',
-  'Macaw', 'Iguana', 'Tapir', 'Manatee', 'Harpy',
+  'Firefly',
+  'Phoenix',
+  'Condor',
+  'Jaguar',
+  'Quetzal',
+  'Orchid',
+  'Ceiba',
+  'Cacao',
+  'Ocelot',
+  'Toucan',
+  'Macaw',
+  'Iguana',
+  'Tapir',
+  'Manatee',
+  'Harpy',
 ];
 
 /**
@@ -92,10 +116,7 @@ export interface PaginationParams {
  * Apply pagination to an array of items.
  * Returns a PaginatedResult with items, total count, and hasMore flag.
  */
-export function paginate<T>(
-  items: T[],
-  pagination: PaginationParams
-): PaginatedResult<T> {
+export function paginate<T>(items: T[], pagination: PaginationParams): PaginatedResult<T> {
   const total = items.length;
   const start = pagination.offset;
   const end = start + pagination.limit;
@@ -134,9 +155,7 @@ export function filterByTopic<T>(
 ): T[] {
   if (topic === undefined) return items;
   const topicLower = topic.toLowerCase();
-  return items.filter((item) =>
-    getTopics(item).some((t) => t.toLowerCase().includes(topicLower))
-  );
+  return items.filter((item) => getTopics(item).some((t) => t.toLowerCase().includes(topicLower)));
 }
 
 // ============================================================
@@ -193,7 +212,9 @@ export async function fetchFromBulletin<T>(cid: string): Promise<T | null> {
  * Upload a photo file to Bulletin Chain.
  * Returns the CID and metadata on success.
  */
-export async function uploadPhotoToBulletin(file: File): Promise<Result<PhotoUploadResult, string>> {
+export async function uploadPhotoToBulletin(
+  file: File
+): Promise<Result<PhotoUploadResult, string>> {
   try {
     const bulletin = await getBulletinClient();
     const arrayBuffer = await file.arrayBuffer();

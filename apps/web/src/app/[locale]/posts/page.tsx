@@ -27,9 +27,7 @@ export default async function PostsPage({ params }: PostsPageProps): Promise<Rea
   });
 
   // Extract unique topics from posts
-  const allTopics = Array.from(
-    new Set(postsResult.items.flatMap((p) => [...p.topics]))
-  ).sort();
+  const allTopics = Array.from(new Set(postsResult.items.flatMap((p) => [...p.topics]))).sort();
 
   // Build topic translation map
   const topicTranslations: Record<string, string> = {};
@@ -45,10 +43,7 @@ export default async function PostsPage({ params }: PostsPageProps): Promise<Rea
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <PostsHeader
-        title={tPosts('title')}
-        description={tPosts('description')}
-      />
+      <PostsHeader title={tPosts('title')} description={tPosts('description')} />
 
       {/* Main content */}
       <section className="py-6">

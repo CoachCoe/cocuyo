@@ -8,14 +8,14 @@ This command checks reference repositories for skill updates and suggests improv
 
 ## Reference Repositories
 
-| Repo | Path | Skills to Watch |
-|------|------|-----------------|
-| product-infrastructure | `/Users/shawncoe/Documents/dev/product-infrastructure` | Polkadot patterns, skill structure |
-| dotns-sdk | `/Users/shawncoe/Documents/dev/dotns-sd` | CLI commands, deployment |
-| identity-backend | `/Users/shawncoe/Documents/dev/identity-backend` | Skill-creator, commands |
-| erc8004 | `/Users/shawncoe/Documents/dev/erc8004` | Deployment, contracts |
-| polkadot-bulletin-chain | `/Users/shawncoe/Documents/dev/polkadot-bulletin-chain` | Storage patterns |
-| Agent-Skills-Context-Engineering | `/Users/shawncoe/Documents/dev/Agent-Skills-for-Context-Engineering` | Skill architecture |
+| Repo                             | Path                                                                 | Skills to Watch                    |
+| -------------------------------- | -------------------------------------------------------------------- | ---------------------------------- |
+| product-infrastructure           | `/Users/shawncoe/Documents/dev/product-infrastructure`               | Polkadot patterns, skill structure |
+| dotns-sdk                        | `/Users/shawncoe/Documents/dev/dotns-sd`                             | CLI commands, deployment           |
+| identity-backend                 | `/Users/shawncoe/Documents/dev/identity-backend`                     | Skill-creator, commands            |
+| erc8004                          | `/Users/shawncoe/Documents/dev/erc8004`                              | Deployment, contracts              |
+| polkadot-bulletin-chain          | `/Users/shawncoe/Documents/dev/polkadot-bulletin-chain`              | Storage patterns                   |
+| Agent-Skills-Context-Engineering | `/Users/shawncoe/Documents/dev/Agent-Skills-for-Context-Engineering` | Skill architecture                 |
 
 ## Sync Workflow
 
@@ -34,17 +34,18 @@ done
 
 Check these files for updates:
 
-| Reference File | Local Skill | Check For |
-|----------------|-------------|-----------|
-| `erc8004/.claude/skills/deploy-frontend/SKILL.md` | `dotns-cli.md` | New CLI commands |
-| `erc8004/.claude/skills/deploy-contracts/SKILL.md` | `polkadot-web3.md` | Deployment patterns |
-| `identity-backend/.claude/skills/skill-creator/SKILL.md` | (skill structure) | New patterns |
-| `product-infrastructure/.claude/skills/` | All skills | Architecture updates |
-| `dotns-sd/packages/cli/src/cli/commands/` | `dotns-cli.md` | New CLI commands |
+| Reference File                                           | Local Skill        | Check For            |
+| -------------------------------------------------------- | ------------------ | -------------------- |
+| `erc8004/.claude/skills/deploy-frontend/SKILL.md`        | `dotns-cli.md`     | New CLI commands     |
+| `erc8004/.claude/skills/deploy-contracts/SKILL.md`       | `polkadot-web3.md` | Deployment patterns  |
+| `identity-backend/.claude/skills/skill-creator/SKILL.md` | (skill structure)  | New patterns         |
+| `product-infrastructure/.claude/skills/`                 | All skills         | Architecture updates |
+| `dotns-sd/packages/cli/src/cli/commands/`                | `dotns-cli.md`     | New CLI commands     |
 
 ### Step 3: Generate Diff Report
 
 For each reference, compare:
+
 1. **New commands/patterns** not in local skills
 2. **Changed invariants** that need updating
 3. **New anti-patterns** to add
@@ -53,6 +54,7 @@ For each reference, compare:
 ### Step 4: Update Skills
 
 If updates found:
+
 1. Read the updated reference file
 2. Identify delta (what's new/changed)
 3. Update local skill with new patterns
@@ -67,15 +69,16 @@ Add to bottom of each skill when updated:
 
 ## Changelog
 
-| Date | Change | Source |
-|------|--------|--------|
-| 2024-XX-XX | Added new CLI command X | dotns-sdk v1.2.0 |
+| Date       | Change                      | Source                  |
+| ---------- | --------------------------- | ----------------------- |
+| 2024-XX-XX | Added new CLI command X     | dotns-sdk v1.2.0        |
 | 2024-XX-XX | Updated deployment workflow | erc8004 deploy-frontend |
 ```
 
 ## Automation
 
 Run this check:
+
 - Before starting major work
 - Weekly during active development
 - After reference repo announces updates

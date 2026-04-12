@@ -1,6 +1,6 @@
 ---
 name: dotns-integration
-description: "Integrate dotns name resolution and wallet permissions for the Firefly Network. Triggers: dotns, name, domain, wallet, permission, resolve, namehash"
+description: 'Integrate dotns name resolution and wallet permissions for the Firefly Network. Triggers: dotns, name, domain, wallet, permission, resolve, namehash'
 ---
 
 # dotns Integration Skill
@@ -17,12 +17,12 @@ description: "Integrate dotns name resolution and wallet permissions for the Fir
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| Names are optional identity layer | DIM credential is primary | MANDATORY |
-| Wallet permissions require signature | EIP-712 or equivalent | MANDATORY |
-| Name validation follows dotns rules | See validation matrix | MANDATORY |
-| Pure functions for name handling | No side effects in parsing | MANDATORY |
+| Rule                                 | Enforcement                | Status    |
+| ------------------------------------ | -------------------------- | --------- |
+| Names are optional identity layer    | DIM credential is primary  | MANDATORY |
+| Wallet permissions require signature | EIP-712 or equivalent      | MANDATORY |
+| Name validation follows dotns rules  | See validation matrix      | MANDATORY |
+| Pure functions for name handling     | No side effects in parsing | MANDATORY |
 
 ---
 
@@ -30,12 +30,12 @@ description: "Integrate dotns name resolution and wallet permissions for the Fir
 
 ### Length Requirements
 
-| Length | Status Required | Example |
-|--------|-----------------|---------|
-| ≤5 chars | Reserved (governance) | `fire` |
-| 6-8 chars | PoP Full required | `firefly` |
-| 6-8 chars + 2 digits | PoP Lite allowed | `firefly01` |
-| 9+ chars + 2 digits | No verification | `fireflynet99` |
+| Length               | Status Required       | Example        |
+| -------------------- | --------------------- | -------------- |
+| ≤5 chars             | Reserved (governance) | `fire`         |
+| 6-8 chars            | PoP Full required     | `firefly`      |
+| 6-8 chars + 2 digits | PoP Lite allowed      | `firefly01`    |
+| 9+ chars + 2 digits  | No verification       | `fireflynet99` |
 
 ### Character Rules
 
@@ -77,23 +77,23 @@ export interface DomainRegistration {
   readonly owner: DIMCredential;
   readonly registeredAt: number;
   readonly expiresAt: number;
-  readonly resolvedAddress?: string;  // Optional on-chain address
+  readonly resolvedAddress?: string; // Optional on-chain address
 }
 
 /** Wallet permission state */
 export interface WalletPermission {
   readonly grantedBy: DIMCredential;
-  readonly grantedTo: string;  // Address
+  readonly grantedTo: string; // Address
   readonly scope: PermissionScope[];
   readonly expiresAt: number;
-  readonly nonce: number;  // Replay protection
+  readonly nonce: number; // Replay protection
 }
 
 type PermissionScope =
-  | 'illuminate'     // Can create signals
-  | 'corroborate'    // Can corroborate
-  | 'bounty_claim'   // Can claim bounties
-  | 'reputation_delegate';  // Can delegate reputation weight
+  | 'illuminate' // Can create signals
+  | 'corroborate' // Can corroborate
+  | 'bounty_claim' // Can claim bounties
+  | 'reputation_delegate'; // Can delegate reputation weight
 ```
 
 ---
@@ -109,7 +109,7 @@ function parseDotnsName(input: string): { label: string; tld: string } | null {
   if (parts.length !== 2) return null;
 
   const [label, tld] = parts;
-  if (tld !== 'dot') return null;  // Only .dot TLD for now
+  if (tld !== 'dot') return null; // Only .dot TLD for now
 
   if (!validateDomainLabel(label)) return null;
 
@@ -163,11 +163,7 @@ async function grantPermission(
 ): Promise<SignedPermission> {
   const nonce = await getNextNonce(signer.address);
 
-  const signature = await signer.signTypedData(
-    domain,
-    permissionTypes,
-    { ...params, nonce }
-  );
+  const signature = await signer.signTypedData(domain, permissionTypes, { ...params, nonce });
 
   return {
     ...params,
@@ -181,10 +177,7 @@ async function grantPermission(
 ### Permission Verification
 
 ```typescript
-function verifyPermission(
-  permission: SignedPermission,
-  requiredScope: PermissionScope
-): boolean {
+function verifyPermission(permission: SignedPermission, requiredScope: PermissionScope): boolean {
   // Check expiration
   if (Date.now() / 1000 > permission.expiresAt) {
     return false;
@@ -217,6 +210,7 @@ function verifyPermission(
 ### Name Resolution
 
 ✅ CORRECT:
+
 ```typescript
 // Pure function approach
 async function resolveFireflyName(name: string): Promise<DIMCredential | null> {
@@ -233,6 +227,7 @@ async function resolveFireflyName(name: string): Promise<DIMCredential | null> {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Side effects in parsing
 function resolveFireflyName(name: string) {
@@ -250,6 +245,7 @@ function resolveFireflyName(name: string) {
 ### Wallet Permissions
 
 ✅ CORRECT:
+
 ```typescript
 // Signature-based permission with nonce
 async function delegateIlluminate(delegateTo: string): Promise<SignedPermission> {
@@ -257,7 +253,7 @@ async function delegateIlluminate(delegateTo: string): Promise<SignedPermission>
     {
       grantedTo: delegateTo,
       scope: ['illuminate'],
-      expiresAt: Math.floor(Date.now() / 1000) + 86400,  // 24 hours
+      expiresAt: Math.floor(Date.now() / 1000) + 86400, // 24 hours
     },
     signer
   );
@@ -269,6 +265,7 @@ async function delegateIlluminate(delegateTo: string): Promise<SignedPermission>
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Permission without signature
 function delegateIlluminate(delegateTo: string) {
@@ -288,18 +285,11 @@ function delegateIlluminate(delegateTo: string) {
 
 ```tsx
 // Names are optional - credential is primary identity
-function FireflyDisplay({ credential, name }: {
-  credential: DIMCredential;
-  name?: DotnsName;
-}) {
+function FireflyDisplay({ credential, name }: { credential: DIMCredential; name?: DotnsName }) {
   // Show name if available, otherwise show truncated credential
   const displayName = name ?? truncateCredential(credential);
 
-  return (
-    <span className="font-mono text-sm">
-      {displayName}
-    </span>
-  );
+  return <span className="font-mono text-sm">{displayName}</span>;
 }
 ```
 
@@ -330,9 +320,9 @@ async function illuminateWithDelegation(
 
 ## Network Configuration
 
-| Network | Chain ID | RPC |
-|---------|----------|-----|
-| Paseo (testnet) | 420420421 | `https://paseo-asset-hub-eth-rpc.polkadot.io` |
+| Network            | Chain ID  | RPC                                              |
+| ------------------ | --------- | ------------------------------------------------ |
+| Paseo (testnet)    | 420420421 | `https://paseo-asset-hub-eth-rpc.polkadot.io`    |
 | Polkadot (mainnet) | 420420420 | `https://polkadot-asset-hub-eth-rpc.polkadot.io` |
 
 ### Contract Addresses
@@ -355,23 +345,23 @@ function getDotnsConfig(network: 'paseo' | 'polkadot'): DotnsConfig {
 
 ## Quality Requirements
 
-| Principle | Implementation |
-|-----------|----------------|
+| Principle              | Implementation                     |
+| ---------------------- | ---------------------------------- |
 | Deterministic behavior | Pure functions for parsing/hashing |
-| Explicit inputs | No environment magic |
-| Small modules | Separate parse, validate, resolve |
-| Invariant tests | Test parsing/hashing exhaustively |
+| Explicit inputs        | No environment magic               |
+| Small modules          | Separate parse, validate, resolve  |
+| Invariant tests        | Test parsing/hashing exhaustively  |
 
 ---
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| Side effects in name parsing | FORBIDDEN | Must be pure |
-| Permission without signature | FORBIDDEN | No cryptographic proof |
-| Skip nonce in permission | FORBIDDEN | Replay attacks |
-| Hardcode contract addresses | FORBIDDEN | Use configuration |
-| Environment magic for network | FORBIDDEN | Explicit parameters |
-| Name as primary identity | FORBIDDEN | DIM credential is primary |
-| Store permissions client-side only | FORBIDDEN | Verify on-chain/server |
+| Pattern                            | Status    | Reason                    |
+| ---------------------------------- | --------- | ------------------------- |
+| Side effects in name parsing       | FORBIDDEN | Must be pure              |
+| Permission without signature       | FORBIDDEN | No cryptographic proof    |
+| Skip nonce in permission           | FORBIDDEN | Replay attacks            |
+| Hardcode contract addresses        | FORBIDDEN | Use configuration         |
+| Environment magic for network      | FORBIDDEN | Explicit parameters       |
+| Name as primary identity           | FORBIDDEN | DIM credential is primary |
+| Store permissions client-side only | FORBIDDEN | Verify on-chain/server    |

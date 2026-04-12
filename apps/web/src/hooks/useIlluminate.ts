@@ -14,10 +14,7 @@
  */
 
 import { useContext } from 'react';
-import {
-  IlluminateContext,
-  type IlluminateContextValue,
-} from '@/components/IlluminateProvider';
+import { IlluminateContext, type IlluminateContextValue } from '@/components/IlluminateProvider';
 
 export function useIlluminate(): IlluminateContextValue {
   const context = useContext(IlluminateContext);

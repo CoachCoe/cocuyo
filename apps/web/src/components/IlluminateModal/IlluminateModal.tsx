@@ -80,8 +80,7 @@ export function IlluminateModal(): ReactElement | null {
       document.body.style.overflow = 'hidden';
 
       // Focus first focusable element in modal
-      const firstFocusable =
-        modalRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusable = modalRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       if (firstFocusable !== null && firstFocusable !== undefined) {
         firstFocusable.focus();
       } else {
@@ -115,7 +114,7 @@ export function IlluminateModal(): ReactElement | null {
     >
       {/* Backdrop with blur */}
       <div
-        className="absolute inset-0 bg-overlay backdrop-blur-sm animate-backdrop-in"
+        className="animate-backdrop-in absolute inset-0 bg-overlay backdrop-blur-sm"
         aria-hidden="true"
       />
 
@@ -123,24 +122,21 @@ export function IlluminateModal(): ReactElement | null {
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface-nested border border-DEFAULT rounded-container shadow-3 animate-scale-in"
+        className="animate-scale-in relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-container border border-DEFAULT bg-surface-nested shadow-3"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-surface-nested border-b border-DEFAULT">
-          <h2
-            id="illuminate-title"
-            className="text-xl font-bold text-primary"
-          >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-DEFAULT border-b bg-surface-nested p-4 sm:p-6">
+          <h2 id="illuminate-title" className="text-xl font-bold text-primary">
             Illuminate
           </h2>
           <button
             type="button"
             onClick={closeModal}
-            className="p-2 text-secondary hover:text-primary transition-colors rounded-nested hover:bg-surface-hover"
+            className="rounded-nested p-2 text-secondary transition-colors hover:bg-surface-hover hover:text-primary"
             aria-label="Close modal"
           >
             <svg
-              className="w-5 h-5"
+              className="h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

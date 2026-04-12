@@ -269,44 +269,47 @@ This plan covers the phases we can implement immediately without waiting for ext
 
 ### Critical (Blocks Production)
 
-| ID | Blocker | Status | Owner | Notes |
-|----|---------|--------|-------|-------|
-| B1 | pUSD Asset ID | Unknown | Polkadot team | Required for Phase 3 |
-| B2 | Coinage testnet | Unknown | Coinage team | Required for Phase 4 |
-| B3 | Coinage API finalized | Unknown | Coinage team | Required for Phase 4 |
+| ID  | Blocker               | Status  | Owner         | Notes                |
+| --- | --------------------- | ------- | ------------- | -------------------- |
+| B1  | pUSD Asset ID         | Unknown | Polkadot team | Required for Phase 3 |
+| B2  | Coinage testnet       | Unknown | Coinage team  | Required for Phase 4 |
+| B3  | Coinage API finalized | Unknown | Coinage team  | Required for Phase 4 |
 
 ### Major (Blocks Features)
 
-| ID | Blocker | Status | Owner | Notes |
-|----|---------|--------|-------|-------|
-| B4 | Chat infrastructure | Not started | Team decision | Required for private transfers |
-| B5 | Escrow mechanism | Not decided | Architecture | Multi-sig vs contract |
-| B6 | Treasury signers | Not decided | Governance | Who controls treasury |
+| ID  | Blocker             | Status      | Owner         | Notes                          |
+| --- | ------------------- | ----------- | ------------- | ------------------------------ |
+| B4  | Chat infrastructure | Not started | Team decision | Required for private transfers |
+| B5  | Escrow mechanism    | Not decided | Architecture  | Multi-sig vs contract          |
+| B6  | Treasury signers    | Not decided | Governance    | Who controls treasury          |
 
 ### To Investigate
 
-| ID | Question | Status | Notes |
-|----|----------|--------|-------|
-| Q1 | DIM → Claim token API | Unknown | Need docs from Coinage team |
-| Q2 | XCM flow Asset Hub ↔ People Chain | Unknown | Need docs |
-| Q3 | Compliance requirements | Unknown | Need legal review |
+| ID  | Question                          | Status  | Notes                       |
+| --- | --------------------------------- | ------- | --------------------------- |
+| Q1  | DIM → Claim token API             | Unknown | Need docs from Coinage team |
+| Q2  | XCM flow Asset Hub ↔ People Chain | Unknown | Need docs                   |
+| Q3  | Compliance requirements           | Unknown | Need legal review           |
 
 ---
 
 ## Success Criteria
 
 ### Phase 1 Complete When:
+
 - [ ] All type definitions compile without errors
 - [ ] All utility functions have >90% test coverage
 - [ ] Types are exported and usable from `@cocuyo/types`
 
 ### Phase 2 Complete When:
+
 - [ ] Mock services implement all interface methods
 - [ ] Services have >80% test coverage
 - [ ] React hooks work with mock services
 - [ ] Can simulate full bounty lifecycle with mocks
 
 ### Phase 2b Complete When:
+
 - [ ] Bounty creation flow works end-to-end (with mocks)
 - [ ] Bounty list displays mock bounties
 - [ ] Bounty detail shows full information

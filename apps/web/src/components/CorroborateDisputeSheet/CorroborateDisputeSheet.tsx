@@ -122,8 +122,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
 
-      const firstFocusable =
-        sheetRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusable = sheetRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       if (firstFocusable !== null && firstFocusable !== undefined) {
         firstFocusable.focus();
       } else {
@@ -185,7 +184,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="corroborate-dispute-title"
@@ -193,7 +192,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-overlay backdrop-blur-sm animate-backdrop-in"
+        className="animate-backdrop-in absolute inset-0 bg-overlay backdrop-blur-sm"
         aria-hidden="true"
       />
 
@@ -201,24 +200,21 @@ export function CorroborateDisputeSheet(): ReactElement | null {
       <div
         ref={sheetRef}
         tabIndex={-1}
-        className="relative w-full sm:max-w-lg max-h-[90vh] overflow-y-auto bg-surface-nested border border-DEFAULT rounded-t-container sm:rounded-container shadow-3 animate-slide-up sm:animate-scale-in"
+        className="animate-slide-up sm:animate-scale-in relative max-h-[90vh] w-full overflow-y-auto rounded-t-container border border-DEFAULT bg-surface-nested shadow-3 sm:max-w-lg sm:rounded-container"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-surface-nested border-b border-DEFAULT">
-          <h2
-            id="corroborate-dispute-title"
-            className="text-xl font-bold text-primary"
-          >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-DEFAULT border-b bg-surface-nested p-4 sm:p-6">
+          <h2 id="corroborate-dispute-title" className="text-xl font-bold text-primary">
             {actionLabel}
           </h2>
           <button
             type="button"
             onClick={closeSheet}
-            className="p-2 text-secondary hover:text-primary transition-colors rounded-nested hover:bg-surface-hover"
+            className="rounded-nested p-2 text-secondary transition-colors hover:bg-surface-hover hover:text-primary"
             aria-label="Close"
           >
             <svg
-              className="w-5 h-5"
+              className="h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -235,16 +231,21 @@ export function CorroborateDisputeSheet(): ReactElement | null {
         </div>
 
         {/* Content */}
-        <form onSubmit={(e) => { void handleSubmit(e); }} className="p-4 sm:p-6 space-y-6">
+        <form
+          onSubmit={(e) => {
+            void handleSubmit(e);
+          }}
+          className="space-y-6 p-4 sm:p-6"
+        >
           {/* Campaign notice */}
           {campaign !== null && (
-            <div className="p-4 rounded-nested bg-[var(--color-firefly-gold)]/10 border border-[var(--color-firefly-gold)]/30">
-              <p className="text-sm text-[var(--color-firefly-gold)] font-medium mb-1">
+            <div className="bg-[var(--color-firefly-gold)]/10 border-[var(--color-firefly-gold)]/30 rounded-nested border p-4">
+              <p className="mb-1 text-sm font-medium text-[var(--color-firefly-gold)]">
                 This post is under funded investigation
               </p>
               <p className="text-sm text-secondary">
                 Contributing evidence may earn you{' '}
-                <span className="text-[var(--color-firefly-gold)] font-medium">
+                <span className="font-medium text-[var(--color-firefly-gold)]">
                   {formatPUSDCompact(campaign.fundingAmount)}
                 </span>
               </p>
@@ -252,32 +253,25 @@ export function CorroborateDisputeSheet(): ReactElement | null {
           )}
 
           {/* Post preview */}
-          <div className="p-4 rounded-nested bg-surface-container border border-subtle">
-            <p className="text-sm text-secondary line-clamp-3">
-              {post.content.text}
-            </p>
-            <p className="text-xs text-tertiary mt-2">
-              by {post.author.pseudonym}
-            </p>
+          <div className="rounded-nested border border-subtle bg-surface-container p-4">
+            <p className="line-clamp-3 text-sm text-secondary">{post.content.text}</p>
+            <p className="mt-2 text-xs text-tertiary">by {post.author.pseudonym}</p>
           </div>
 
           {/* Evidence type selector */}
           <fieldset>
-            <legend className="text-sm font-medium text-primary mb-3">
+            <legend className="mb-3 text-sm font-medium text-primary">
               What type of evidence are you providing?
             </legend>
             <div className="grid grid-cols-2 gap-3">
               {EVIDENCE_TYPES.map((option) => (
                 <label
                   key={option.type}
-                  className={`
-                    flex flex-col p-3 rounded-nested border cursor-pointer transition-all
-                    ${
-                      evidenceType === option.type
-                        ? 'border-[var(--fg-accent)] bg-[var(--fg-accent)]/5'
-                        : 'border-DEFAULT hover:border-subtle'
-                    }
-                  `}
+                  className={`flex cursor-pointer flex-col rounded-nested border p-3 transition-all ${
+                    evidenceType === option.type
+                      ? 'bg-[var(--fg-accent)]/5 border-[var(--fg-accent)]'
+                      : 'border-DEFAULT hover:border-subtle'
+                  } `}
                 >
                   <input
                     type="radio"
@@ -287,13 +281,9 @@ export function CorroborateDisputeSheet(): ReactElement | null {
                     onChange={() => setEvidenceType(option.type)}
                     className="sr-only"
                   />
-                  <span className="text-lg mb-1">{option.icon}</span>
-                  <span className="text-sm font-medium text-primary">
-                    {option.label}
-                  </span>
-                  <span className="text-xs text-tertiary">
-                    {option.description}
-                  </span>
+                  <span className="mb-1 text-lg">{option.icon}</span>
+                  <span className="text-sm font-medium text-primary">{option.label}</span>
+                  <span className="text-xs text-tertiary">{option.description}</span>
                 </label>
               ))}
             </div>
@@ -301,7 +291,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
 
           {/* Evidence input */}
           <div>
-            <label className="block text-sm font-medium text-primary mb-2">
+            <label className="mb-2 block text-sm font-medium text-primary">
               {evidenceType === 'source_link' && 'Link URL'}
               {evidenceType === 'observation' && 'Describe what you observed'}
               {evidenceType === 'photo' && 'Photo upload'}
@@ -314,7 +304,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="https://..."
-                className="w-full px-4 py-3 rounded-nested bg-surface-container border border-DEFAULT text-primary placeholder:text-tertiary focus:outline-none focus:border-[var(--fg-accent)] transition-colors"
+                className="w-full rounded-nested border border-DEFAULT bg-surface-container px-4 py-3 text-primary transition-colors placeholder:text-tertiary focus:border-[var(--fg-accent)] focus:outline-none"
                 required
               />
             )}
@@ -325,19 +315,15 @@ export function CorroborateDisputeSheet(): ReactElement | null {
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Describe what you witnessed..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-nested bg-surface-container border border-DEFAULT text-primary placeholder:text-tertiary focus:outline-none focus:border-[var(--fg-accent)] transition-colors resize-none"
+                className="w-full resize-none rounded-nested border border-DEFAULT bg-surface-container px-4 py-3 text-primary transition-colors placeholder:text-tertiary focus:border-[var(--fg-accent)] focus:outline-none"
                 required
               />
             )}
 
             {(evidenceType === 'photo' || evidenceType === 'document') && (
-              <div className="flex flex-col items-center justify-center p-8 rounded-nested border-2 border-dashed border-DEFAULT text-center">
-                <span className="text-3xl mb-2">
-                  {evidenceType === 'photo' ? '📷' : '📄'}
-                </span>
-                <p className="text-sm text-secondary mb-2">
-                  File upload coming soon
-                </p>
+              <div className="flex flex-col items-center justify-center rounded-nested border-2 border-DEFAULT border-dashed p-8 text-center">
+                <span className="mb-2 text-3xl">{evidenceType === 'photo' ? '📷' : '📄'}</span>
+                <p className="mb-2 text-sm text-secondary">File upload coming soon</p>
                 <p className="text-xs text-tertiary">
                   For now, use a link or describe your evidence
                 </p>
@@ -346,7 +332,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Or paste a link to the file..."
-                  className="w-full mt-4 px-4 py-2 rounded-nested bg-surface-container border border-DEFAULT text-primary text-sm placeholder:text-tertiary focus:outline-none focus:border-[var(--fg-accent)] transition-colors"
+                  className="mt-4 w-full rounded-nested border border-DEFAULT bg-surface-container px-4 py-2 text-sm text-primary transition-colors placeholder:text-tertiary focus:border-[var(--fg-accent)] focus:outline-none"
                 />
               </div>
             )}
@@ -355,16 +341,16 @@ export function CorroborateDisputeSheet(): ReactElement | null {
           {/* Optional description */}
           {evidenceType !== 'observation' && (
             <div>
-              <label className="block text-sm font-medium text-primary mb-2">
+              <label className="mb-2 block text-sm font-medium text-primary">
                 How does this support your {mode === 'corroborate' ? 'corroboration' : 'dispute'}?
-                <span className="text-tertiary font-normal"> (optional)</span>
+                <span className="font-normal text-tertiary"> (optional)</span>
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Explain how this evidence relates to the post..."
                 rows={2}
-                className="w-full px-4 py-3 rounded-nested bg-surface-container border border-DEFAULT text-primary placeholder:text-tertiary focus:outline-none focus:border-[var(--fg-accent)] transition-colors resize-none"
+                className="w-full resize-none rounded-nested border border-DEFAULT bg-surface-container px-4 py-3 text-primary transition-colors placeholder:text-tertiary focus:border-[var(--fg-accent)] focus:outline-none"
               />
             </div>
           )}
@@ -373,7 +359,7 @@ export function CorroborateDisputeSheet(): ReactElement | null {
           <button
             type="submit"
             disabled={content.trim().length === 0 || isSubmitting}
-            className="w-full py-3 px-6 rounded-nested font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-nested px-6 py-3 font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
             style={{
               backgroundColor: actionColor,
               color: 'var(--bg-primary)',

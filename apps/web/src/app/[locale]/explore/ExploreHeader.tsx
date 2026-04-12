@@ -31,35 +31,22 @@ export function ExploreHeader({
   };
 
   return (
-    <section className="pt-16 pb-8">
+    <section className="pb-8 pt-16">
       <div className="container-wide">
-        <div className="text-center max-w-2xl mx-auto">
+        <div className="mx-auto max-w-2xl text-center">
           {/* Title */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-primary mb-4">
+          <h1 className="mb-4 font-display text-3xl font-bold text-primary md:text-4xl lg:text-5xl">
             {title}
           </h1>
 
           {/* Description */}
-          <p className="text-lg text-secondary leading-relaxed mb-8">
-            {description}
-          </p>
+          <p className="mb-8 text-lg leading-relaxed text-secondary">{description}</p>
 
           {/* Illuminate button */}
           <button
             type="button"
             onClick={handleIlluminate}
-            className="
-              inline-flex items-center gap-2
-              px-8 py-3.5
-              bg-[var(--bg-accent-firefly)] text-black
-              font-semibold text-base
-              rounded-full
-              shadow-glow animate-pulse-subtle
-              hover:brightness-110 hover:scale-[1.02]
-              active:scale-[0.98]
-              transition-all duration-150
-              focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fg-accent)]
-            "
+            className="animate-pulse-subtle inline-flex items-center gap-2 rounded-full bg-[var(--bg-accent-firefly)] px-8 py-3.5 text-base font-semibold text-black shadow-glow transition-all duration-150 hover:scale-[1.02] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fg-accent)] active:scale-[0.98]"
           >
             <FireflySymbol size={18} color="inherit" />
             {illuminateLabel}

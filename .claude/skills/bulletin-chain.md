@@ -1,6 +1,6 @@
 ---
 name: bulletin-chain
-description: "Implement Bulletin Chain integration for decentralized signal storage. Triggers: bulletin, storage, IPFS, chain, content, hash, CID"
+description: 'Implement Bulletin Chain integration for decentralized signal storage. Triggers: bulletin, storage, IPFS, chain, content, hash, CID'
 ---
 
 # Bulletin Chain Skill
@@ -17,13 +17,13 @@ description: "Implement Bulletin Chain integration for decentralized signal stor
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| Content-addressed storage | Hash-based references | MANDATORY |
-| On-chain = minimal | Hashes + metadata only | MANDATORY |
-| Off-chain = full content | Bulletin chain storage | MANDATORY |
-| 2-week retention minimum | Configure node appropriately | MANDATORY |
-| IPFS via litep2p | Network backend requirement | MANDATORY |
+| Rule                      | Enforcement                  | Status    |
+| ------------------------- | ---------------------------- | --------- |
+| Content-addressed storage | Hash-based references        | MANDATORY |
+| On-chain = minimal        | Hashes + metadata only       | MANDATORY |
+| Off-chain = full content  | Bulletin chain storage       | MANDATORY |
+| 2-week retention minimum  | Configure node appropriately | MANDATORY |
+| IPFS via litep2p          | Network backend requirement  | MANDATORY |
 
 ---
 
@@ -48,14 +48,14 @@ struct OnChainSignal {
 // Full content stored on Bulletin chain
 interface BulletinSignalContent {
   readonly text: string;
-  readonly media: ContentHash[];     // IPFS CIDs
+  readonly media: ContentHash[]; // IPFS CIDs
   readonly links: string[];
   readonly context: SignalContext;
-  readonly signature: string;        // DIM signature
+  readonly signature: string; // DIM signature
 }
 
 interface ContentHash {
-  readonly cid: string;              // IPFS CID
+  readonly cid: string; // IPFS CID
   readonly mimeType: string;
   readonly size: number;
 }
@@ -116,10 +116,10 @@ async function generateCID(content: unknown): Promise<string> {
 
 ### Network Configuration
 
-| Network | Chain | Storage Endpoint |
-|---------|-------|------------------|
-| Testnet | Paseo Bulletin | `wss://paseo-bulletin.polkadot.io` |
-| Mainnet | Polkadot Bulletin | `wss://bulletin.polkadot.io` |
+| Network | Chain             | Storage Endpoint                   |
+| ------- | ----------------- | ---------------------------------- |
+| Testnet | Paseo Bulletin    | `wss://paseo-bulletin.polkadot.io` |
+| Mainnet | Polkadot Bulletin | `wss://bulletin.polkadot.io`       |
 
 ---
 
@@ -145,9 +145,7 @@ async function storeSignalContent(
 ### Retrieve Signal Content
 
 ```typescript
-async function retrieveSignalContent(
-  contentHash: string
-): Promise<BulletinSignalContent | null> {
+async function retrieveSignalContent(contentHash: string): Promise<BulletinSignalContent | null> {
   // 1. Query on-chain for CID reference
   const onChainRecord = await signalContract.getSignal(contentHash);
   if (!onChainRecord) return null;
@@ -181,8 +179,8 @@ interface VerificationEntry {
   readonly type: 'illuminate' | 'corroborate' | 'challenge';
   readonly actor: DIMCredential;
   readonly timestamp: number;
-  readonly proof: string;        // Cryptographic proof
-  readonly contentHash: string;  // Points to details on Bulletin chain
+  readonly proof: string; // Cryptographic proof
+  readonly contentHash: string; // Points to details on Bulletin chain
 }
 ```
 
@@ -208,6 +206,7 @@ struct OnChainTrail {
 ### Content Storage
 
 ✅ CORRECT:
+
 ```typescript
 // Hash-first, then store
 async function illuminate(signal: NewSignal): Promise<SignalId> {
@@ -226,6 +225,7 @@ async function illuminate(signal: NewSignal): Promise<SignalId> {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Storing everything on-chain
 async function illuminate(signal: NewSignal) {
@@ -237,13 +237,14 @@ async function illuminate(signal: NewSignal) {
 async function getSignal(id: SignalId) {
   const content = await bulletinClient.fetch(id);
   // WRONG: No hash verification
-  return content;  // Could be tampered
+  return content; // Could be tampered
 }
 ```
 
 ### Data Integrity
 
 ✅ CORRECT:
+
 ```typescript
 // Always verify content hash
 async function verifySignal(signalId: SignalId): Promise<boolean> {
@@ -256,10 +257,11 @@ async function verifySignal(signalId: SignalId): Promise<boolean> {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Trusting off-chain content without verification
 async function getSignal(id: SignalId) {
-  return await bulletinClient.fetch(id);  // WRONG: No verification
+  return await bulletinClient.fetch(id); // WRONG: No verification
 }
 ```
 
@@ -270,9 +272,7 @@ async function getSignal(id: SignalId) {
 ### Image/Document Handling
 
 ```typescript
-async function storeMedia(
-  file: File
-): Promise<ContentHash> {
+async function storeMedia(file: File): Promise<ContentHash> {
   // 1. Validate file type
   const mimeType = await detectMimeType(file);
   if (!ALLOWED_MIME_TYPES.includes(mimeType)) {
@@ -294,14 +294,9 @@ async function storeMedia(
   };
 }
 
-const ALLOWED_MIME_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'application/pdf',
-];
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 
-const MAX_MEDIA_SIZE = 10 * 1024 * 1024;  // 10MB
+const MAX_MEDIA_SIZE = 10 * 1024 * 1024; // 10MB
 ```
 
 ---
@@ -310,13 +305,13 @@ const MAX_MEDIA_SIZE = 10 * 1024 * 1024;  // 10MB
 
 ### Data Lifecycle
 
-| Data Type | Retention | Location |
-|-----------|-----------|----------|
-| Signal metadata | Permanent | On-chain |
-| Content hashes | Permanent | On-chain |
-| Full signal content | 2 weeks minimum | Bulletin chain |
-| Media files | 2 weeks minimum | IPFS via Bulletin |
-| Verification trails | Permanent | Merkle root on-chain |
+| Data Type           | Retention       | Location             |
+| ------------------- | --------------- | -------------------- |
+| Signal metadata     | Permanent       | On-chain             |
+| Content hashes      | Permanent       | On-chain             |
+| Full signal content | 2 weeks minimum | Bulletin chain       |
+| Media files         | 2 weeks minimum | IPFS via Bulletin    |
+| Verification trails | Permanent       | Merkle root on-chain |
 
 ### Pinning for Permanence
 
@@ -339,12 +334,12 @@ async function pinSignal(signalId: SignalId): Promise<void> {
 
 ## Performance Considerations
 
-| Operation | Latency | Notes |
-|-----------|---------|-------|
-| Block time | 6 seconds | Faster than Ethereum |
-| IPFS fetch (cached) | ~100ms | Local node cache |
-| IPFS fetch (network) | 1-5 seconds | DHT lookup |
-| On-chain query | ~500ms | RPC dependent |
+| Operation            | Latency     | Notes                |
+| -------------------- | ----------- | -------------------- |
+| Block time           | 6 seconds   | Faster than Ethereum |
+| IPFS fetch (cached)  | ~100ms      | Local node cache     |
+| IPFS fetch (network) | 1-5 seconds | DHT lookup           |
+| On-chain query       | ~500ms      | RPC dependent        |
 
 ### Caching Strategy
 
@@ -352,7 +347,7 @@ async function pinSignal(signalId: SignalId): Promise<void> {
 // Cache frequently accessed signals
 const signalCache = new LRUCache<SignalId, BulletinSignalContent>({
   max: 1000,
-  ttl: 1000 * 60 * 5,  // 5 minutes
+  ttl: 1000 * 60 * 5, // 5 minutes
 });
 
 async function getSignalCached(id: SignalId): Promise<BulletinSignalContent> {
@@ -370,12 +365,12 @@ async function getSignalCached(id: SignalId): Promise<BulletinSignalContent> {
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| Full content on-chain | FORBIDDEN | Expensive, no privacy |
-| Skip hash verification | FORBIDDEN | Data integrity risk |
-| Random IDs (not hashes) | FORBIDDEN | Not content-addressed |
-| Trust off-chain without proof | FORBIDDEN | Tamper risk |
-| Store PII on Bulletin chain | FORBIDDEN | Surveillance resistance |
-| Skip CID validation | FORBIDDEN | Content integrity |
-| Ignore retention policy | FORBIDDEN | Data availability |
+| Pattern                       | Status    | Reason                  |
+| ----------------------------- | --------- | ----------------------- |
+| Full content on-chain         | FORBIDDEN | Expensive, no privacy   |
+| Skip hash verification        | FORBIDDEN | Data integrity risk     |
+| Random IDs (not hashes)       | FORBIDDEN | Not content-addressed   |
+| Trust off-chain without proof | FORBIDDEN | Tamper risk             |
+| Store PII on Bulletin chain   | FORBIDDEN | Surveillance resistance |
+| Skip CID validation           | FORBIDDEN | Content integrity       |
+| Ignore retention policy       | FORBIDDEN | Data availability       |

@@ -22,10 +22,13 @@ export type NetworkName = keyof typeof NETWORKS;
 
 // Contract addresses per network
 // Updated when contracts are deployed
-export const CONTRACT_ADDRESSES: Record<NetworkName, {
-  bountyEscrow: string | null;
-  fireflyReputation: string | null;
-}> = {
+export const CONTRACT_ADDRESSES: Record<
+  NetworkName,
+  {
+    bountyEscrow: string | null;
+    fireflyReputation: string | null;
+  }
+> = {
   paseo: {
     // Deployed 2026-04-03 via hardhat-polkadot
     // Proxy addresses (UUPS upgradeable)

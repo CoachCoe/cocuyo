@@ -80,7 +80,10 @@ describe('Navbar', () => {
       const menuButton = screen.getByLabelText('Open menu');
       fireEvent.click(menuButton);
       expect(screen.getByLabelText('Close menu')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('button', { name: 'Close menu' })).toHaveAttribute(
+        'aria-expanded',
+        'true'
+      );
     });
 
     it('shows mobile navigation when open', () => {
@@ -113,8 +116,19 @@ describe('Navbar', () => {
 
   describe('custom Link component', () => {
     it('uses custom Link component for navigation', () => {
-      function CustomLink({ href, children, ...props }: { href: string; children: React.ReactNode }): React.ReactElement {
-        return <a href={href} data-custom="true" {...props}>{children}</a>;
+      function CustomLink({
+        href,
+        children,
+        ...props
+      }: {
+        href: string;
+        children: React.ReactNode;
+      }): React.ReactElement {
+        return (
+          <a href={href} data-custom="true" {...props}>
+            {children}
+          </a>
+        );
       }
       render(<Navbar LinkComponent={CustomLink} />);
       const links = document.querySelectorAll('[data-custom="true"]');

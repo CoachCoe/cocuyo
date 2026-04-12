@@ -81,8 +81,7 @@ export async function initHostDetection(): Promise<boolean> {
       ]);
 
       // Skip Spektr injection on dot.li (causes reload loop)
-      const isDotLi = typeof window !== 'undefined' &&
-        window.location.hostname.endsWith('.dot.li');
+      const isDotLi = typeof window !== 'undefined' && window.location.hostname.endsWith('.dot.li');
 
       if (!isDotLi) {
         // Inject the Spektr extension which enables host communication

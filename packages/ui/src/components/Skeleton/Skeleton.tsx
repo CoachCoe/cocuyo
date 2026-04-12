@@ -24,8 +24,7 @@ export function Skeleton({
   variant = 'text',
   className = '',
 }: SkeletonProps): ReactElement {
-  const baseClasses =
-    'animate-pulse bg-[var(--bg-surface-container)] overflow-hidden';
+  const baseClasses = 'animate-pulse bg-[var(--bg-surface-container)] overflow-hidden';
 
   const variantClasses = {
     text: 'rounded-nested',
@@ -65,25 +64,17 @@ export function SkeletonText({
   return (
     <div className={`space-y-2 ${className}`}>
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton
-          key={i}
-          variant="text"
-          width={i === lines - 1 ? '60%' : '100%'}
-        />
+        <Skeleton key={i} variant="text" width={i === lines - 1 ? '60%' : '100%'} />
       ))}
     </div>
   );
 }
 
 /** Pre-built skeleton for card content */
-export function SkeletonCard({
-  className = '',
-}: {
-  className?: string;
-}): ReactElement {
+export function SkeletonCard({ className = '' }: { className?: string }): ReactElement {
   return (
     <div
-      className={`p-6 bg-[var(--bg-surface-container)] rounded-container space-y-4 ${className}`}
+      className={`rounded-container space-y-4 bg-[var(--bg-surface-container)] p-6 ${className}`}
     >
       <div className="flex items-center gap-3">
         <Skeleton variant="circular" width={40} height={40} />
@@ -102,14 +93,10 @@ export function SkeletonCard({
 }
 
 /** Skeleton for PostCard */
-export function SkeletonPostCard({
-  className = '',
-}: {
-  className?: string;
-}): ReactElement {
+export function SkeletonPostCard({ className = '' }: { className?: string }): ReactElement {
   return (
     <div
-      className={`p-6 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container space-y-4 ${className}`}
+      className={`rounded-container space-y-4 border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6 ${className}`}
     >
       {/* Title */}
       <Skeleton variant="text" width="75%" height={20} />
@@ -131,14 +118,10 @@ export function SkeletonPostCard({
 }
 
 /** Skeleton for ClaimCard */
-export function SkeletonClaimCard({
-  className = '',
-}: {
-  className?: string;
-}): ReactElement {
+export function SkeletonClaimCard({ className = '' }: { className?: string }): ReactElement {
   return (
     <div
-      className={`p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container space-y-3 ${className}`}
+      className={`rounded-container space-y-3 border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 ${className}`}
     >
       {/* Status badge */}
       <Skeleton variant="rectangular" width={80} height={22} className="rounded-full" />
@@ -159,14 +142,10 @@ export function SkeletonClaimCard({
 }
 
 /** Skeleton for FeedPostCard */
-export function SkeletonFeedPostCard({
-  className = '',
-}: {
-  className?: string;
-}): ReactElement {
+export function SkeletonFeedPostCard({ className = '' }: { className?: string }): ReactElement {
   return (
     <div
-      className={`p-5 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container space-y-4 ${className}`}
+      className={`rounded-container space-y-4 border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-5 ${className}`}
     >
       {/* Author row */}
       <div className="flex items-center gap-3">
@@ -185,7 +164,7 @@ export function SkeletonFeedPostCard({
         <Skeleton variant="rectangular" width={80} height={20} className="rounded-full" />
       </div>
       {/* Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-[var(--border-subtle)]">
+      <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-2">
         <div className="flex gap-4">
           <Skeleton variant="text" width={50} height={14} />
           <Skeleton variant="text" width={50} height={14} />

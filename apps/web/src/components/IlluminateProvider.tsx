@@ -12,6 +12,8 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
@@ -61,7 +63,24 @@ export function IlluminateProvider({ children }: IlluminateProviderProps): React
   const [evidenceClaimId, setEvidenceClaimId] = useState<ClaimId | null>(null);
   const [evidenceType, setEvidenceType] = useState<EvidenceType | null>(null);
 
+  // Track timeout for cleanup
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clearTimeoutRef.current !== null) {
+        clearTimeout(clearTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const openModal = useCallback((options?: IlluminateModalOptions): void => {
+    // Cancel any pending clear timeout when reopening
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
     setPreSelectedChainId(options?.chainId ?? null);
     setPreSelectedCampaignId(options?.campaignId ?? null);
     setEvidenceClaimId(options?.claimId ?? null);
@@ -72,11 +91,12 @@ export function IlluminateProvider({ children }: IlluminateProviderProps): React
   const closeModal = useCallback((): void => {
     setIsOpen(false);
     // Clear pre-selections after a brief delay (for animation)
-    setTimeout(() => {
+    clearTimeoutRef.current = setTimeout(() => {
       setPreSelectedChainId(null);
       setPreSelectedCampaignId(null);
       setEvidenceClaimId(null);
       setEvidenceType(null);
+      clearTimeoutRef.current = null;
     }, 200);
   }, []);
 
@@ -90,12 +110,16 @@ export function IlluminateProvider({ children }: IlluminateProviderProps): React
       openModal,
       closeModal,
     }),
-    [isOpen, preSelectedChainId, preSelectedCampaignId, evidenceClaimId, evidenceType, openModal, closeModal]
+    [
+      isOpen,
+      preSelectedChainId,
+      preSelectedCampaignId,
+      evidenceClaimId,
+      evidenceType,
+      openModal,
+      closeModal,
+    ]
   );
 
-  return (
-    <IlluminateContext.Provider value={value}>
-      {children}
-    </IlluminateContext.Provider>
-  );
+  return <IlluminateContext.Provider value={value}>{children}</IlluminateContext.Provider>;
 }

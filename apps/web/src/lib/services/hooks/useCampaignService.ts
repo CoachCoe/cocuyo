@@ -3,8 +3,8 @@
 /**
  * Campaign service hook.
  *
- * Provides campaign operations with integrated wallet state from useSigner().
- * Handles both mock and chain implementations based on NEXT_PUBLIC_USE_CHAIN.
+ * This hook wraps the singleton campaignService to provide wallet state integration.
+ * All data is stored in the singleton's cache to avoid cache divergence.
  */
 
 import { useCallback, useRef } from 'react';
@@ -20,51 +20,16 @@ import type {
   Result,
   PostId,
 } from '@cocuyo/types';
-import {
-  ok,
-  err,
-  createCampaignId,
-  createEscrowId,
-  createTransactionHash,
-} from '@cocuyo/types';
-import { calculateCIDFromJSON } from '@cocuyo/bulletin';
 import { useSigner } from '@/lib/context/SignerContext';
-import { getBulletinClient } from '@/lib/chain/client';
-import { fetchFromBulletin } from '../service-utils';
+import { campaignService, setConnectedWallet } from '../index';
 
 export type Locale = 'en' | 'es';
-
-const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
-
-// Session cache for user-created campaigns
-const userCampaigns: Campaign[] = [];
-
-function campaignToPreview(campaign: Campaign): CampaignPreview {
-  // Calculate deliverable progress
-  const totalTarget = campaign.deliverables.reduce((sum, d) => sum + d.target, 0);
-  const totalCurrent = campaign.deliverables.reduce((sum, d) => sum + d.current, 0);
-  const deliverableProgress = totalTarget > 0 ? Math.round((totalCurrent / totalTarget) * 100) : 0;
-
-  return {
-    id: campaign.id,
-    title: campaign.title,
-    topics: campaign.topics,
-    ...(campaign.location !== undefined && { location: campaign.location }),
-    sponsor: campaign.sponsor,
-    status: campaign.status,
-    fundingAmount: campaign.fundingAmount,
-    payoutMode: campaign.payoutMode,
-    contributionCount: campaign.contributingPostIds.length,
-    deliverableProgress,
-    expiresAt: campaign.expiresAt,
-  };
-}
 
 /**
  * Hook providing campaign service operations.
  *
- * Write operations use wallet state from useSigner().
- * Read operations work without wallet connection.
+ * All operations delegate to the singleton campaignService to ensure
+ * consistent caching. Write operations use wallet state from useSigner().
  */
 export function useCampaignService(): CampaignService {
   const { selectedAccount, isConnected } = useSigner();
@@ -75,23 +40,15 @@ export function useCampaignService(): CampaignService {
   const connectedRef = useRef(isConnected);
   connectedRef.current = isConnected;
 
+  // Sync wallet state to singleton service when account changes
+  if (selectedAccount) {
+    setConnectedWallet(selectedAccount.address);
+  }
+
+  // Delegate read operations directly to singleton
   const getCampaign = useCallback(
-    async (id: CampaignId, _locale = 'en'): Promise<Campaign | null> => {
-      // Check user campaigns first
-      const userCampaign = userCampaigns.find((c) => c.id === id);
-      if (userCampaign) return userCampaign;
-
-      if (USE_CHAIN) {
-        try {
-          const bulletin = await getBulletinClient();
-          return await bulletin.fetchJson<Campaign>(id);
-        } catch {
-          return null;
-        }
-      }
-
-      // Try fetching from Bulletin Chain
-      return fetchFromBulletin<Campaign>(id);
+    async (id: CampaignId, locale = 'en'): Promise<Campaign | null> => {
+      return campaignService.getCampaign(id, locale);
     },
     []
   );
@@ -105,43 +62,7 @@ export function useCampaignService(): CampaignService {
       locale?: string;
       pagination: PaginationParams;
     }): Promise<PaginatedResult<CampaignPreview>> => {
-      let campaigns = userCampaigns.map(campaignToPreview);
-
-      // Filter by status
-      if (params.status !== undefined) {
-        campaigns = campaigns.filter((c) => c.status === params.status);
-      }
-
-      // Filter by sponsor type
-      if (params.sponsorType !== undefined) {
-        campaigns = campaigns.filter((c) => c.sponsor.type === params.sponsorType);
-      }
-
-      // Filter by topic
-      if (params.topic !== undefined) {
-        const topicLower = params.topic.toLowerCase();
-        campaigns = campaigns.filter((c) =>
-          c.topics.some((t: string) => t.toLowerCase().includes(topicLower))
-        );
-      }
-
-      // Filter by location
-      if (params.location !== undefined) {
-        const locationLower = params.location.toLowerCase();
-        campaigns = campaigns.filter(
-          (c) => c.location?.toLowerCase().includes(locationLower) ?? false
-        );
-      }
-
-      // Apply pagination
-      const { limit, offset } = params.pagination;
-      const paginatedItems = campaigns.slice(offset, offset + limit);
-
-      return {
-        items: paginatedItems,
-        total: campaigns.length,
-        hasMore: offset + limit < campaigns.length,
-      };
+      return campaignService.getCampaigns(params);
     },
     []
   );
@@ -153,12 +74,9 @@ export function useCampaignService(): CampaignService {
       locale?: string;
       pagination: PaginationParams;
     }): Promise<PaginatedResult<CampaignPreview>> => {
-      return getCampaigns({
-        ...params,
-        status: 'active',
-      });
+      return campaignService.getActiveCampaigns(params);
     },
-    [getCampaigns]
+    []
   );
 
   const createCampaign = useCallback(
@@ -167,79 +85,32 @@ export function useCampaignService(): CampaignService {
       const connected = connectedRef.current;
 
       if (!connected || !account) {
-        return err('Wallet not connected. Please connect to create a campaign.');
+        return { ok: false, error: 'Wallet not connected. Please connect to create a campaign.' };
       }
 
-      if (USE_CHAIN) {
-        return err(
-          'On-chain campaign creation requires DIM signing infrastructure. ' +
-          'Use mock mode (NEXT_PUBLIC_USE_CHAIN=false) for demos.'
-        );
-      }
+      // Sync wallet state to singleton
+      setConnectedWallet(account.address);
 
-      const now = Date.now();
-
-      const campaign: Campaign = {
-        id: '' as CampaignId,
-        title: newCampaign.title,
-        description: newCampaign.description,
-        topics: newCampaign.topics,
-        ...(newCampaign.location !== undefined && { location: newCampaign.location }),
-        sponsor: newCampaign.sponsor,
-        status: 'active',
-        fundingAmount: newCampaign.fundingAmount,
-        escrowId: createEscrowId(`escrow-${Date.now()}`),
-        fundingTxHash: createTransactionHash(`0x${Date.now().toString(16)}`),
-        payoutMode: newCampaign.payoutMode ?? 'private',
-        deliverables: newCampaign.deliverables.map((d) => ({ ...d, current: 0 })),
-        contributingPostIds: [],
-        ...(newCampaign.targetClaimIds !== undefined && { targetClaimIds: newCampaign.targetClaimIds }),
-        createdAt: now,
-        expiresAt: now + newCampaign.duration * 1000,
-      };
-
-      // Generate CID-based ID
-      const cid = calculateCIDFromJSON(campaign);
-      const campaignWithId: Campaign = { ...campaign, id: createCampaignId(cid) };
-
-      // Add to session cache
-      userCampaigns.unshift(campaignWithId);
-
-      return ok(campaignWithId.id);
+      // Delegate to singleton service which maintains the unified cache
+      return campaignService.createCampaign(newCampaign);
     },
     []
   );
 
   const contributeToCampaign = useCallback(
     async (campaignId: CampaignId, postId: PostId): Promise<Result<void, string>> => {
+      const account = accountRef.current;
       const connected = connectedRef.current;
 
-      if (!connected) {
-        return err('Wallet not connected. Please connect to contribute.');
+      if (!connected || !account) {
+        return { ok: false, error: 'Wallet not connected. Please connect to contribute.' };
       }
 
-      if (USE_CHAIN) {
-        return err(
-          'On-chain contributions require DIM signing infrastructure. ' +
-          'Use mock mode (NEXT_PUBLIC_USE_CHAIN=false) for demos.'
-        );
-      }
+      // Sync wallet state to singleton
+      setConnectedWallet(account.address);
 
-      // Find campaign in user cache
-      const campaignIndex = userCampaigns.findIndex((c) => c.id === campaignId);
-      if (campaignIndex !== -1) {
-        const oldCampaign = userCampaigns[campaignIndex];
-        if (oldCampaign) {
-          userCampaigns[campaignIndex] = {
-            ...oldCampaign,
-            contributingPostIds: [...oldCampaign.contributingPostIds, postId],
-          };
-          return ok(undefined);
-        }
-      }
-
-      // Campaign not found in user cache
-      return err('Campaign not found or is read-only.');
+      // Delegate to singleton service which maintains the unified cache
+      return campaignService.contributeToCampaign(campaignId, postId);
     },
     []
   );

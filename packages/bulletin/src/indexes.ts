@@ -159,7 +159,7 @@ export function createIndexManager(client: BulletinClient): IndexManager {
       // Filter by before timestamp
       const beforeTs = options?.before;
       if (beforeTs !== undefined && beforeTs > 0) {
-        signals = signals.filter(s => s.timestamp < beforeTs);
+        signals = signals.filter((s) => s.timestamp < beforeTs);
       }
 
       // Apply limit
@@ -232,9 +232,7 @@ export function createIndexManager(client: BulletinClient): IndexManager {
       };
 
       // Check if already exists (update) or new
-      const existingIndex = current.collectives.findIndex(
-        c => c.cid === entry.cid
-      );
+      const existingIndex = current.collectives.findIndex((c) => c.cid === entry.cid);
 
       let collectives: readonly CollectiveIndexEntry[];
       if (existingIndex >= 0) {
@@ -257,10 +255,7 @@ export function createIndexManager(client: BulletinClient): IndexManager {
       await client.write(createRecord('index', updatedIndex));
     },
 
-    async updateUserIndex(
-      credential: DIMCredential,
-      update: Partial<UserIndex>
-    ): Promise<void> {
+    async updateUserIndex(credential: DIMCredential, update: Partial<UserIndex>): Promise<void> {
       const key = `${USER_INDEX_PREFIX}${credential}`;
 
       // Load current

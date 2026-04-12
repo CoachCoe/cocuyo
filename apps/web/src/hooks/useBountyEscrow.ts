@@ -60,9 +60,7 @@ export interface UseBountyEscrowResult extends BountyEscrowState {
   BountyStatus: typeof BountyStatus;
 }
 
-export function useBountyEscrow(
-  options: UseBountyEscrowOptions = {}
-): UseBountyEscrowResult {
+export function useBountyEscrow(options: UseBountyEscrowOptions = {}): UseBountyEscrowResult {
   const { network } = options;
   const [state, setState] = useState<BountyEscrowState>({
     isLoading: false,
@@ -148,9 +146,7 @@ export function useBountyEscrow(
     async (bountyId: string): Promise<boolean> => {
       try {
         const contract = getReadContract();
-        const result = (await contract.getFunction('isExpired')(
-          toBountyId(bountyId)
-        )) as boolean;
+        const result = (await contract.getFunction('isExpired')(toBountyId(bountyId))) as boolean;
         return result;
       } catch {
         return false;
@@ -184,15 +180,9 @@ export function useBountyEscrow(
         const contract = getWriteContract(signer);
         const id = toBountyId(bountyId);
 
-        const tx = (await contract.getFunction('fundBounty')(
-          id,
-          paymentAsset,
-          amount,
-          expiresAt,
-          {
-            value: paymentAsset === NATIVE_ASSET ? amount : 0n,
-          }
-        )) as ethers.ContractTransactionResponse;
+        const tx = (await contract.getFunction('fundBounty')(id, paymentAsset, amount, expiresAt, {
+          value: paymentAsset === NATIVE_ASSET ? amount : 0n,
+        })) as ethers.ContractTransactionResponse;
 
         const receipt = await tx.wait();
         setState({ isLoading: false, error: null });
@@ -208,11 +198,7 @@ export function useBountyEscrow(
 
   // Write: Release bounty funds to recipients
   const releaseBounty = useCallback(
-    async (
-      signer: ethers.Signer,
-      bountyId: string,
-      allocations: Allocation[]
-    ): Promise<string> => {
+    async (signer: ethers.Signer, bountyId: string, allocations: Allocation[]): Promise<string> => {
       setState({ isLoading: true, error: null });
       try {
         const contract = getWriteContract(signer);
@@ -281,10 +267,7 @@ export function useBountyEscrow(
   );
 
   // Contract address for display
-  const contractAddress = useMemo(
-    () => getContractAddress('bountyEscrow', network),
-    [network]
-  );
+  const contractAddress = useMemo(() => getContractAddress('bountyEscrow', network), [network]);
 
   return {
     // State

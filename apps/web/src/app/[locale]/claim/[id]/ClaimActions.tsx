@@ -61,29 +61,42 @@ export function ClaimActions({
   return (
     <>
       {/* Submit Evidence buttons */}
-      <div className="flex flex-col sm:flex-row justify-center gap-3 mb-8">
+      <div className="mb-8 flex flex-col justify-center gap-3 sm:flex-row">
         {/* Support button */}
         <button
           type="button"
           onClick={() => handleSubmitEvidence('support')}
           disabled={isSubmitting}
-          className={`
-            inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
-            font-medium text-sm transition-all duration-200
-            ${isConnected
-              ? 'bg-[var(--fg-success)]/15 text-[var(--fg-success)] border border-[var(--fg-success)]/30 hover:bg-[var(--fg-success)]/25 hover:border-[var(--fg-success)]/50'
-              : 'bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)] border border-[var(--border-default)]'
-            }
-            ${isSubmitting && selectedType === 'support' ? 'opacity-70 cursor-wait' : ''}
-          `}
+          className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
+            isConnected
+              ? 'bg-[var(--fg-success)]/15 border-[var(--fg-success)]/30 hover:bg-[var(--fg-success)]/25 hover:border-[var(--fg-success)]/50 border text-[var(--fg-success)]'
+              : 'border border-[var(--border-default)] bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)]'
+          } ${isSubmitting && selectedType === 'support' ? 'cursor-wait opacity-70' : ''} `}
         >
           {isSubmitting && selectedType === 'support' ? (
-            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
           ) : (
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           )}
@@ -95,23 +108,36 @@ export function ClaimActions({
           type="button"
           onClick={() => handleSubmitEvidence('contradict')}
           disabled={isSubmitting}
-          className={`
-            inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
-            font-medium text-sm transition-all duration-200
-            ${isConnected
-              ? 'bg-[var(--fg-error)]/15 text-[var(--fg-error)] border border-[var(--fg-error)]/30 hover:bg-[var(--fg-error)]/25 hover:border-[var(--fg-error)]/50'
-              : 'bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)] border border-[var(--border-default)]'
-            }
-            ${isSubmitting && selectedType === 'contradict' ? 'opacity-70 cursor-wait' : ''}
-          `}
+          className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
+            isConnected
+              ? 'bg-[var(--fg-error)]/15 border-[var(--fg-error)]/30 hover:bg-[var(--fg-error)]/25 hover:border-[var(--fg-error)]/50 border text-[var(--fg-error)]'
+              : 'border border-[var(--border-default)] bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)]'
+          } ${isSubmitting && selectedType === 'contradict' ? 'cursor-wait opacity-70' : ''} `}
         >
           {isSubmitting && selectedType === 'contradict' ? (
-            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
           ) : (
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           )}

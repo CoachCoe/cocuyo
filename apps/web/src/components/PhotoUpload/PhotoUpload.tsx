@@ -9,7 +9,15 @@
  * - Image preview grid with remove button
  */
 
-import { useState, useCallback, useRef, type ReactElement, type DragEvent } from 'react';
+import {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  type ReactElement,
+  type DragEvent,
+} from 'react';
 import { MAX_POST_PHOTOS } from '@cocuyo/types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -133,6 +141,20 @@ export function PhotoUpload({
     }
   }, [disabled, canAddMore]);
 
+  // Create and track blob URLs for cleanup
+  const photoUrls = useMemo(() => {
+    return photos.map((photo) => URL.createObjectURL(photo));
+  }, [photos]);
+
+  // Cleanup blob URLs when photos change or component unmounts
+  useEffect(() => {
+    return () => {
+      for (const url of photoUrls) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [photoUrls]);
+
   return (
     <div className="space-y-3">
       {/* Dropzone */}
@@ -142,14 +164,11 @@ export function PhotoUpload({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={handleClick}
-          className={`
-            relative border-2 border-dashed rounded-nested p-4 text-center cursor-pointer transition-colors
-            ${disabled ? 'opacity-50 cursor-not-allowed border-[var(--border-subtle)]' : ''}
-            ${isDragging
-              ? 'border-[var(--color-firefly-gold)] bg-[var(--color-firefly-gold)]/5'
+          className={`relative cursor-pointer rounded-nested border-2 border-dashed p-4 text-center transition-colors ${disabled ? 'cursor-not-allowed border-[var(--border-subtle)] opacity-50' : ''} ${
+            isDragging
+              ? 'bg-[var(--color-firefly-gold)]/5 border-[var(--color-firefly-gold)]'
               : 'border-[var(--border-default)] hover:border-[var(--fg-tertiary)]'
-            }
-          `}
+          } `}
         >
           <input
             ref={inputRef}
@@ -162,7 +181,7 @@ export function PhotoUpload({
           />
           <div className="flex flex-col items-center gap-2">
             <svg
-              className="w-8 h-8 text-[var(--fg-tertiary)]"
+              className="h-8 w-8 text-[var(--fg-tertiary)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -177,9 +196,7 @@ export function PhotoUpload({
             </svg>
             <p className="text-sm text-[var(--fg-secondary)]">
               {t?.dropzone ?? 'Drop photos here or'}{' '}
-              <span className="text-[var(--color-firefly-gold)]">
-                {t?.browse ?? 'browse'}
-              </span>
+              <span className="text-[var(--color-firefly-gold)]">{t?.browse ?? 'browse'}</span>
             </p>
             <p className="text-xs text-[var(--fg-tertiary)]">
               {t?.maxFiles ?? `Up to ${MAX_POST_PHOTOS} photos`} &bull;{' '}
@@ -190,9 +207,7 @@ export function PhotoUpload({
       )}
 
       {/* Error message */}
-      {error !== null && (
-        <p className="text-xs text-[var(--fg-error)]">{error}</p>
-      )}
+      {error !== null && <p className="text-xs text-[var(--fg-error)]">{error}</p>}
 
       {/* Photo previews */}
       {photos.length > 0 && (
@@ -201,18 +216,18 @@ export function PhotoUpload({
             <div key={`${photo.name}-${index}`} className="relative aspect-square">
               {/* eslint-disable-next-line @next/next/no-img-element -- Blob URLs cannot use next/image */}
               <img
-                src={URL.createObjectURL(photo)}
+                src={photoUrls[index]}
                 alt={`Upload preview ${index + 1}`}
-                className="w-full h-full object-cover rounded-nested"
+                className="h-full w-full rounded-nested object-cover"
               />
               <button
                 type="button"
                 onClick={() => removePhoto(index)}
-                className="absolute top-1 right-1 p-1 bg-[var(--bg-primary)]/80 rounded-full hover:bg-[var(--bg-primary)] transition-colors"
+                className="bg-[var(--bg-primary)]/80 absolute right-1 top-1 rounded-full p-1 transition-colors hover:bg-[var(--bg-primary)]"
                 aria-label={t?.remove ?? 'Remove photo'}
               >
                 <svg
-                  className="w-4 h-4 text-[var(--fg-primary)]"
+                  className="h-4 w-4 text-[var(--fg-primary)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

@@ -139,9 +139,7 @@ describe('BountyEscrow', function () {
       });
 
       await expect(
-        escrow
-          .connect(other)
-          .releaseBounty(bountyId, [{ recipient: recipient1.address, amount }])
+        escrow.connect(other).releaseBounty(bountyId, [{ recipient: recipient1.address, amount }])
       ).to.be.revertedWithCustomError(escrow, 'NotFunder');
     });
 

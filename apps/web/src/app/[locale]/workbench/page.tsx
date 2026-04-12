@@ -46,10 +46,7 @@ export default async function WorkbenchPage({ params }: WorkbenchPageProps): Pro
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <WorkbenchHeader
-        title={tWorkbench('title')}
-        description={tWorkbench('description')}
-      />
+      <WorkbenchHeader title={tWorkbench('title')} description={tWorkbench('description')} />
 
       {/* Main content */}
       <section className="py-6">

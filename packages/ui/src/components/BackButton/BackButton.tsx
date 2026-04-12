@@ -22,18 +22,13 @@ export interface BackButtonProps {
 function DefaultIcon(): ReactElement {
   return (
     <svg
-      className="w-4 h-4"
+      className="h-4 w-4"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M15 19l-7-7 7-7"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
     </svg>
   );
 }
@@ -48,12 +43,7 @@ export function BackButton({
     <button
       type="button"
       onClick={onClick}
-      className={`
-        inline-flex items-center gap-2 text-sm font-medium
-        text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]
-        transition-colors
-        ${className}
-      `}
+      className={`inline-flex items-center gap-2 text-sm font-medium text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)] ${className} `}
       aria-label={label}
     >
       {icon ?? <DefaultIcon />}

@@ -10,16 +10,21 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type { Post, ChainId, CampaignId } from '@cocuyo/types';
-import { FeedPostCard, AnimatedList, EmptyState, SkeletonFeedPostCard, type PostCampaignInfo } from '@cocuyo/ui';
+import {
+  FeedPostCard,
+  AnimatedList,
+  EmptyState,
+  SkeletonFeedPostCard,
+  type PostCampaignInfo,
+} from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
 import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
 import { useTrustDrawer } from '@/components/TrustDrawer';
 
 // Dynamic import with SSR disabled - map requires window/Leaflet
-const PostMapView = dynamic(
-  () => import('@/components/Map').then((m) => m.PostMapView),
-  { ssr: false }
-);
+const PostMapView = dynamic(() => import('@/components/Map').then((m) => m.PostMapView), {
+  ssr: false,
+});
 
 export type ViewMode = 'list' | 'map';
 
@@ -106,34 +111,56 @@ export function FeedPostsList({
 
   // View mode toggle component
   const viewToggle = onViewModeChange !== undefined && (
-    <div className="flex items-center gap-1 bg-[var(--bg-surface-nested)] rounded-lg p-1">
+    <div className="flex items-center gap-1 rounded-lg bg-[var(--bg-surface-nested)] p-1">
       <button
         type="button"
         onClick={() => onViewModeChange('list')}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
           viewMode === 'list'
             ? 'bg-[var(--bg-primary)] text-[var(--fg-primary)] shadow-sm'
             : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
         }`}
         aria-pressed={viewMode === 'list'}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 6h16M4 10h16M4 14h16M4 18h16"
+          />
         </svg>
         <span>List</span>
       </button>
       <button
         type="button"
         onClick={() => onViewModeChange('map')}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
           viewMode === 'map'
             ? 'bg-[var(--bg-primary)] text-[var(--fg-primary)] shadow-sm'
             : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
         }`}
         aria-pressed={viewMode === 'map'}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+          />
         </svg>
         <span>Map</span>
       </button>
@@ -144,7 +171,7 @@ export function FeedPostsList({
   if (isLoading) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-4 min-h-[40px]">
+        <div className="mb-4 flex min-h-[40px] items-center justify-between">
           <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} className="mb-0" />
           {viewToggle}
         </div>
@@ -159,24 +186,18 @@ export function FeedPostsList({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 min-h-[40px]">
+      <div className="mb-4 flex min-h-[40px] items-center justify-between">
         <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} className="mb-0" />
         {viewToggle}
       </div>
 
       {viewMode === 'map' ? (
-        <PostMapView
-          posts={posts}
-          locale={locale}
-          className="h-[500px] rounded-lg"
-        />
+        <PostMapView posts={posts} locale={locale} className="h-[500px] rounded-lg" />
       ) : posts.length > 0 ? (
         <AnimatedList className="grid gap-4" variant="fast">
           {posts.map((post) => {
             const chainTitle =
-              post.chainLinks.length > 0
-                ? chainTitles[post.chainLinks[0] as string]
-                : undefined;
+              post.chainLinks.length > 0 ? chainTitles[post.chainLinks[0] as string] : undefined;
             const campaign = postCampaignMap[post.id];
             return (
               <FeedPostCard
@@ -214,7 +235,7 @@ export function FeedPostsList({
         <div className="mt-10 text-center">
           <button
             type="button"
-            className="px-6 py-2.5 text-sm font-medium border border-[var(--color-border-default)] rounded-small hover:border-[var(--fg-accent)] hover:text-[var(--fg-accent)] transition-colors"
+            className="rounded-small border border-[var(--color-border-default)] px-6 py-2.5 text-sm font-medium transition-colors hover:border-[var(--fg-accent)] hover:text-[var(--fg-accent)]"
           >
             Load more posts
           </button>

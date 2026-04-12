@@ -14,12 +14,13 @@ The Firefly Network transforms this audience into **active pUSD users** through 
 
 The Firefly Network leverages **both** Polkadot payment systems:
 
-| Layer | Technology | Use Case |
-|-------|------------|----------|
-| **Public** | pUSD on Asset Hub | Treasury, membership, compliance, off-ramps |
+| Layer       | Technology              | Use Case                                                     |
+| ----------- | ----------------------- | ------------------------------------------------------------ |
+| **Public**  | pUSD on Asset Hub       | Treasury, membership, compliance, off-ramps                  |
 | **Private** | Coinage on People Chain | Bounty payouts, journalist salaries, anonymous contributions |
 
 This dual-layer approach provides:
+
 - **Transparency** where needed (treasury governance, membership)
 - **Privacy** where critical (protecting journalists and sources)
 
@@ -27,13 +28,13 @@ This dual-layer approach provides:
 
 ## Why Journalists Need pUSD
 
-| Problem | Traditional Finance | pUSD Solution |
-|---------|--------------------|--------------|
-| Government freezes bank account | Outlet loses all operating funds | Self-custodied wallet, no seizure risk |
-| PayPal/Stripe blocks region | Cannot receive donations | Direct wallet transfers |
-| Hyperinflation (Venezuela: 200%+) | Savings worthless in weeks | Stable USD peg |
-| Wire transfer fees | 3-5% + 3-5 day delays | <$0.01 + instant |
-| Diaspora wants to help | Complex remittance flows | Simple Polkadot transfer |
+| Problem                           | Traditional Finance              | pUSD Solution                          |
+| --------------------------------- | -------------------------------- | -------------------------------------- |
+| Government freezes bank account   | Outlet loses all operating funds | Self-custodied wallet, no seizure risk |
+| PayPal/Stripe blocks region       | Cannot receive donations         | Direct wallet transfers                |
+| Hyperinflation (Venezuela: 200%+) | Savings worthless in weeks       | Stable USD peg                         |
+| Wire transfer fees                | 3-5% + 3-5 day delays            | <$0.01 + instant                       |
+| Diaspora wants to help            | Complex remittance flows         | Simple Polkadot transfer               |
 
 **Bottom line:** Journalists in hostile environments need stable, censorship-resistant money more than almost anyone.
 
@@ -42,26 +43,31 @@ This dual-layer approach provides:
 ## Five pUSD Use Cases
 
 ### 1. Information Bounties
+
 Community-funded requests for journalism. Funder deposits pUSD → escrow holds funds → journalist fulfills bounty → pUSD released.
 
 **Volume:** $2-5M/year at scale
 
 ### 2. Crowdstacking Treasury
+
 Alliance supporters contribute monthly in pUSD. Professional investment generates yield. Yield funds operations while preserving principal.
 
 **Volume:** $15-30M/year in treasury holdings
 
 ### 3. Journalist Compensation
+
 Outlets pay journalists in pUSD. Cross-border, instant, censorship-resistant.
 
 **Volume:** $5-10M/year in payroll
 
 ### 4. Alliance Settlements
+
 100+ outlets collaborating on investigations. pUSD settles inter-outlet payments without banking friction.
 
 **Volume:** $5-10M/year in settlements
 
 ### 5. Membership Fees
+
 Premium features paid in pUSD. Recurring revenue for network sustainability.
 
 **Volume:** $3-5M/year in subscriptions
@@ -70,12 +76,12 @@ Premium features paid in pUSD. Recurring revenue for network sustainability.
 
 ## Volume Projections
 
-| Metric | Year 1 | Year 3 |
-|--------|--------|--------|
-| Total pUSD Volume | $2-3M | $35-40M |
-| Unique Wallets | 5,000-10,000 | 50,000-100,000 |
-| Treasury Holdings | $1-2M | $20-30M |
-| Active Outlets | 5-10 | 50-100 |
+| Metric            | Year 1       | Year 3         |
+| ----------------- | ------------ | -------------- |
+| Total pUSD Volume | $2-3M        | $35-40M        |
+| Unique Wallets    | 5,000-10,000 | 50,000-100,000 |
+| Treasury Holdings | $1-2M        | $20-30M        |
+| Active Outlets    | 5-10         | 50-100         |
 
 ---
 
@@ -84,6 +90,7 @@ Premium features paid in pUSD. Recurring revenue for network sustainability.
 ### Not Speculation — Utility
 
 Every pUSD transaction serves a real purpose:
+
 - Funding an investigation
 - Paying a journalist
 - Supporting press freedom
@@ -100,6 +107,7 @@ No "number go up" mentality. Just stable value moving through a functioning econ
 ### Network Effects
 
 Each outlet joining the alliance brings:
+
 - Their existing audience (potential contributors)
 - Their journalists (needing payment rails)
 - Their diaspora (wanting to send money home)
@@ -156,38 +164,45 @@ The Firefly Network becomes the first major use case for Coinage — proving tha
 ## Strategic Value for Polkadot
 
 ### 1. Real-World Use Case
+
 Not DeFi-for-DeFi. Actual humans solving actual problems.
 
 ### 2. LATAM Market Entry
+
 60+ million diaspora. 650+ million regional population. High crypto adoption rates.
 
 ### 3. Compelling Narrative
+
 "pUSD + Coinage defends press freedom" is a story that resonates beyond crypto.
 
 ### 4. Sustainable Growth
+
 Treasury model accumulates pUSD holdings over time, creating long-term demand.
 
 ### 5. Cross-Chain Showcase
+
 The complete Polkadot stack working together:
+
 - **Bulletin Chain** — Decentralized content storage
 - **Asset Hub** — pUSD for public payments
 - **People Chain** — Coinage for private payments + DIM for identity
 
 ### 6. First Major Coinage Use Case
+
 Firefly Network becomes the flagship demonstration of Polkadot's privacy technology protecting real-world users.
 
 ---
 
 ## Current State
 
-| Component | Status |
-|-----------|--------|
-| Wallet integration | Ready (Polkadot Signer) |
-| Identity system (DIM) | Partially implemented |
-| Content storage (Bulletin) | Partially implemented |
-| Bounty types | Defined, not implemented |
-| pUSD integration | Designed, ready to build |
-| Treasury infrastructure | Designed, ready to build |
+| Component                  | Status                   |
+| -------------------------- | ------------------------ |
+| Wallet integration         | Ready (Polkadot Signer)  |
+| Identity system (DIM)      | Partially implemented    |
+| Content storage (Bulletin) | Partially implemented    |
+| Bounty types               | Defined, not implemented |
+| pUSD integration           | Designed, ready to build |
+| Treasury infrastructure    | Designed, ready to build |
 
 **Timeline to MVP:** 8-12 weeks for bounty system with pUSD
 
@@ -208,12 +223,14 @@ Firefly Network becomes the flagship demonstration of Polkadot's privacy technol
 Partner with the Firefly Network to make pUSD the currency of independent journalism.
 
 **We bring:**
+
 - 400-800M monthly audience reach
 - 100+ mission-aligned media outlets
 - Real utility demand (not speculation)
 - Compelling narrative for Polkadot adoption
 
 **You bring:**
+
 - pUSD infrastructure
 - Technical expertise
 - Ecosystem connections

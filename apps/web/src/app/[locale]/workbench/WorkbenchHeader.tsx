@@ -15,12 +15,8 @@ export function WorkbenchHeader({ title, description }: WorkbenchHeaderProps): R
   return (
     <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-primary)]">
       <div className="container-wide py-8">
-        <h1 className="text-2xl font-display font-medium text-[var(--fg-primary)] mb-2">
-          {title}
-        </h1>
-        <p className="text-[var(--fg-secondary)] text-sm max-w-2xl">
-          {description}
-        </p>
+        <h1 className="mb-2 font-display text-2xl font-medium text-[var(--fg-primary)]">{title}</h1>
+        <p className="max-w-2xl text-sm text-[var(--fg-secondary)]">{description}</p>
       </div>
     </header>
   );

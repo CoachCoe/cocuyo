@@ -42,18 +42,16 @@ export function LanguageSwitcher(): ReactElement {
             type="button"
             onClick={() => handleLocaleChange(config.code)}
             disabled={isActive}
-            className={`
-              flex items-center gap-1.5 px-2 py-1 rounded text-sm transition-colors
-              ${isActive
-                ? 'bg-[var(--bg-surface-container)] text-[var(--fg-primary)] cursor-default'
-                : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] hover:bg-[var(--bg-surface-nested)]'
-              }
-            `}
+            className={`flex items-center gap-1.5 rounded px-2 py-1 text-sm transition-colors ${
+              isActive
+                ? 'cursor-default bg-[var(--bg-surface-container)] text-[var(--fg-primary)]'
+                : 'text-[var(--fg-secondary)] hover:bg-[var(--bg-surface-nested)] hover:text-[var(--fg-primary)]'
+            } `}
             aria-label={`Switch to ${config.label}`}
             aria-current={isActive ? 'true' : undefined}
           >
             <span aria-hidden="true">{config.flag}</span>
-            <span className="uppercase text-xs font-medium">{config.code}</span>
+            <span className="text-xs font-medium uppercase">{config.code}</span>
           </button>
         );
       })}

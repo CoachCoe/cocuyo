@@ -144,10 +144,7 @@ export class ClaimServiceImpl implements ClaimService {
     return ok(claimWithId.id);
   }
 
-  submitEvidence(
-    claimId: ClaimId,
-    evidence: NewClaimEvidence
-  ): Promise<Result<void, string>> {
+  submitEvidence(claimId: ClaimId, evidence: NewClaimEvidence): Promise<Result<void, string>> {
     const connectedAddress = getConnectedWallet();
     const dimCredential = getConnectedCredential();
 

@@ -29,9 +29,7 @@ export function AnimatedList({
   className = '',
   as: Component = 'div',
 }: AnimatedListProps): ReactElement {
-  const animationClass = variant === 'fast'
-    ? 'animate-stagger-item-fast'
-    : 'animate-stagger-item';
+  const animationClass = variant === 'fast' ? 'animate-stagger-item-fast' : 'animate-stagger-item';
 
   const childArray = Children.toArray(children);
 
@@ -43,14 +41,18 @@ export function AnimatedList({
 
         // If the child is a valid element, clone it with the style
         if (isValidElement(child)) {
-          return cloneElement(child as ReactElement<{ style?: React.CSSProperties; className?: string }>, {
-            key: (child as ReactElement).key ?? index,
-            style: {
-              ...(child.props as { style?: React.CSSProperties }).style,
-              '--stagger-index': shouldAnimate ? index : 0,
-            } as React.CSSProperties,
-            className: `${(child.props as { className?: string }).className ?? ''} ${shouldAnimate ? animationClass : ''}`.trim(),
-          });
+          return cloneElement(
+            child as ReactElement<{ style?: React.CSSProperties; className?: string }>,
+            {
+              key: (child as ReactElement).key ?? index,
+              style: {
+                ...(child.props as { style?: React.CSSProperties }).style,
+                '--stagger-index': shouldAnimate ? index : 0,
+              } as React.CSSProperties,
+              className:
+                `${(child.props as { className?: string }).className ?? ''} ${shouldAnimate ? animationClass : ''}`.trim(),
+            }
+          );
         }
 
         // For non-element children, wrap in a div

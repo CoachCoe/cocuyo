@@ -31,7 +31,11 @@ const STATUS_DISPLAY: Record<Claim['status'], { label: string; color: string }> 
   unverifiable: { label: 'Unverifiable', color: 'var(--fg-tertiary)' },
 };
 
-export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSectionProps): ReactElement {
+export function ClaimSection({
+  claims,
+  verdicts: _verdicts,
+  postId,
+}: ClaimSectionProps): ReactElement {
   const { openSheet } = useExtractClaim();
 
   const handleExtractClaim = (): void => {
@@ -40,8 +44,8 @@ export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSecti
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-primary flex items-center gap-2">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-primary">
           <span>Claims ({claims.length})</span>
         </h3>
         <button
@@ -63,13 +67,13 @@ export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSecti
             return (
               <div
                 key={claim.id}
-                className="p-4 rounded-nested bg-surface-container border border-subtle"
+                className="rounded-nested border border-subtle bg-surface-container p-4"
               >
-                <p className="text-sm text-primary mb-2">{claim.statement}</p>
+                <p className="mb-2 text-sm text-primary">{claim.statement}</p>
 
                 <div className="flex items-center gap-2">
                   <span
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    className="rounded-full px-2 py-0.5 text-xs font-medium"
                     style={{
                       backgroundColor: `color-mix(in srgb, ${status.color} 15%, transparent)`,
                       color: status.color,
@@ -78,16 +82,14 @@ export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSecti
                     {status.label}
                   </span>
                   {claim.evidence.length > 0 && (
-                    <span className="text-xs text-tertiary">
-                      {claim.evidence.length} evidence
-                    </span>
+                    <span className="text-xs text-tertiary">{claim.evidence.length} evidence</span>
                   )}
                 </div>
 
                 {/* Verdict reasoning */}
                 {verdict !== undefined && (
-                  <div className="mt-3 pt-3 border-t border-subtle">
-                    <p className="text-xs text-tertiary mb-1">Verdict reasoning:</p>
+                  <div className="mt-3 border-t border-subtle pt-3">
+                    <p className="mb-1 text-xs text-tertiary">Verdict reasoning:</p>
                     <p className="text-sm text-secondary">{verdict.reasoning}</p>
                   </div>
                 )}

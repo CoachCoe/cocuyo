@@ -103,16 +103,11 @@ export function ClaimStatusBadge({
 }: ClaimStatusBadgeProps): ReactElement {
   const config = getBadgeConfig(status, translations);
 
-  const sizeClasses = size === 'sm'
-    ? 'text-xs px-1.5 py-0.5'
-    : 'text-sm px-2 py-1';
+  const sizeClasses = size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-sm px-2 py-1';
 
   return (
     <span
-      className={`
-        inline-flex items-center gap-1 rounded-full font-medium
-        ${config.bgClass} ${config.colorClass} ${sizeClasses}
-      `}
+      className={`inline-flex items-center gap-1 rounded-full font-medium ${config.bgClass} ${config.colorClass} ${sizeClasses} `}
       title={config.label}
       aria-label={`Claim status: ${config.label}`}
     >

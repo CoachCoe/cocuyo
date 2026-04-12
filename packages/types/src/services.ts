@@ -27,7 +27,15 @@ import type {
   NewCampaign,
 } from './campaign';
 import type { ChainPreview, StoryChain } from './chain';
-import type { Claim, ClaimPreview, ClaimStatus, NewClaim, NewClaimEvidence, NewVerdict, Verdict } from './claim';
+import type {
+  Claim,
+  ClaimPreview,
+  ClaimStatus,
+  NewClaim,
+  NewClaimEvidence,
+  NewVerdict,
+  Verdict,
+} from './claim';
 import type { NewPost, Post, PostPreview, PostStatus } from './post';
 import type {
   Coin,
@@ -151,9 +159,7 @@ export interface CorroborationService {
   getPostCorroborations(postId: PostId): Promise<readonly Corroboration[]>;
 
   /** Submit a corroboration */
-  corroborate(
-    corroboration: NewCorroboration
-  ): Promise<Result<CorroborationId, string>>;
+  corroborate(corroboration: NewCorroboration): Promise<Result<CorroborationId, string>>;
 }
 
 /**
@@ -185,10 +191,7 @@ export interface CampaignService {
   createCampaign(campaign: NewCampaign): Promise<Result<CampaignId, string>>;
 
   /** Contribute a post to a campaign */
-  contributeToCampaign(
-    campaignId: CampaignId,
-    postId: PostId
-  ): Promise<Result<void, string>>;
+  contributeToCampaign(campaignId: CampaignId, postId: PostId): Promise<Result<void, string>>;
 }
 
 /**
@@ -239,10 +242,7 @@ export interface ClaimService {
   extractClaim(claim: NewClaim): Promise<Result<ClaimId, string>>;
 
   /** Submit evidence to a claim */
-  submitEvidence(
-    claimId: ClaimId,
-    evidence: NewClaimEvidence
-  ): Promise<Result<void, string>>;
+  submitEvidence(claimId: ClaimId, evidence: NewClaimEvidence): Promise<Result<void, string>>;
 }
 
 // ============================================================================
@@ -292,7 +292,10 @@ export interface CollectiveService {
   getMemberRole(collectiveId: CollectiveId, credential: DIMCredential): Promise<MemberRole | null>;
 
   /** Get member details */
-  getMember(collectiveId: CollectiveId, credential: DIMCredential): Promise<CollectiveMember | null>;
+  getMember(
+    collectiveId: CollectiveId,
+    credential: DIMCredential
+  ): Promise<CollectiveMember | null>;
 
   /** Get collectives a credential belongs to */
   getCollectivesForMember(credential: DIMCredential): Promise<readonly CollectivePreview[]>;
@@ -302,7 +305,12 @@ export interface CollectiveService {
 // Verdict Proposal Service (Multi-sig Voting)
 // ============================================================================
 
-import type { VerdictProposal, NewVerdictProposal, NewVerdictVote, VerdictVote } from './verdict-voting';
+import type {
+  VerdictProposal,
+  NewVerdictProposal,
+  NewVerdictVote,
+  VerdictVote,
+} from './verdict-voting';
 
 /**
  * Verdict proposal service interface.
@@ -386,16 +394,10 @@ export interface ReputationService {
   getReputation(credential: DIMCredential): Promise<ReputationProfile | null>;
 
   /** Get reputation score for a specific topic */
-  getTopicScore(
-    credential: DIMCredential,
-    topic: ReputationTopic
-  ): Promise<number>;
+  getTopicScore(credential: DIMCredential, topic: ReputationTopic): Promise<number>;
 
   /** Get average reputation across specified topics */
-  getAverageScore(
-    credential: DIMCredential,
-    topics: readonly ReputationTopic[]
-  ): Promise<number>;
+  getAverageScore(credential: DIMCredential, topics: readonly ReputationTopic[]): Promise<number>;
 
   /**
    * Record a corroboration event.
@@ -498,7 +500,11 @@ export interface PersonhoodService {
  * Error types for payment operations.
  */
 export type PaymentError =
-  | { readonly type: 'INSUFFICIENT_BALANCE'; readonly available: PUSDAmount; readonly required: PUSDAmount }
+  | {
+      readonly type: 'INSUFFICIENT_BALANCE';
+      readonly available: PUSDAmount;
+      readonly required: PUSDAmount;
+    }
   | { readonly type: 'INVALID_ADDRESS'; readonly address: string }
   | { readonly type: 'BELOW_MINIMUM'; readonly amount: PUSDAmount; readonly minimum: PUSDAmount }
   | { readonly type: 'TRANSACTION_FAILED'; readonly reason: string }
@@ -535,7 +541,11 @@ export interface PaymentService {
  * Error types for escrow operations.
  */
 export type EscrowError =
-  | { readonly type: 'INSUFFICIENT_BALANCE'; readonly available: PUSDAmount; readonly required: PUSDAmount }
+  | {
+      readonly type: 'INSUFFICIENT_BALANCE';
+      readonly available: PUSDAmount;
+      readonly required: PUSDAmount;
+    }
   | { readonly type: 'ESCROW_NOT_FOUND'; readonly escrowId: EscrowId }
   | { readonly type: 'ESCROW_ALREADY_SETTLED'; readonly escrowId: EscrowId }
   | { readonly type: 'INVALID_DISTRIBUTION'; readonly reason: string }
@@ -643,20 +653,13 @@ export interface CoinageService {
   }): Promise<Result<Coin[], CoinageError>>;
 
   /** Prepare transfer (returns keys to share off-chain) */
-  prepareTransfer(params: {
-    coins: readonly Coin[];
-    expiresInSeconds?: number;
-  }): TransferPackage;
+  prepareTransfer(params: { coins: readonly Coin[]; expiresInSeconds?: number }): TransferPackage;
 
   /** Claim incoming transfer */
-  claimTransfer(params: {
-    keys: readonly string[];
-  }): Promise<Result<Coin[], CoinageError>>;
+  claimTransfer(params: { keys: readonly string[] }): Promise<Result<Coin[], CoinageError>>;
 
   /** Cancel pending transfer (reclaim coins to self) */
-  cancelTransfer(params: {
-    coins: readonly Coin[];
-  }): Promise<Result<Coin[], CoinageError>>;
+  cancelTransfer(params: { coins: readonly Coin[] }): Promise<Result<Coin[], CoinageError>>;
 
   /** Recycle coins to reset age */
   recycleCoin(params: {

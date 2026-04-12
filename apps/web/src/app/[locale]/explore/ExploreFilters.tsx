@@ -88,23 +88,24 @@ export function ExploreFilters({
     <div className="space-y-6">
       {/* Stories Section */}
       <div className="space-y-4">
-        <div className="flex items-center min-h-[40px]">
-          <SectionHeader title={t.storiesLabel} infoTitle={storiesInfoTitle} infoBody={storiesInfoBody} className="mb-0" />
+        <div className="flex min-h-[40px] items-center">
+          <SectionHeader
+            title={t.storiesLabel}
+            infoTitle={storiesInfoTitle}
+            infoBody={storiesInfoBody}
+            className="mb-0"
+          />
         </div>
 
         {/* All Posts option */}
         <button
           type="button"
           onClick={() => onFilterChange(null, null)}
-          className={`
-            w-full text-left px-3 py-2 rounded-nested
-            text-sm font-medium transition-colors
-            ${
-              isAllPostsActive
-                ? 'bg-[var(--bg-surface-nested)] text-primary border border-[var(--border-emphasis)]'
-                : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
-            }
-          `}
+          className={`w-full rounded-nested px-3 py-2 text-left text-sm font-medium transition-colors ${
+            isAllPostsActive
+              ? 'border border-[var(--border-emphasis)] bg-[var(--bg-surface-nested)] text-primary'
+              : 'text-secondary hover:bg-[var(--bg-surface-hover)] hover:text-primary'
+          } `}
         >
           {t.allPostsLabel}
         </button>
@@ -129,26 +130,29 @@ export function ExploreFilters({
                     onFilterChange('chain', chain.id);
                   }
                 }}
-                className={`
-                  w-full text-left px-3 py-2.5 rounded-nested
-                  transition-colors group cursor-pointer
-                  ${
-                    isActive
-                      ? 'bg-[var(--bg-surface-nested)] border border-[var(--border-emphasis)]'
-                      : 'hover:bg-[var(--bg-surface-hover)]'
-                  }
-                `}
-                style={hasCampaign ? {
-                  borderLeft: '3px solid var(--color-firefly-gold)',
-                  backgroundColor: isActive ? undefined : 'rgba(232, 185, 49, 0.08)',
-                } : undefined}
+                className={`group w-full cursor-pointer rounded-nested px-3 py-2.5 text-left transition-colors ${
+                  isActive
+                    ? 'border border-[var(--border-emphasis)] bg-[var(--bg-surface-nested)]'
+                    : 'hover:bg-[var(--bg-surface-hover)]'
+                } `}
+                style={
+                  hasCampaign
+                    ? {
+                        borderLeft: '3px solid var(--color-firefly-gold)',
+                        backgroundColor: isActive ? undefined : 'rgba(232, 185, 49, 0.08)',
+                      }
+                    : undefined
+                }
               >
                 {/* Campaign badge row */}
                 {hasCampaign && campaign !== undefined && (
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="mb-1.5 flex items-center justify-between">
                     <span
-                      className="px-2 py-0.5 rounded-full font-semibold text-xs"
-                      style={{ backgroundColor: 'rgba(232, 185, 49, 0.25)', color: 'var(--color-firefly-gold)' }}
+                      className="rounded-full px-2 py-0.5 text-xs font-semibold"
+                      style={{
+                        backgroundColor: 'rgba(232, 185, 49, 0.25)',
+                        color: 'var(--color-firefly-gold)',
+                      }}
                     >
                       Earn {formatPUSDCompact(campaign.fundingAmount)}
                     </span>
@@ -159,14 +163,7 @@ export function ExploreFilters({
                         e.stopPropagation();
                         onIlluminateChain(chain.id);
                       }}
-                      className="
-                        shrink-0 p-1 rounded
-                        text-[var(--fg-accent)] animate-firefly-pulse
-                        opacity-100 md:opacity-0 md:group-hover:opacity-100
-                        transition-opacity duration-150
-                        hover:bg-[var(--bg-surface-hover)]
-                        focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--fg-accent)]
-                      "
+                      className="animate-firefly-pulse shrink-0 rounded p-1 text-[var(--fg-accent)] opacity-100 transition-opacity duration-150 hover:bg-[var(--bg-surface-hover)] focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--fg-accent)] md:opacity-0 md:group-hover:opacity-100"
                       aria-label={`Illuminate signal for ${chain.title}`}
                     >
                       <FireflySymbol size={14} />
@@ -176,20 +173,15 @@ export function ExploreFilters({
                 <div className="flex items-center gap-2">
                   {/* Status dot */}
                   <span
-                    className="w-2 h-2 rounded-full shrink-0"
+                    className="h-2 w-2 shrink-0 rounded-full"
                     style={{ backgroundColor: getStatusColor(chain.status) }}
                   />
                   <span
-                    className={`
-                      text-sm truncate flex-1
-                      ${isActive ? 'text-primary font-medium' : 'text-secondary group-hover:text-primary'}
-                    `}
+                    className={`flex-1 truncate text-sm ${isActive ? 'font-medium text-primary' : 'text-secondary group-hover:text-primary'} `}
                   >
                     {chain.title}
                   </span>
-                  <span className="text-xs text-tertiary shrink-0">
-                    {chain.postCount}
-                  </span>
+                  <span className="shrink-0 text-xs text-tertiary">{chain.postCount}</span>
                   {/* Illuminate button for non-campaign stories */}
                   {!hasCampaign && (
                     <button
@@ -198,14 +190,7 @@ export function ExploreFilters({
                         e.stopPropagation();
                         onIlluminateChain(chain.id);
                       }}
-                      className="
-                        shrink-0 p-1 rounded
-                        text-[var(--fg-accent)] animate-firefly-pulse
-                        opacity-100 md:opacity-0 md:group-hover:opacity-100
-                        transition-opacity duration-150
-                        hover:bg-[var(--bg-surface-hover)]
-                        focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--fg-accent)]
-                      "
+                      className="animate-firefly-pulse shrink-0 rounded p-1 text-[var(--fg-accent)] opacity-100 transition-opacity duration-150 hover:bg-[var(--bg-surface-hover)] focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--fg-accent)] md:opacity-0 md:group-hover:opacity-100"
                       aria-label={`Illuminate signal for ${chain.title}`}
                     >
                       <FireflySymbol size={14} />
@@ -213,7 +198,7 @@ export function ExploreFilters({
                   )}
                 </div>
                 {chain.location != null && (
-                  <span className="text-xs text-tertiary block truncate ml-4 mt-0.5">
+                  <span className="ml-4 mt-0.5 block truncate text-xs text-tertiary">
                     {chain.location}
                   </span>
                 )}
@@ -225,8 +210,12 @@ export function ExploreFilters({
 
       {/* Open Campaigns Section - questions without stories yet */}
       {orphanCampaigns.length > 0 && (
-        <div className="space-y-4 pt-4 border-t border-[var(--border-subtle)]">
-          <SectionHeader title={t.openCampaignsLabel} infoTitle={openCampaignsInfoTitle} infoBody={openCampaignsInfoBody} />
+        <div className="space-y-4 border-t border-[var(--border-subtle)] pt-4">
+          <SectionHeader
+            title={t.openCampaignsLabel}
+            infoTitle={openCampaignsInfoTitle}
+            infoBody={openCampaignsInfoBody}
+          />
 
           <div className="space-y-2">
             {orphanCampaigns.map((campaign) => {
@@ -243,25 +232,24 @@ export function ExploreFilters({
                       onFilterChange('campaign', campaign.id);
                     }
                   }}
-                  className={`
-                    w-full text-left px-3 py-2.5 rounded-nested
-                    transition-colors group cursor-pointer
-                    ${
-                      isActive
-                        ? 'bg-[var(--bg-surface-nested)] border border-[var(--border-emphasis)]'
-                        : 'hover:bg-[var(--bg-surface-hover)]'
-                    }
-                  `}
+                  className={`group w-full cursor-pointer rounded-nested px-3 py-2.5 text-left transition-colors ${
+                    isActive
+                      ? 'border border-[var(--border-emphasis)] bg-[var(--bg-surface-nested)]'
+                      : 'hover:bg-[var(--bg-surface-hover)]'
+                  } `}
                   style={{
                     borderLeft: '3px solid var(--color-firefly-gold)',
                     backgroundColor: isActive ? undefined : 'rgba(232, 185, 49, 0.08)',
                   }}
                 >
                   {/* Campaign badge row */}
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="mb-1.5 flex items-center justify-between">
                     <span
-                      className="px-2 py-0.5 rounded-full font-semibold text-xs"
-                      style={{ backgroundColor: 'rgba(232, 185, 49, 0.25)', color: 'var(--color-firefly-gold)' }}
+                      className="rounded-full px-2 py-0.5 text-xs font-semibold"
+                      style={{
+                        backgroundColor: 'rgba(232, 185, 49, 0.25)',
+                        color: 'var(--color-firefly-gold)',
+                      }}
                     >
                       Earn {formatPUSDCompact(campaign.fundingAmount)}
                     </span>
@@ -272,14 +260,7 @@ export function ExploreFilters({
                         e.stopPropagation();
                         onIlluminateCampaign(campaign.id);
                       }}
-                      className="
-                        shrink-0 p-1 rounded
-                        text-[var(--fg-accent)] animate-firefly-pulse
-                        opacity-100 md:opacity-0 md:group-hover:opacity-100
-                        transition-opacity duration-150
-                        hover:bg-[var(--bg-surface-hover)]
-                        focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--fg-accent)]
-                      "
+                      className="animate-firefly-pulse shrink-0 rounded p-1 text-[var(--fg-accent)] opacity-100 transition-opacity duration-150 hover:bg-[var(--bg-surface-hover)] focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--fg-accent)] md:opacity-0 md:group-hover:opacity-100"
                       aria-label={`Illuminate signal for campaign: ${campaign.title}`}
                     >
                       <FireflySymbol size={14} />
@@ -287,15 +268,12 @@ export function ExploreFilters({
                   </div>
                   {/* Title */}
                   <p
-                    className={`
-                      text-sm truncate
-                      ${isActive ? 'text-primary font-medium' : 'text-secondary group-hover:text-primary'}
-                    `}
+                    className={`truncate text-sm ${isActive ? 'font-medium text-primary' : 'text-secondary group-hover:text-primary'} `}
                   >
                     {campaign.title}
                   </p>
                   {campaign.location != null && (
-                    <span className="text-xs text-tertiary block truncate mt-0.5">
+                    <span className="mt-0.5 block truncate text-xs text-tertiary">
                       {campaign.location}
                     </span>
                   )}

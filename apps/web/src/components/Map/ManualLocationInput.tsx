@@ -31,19 +31,12 @@ export function ManualLocationInput({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-[var(--fg-primary)]">
-          {label}
-        </label>
+        <label className="block text-sm font-medium text-[var(--fg-primary)]">{label}</label>
       )}
 
       <div className="relative">
         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--fg-tertiary)]">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -67,14 +60,7 @@ export function ManualLocationInput({
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           disabled={disabled}
-          className={`
-            w-full pl-10 pr-4 py-3
-            bg-[var(--bg-surface-muted)] border rounded-nested
-            text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)]
-            focus:outline-none transition-colors
-            ${isFocused ? 'border-[var(--color-firefly-gold)]' : 'border-[var(--border-default)]'}
-            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
+          className={`w-full rounded-nested border bg-[var(--bg-surface-muted)] py-3 pl-10 pr-4 text-[var(--fg-primary)] transition-colors placeholder:text-[var(--fg-tertiary)] focus:outline-none ${isFocused ? 'border-[var(--color-firefly-gold)]' : 'border-[var(--border-default)]'} ${disabled ? 'cursor-not-allowed opacity-50' : ''} `}
         />
       </div>
 

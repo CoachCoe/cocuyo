@@ -25,11 +25,7 @@ export function AddPostButton({
   const { openModal } = useIlluminate();
 
   return (
-    <Button
-      variant={variant}
-      className={className}
-      onClick={() => openModal({ chainId })}
-    >
+    <Button variant={variant} className={className} onClick={() => openModal({ chainId })}>
       {children}
     </Button>
   );

@@ -7,14 +7,7 @@
 
 'use client';
 
-import {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactElement, type ReactNode } from 'react';
 
 export interface InfoPopoverProps {
   /** Title of the popover */
@@ -65,10 +58,7 @@ export function InfoPopover({
     if (!isOpen) return undefined;
 
     const handleClickOutside = (event: MouseEvent): void => {
-      if (
-        containerRef.current !== null &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current !== null && !containerRef.current.contains(event.target as Node)) {
         close();
       }
     };
@@ -121,8 +111,7 @@ export function InfoPopover({
   // Focus first element when opened
   useEffect(() => {
     if (isOpen && popoverRef.current !== null) {
-      const firstFocusable =
-        popoverRef.current.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusable = popoverRef.current.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       firstFocusable?.focus();
     }
   }, [isOpen]);
@@ -133,22 +122,13 @@ export function InfoPopover({
         ref={triggerRef}
         type="button"
         onClick={toggle}
-        className={`
-          inline-flex items-center justify-center gap-1
-          px-2 py-0.5 rounded-full
-          text-xs text-secondary hover:text-primary
-          border border-[var(--border-default)] hover:border-[var(--border-emphasis)]
-          bg-[var(--bg-surface-nested)] hover:bg-[var(--bg-surface-hover)]
-          transition-colors
-          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--fg-accent)]
-          ${triggerClassName}
-        `}
+        className={`text-secondary hover:text-primary inline-flex items-center justify-center gap-1 rounded-full border border-[var(--border-default)] bg-[var(--bg-surface-nested)] px-2 py-0.5 text-xs transition-colors hover:border-[var(--border-emphasis)] hover:bg-[var(--bg-surface-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--fg-accent)] ${triggerClassName} `}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label={`Learn about ${title}`}
       >
         <svg
-          className="w-3 h-3"
+          className="h-3 w-3"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -170,30 +150,21 @@ export function InfoPopover({
           role="dialog"
           aria-modal="true"
           aria-labelledby="info-popover-title"
-          className={`
-            absolute z-50 w-80 max-w-[calc(100vw-2rem)]
-            bg-[var(--bg-surface-container)] text-[var(--fg-primary)]
-            border border-[var(--border-default)] rounded-nested
-            shadow-3
-            ${positionClasses[position]}
-          `}
+          className={`rounded-nested shadow-3 absolute z-50 w-80 max-w-[calc(100vw-2rem)] border border-[var(--border-default)] bg-[var(--bg-surface-container)] text-[var(--fg-primary)] ${positionClasses[position]} `}
         >
           {/* Header */}
-          <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[var(--border-subtle)]">
-            <h3
-              id="info-popover-title"
-              className="text-sm font-semibold text-primary"
-            >
+          <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] px-4 py-3">
+            <h3 id="info-popover-title" className="text-primary text-sm font-semibold">
               {title}
             </h3>
             <button
               type="button"
               onClick={close}
-              className="p-1 text-tertiary hover:text-secondary transition-colors rounded-small hover:bg-surface-hover"
+              className="text-tertiary hover:text-secondary rounded-small hover:bg-surface-hover p-1 transition-colors"
               aria-label="Close"
             >
               <svg
-                className="w-4 h-4"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -210,9 +181,7 @@ export function InfoPopover({
           </div>
 
           {/* Body */}
-          <div className="px-4 py-3 text-sm text-secondary leading-relaxed">
-            {children}
-          </div>
+          <div className="text-secondary px-4 py-3 text-sm leading-relaxed">{children}</div>
         </div>
       )}
     </div>

@@ -51,7 +51,7 @@ const sizeClasses = {
 function DefaultIcon(): ReactElement {
   return (
     <svg
-      className="w-full h-full"
+      className="h-full w-full"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -78,24 +78,18 @@ export function EmptyState({
 
   return (
     <div
-      className={`flex flex-col items-center text-center bg-[var(--bg-surface-container)] rounded-container animate-fade-in ${styles.container}`}
+      className={`rounded-container animate-fade-in flex flex-col items-center bg-[var(--bg-surface-container)] text-center ${styles.container}`}
     >
       <div
-        className={`flex items-center justify-center rounded-full bg-[var(--bg-surface-nested)] text-[var(--fg-tertiary)] animate-scale-in ${styles.iconWrapper}`}
+        className={`animate-scale-in flex items-center justify-center rounded-full bg-[var(--bg-surface-nested)] text-[var(--fg-tertiary)] ${styles.iconWrapper}`}
       >
         {icon ?? <DefaultIcon />}
       </div>
-      <h3
-        className={`font-semibold text-[var(--fg-primary)] leading-tight ${styles.title}`}
-      >
+      <h3 className={`leading-tight font-semibold text-[var(--fg-primary)] ${styles.title}`}>
         {title}
       </h3>
       {description !== undefined && (
-        <p
-          className={`text-[var(--fg-secondary)] max-w-sm ${styles.description}`}
-        >
-          {description}
-        </p>
+        <p className={`max-w-sm text-[var(--fg-secondary)] ${styles.description}`}>{description}</p>
       )}
       {action !== undefined && <div className={styles.action}>{action}</div>}
     </div>

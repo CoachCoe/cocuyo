@@ -10,10 +10,10 @@ import type { ChainId, PostId } from './brands';
 
 /** Status of a story chain */
 export type ChainStatus =
-  | 'emerging'     // Few posts, still forming
-  | 'active'       // Actively receiving posts and corroborations
-  | 'established'  // Well-corroborated, stable
-  | 'contested';   // Significant challenges, under dispute
+  | 'emerging' // Few posts, still forming
+  | 'active' // Actively receiving posts and corroborations
+  | 'established' // Well-corroborated, stable
+  | 'contested'; // Significant challenges, under dispute
 
 /** Summary statistics for a chain */
 export interface ChainStats {

@@ -147,13 +147,12 @@ export class VerdictProposalServiceImpl implements VerdictProposalService {
     return proposalsCache.filter((p) => p.claimId === claimId);
   }
 
-  async getActiveProposalsForCollective(collectiveId: CollectiveId): Promise<readonly VerdictProposal[]> {
+  async getActiveProposalsForCollective(
+    collectiveId: CollectiveId
+  ): Promise<readonly VerdictProposal[]> {
     const now = Date.now();
     return proposalsCache.filter(
-      (p) =>
-        p.collectiveId === collectiveId &&
-        p.status === 'voting' &&
-        p.expiresAt > now
+      (p) => p.collectiveId === collectiveId && p.status === 'voting' && p.expiresAt > now
     );
   }
 
@@ -288,19 +287,19 @@ export class VerdictProposalServiceImpl implements VerdictProposalService {
       decision: newVote.decision,
       votedAt: now,
     };
-    const signatureInput = newVote.rationale !== undefined
-      ? { ...voteBase, rationale: newVote.rationale }
-      : voteBase;
-    const vote: VerdictVote = newVote.rationale !== undefined
-      ? {
-          ...voteBase,
-          rationale: newVote.rationale,
-          signature: signVote(signatureInput),
-        }
-      : {
-          ...voteBase,
-          signature: signVote(signatureInput),
-        };
+    const signatureInput =
+      newVote.rationale !== undefined ? { ...voteBase, rationale: newVote.rationale } : voteBase;
+    const vote: VerdictVote =
+      newVote.rationale !== undefined
+        ? {
+            ...voteBase,
+            rationale: newVote.rationale,
+            signature: signVote(signatureInput),
+          }
+        : {
+            ...voteBase,
+            signature: signVote(signatureInput),
+          };
 
     // Update proposal with new vote
     const updatedProposal: VerdictProposal = {
@@ -312,7 +311,12 @@ export class VerdictProposalServiceImpl implements VerdictProposalService {
     proposalsCache[proposalIndex] = updatedProposal;
 
     // Upload updated proposal to Bulletin Chain
-    await uploadToBulletin(updatedProposal);
+    const uploadResult = await uploadToBulletin(updatedProposal);
+    if (!uploadResult.ok) {
+      // Rollback cache on persistence failure
+      proposalsCache[proposalIndex] = proposal;
+      return err(`Vote recorded but persistence failed: ${uploadResult.error}`);
+    }
 
     logger.debug('Vote cast', 'vote', {
       proposalId,
@@ -349,7 +353,13 @@ export class VerdictProposalServiceImpl implements VerdictProposalService {
         status: 'expired',
       };
       proposalsCache[proposalIndex] = expiredProposal;
-      await uploadToBulletin(expiredProposal);
+      const expiredUploadResult = await uploadToBulletin(expiredProposal);
+      if (!expiredUploadResult.ok) {
+        logger.swallowed('Failed to persist expired proposal', 'checkAndFinalize', undefined, {
+          proposalId,
+          error: expiredUploadResult.error,
+        });
+      }
       return ok(null);
     }
 
@@ -378,7 +388,13 @@ export class VerdictProposalServiceImpl implements VerdictProposalService {
       status: 'approved',
     };
     proposalsCache[proposalIndex] = approvedProposal;
-    await uploadToBulletin(approvedProposal);
+    const approvedUploadResult = await uploadToBulletin(approvedProposal);
+    if (!approvedUploadResult.ok) {
+      logger.swallowed('Failed to persist approved proposal', 'checkAndFinalize', undefined, {
+        proposalId,
+        error: approvedUploadResult.error,
+      });
+    }
 
     logger.info('Proposal finalized', 'checkAndFinalize', {
       proposalId,

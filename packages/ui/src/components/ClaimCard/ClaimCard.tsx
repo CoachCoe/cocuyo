@@ -80,22 +80,21 @@ export function ClaimCard({
     }
   };
 
-  const statusTranslations: ClaimStatusTranslations | undefined = t !== undefined ? {
-    pending: t.statusPending,
-    under_review: t.statusUnderReview,
-    verified: t.statusVerified,
-    disputed: t.statusDisputed,
-    false: t.statusFalse,
-    unverifiable: t.statusUnverifiable,
-  } : undefined;
+  const statusTranslations: ClaimStatusTranslations | undefined =
+    t !== undefined
+      ? {
+          pending: t.statusPending,
+          under_review: t.statusUnderReview,
+          verified: t.statusVerified,
+          disputed: t.statusDisputed,
+          false: t.statusFalse,
+          unverifiable: t.statusUnverifiable,
+        }
+      : undefined;
 
   return (
     <article
-      className={`
-        bg-[var(--bg-surface-nested)] border border-[var(--border-default)]
-        rounded-container p-4 transition-all duration-200 ease-out
-        ${onClick !== undefined ? 'cursor-pointer hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none' : ''}
-      `}
+      className={`rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4 transition-all duration-200 ease-out ${onClick !== undefined ? 'cursor-pointer hover:-translate-y-0.5 hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] active:translate-y-0 active:shadow-none' : ''} `}
       onClick={onClick !== undefined ? handleClick : undefined}
       onKeyDown={onClick !== undefined ? handleKeyDown : undefined}
       tabIndex={onClick !== undefined ? 0 : undefined}
@@ -103,25 +102,23 @@ export function ClaimCard({
       aria-label={`Claim: ${statement}`}
     >
       {/* Status badge row */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="mb-3 flex items-center justify-between">
         <ClaimStatusBadge status={status} translations={statusTranslations} />
-        <span className="text-xs text-[var(--fg-tertiary)]">
-          {formatRelativeTime(createdAt)}
-        </span>
+        <span className="text-xs text-[var(--fg-tertiary)]">{formatRelativeTime(createdAt)}</span>
       </div>
 
       {/* Statement - 2 line truncate */}
-      <p className="text-sm text-[var(--fg-primary)] leading-snug mb-3 line-clamp-2 font-medium">
+      <p className="mb-3 line-clamp-2 text-sm leading-snug font-medium text-[var(--fg-primary)]">
         &ldquo;{statement}&rdquo;
       </p>
 
       {/* Topics tags */}
       {topics.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5 mb-3">
+        <div className="mb-3 flex flex-wrap items-center gap-1.5">
           {topics.slice(0, 3).map((topic) => (
             <span
               key={topic}
-              className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--bg-surface-container)] text-[var(--fg-tertiary)]"
+              className="rounded-full bg-[var(--bg-surface-container)] px-1.5 py-0.5 text-xs text-[var(--fg-tertiary)]"
             >
               {topicTranslations?.[topic] ?? topic.replace(/-/g, ' ')}
             </span>
@@ -130,7 +127,7 @@ export function ClaimCard({
       )}
 
       {/* Evidence count */}
-      <div className="flex items-center gap-3 text-xs text-[var(--fg-secondary)] border-t border-[var(--border-subtle)] pt-3">
+      <div className="flex items-center gap-3 border-t border-[var(--border-subtle)] pt-3 text-xs text-[var(--fg-secondary)]">
         {supportingCount > 0 && (
           <span className="flex items-center gap-1">
             <span className="text-[var(--fg-success)]">+{supportingCount}</span>

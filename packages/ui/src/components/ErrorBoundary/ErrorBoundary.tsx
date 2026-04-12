@@ -47,10 +47,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center">
-          <div className="w-16 h-16 mb-6 rounded-full bg-[var(--bg-surface-container)] flex items-center justify-center">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 text-center">
+          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--bg-surface-container)]">
             <svg
-              className="w-8 h-8 text-[var(--fg-error)]"
+              className="h-8 w-8 text-[var(--fg-error)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -64,25 +64,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-[var(--fg-primary)] mb-2">
+          <h2 className="mb-2 text-xl font-semibold text-[var(--fg-primary)]">
             Something went wrong
           </h2>
-          <p className="text-[var(--fg-secondary)] mb-6 max-w-md">
+          <p className="mb-6 max-w-md text-[var(--fg-secondary)]">
             We encountered an unexpected error. This has been noted and we&apos;re working on it.
           </p>
           <button
             type="button"
             onClick={this.handleRetry}
-            className="px-4 py-2 bg-[var(--bg-action-primary)] text-[var(--fg-inverse)] rounded-nested font-medium hover:bg-[var(--bg-action-primary-hover)] transition-colors"
+            className="rounded-nested bg-[var(--bg-action-primary)] px-4 py-2 font-medium text-[var(--fg-inverse)] transition-colors hover:bg-[var(--bg-action-primary-hover)]"
           >
             Try again
           </button>
           {process.env.NODE_ENV === 'development' && this.state.error !== null && (
-            <details className="mt-8 text-left w-full max-w-lg">
+            <details className="mt-8 w-full max-w-lg text-left">
               <summary className="cursor-pointer text-sm text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]">
                 Error details
               </summary>
-              <pre className="mt-2 p-4 bg-[var(--bg-surface-container)] rounded-nested text-xs text-[var(--fg-error)] overflow-x-auto">
+              <pre className="rounded-nested mt-2 overflow-x-auto bg-[var(--bg-surface-container)] p-4 text-xs text-[var(--fg-error)]">
                 {this.state.error.message}
                 {'\n\n'}
                 {this.state.error.stack}

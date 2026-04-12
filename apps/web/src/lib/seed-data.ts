@@ -96,21 +96,25 @@ const localizedContent = {
   chain1: {
     en: {
       title: '#TheEchoMachine',
-      description: 'Investigation into how 44 media outlets globalize the Venezuelan regime\'s narrative. Collaborative tracking of the propaganda amplification network.',
+      description:
+        "Investigation into how 44 media outlets globalize the Venezuelan regime's narrative. Collaborative tracking of the propaganda amplification network.",
     },
     es: {
       title: '#LaMaquinariaDelEco',
-      description: 'Investigación sobre cómo 44 medios globalizan la narrativa del régimen venezolano. Seguimiento colaborativo de la red de amplificación de propaganda.',
+      description:
+        'Investigación sobre cómo 44 medios globalizan la narrativa del régimen venezolano. Seguimiento colaborativo de la red de amplificación de propaganda.',
     },
   },
   campaign1: {
     en: {
       title: 'Identify funding sources for the media network',
-      description: 'We are looking for documented evidence about the funding sources of the 44 media outlets identified in the #TheEchoMachine investigation. We are especially interested in documenting advertising contracts with state entities, international transfers, or corporate links.',
+      description:
+        'We are looking for documented evidence about the funding sources of the 44 media outlets identified in the #TheEchoMachine investigation. We are especially interested in documenting advertising contracts with state entities, international transfers, or corporate links.',
     },
     es: {
       title: 'Identificar fuentes de financiamiento de la red de medios',
-      description: 'Buscamos evidencia documentada sobre las fuentes de financiamiento de los 44 medios identificados en la investigación #LaMaquinariaDelEco. Interesa especialmente documentar contratos publicitarios con entidades estatales, transferencias internacionales, o vínculos corporativos.',
+      description:
+        'Buscamos evidencia documentada sobre las fuentes de financiamiento de los 44 medios identificados en la investigación #LaMaquinariaDelEco. Interesa especialmente documentar contratos publicitarios con entidades estatales, transferencias internacionales, o vínculos corporativos.',
     },
   },
   corroboration1: {
@@ -123,18 +127,22 @@ const localizedContent = {
   },
   corroboration2: {
     en: {
-      evidenceContent: 'I work in digital media in Venezuela. I have personally observed how similar content guidelines arrive at different newsrooms simultaneously.',
+      evidenceContent:
+        'I work in digital media in Venezuela. I have personally observed how similar content guidelines arrive at different newsrooms simultaneously.',
     },
     es: {
-      evidenceContent: 'Trabajo en medios digitales en Venezuela. He observado personalmente cómo llegan pautas de contenido similares a diferentes redacciones simultáneamente.',
+      evidenceContent:
+        'Trabajo en medios digitales en Venezuela. He observado personalmente cómo llegan pautas de contenido similares a diferentes redacciones simultáneamente.',
     },
   },
   claim1: {
     en: {
-      statement: '44 media outlets participate in a coordinated network to amplify Venezuelan government narratives',
+      statement:
+        '44 media outlets participate in a coordinated network to amplify Venezuelan government narratives',
     },
     es: {
-      statement: '44 medios participan en una red coordinada de amplificación de narrativas del gobierno venezolano',
+      statement:
+        '44 medios participan en una red coordinada de amplificación de narrativas del gobierno venezolano',
     },
   },
 };
@@ -144,42 +152,54 @@ const localizedContent = {
 // ============================================================================
 
 export const seedOutlets = new Map<OutletId, Outlet>([
-  [OUTLET_EFECTO_COCUYO_ID, {
-    id: OUTLET_EFECTO_COCUYO_ID,
-    name: 'Efecto Cocuyo',
-    description: 'Independent digital journalism from Venezuela',
-    country: 'Venezuela',
-    website: 'https://efectococuyo.com',
-    topics: ['politics', 'human-rights', 'economy'],
-    foundedYear: 2015,
-  }],
-  [createOutletId('outlet-animal-politico'), {
-    id: createOutletId('outlet-animal-politico'),
-    name: 'Animal Político',
-    description: 'Political journalism and fact-checking from Mexico',
-    country: 'Mexico',
-    website: 'https://animalpolitico.com',
-    topics: ['politics', 'corruption', 'human-rights'],
-    foundedYear: 2010,
-  }],
-  [createOutletId('outlet-el-faro'), {
-    id: createOutletId('outlet-el-faro'),
-    name: 'El Faro',
-    description: 'Investigative journalism from Central America',
-    country: 'El Salvador',
-    website: 'https://elfaro.net',
-    topics: ['corruption', 'migration', 'violence'],
-    foundedYear: 1998,
-  }],
-  [createOutletId('outlet-chequeado'), {
-    id: createOutletId('outlet-chequeado'),
-    name: 'Chequeado',
-    description: 'Fact-checking organization from Argentina',
-    country: 'Argentina',
-    website: 'https://chequeado.com',
-    topics: ['fact-checking', 'politics', 'health'],
-    foundedYear: 2010,
-  }],
+  [
+    OUTLET_EFECTO_COCUYO_ID,
+    {
+      id: OUTLET_EFECTO_COCUYO_ID,
+      name: 'Efecto Cocuyo',
+      description: 'Independent digital journalism from Venezuela',
+      country: 'Venezuela',
+      website: 'https://efectococuyo.com',
+      topics: ['politics', 'human-rights', 'economy'],
+      foundedYear: 2015,
+    },
+  ],
+  [
+    createOutletId('outlet-animal-politico'),
+    {
+      id: createOutletId('outlet-animal-politico'),
+      name: 'Animal Político',
+      description: 'Political journalism and fact-checking from Mexico',
+      country: 'Mexico',
+      website: 'https://animalpolitico.com',
+      topics: ['politics', 'corruption', 'human-rights'],
+      foundedYear: 2010,
+    },
+  ],
+  [
+    createOutletId('outlet-el-faro'),
+    {
+      id: createOutletId('outlet-el-faro'),
+      name: 'El Faro',
+      description: 'Investigative journalism from Central America',
+      country: 'El Salvador',
+      website: 'https://elfaro.net',
+      topics: ['corruption', 'migration', 'violence'],
+      foundedYear: 1998,
+    },
+  ],
+  [
+    createOutletId('outlet-chequeado'),
+    {
+      id: createOutletId('outlet-chequeado'),
+      name: 'Chequeado',
+      description: 'Fact-checking organization from Argentina',
+      country: 'Argentina',
+      website: 'https://chequeado.com',
+      topics: ['fact-checking', 'politics', 'health'],
+      foundedYear: 2010,
+    },
+  ],
 ]);
 
 // ============================================================================
@@ -382,18 +402,16 @@ export function getSeedPostsForLocale(locale: Locale): Map<PostId, Post> {
 }
 
 export function getSeedStoryChainsForLocale(locale: Locale): Map<ChainId, StoryChain> {
-  return new Map<ChainId, StoryChain>([
-    [CHAIN_1_ID, createStoryChain1(locale)],
-  ]);
+  return new Map<ChainId, StoryChain>([[CHAIN_1_ID, createStoryChain1(locale)]]);
 }
 
 export function getSeedCampaignsForLocale(locale: Locale): Map<CampaignId, Campaign> {
-  return new Map<CampaignId, Campaign>([
-    [CAMPAIGN_1_ID, createCampaign1(locale)],
-  ]);
+  return new Map<CampaignId, Campaign>([[CAMPAIGN_1_ID, createCampaign1(locale)]]);
 }
 
-export function getSeedCorroborationsForLocale(locale: Locale): Map<CorroborationId, Corroboration> {
+export function getSeedCorroborationsForLocale(
+  locale: Locale
+): Map<CorroborationId, Corroboration> {
   return new Map<CorroborationId, Corroboration>([
     [CORR_1_ID, createCorroboration1(locale)],
     [CORR_2_ID, createCorroboration2(locale)],
@@ -401,9 +419,7 @@ export function getSeedCorroborationsForLocale(locale: Locale): Map<Corroboratio
 }
 
 export function getSeedClaimsForLocale(locale: Locale): Map<ClaimId, Claim> {
-  return new Map<ClaimId, Claim>([
-    [CLAIM_1_ID, createClaim1(locale)],
-  ]);
+  return new Map<ClaimId, Claim>([[CLAIM_1_ID, createClaim1(locale)]]);
 }
 
 // ============================================================================
@@ -417,21 +433,15 @@ export const seedCorroborations = getSeedCorroborationsForLocale('en');
 export const seedClaims = getSeedClaimsForLocale('en');
 
 // Derived mappings (locale-independent)
-export const seedPostClaims = new Map<PostId, ClaimId[]>([
-  [POST_1_ID, [CLAIM_1_ID]],
-]);
+export const seedPostClaims = new Map<PostId, ClaimId[]>([[POST_1_ID, [CLAIM_1_ID]]]);
 
 export const seedPostCorroborations = new Map<PostId, CorroborationId[]>([
   [POST_1_ID, [CORR_1_ID, CORR_2_ID]],
 ]);
 
-export const seedPostCampaigns = new Map<PostId, CampaignId[]>([
-  [POST_1_ID, [CAMPAIGN_1_ID]],
-]);
+export const seedPostCampaigns = new Map<PostId, CampaignId[]>([[POST_1_ID, [CAMPAIGN_1_ID]]]);
 
-export const seedCampaignPosts = new Map<CampaignId, PostId[]>([
-  [CAMPAIGN_1_ID, [POST_1_ID]],
-]);
+export const seedCampaignPosts = new Map<CampaignId, PostId[]>([[CAMPAIGN_1_ID, [POST_1_ID]]]);
 
 // Export IDs for use in generateStaticParams
 export const SEED_POST_IDS = ['seed-post-001', 'seed-post-002', 'seed-post-003'];

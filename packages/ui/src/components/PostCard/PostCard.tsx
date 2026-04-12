@@ -69,7 +69,16 @@ export function PostCard({
   translations: t,
   topicTranslations,
 }: PostCardProps): ReactElement {
-  const { id, title, excerpt, topics, locationName, corroborationCount, challengeCount, createdAt } = post;
+  const {
+    id,
+    title,
+    excerpt,
+    topics,
+    locationName,
+    corroborationCount,
+    challengeCount,
+    createdAt,
+  } = post;
 
   const handleClick = (): void => {
     onClick?.(id);
@@ -84,11 +93,7 @@ export function PostCard({
 
   return (
     <article
-      className={`
-        bg-[var(--bg-surface-nested)] border border-[var(--border-default)]
-        rounded-container p-6 transition-all duration-200 ease-out
-        ${onClick !== undefined ? 'cursor-pointer hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none' : ''}
-      `}
+      className={`rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6 transition-all duration-200 ease-out ${onClick !== undefined ? 'cursor-pointer hover:-translate-y-0.5 hover:border-[var(--color-firefly-gold)]/40 hover:shadow-[0_4px_20px_rgba(232,185,49,0.08)] active:translate-y-0 active:shadow-none' : ''} `}
       onClick={onClick !== undefined ? handleClick : undefined}
       onKeyDown={onClick !== undefined ? handleKeyDown : undefined}
       tabIndex={onClick !== undefined ? 0 : undefined}
@@ -97,50 +102,60 @@ export function PostCard({
     >
       {/* Title - 2 line truncate (only shown if present) */}
       {title !== undefined && (
-        <h3 className="text-lg font-medium text-[var(--fg-primary)] leading-snug mb-2 line-clamp-2">
+        <h3 className="mb-2 line-clamp-2 text-lg leading-snug font-medium text-[var(--fg-primary)]">
           {title}
         </h3>
       )}
 
       {/* Excerpt - 3 line truncate */}
-      <p className="text-sm text-[var(--fg-secondary)] leading-relaxed mb-4 line-clamp-3">
+      <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-[var(--fg-secondary)]">
         {excerpt}
       </p>
 
       {/* Topics and location tags */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         {topics.slice(0, 3).map((topic) => (
           <span
             key={topic}
-            className="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-surface-container)] text-[var(--fg-secondary)]"
+            className="rounded-full bg-[var(--bg-surface-container)] px-2 py-0.5 text-xs text-[var(--fg-secondary)]"
           >
             {topicTranslations?.[topic] ?? topic.replace(/-/g, ' ')}
           </span>
         ))}
         {locationName !== undefined && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-surface-container)] text-[var(--fg-tertiary)]">
+          <span className="rounded-full bg-[var(--bg-surface-container)] px-2 py-0.5 text-xs text-[var(--fg-tertiary)]">
             {locationName}
           </span>
         )}
       </div>
 
       {/* Stats row */}
-      <div className="flex items-center justify-between text-sm border-t border-[var(--border-subtle)] pt-4">
+      <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-4 text-sm">
         <div className="flex items-center gap-4 text-[var(--fg-secondary)]">
           <span className="flex items-center gap-1">
-            <span className="text-[var(--fg-success)]" aria-hidden="true">&#9673;</span>
-            {formatCount(corroborationCount, t?.corroborationWord ?? 'corroboration', t?.corroborationsWord ?? 'corroborations')}
+            <span className="text-[var(--fg-success)]" aria-hidden="true">
+              &#9673;
+            </span>
+            {formatCount(
+              corroborationCount,
+              t?.corroborationWord ?? 'corroboration',
+              t?.corroborationsWord ?? 'corroborations'
+            )}
           </span>
           {challengeCount > 0 && (
             <span className="flex items-center gap-1">
-              <span className="text-[var(--fg-error)]" aria-hidden="true">&#9651;</span>
-              {formatCount(challengeCount, t?.challengeWord ?? 'challenge', t?.challengesWord ?? 'challenges')}
+              <span className="text-[var(--fg-error)]" aria-hidden="true">
+                &#9651;
+              </span>
+              {formatCount(
+                challengeCount,
+                t?.challengeWord ?? 'challenge',
+                t?.challengesWord ?? 'challenges'
+              )}
             </span>
           )}
         </div>
-        <span className="text-xs text-[var(--fg-tertiary)]">
-          {formatRelativeTime(createdAt)}
-        </span>
+        <span className="text-xs text-[var(--fg-tertiary)]">{formatRelativeTime(createdAt)}</span>
       </div>
     </article>
   );

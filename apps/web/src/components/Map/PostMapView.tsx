@@ -20,10 +20,7 @@ import type { Post, VerificationStatus } from '@cocuyo/types';
 import type { MarkerData, MapLocation } from './BaseMap';
 
 // Dynamic import with SSR disabled - Leaflet requires window
-const BaseMap = dynamic(
-  () => import('./BaseMap').then((m) => m.BaseMap),
-  { ssr: false }
-);
+const BaseMap = dynamic(() => import('./BaseMap').then((m) => m.BaseMap), { ssr: false });
 
 interface PostMapViewProps {
   posts: Post[];
@@ -36,10 +33,7 @@ interface PostMapViewProps {
 /**
  * Map verification status to marker color.
  */
-function getMarkerColor(
-  status: VerificationStatus,
-  evidenceCount: number
-): MarkerData['color'] {
+function getMarkerColor(status: VerificationStatus, evidenceCount: number): MarkerData['color'] {
   if (status === 'disputed' || status === 'false') return 'red';
   if (status === 'verified' || evidenceCount >= 5) return 'gold';
   if (evidenceCount >= 2) return 'green';
@@ -62,10 +56,10 @@ function getPostCoordinates(post: Post): MapLocation | null {
 function MapLoader({ className }: { className?: string }): ReactNode {
   return (
     <div
-      className={`bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg flex items-center justify-center ${className}`}
+      className={`flex items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] ${className}`}
     >
       <div className="flex flex-col items-center gap-2 text-[var(--fg-tertiary)]">
-        <svg className="w-8 h-8 animate-spin" fill="none" viewBox="0 0 24 24">
+        <svg className="h-8 w-8 animate-spin" fill="none" viewBox="0 0 24 24">
           <circle
             className="opacity-25"
             cx="12"
@@ -92,11 +86,11 @@ function MapLoader({ className }: { className?: string }): ReactNode {
 function MapUnavailable({ className }: { className?: string }): ReactNode {
   return (
     <div
-      className={`bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg flex items-center justify-center ${className}`}
+      className={`flex items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] ${className}`}
     >
-      <div className="flex flex-col items-center gap-3 text-center p-6">
+      <div className="flex flex-col items-center gap-3 p-6 text-center">
         <svg
-          className="w-12 h-12 text-[var(--fg-tertiary)]"
+          className="h-12 w-12 text-[var(--fg-tertiary)]"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -109,10 +103,8 @@ function MapUnavailable({ className }: { className?: string }): ReactNode {
           />
         </svg>
         <div>
-          <p className="text-[var(--fg-secondary)] font-medium">
-            Map unavailable
-          </p>
-          <p className="text-sm text-[var(--fg-tertiary)] mt-1">
+          <p className="font-medium text-[var(--fg-secondary)]">Map unavailable</p>
+          <p className="mt-1 text-sm text-[var(--fg-tertiary)]">
             Interactive map requires network access
           </p>
         </div>
@@ -124,16 +116,10 @@ function MapUnavailable({ className }: { className?: string }): ReactNode {
 /**
  * Post popup content.
  */
-function PostPopup({
-  post,
-  locale,
-}: {
-  post: Post;
-  locale: string;
-}): ReactNode {
+function PostPopup({ post, locale }: { post: Post; locale: string }): ReactNode {
   return (
     <div className="min-w-[200px] max-w-[280px]">
-      <p className="text-sm text-[var(--fg-primary)] line-clamp-3 mb-2">
+      <p className="mb-2 line-clamp-3 text-sm text-[var(--fg-primary)]">
         {post.content.text.slice(0, 150)}
         {post.content.text.length > 150 ? '...' : ''}
       </p>
@@ -180,10 +166,7 @@ export function PostMapView({
     return {
       id: post.id,
       position: coords,
-      color: getMarkerColor(
-        post.verification.status,
-        post.corroborations.evidenceCount
-      ),
+      color: getMarkerColor(post.verification.status, post.corroborations.evidenceCount),
       popup: <PostPopup post={post} locale={locale} />,
     };
   });
@@ -192,10 +175,8 @@ export function PostMapView({
   const center: MapLocation =
     markers.length > 0
       ? {
-          lat:
-            markers.reduce((sum, m) => sum + m.position.lat, 0) / markers.length,
-          lon:
-            markers.reduce((sum, m) => sum + m.position.lon, 0) / markers.length,
+          lat: markers.reduce((sum, m) => sum + m.position.lat, 0) / markers.length,
+          lon: markers.reduce((sum, m) => sum + m.position.lon, 0) / markers.length,
         }
       : { lat: 20, lon: 0 };
 
@@ -216,11 +197,9 @@ export function PostMapView({
   if (markers.length === 0) {
     return (
       <div
-        className={`bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg flex items-center justify-center ${className}`}
+        className={`flex items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] ${className}`}
       >
-        <p className="text-[var(--fg-tertiary)]">
-          No posts with location data
-        </p>
+        <p className="text-[var(--fg-tertiary)]">No posts with location data</p>
       </div>
     );
   }

@@ -12,29 +12,29 @@ import type { ClaimId, CorroborationId, DIMCredential, PostId } from './brands';
  * Types of corroboration — each carries different meaning.
  */
 export type CorroborationType =
-  | 'witness'    // "I can independently confirm this observation"
-  | 'evidence'   // "I have additional documentation that supports this"
-  | 'expertise'  // "This is consistent with my knowledge in this domain"
+  | 'witness' // "I can independently confirm this observation"
+  | 'evidence' // "I have additional documentation that supports this"
+  | 'expertise' // "This is consistent with my knowledge in this domain"
   | 'challenge'; // "I have reason to believe this is inaccurate"
 
 /**
  * Evidence type for submissions via Corroborate/Dispute gestures.
  */
 export type EvidenceType =
-  | 'source_link'    // URL input
-  | 'document'       // File upload (placeholder)
-  | 'photo'          // Image upload (placeholder)
-  | 'observation';   // Free text firsthand account
+  | 'source_link' // URL input
+  | 'document' // File upload (placeholder)
+  | 'photo' // Image upload (placeholder)
+  | 'observation'; // Free text firsthand account
 
 /**
  * Evidence quality assessment — determined by content and review.
  */
 export type EvidenceQuality =
-  | 'peer_reviewed'    // Reviewed by collective members
-  | 'source_verified'  // Original source confirmed
-  | 'documented'       // Has supporting documents/media
-  | 'observation'      // First-hand witness account
-  | 'unverified';      // Not yet reviewed (default)
+  | 'peer_reviewed' // Reviewed by collective members
+  | 'source_verified' // Original source confirmed
+  | 'documented' // Has supporting documents/media
+  | 'observation' // First-hand witness account
+  | 'unverified'; // Not yet reviewed (default)
 
 /**
  * A single corroboration record.

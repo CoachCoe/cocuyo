@@ -4,11 +4,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { createDIMCredential } from '@cocuyo/types';
-import {
-  createDIMClient,
-  generatePseudonym,
-  type DIMCredentialInfo,
-} from './dim-client';
+import { createDIMClient, generatePseudonym, type DIMCredentialInfo } from './dim-client';
 
 describe('createDIMClient', () => {
   describe('with mock credential', () => {

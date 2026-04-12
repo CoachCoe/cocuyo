@@ -49,15 +49,17 @@ function formatRelativeTime(timestamp: number): string {
   return new Date(ts).toLocaleDateString();
 }
 
-export function EvidenceSection({ title, type, corroborations }: EvidenceSectionProps): ReactElement {
+export function EvidenceSection({
+  title,
+  type,
+  corroborations,
+}: EvidenceSectionProps): ReactElement {
   const accentColor = type === 'supporting' ? 'var(--fg-success)' : 'var(--fg-error)';
 
   return (
     <section>
-      <h3 className="text-sm font-medium text-primary mb-3 flex items-center gap-2">
-        <span style={{ color: accentColor }}>
-          {type === 'supporting' ? '✓' : '⚠'}
-        </span>
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
+        <span style={{ color: accentColor }}>{type === 'supporting' ? '✓' : '⚠'}</span>
         {title} ({corroborations.length})
       </h3>
 
@@ -65,17 +67,16 @@ export function EvidenceSection({ title, type, corroborations }: EvidenceSection
         {corroborations.map((corr) => {
           const defaultType = { icon: '📎', label: 'Evidence' };
           const corrType = CORR_TYPE_DISPLAY[corr.type] ?? defaultType;
-          const evidenceType = corr.evidenceType !== undefined
-            ? EVIDENCE_TYPE_DISPLAY[corr.evidenceType]
-            : undefined;
+          const evidenceType =
+            corr.evidenceType !== undefined ? EVIDENCE_TYPE_DISPLAY[corr.evidenceType] : undefined;
 
           return (
             <div
               key={corr.id}
-              className="p-4 rounded-nested bg-surface-container border border-subtle"
+              className="rounded-nested border border-subtle bg-surface-container p-4"
             >
               {/* Header */}
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{corrType.icon}</span>
                   <span className="text-xs font-medium text-secondary">{corrType.label}</span>
@@ -86,9 +87,7 @@ export function EvidenceSection({ title, type, corroborations }: EvidenceSection
                     </>
                   )}
                 </div>
-                <span className="text-xs text-tertiary">
-                  {formatRelativeTime(corr.createdAt)}
-                </span>
+                <span className="text-xs text-tertiary">{formatRelativeTime(corr.createdAt)}</span>
               </div>
 
               {/* Content */}
@@ -99,7 +98,7 @@ export function EvidenceSection({ title, type, corroborations }: EvidenceSection
                       href={corr.evidenceContent}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-[var(--fg-accent)] hover:underline break-all"
+                      className="break-all text-sm text-[var(--fg-accent)] hover:underline"
                     >
                       {corr.evidenceContent}
                     </a>
@@ -111,13 +110,13 @@ export function EvidenceSection({ title, type, corroborations }: EvidenceSection
 
               {/* Description */}
               {corr.evidenceDescription !== undefined && (
-                <p className="text-xs text-secondary italic">
+                <p className="text-xs italic text-secondary">
                   &ldquo;{corr.evidenceDescription}&rdquo;
                 </p>
               )}
 
               {/* Quality indicator */}
-              <div className="mt-2 pt-2 border-t border-subtle flex items-center gap-2 text-xs text-tertiary">
+              <div className="mt-2 flex items-center gap-2 border-t border-subtle pt-2 text-xs text-tertiary">
                 <span>Quality: {corr.quality}</span>
               </div>
             </div>

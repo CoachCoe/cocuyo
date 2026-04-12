@@ -15,10 +15,7 @@ export function WorkbenchAccessGate(): ReactElement {
 
   return (
     <div className="py-16">
-      <EmptyState
-        title={t('accessRequired')}
-        description={t('accessDescription')}
-      />
+      <EmptyState title={t('accessRequired')} description={t('accessDescription')} />
     </div>
   );
 }
