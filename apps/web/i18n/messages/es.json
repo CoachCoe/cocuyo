@@ -108,6 +108,10 @@
       "verificationTrails": {
         "title": "Rastros de Verificación",
         "description": "Cada cadena lleva un rastro de verificación transparente — el historial completo de publicaciones, corroboraciones, cuestionamientos y evidencia. No necesitas confiar en nosotros para saber que algo está verificado. Puedes rastrear el camino tú mismo y ver exactamente cuántos humanos independientes, con qué reputación, hicieron qué afirmaciones."
+      },
+      "campaigns": {
+        "title": "Campañas",
+        "description": "Las campañas son esfuerzos de verificación patrocinados. Medios de comunicación, colectivos o miembros de la comunidad financian una solicitud de información específica — y las luciérnagas que contribuyen evidencia valiosa ganan una parte de la recompensa. Los fondos se mantienen en custodia hasta que se cumplan los entregables. Los pagos pueden ser públicos (pUSD) o privados (Coinage) para proteger la identidad del contribuyente. Esto crea un mercado funcional para el periodismo de investigación."
       }
     },
     "surveillanceResistance": {
@@ -307,7 +311,7 @@
       "detail": "Detalles de la Campaña"
     },
     "funding": "Financiamiento",
-    "sponsor": "Patrocinador",
+    "payoutMode": "Modo de Pago",
     "expires": "Expira",
     "expired": "Expirada",
     "expiresSoon": "Expira pronto",
@@ -324,8 +328,13 @@
     "topics": "Temas",
     "location": "Ubicación",
     "description": "Qué estamos verificando",
+    "paymentPublic": "pUSD Público",
+    "paymentPrivate": "Privado",
     "whatsThis": "¿Qué es esto?",
     "posted": "Publicado",
+    "sponsor": "Patrocinador",
+    "deliverables": "Entregables",
+    "progress": "Progreso",
     "deliverableTypes": {
       "evidence_gathered": "Evidencia Recopilada",
       "sources_verified": "Fuentes Verificadas",

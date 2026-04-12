@@ -108,6 +108,10 @@
       "verificationTrails": {
         "title": "Verification Trails",
         "description": "Every chain carries a transparent verification trail — the complete history of posts, corroborations, challenges, and evidence. You don't need to trust us to tell you something is verified. You can trace the trail yourself and see exactly how many independent humans, with what reputation, made what claims."
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "description": "Campaigns are sponsored fact-checking efforts. News outlets, collectives, or community members fund a request for specific information — and fireflies who contribute valuable evidence earn a share of the reward. The funds are held in escrow until deliverables are met. Payments can be public (pUSD) or private (Coinage) to protect contributor identity. This creates a functioning market for investigative journalism."
       }
     },
     "surveillanceResistance": {

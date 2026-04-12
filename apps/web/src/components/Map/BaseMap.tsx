@@ -108,11 +108,7 @@ const markerIcons = {
 /**
  * Internal component to handle map click events.
  */
-function MapClickHandler({
-  onClick,
-}: {
-  onClick?: (location: MapLocation) => void;
-}): null {
+function MapClickHandler({ onClick }: { onClick?: (location: MapLocation) => void }): null {
   useMapEvents({
     click(e) {
       onClick?.({ lat: e.latlng.lat, lon: e.latlng.lng });
@@ -155,7 +151,9 @@ export function BaseMap({
   const selectedMarker = markers.find((m) => m.id === selectedMarkerId);
 
   return (
-    <div className={`rounded-lg overflow-hidden border border-[var(--border-default)] ${className}`}>
+    <div
+      className={`relative isolate overflow-hidden rounded-lg border border-[var(--border-default)] ${className}`}
+    >
       <MapContainer
         center={[center.lat, center.lon]}
         zoom={zoom}
@@ -171,17 +169,12 @@ export function BaseMap({
         {onClick && <MapClickHandler onClick={onClick} />}
 
         {/* Fly to selected marker */}
-        {selectedMarker && (
-          <FlyToLocation location={selectedMarker.position} />
-        )}
+        {selectedMarker && <FlyToLocation location={selectedMarker.position} />}
 
         {/* User location marker */}
         {showUserLocation && userLocation && (
           <>
-            <Marker
-              position={[userLocation.lat, userLocation.lon]}
-              icon={markerIcons.gold}
-            >
+            <Marker position={[userLocation.lat, userLocation.lon]} icon={markerIcons.gold}>
               <Popup>Your location</Popup>
             </Marker>
             {radiusMeters !== undefined && radiusMeters > 0 && (
