@@ -25,7 +25,7 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { ChainService, CampaignService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
+import type { ChainService, CampaignService, PostService, ClaimService, CorroborationService, VerdictService, CollectiveService, VerdictProposalService } from '@cocuyo/types';
 import { SignalServiceImpl } from './signal-service';
 import { ChainServiceImpl } from './chain-service';
 import { CampaignServiceImpl } from './campaign-service';
@@ -33,6 +33,8 @@ import { ClaimServiceImpl } from './claim-service';
 import { CorroborationServiceImpl } from './corroboration-service';
 import { ChainSignalService } from './chain-signal-service';
 import { ChainChainService } from './chain-chain-service';
+import { collectiveService as collectiveServiceInstance } from './collective-service';
+import { verdictService as verdictServiceInstance, verdictProposalService as verdictProposalServiceInstance } from './verdict-service';
 
 /**
  * Whether to use chain-backed services.
@@ -109,6 +111,38 @@ export const claimService: ClaimService = new ClaimServiceImpl();
  */
 export const corroborationService: CorroborationService = new CorroborationServiceImpl();
 
+/**
+ * Collective service instance.
+ *
+ * Provides collective membership and data:
+ * - getCollective: Fetch a collective by ID
+ * - isMember: Check if credential is a member
+ * - getMemberRole: Get member's role in collective
+ * - getCollectivesForMember: Get all collectives for a user
+ */
+export const collectiveService: CollectiveService = collectiveServiceInstance;
+
+/**
+ * Verdict service instance.
+ *
+ * Provides verdict functionality:
+ * - getVerdict: Get a verdict by ID
+ * - getVerdictForClaim: Get verdict for a claim
+ * - issueVerdict: Issue a verdict (used by proposal finalization)
+ */
+export const verdictService: VerdictService = verdictServiceInstance;
+
+/**
+ * Verdict proposal service instance.
+ *
+ * Provides multi-sig voting on verdicts:
+ * - createProposal: Create a new verdict proposal
+ * - vote: Cast a vote on a proposal
+ * - getProposalsForClaim: Get all proposals for a claim
+ * - checkAndFinalize: Finalize if threshold reached
+ */
+export const verdictProposalService: VerdictProposalService = verdictProposalServiceInstance;
+
 // Export classes for type checking and direct instantiation
 export { SignalServiceImpl, SignalServiceImpl as MockSignalService } from './signal-service';
 export { ChainServiceImpl, ChainServiceImpl as MockChainService } from './chain-service';
@@ -118,6 +152,8 @@ export { ClaimServiceImpl, ClaimServiceImpl as MockClaimService } from './claim-
 export { CorroborationServiceImpl, CorroborationServiceImpl as MockCorroborationService } from './corroboration-service';
 export { ChainSignalService } from './chain-signal-service';
 export { ChainChainService } from './chain-chain-service';
+export { CollectiveServiceImpl } from './collective-service';
+export { VerdictServiceImpl, VerdictProposalServiceImpl } from './verdict-service';
 
 // Export service hooks (preferred for new code)
 export {

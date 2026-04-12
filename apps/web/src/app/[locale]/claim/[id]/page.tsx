@@ -9,6 +9,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ClaimStatusBadge } from '@cocuyo/ui';
 import { validateClaimId } from '@/lib/utils/validators';
 import { ClaimActions } from './ClaimActions';
+import { VerdictVotingPanel } from '@/components/VerdictVoting';
 
 interface ClaimDetailPageProps {
   params: Promise<{ locale: string; id: string }>;
@@ -183,6 +184,24 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
               contradictThisClaim: tClaims('contradictThisClaim'),
             }}
           />
+
+          {/* Collective verdict voting */}
+          <div className="mb-8">
+            <VerdictVotingPanel
+              claimId={claim.id}
+              claimStatement={claim.statement}
+              translations={{
+                title: tClaims('collectiveVerification'),
+                noProposals: tClaims('noActiveProposals'),
+                createProposal: tClaims('createProposal'),
+                castYourVote: tClaims('castYourVote'),
+                alreadyVoted: tClaims('alreadyVoted'),
+                notAMember: tClaims('joinCollectiveToVote'),
+                connectWallet: tClaims('connectToVote'),
+                loading: tClaims('loading'),
+              }}
+            />
+          </div>
 
           {/* Verdict section (if exists) */}
           {claim.verdict !== undefined && (

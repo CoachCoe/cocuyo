@@ -78,6 +78,22 @@ export type {
   NewVerdict,
 } from './claim';
 
+// Verdict voting types (multi-sig)
+export type {
+  ProposalStatus,
+  VerdictVote,
+  VerdictProposal,
+  NewVerdictProposal,
+  NewVerdictVote,
+  VotingProgress,
+} from './verdict-voting';
+
+export {
+  calculateVotingProgress,
+  hasVoted,
+  getMemberVote,
+} from './verdict-voting';
+
 // Identity types
 export type {
   DisclosureLevel,
@@ -204,6 +220,8 @@ export type {
   OutletService,
   ClaimService,
   VerdictService,
+  CollectiveService,
+  VerdictProposalService,
   // Reputation services
   ReputationError,
   TopicReputationScore,

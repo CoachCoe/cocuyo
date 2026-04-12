@@ -264,6 +264,72 @@ export interface VerdictService {
 }
 
 // ============================================================================
+// Collective Service
+// ============================================================================
+
+import type { Collective, CollectivePreview, MemberRole, CollectiveMember } from './collective';
+import type { CollectiveId } from './brands';
+
+/**
+ * Collective service interface.
+ *
+ * Provides access to collective data and membership verification.
+ */
+export interface CollectiveService {
+  /** Get a collective by ID */
+  getCollective(id: CollectiveId): Promise<Collective | null>;
+
+  /** Get all collectives */
+  getCollectives(params: {
+    topic?: string;
+    pagination: PaginationParams;
+  }): Promise<PaginatedResult<CollectivePreview>>;
+
+  /** Check if a credential is a member of a collective */
+  isMember(collectiveId: CollectiveId, credential: DIMCredential): Promise<boolean>;
+
+  /** Get a member's role in a collective */
+  getMemberRole(collectiveId: CollectiveId, credential: DIMCredential): Promise<MemberRole | null>;
+
+  /** Get member details */
+  getMember(collectiveId: CollectiveId, credential: DIMCredential): Promise<CollectiveMember | null>;
+
+  /** Get collectives a credential belongs to */
+  getCollectivesForMember(credential: DIMCredential): Promise<readonly CollectivePreview[]>;
+}
+
+// ============================================================================
+// Verdict Proposal Service (Multi-sig Voting)
+// ============================================================================
+
+import type { VerdictProposal, NewVerdictProposal, NewVerdictVote, VerdictVote } from './verdict-voting';
+
+/**
+ * Verdict proposal service interface.
+ *
+ * Manages multi-sig voting on verdict proposals.
+ */
+export interface VerdictProposalService {
+  /** Get a proposal by ID */
+  getProposal(proposalId: string): Promise<VerdictProposal | null>;
+
+  /** Get all proposals for a claim */
+  getProposalsForClaim(claimId: ClaimId): Promise<readonly VerdictProposal[]>;
+
+  /** Get active proposals for a collective */
+  getActiveProposalsForCollective(collectiveId: CollectiveId): Promise<readonly VerdictProposal[]>;
+
+  /** Create a new verdict proposal */
+  createProposal(proposal: NewVerdictProposal): Promise<Result<string, string>>;
+
+  /** Cast a vote on a proposal */
+  vote(proposalId: string, vote: NewVerdictVote): Promise<Result<VerdictVote, string>>;
+
+  /** Check and finalize a proposal if threshold reached */
+  checkAndFinalize(proposalId: string): Promise<Result<VerdictId | null, string>>;
+}
+
+// ============================================================================
 // Reputation Service
 // ============================================================================
 

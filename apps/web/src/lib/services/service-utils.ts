@@ -148,6 +148,12 @@ export interface UploadResult {
   usedFallback: boolean;
 }
 
+export interface PhotoUploadResult {
+  cid: string;
+  mimeType: string;
+  size: number;
+}
+
 /**
  * Upload data to Bulletin Chain.
  * Returns the CID on success, or an error message on failure.
@@ -179,6 +185,49 @@ export async function fetchFromBulletin<T>(cid: string): Promise<T | null> {
     return await bulletin.fetchJson<T>(cid);
   } catch (fetchError) {
     logger.swallowed('Bulletin fetch failed', 'fetchFromBulletin', fetchError, { cid });
+    return null;
+  }
+}
+
+/**
+ * Upload a photo file to Bulletin Chain.
+ * Returns the CID and metadata on success.
+ */
+export async function uploadPhotoToBulletin(file: File): Promise<Result<PhotoUploadResult, string>> {
+  try {
+    const bulletin = await getBulletinClient();
+    const arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const result = await bulletin.upload(bytes);
+
+    logger.debug('Uploaded photo to Bulletin Chain', 'uploadPhotoToBulletin', {
+      cid: result.cid,
+      mimeType: file.type,
+      size: file.size,
+    });
+
+    return ok({
+      cid: result.cid,
+      mimeType: file.type,
+      size: file.size,
+    });
+  } catch (uploadError) {
+    const message = uploadError instanceof Error ? uploadError.message : 'Photo upload failed';
+    logger.swallowed('Photo upload failed', 'uploadPhotoToBulletin', uploadError);
+    return err(message);
+  }
+}
+
+/**
+ * Fetch photo bytes from Bulletin Chain by CID.
+ * Returns null if fetch fails.
+ */
+export async function fetchPhotoFromBulletin(cid: string): Promise<Uint8Array | null> {
+  try {
+    const bulletin = await getBulletinClient();
+    return await bulletin.fetchBytes(cid);
+  } catch (fetchError) {
+    logger.swallowed('Photo fetch failed', 'fetchPhotoFromBulletin', fetchError, { cid });
     return null;
   }
 }
