@@ -7,11 +7,17 @@
  * - Running inside Triangle (network restricted)
  * - Map fails to load
  * - User prefers manual input
+ *
+ * Features:
+ * - "Use my location" button with Host API permission handling
+ * - Click-to-select on map
+ * - Manual text input fallback
  */
 
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
-import { canMakeExternalRequests } from '@/lib/host/detect';
+import { canMakeExternalRequests, hasGeolocation } from '@/lib/host/detect';
+import { getGeolocation } from '@/lib/host';
 import { reverseGeocode, formatLocation, type GeoLocation } from '@/lib/geo';
 import { ManualLocationInput } from './ManualLocationInput';
 
@@ -71,6 +77,8 @@ export function LocationPicker({
   const [mode, setMode] = useState<InputMode>('auto');
   const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // Track mounted state to prevent state updates after unmount
   const mountedRef = useRef(true);
@@ -85,6 +93,38 @@ export function LocationPicker({
   useEffect(() => {
     setMapAvailable(canMakeExternalRequests());
   }, []);
+
+  // Handle "Use my location" button
+  const handleUseMyLocation = useCallback(async (): Promise<void> => {
+    if (disabled) return;
+
+    setIsGettingLocation(true);
+    setLocationError(null);
+
+    try {
+      const pos = await getGeolocation({ timeout: 10000 });
+      const location = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+
+      // Reverse geocode to get location name
+      setIsGeocoding(true);
+      const result = await reverseGeocode(location.lat, location.lon);
+
+      // Guard: don't update state if unmounted during async operations
+      if (!mountedRef.current) return;
+
+      const locationName = result !== null ? formatLocation(result) : '';
+      onChange({ coordinates: location, locationName });
+    } catch {
+      if (mountedRef.current) {
+        setLocationError('Could not get your location. Click on the map instead.');
+      }
+    } finally {
+      if (mountedRef.current) {
+        setIsGettingLocation(false);
+        setIsGeocoding(false);
+      }
+    }
+  }, [disabled, onChange]);
 
   // Handle map click - reverse geocode the location
   const handleMapClick = useCallback(
@@ -172,7 +212,64 @@ export function LocationPicker({
 
       {/* Map view */}
       {effectiveMode === 'map' && (
-        <div className="space-y-2">
+        <div className="space-y-3">
+          {/* Use my location button */}
+          {hasGeolocation() && (
+            <button
+              type="button"
+              onClick={() => void handleUseMyLocation()}
+              disabled={isGettingLocation || disabled}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--fg-accent)] bg-[var(--fg-accent)]/10 px-4 py-2.5 text-sm font-medium text-[var(--fg-accent)] transition-colors hover:bg-[var(--fg-accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isGettingLocation ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  <span>Getting location...</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="3" fill="currentColor" />
+                  </svg>
+                  <span>Use my location</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {locationError !== null && (
+            <div className="rounded-lg border border-[var(--fg-error)]/30 bg-[var(--fg-error)]/10 px-3 py-2 text-xs text-[var(--fg-error)]">
+              {locationError}
+            </div>
+          )}
+
+          <p className="text-center text-xs text-[var(--fg-tertiary)]">
+            or click on the map to select a location
+          </p>
+
           <BaseMap
             center={value.coordinates ?? { lat: 20, lon: 0 }}
             zoom={value.coordinates ? 12 : 2}
@@ -218,8 +315,6 @@ export function LocationPicker({
               )}
             </div>
           )}
-
-          <p className="text-xs text-[var(--fg-tertiary)]">Click the map to select a location</p>
         </div>
       )}
 

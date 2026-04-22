@@ -6,7 +6,7 @@
  * Triangle (network restricted).
  */
 
-export { BaseMap, type MapLocation, type MarkerData } from './BaseMap';
+export { BaseMap, useCurrentLocation, type MapLocation, type MarkerData } from './BaseMap';
 export { LocationPicker, type LocationPickerValue } from './LocationPicker';
 export { ManualLocationInput } from './ManualLocationInput';
 export { PostMapView } from './PostMapView';

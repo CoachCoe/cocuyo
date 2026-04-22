@@ -153,21 +153,3 @@ export function canMakeExternalRequests(): boolean {
 export function hasGeolocation(): boolean {
   return typeof navigator !== 'undefined' && 'geolocation' in navigator;
 }
-
-/**
- * Get current position using browser geolocation API.
- */
-export function getCurrentPosition(): Promise<GeolocationPosition> {
-  return new Promise((resolve, reject) => {
-    if (!hasGeolocation()) {
-      reject(new Error('Geolocation not available'));
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
-      enableHighAccuracy: false,
-      timeout: 10000,
-      maximumAge: 300000, // 5 minutes
-    });
-  });
-}

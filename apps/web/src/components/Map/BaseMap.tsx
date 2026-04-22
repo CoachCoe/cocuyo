@@ -4,11 +4,11 @@
  * BaseMap — Core Leaflet map wrapper with dark theme.
  *
  * Provides:
- * - OpenStreetMap tiles
+ * - CARTO Voyager tiles (works inside Triangle sandbox)
  * - Custom marker icons (firefly gold, verified green, challenged red)
  * - Click handling
  * - Fly-to animation
- * - Current location detection
+ * - Current location detection (via Host API when in Triangle)
  *
  * Must be lazy-loaded to avoid SSR issues with Leaflet.
  */
@@ -132,6 +132,24 @@ function FlyToLocation({ location }: { location: MapLocation | null }): null {
   return null;
 }
 
+// ═══ Hooks ═══
+
+/**
+ * Hook to get the user's current location.
+ * Handles host API permission request when running inside Triangle.
+ */
+export function useCurrentLocation(): {
+  getLocation: () => Promise<MapLocation>;
+} {
+  const getLocation = async (): Promise<MapLocation> => {
+    const { getGeolocation } = await import('@/lib/host');
+    const pos = await getGeolocation({ timeout: 10000 });
+    return { lat: pos.coords.latitude, lon: pos.coords.longitude };
+  };
+
+  return { getLocation };
+}
+
 /**
  * Base map component with dark theme styling.
  */
@@ -161,8 +179,8 @@ export function BaseMap({
         style={{ background: 'var(--bg-surface-nested)' }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
 
         {/* Map click handler */}

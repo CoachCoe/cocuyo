@@ -14,4 +14,4 @@ export { CHAINS, type ChainId, createChainClient, createKnownChainClient } from 
 
 export { storage, read, write, clear } from './storage';
 
-export { requestExternalPermissions } from './permissions';
+export { requestExternalPermissions, getGeolocation } from './permissions';
