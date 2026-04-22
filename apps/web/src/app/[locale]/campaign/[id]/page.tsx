@@ -154,7 +154,10 @@ export default async function CampaignPage({ params }: CampaignPageProps): Promi
 
               {/* Sponsor */}
               <p className="mb-4 text-[var(--fg-secondary)]">
-                {t('sponsor')}: {campaign.sponsor.name}
+                {t('sponsor')}:{' '}
+                {campaign.sponsor.type === 'firefly'
+                  ? campaign.sponsor.pseudonym
+                  : campaign.sponsor.name}
               </p>
 
               {/* Topics */}

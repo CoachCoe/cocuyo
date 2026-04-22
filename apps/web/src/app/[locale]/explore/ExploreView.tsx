@@ -12,7 +12,20 @@ import { useState, useMemo, useCallback, type ReactElement, type ReactNode } fro
 import type { ChainPreview, ChainId, Post, CampaignPreview, CampaignId } from '@cocuyo/types';
 import { useIlluminate } from '@/hooks/useIlluminate';
 import { ExploreFilters, type ExploreFilterType } from './ExploreFilters';
-import { FeedPostsList, type ViewMode } from './FeedPostsList';
+import { FeedPostsList, type ViewMode, type SortMode } from './FeedPostsList';
+
+/**
+ * Calculate contention score for sorting.
+ * Higher score = more contested.
+ */
+function getContentionScore(post: Post): number {
+  const { witnessCount, evidenceCount, expertiseCount, challengeCount } = post.corroborations;
+  const supportCount = witnessCount + evidenceCount + expertiseCount;
+  const total = supportCount + challengeCount;
+  if (total === 0) return 0;
+  // Weight by total activity so posts with more engagement rank higher
+  return (challengeCount / total) * Math.log(total + 1);
+}
 
 export interface ExploreViewProps {
   /** Available story chains */
@@ -64,6 +77,7 @@ export function ExploreView({
   const [filterType, setFilterType] = useState<ExploreFilterType>(null);
   const [filterId, setFilterId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [sortMode, setSortMode] = useState<SortMode>('recent');
   const { openModal } = useIlluminate();
 
   // Handle filter change
@@ -94,20 +108,35 @@ export function ExploreView({
     return orphanCampaigns.find((c) => c.id === filterId) ?? null;
   }, [filterType, filterId, orphanCampaigns]);
 
-  // Filter posts based on active filter
+  // Filter and sort posts based on active filter and sort mode
   const filteredPosts = useMemo(() => {
+    let result: Post[];
     switch (filterType) {
       case null:
-        return posts;
+        result = [...posts];
+        break;
       case 'chain':
-        return posts.filter((post) => post.chainLinks.includes(filterId as ChainId));
+        result = posts.filter((post) => post.chainLinks.includes(filterId as ChainId));
+        break;
       case 'campaign': {
-        if (filterId === null) return posts;
-        const contributingPostIds = campaignPostsMap[filterId] ?? [];
-        return posts.filter((post) => contributingPostIds.includes(post.id));
+        if (filterId === null) {
+          result = [...posts];
+        } else {
+          const contributingPostIds = campaignPostsMap[filterId] ?? [];
+          result = posts.filter((post) => contributingPostIds.includes(post.id));
+        }
+        break;
       }
     }
-  }, [posts, filterType, filterId, campaignPostsMap]);
+
+    // Apply sorting
+    if (sortMode === 'contested') {
+      result.sort((a, b) => getContentionScore(b) - getContentionScore(a));
+    }
+    // 'recent' is default, already sorted by createdAt from the server
+
+    return result;
+  }, [posts, filterType, filterId, campaignPostsMap, sortMode]);
 
   // Determine the posts section title based on filter
   const postsSectionTitle = useMemo(() => {
@@ -171,6 +200,8 @@ export function ExploreView({
           emptyStateMessage={emptyStateMessage}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          sortMode={sortMode}
+          onSortModeChange={setSortMode}
         />
       </main>
     </div>

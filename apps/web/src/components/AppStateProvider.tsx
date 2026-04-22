@@ -89,6 +89,7 @@ export interface NewCampaignInput {
   topics: string[];
   fundingAmount: number;
   expiresInDays: number;
+  targetClaimIds?: ClaimId[];
 }
 
 /** Input for issuing a verdict */
@@ -134,6 +135,7 @@ interface AppState {
   postCampaigns: Map<PostId, CampaignId[]>;
   campaignPosts: Map<CampaignId, PostId[]>;
   claimVerdicts: Map<ClaimId, VerdictId | null>;
+  claimCampaigns: Map<ClaimId, CampaignId[]>;
 }
 
 /** Actions available on the app state */
@@ -174,6 +176,7 @@ interface AppStateActions {
   getPostClaims: (postId: PostId) => Claim[];
   getPostCorroborations: (postId: PostId) => Corroboration[];
   getPostCampaigns: (postId: PostId) => Campaign[];
+  getClaimCampaigns: (claimId: ClaimId) => Campaign[];
   getAllPosts: () => Post[];
   getAllClaims: () => Claim[];
   getAllCampaigns: () => Campaign[];
@@ -254,6 +257,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     () => new Map(seedCampaignPosts)
   );
   const [claimVerdicts, setClaimVerdicts] = useState<Map<ClaimId, VerdictId | null>>(new Map());
+  const [claimCampaigns, setClaimCampaigns] = useState<Map<ClaimId, CampaignId[]>>(new Map());
 
   // Compute current user from wallet state
   const currentUser: CurrentUser = useMemo(() => {
@@ -492,30 +496,42 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
 
   const createCampaign = useCallback(
     (input: NewCampaignInput, targetPostId?: PostId): Campaign | null => {
-      if (!currentUser.isConnected || !currentUser.credentialHash || !currentUser.isOutletAccount) {
+      // Allow any connected user with credentials (personhood check happens in UI)
+      if (!currentUser.isConnected || !currentUser.credentialHash || !currentUser.pseudonym) {
         return null;
       }
 
       const now = Date.now();
       const id = createCampaignId(generateId());
       const expiresAt = now + input.expiresInDays * 24 * 60 * 60 * 1000;
-      // Convert dollars to cents (bigint) for PUSDAmount
-      const fundingCents = BigInt(Math.round(input.fundingAmount * 100));
+      // Convert dollars to smallest unit (6 decimals, 1 pUSD = 1,000,000 units)
+      const fundingUnits = BigInt(Math.round(input.fundingAmount * 1_000_000));
+
+      // Use outlet sponsor if in outlet mode, otherwise firefly sponsor
+      const sponsor: Campaign['sponsor'] = currentUser.isOutletAccount
+        ? {
+            type: 'outlet',
+            id: createOutletId('demo-outlet'),
+            name: 'Demo Outlet',
+          }
+        : {
+            type: 'firefly',
+            credential: currentUser.credentialHash,
+            pseudonym: currentUser.pseudonym,
+          };
 
       const campaign: Campaign = {
         id,
         title: input.title,
         description: input.description,
         topics: input.topics,
-        sponsor: {
-          type: 'outlet',
-          id: createOutletId('demo-outlet'),
-          name: 'Demo Outlet',
-        },
-        fundingAmount: createPUSDAmount(fundingCents),
+        sponsor,
+        fundingAmount: createPUSDAmount(fundingUnits),
         escrowId: createEscrowId(`escrow-${generateId()}`),
         fundingTxHash: createTransactionHash(`0x${generateId()}`),
         contributingPostIds: targetPostId ? [targetPostId] : [],
+        ...(input.targetClaimIds !== undefined &&
+          input.targetClaimIds.length > 0 && { targetClaimIds: input.targetClaimIds }),
         deliverables: [{ type: 'evidence_gathered', target: 10, current: 0 }],
         payoutMode: 'public',
         status: 'active',
@@ -537,6 +553,18 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
         setCampaignPosts((prev) => {
           const newMap = new Map(prev);
           newMap.set(id, [targetPostId]);
+          return newMap;
+        });
+      }
+
+      // Update claim-campaign mappings
+      if (input.targetClaimIds !== undefined && input.targetClaimIds.length > 0) {
+        setClaimCampaigns((prev) => {
+          const newMap = new Map(prev);
+          for (const claimId of input.targetClaimIds ?? []) {
+            const existing = newMap.get(claimId) ?? [];
+            newMap.set(claimId, [...existing, id]);
+          }
           return newMap;
         });
       }
@@ -836,6 +864,14 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     [postCampaigns, campaigns]
   );
 
+  const getClaimCampaigns = useCallback(
+    (claimId: ClaimId): Campaign[] => {
+      const ids = claimCampaigns.get(claimId) ?? [];
+      return ids.map((id) => campaigns.get(id)).filter((c): c is Campaign => c !== undefined);
+    },
+    [claimCampaigns, campaigns]
+  );
+
   const getAllPosts = useCallback((): Post[] => {
     return Array.from(posts.values()).sort((a, b) => b.createdAt - a.createdAt);
   }, [posts]);
@@ -871,6 +907,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       postCampaigns,
       campaignPosts,
       claimVerdicts,
+      claimCampaigns,
 
       // Actions
       createPost,
@@ -891,6 +928,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       getPostClaims,
       getPostCorroborations,
       getPostCampaigns,
+      getClaimCampaigns,
       getAllPosts,
       getAllClaims,
       getAllCampaigns,
@@ -909,6 +947,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       postCampaigns,
       campaignPosts,
       claimVerdicts,
+      claimCampaigns,
       createPost,
       submitCorroboration,
       extractClaim,
@@ -925,6 +964,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       getPostClaims,
       getPostCorroborations,
       getPostCampaigns,
+      getClaimCampaigns,
       getAllPosts,
       getAllClaims,
       getAllCampaigns,

@@ -27,6 +27,7 @@ const PostMapView = dynamic(() => import('@/components/Map').then((m) => m.PostM
 });
 
 export type ViewMode = 'list' | 'map';
+export type SortMode = 'recent' | 'contested';
 
 interface FeedPostsListProps {
   posts: Post[];
@@ -50,6 +51,10 @@ interface FeedPostsListProps {
   viewMode?: ViewMode | undefined;
   /** Callback when view mode changes */
   onViewModeChange?: ((mode: ViewMode) => void) | undefined;
+  /** Current sort mode */
+  sortMode?: SortMode | undefined;
+  /** Callback when sort mode changes */
+  onSortModeChange?: ((mode: SortMode) => void) | undefined;
 }
 
 export function FeedPostsList({
@@ -65,6 +70,8 @@ export function FeedPostsList({
   postCampaignMap = {},
   viewMode = 'list',
   onViewModeChange,
+  sortMode = 'recent',
+  onSortModeChange,
 }: FeedPostsListProps): ReactElement {
   const router = useRouter();
   const locale = useLocale();
@@ -108,6 +115,19 @@ export function FeedPostsList({
   const handleViewTrust = (post: Post): void => {
     openTrustDrawer(post.id);
   };
+
+  // Sort selector component
+  const sortSelector = onSortModeChange !== undefined && (
+    <select
+      value={sortMode}
+      onChange={(e) => onSortModeChange(e.target.value as SortMode)}
+      className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] px-3 py-1.5 text-sm text-[var(--fg-primary)] focus:border-[var(--fg-accent)] focus:outline-none"
+      aria-label="Sort posts"
+    >
+      <option value="recent">Most Recent</option>
+      <option value="contested">Most Contested</option>
+    </select>
+  );
 
   // View mode toggle component
   const viewToggle = onViewModeChange !== undefined && (
@@ -173,7 +193,10 @@ export function FeedPostsList({
       <div>
         <div className="mb-4 flex min-h-[40px] items-center justify-between">
           <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} className="mb-0" />
-          {viewToggle}
+          <div className="flex items-center gap-3">
+            {sortSelector}
+            {viewToggle}
+          </div>
         </div>
         <div className="grid gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -188,7 +211,10 @@ export function FeedPostsList({
     <div>
       <div className="mb-4 flex min-h-[40px] items-center justify-between">
         <SectionHeader title={title} infoTitle={infoTitle} infoBody={infoBody} className="mb-0" />
-        {viewToggle}
+        <div className="flex items-center gap-3">
+          {sortSelector}
+          {viewToggle}
+        </div>
       </div>
 
       {viewMode === 'map' ? (

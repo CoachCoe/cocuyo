@@ -32,7 +32,8 @@ export type CampaignStatus =
 export type CampaignSponsor =
   | { readonly type: 'outlet'; readonly id: OutletId; readonly name: string }
   | { readonly type: 'collective'; readonly id: CollectiveId; readonly name: string }
-  | { readonly type: 'community'; readonly id: CommunityId; readonly name: string };
+  | { readonly type: 'community'; readonly id: CommunityId; readonly name: string }
+  | { readonly type: 'firefly'; readonly credential: DIMCredential; readonly pseudonym: string };
 
 /** Types of deliverables for campaign completion */
 export type DeliverableType =

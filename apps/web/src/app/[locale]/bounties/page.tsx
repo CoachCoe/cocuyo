@@ -68,7 +68,9 @@ function CampaignCard({
       </h3>
 
       {/* Sponsor */}
-      <p className="mb-3 text-sm text-[var(--fg-secondary)]">{campaign.sponsor.name}</p>
+      <p className="mb-3 text-sm text-[var(--fg-secondary)]">
+        {campaign.sponsor.type === 'firefly' ? campaign.sponsor.pseudonym : campaign.sponsor.name}
+      </p>
 
       {/* Topics */}
       {campaign.topics.length > 0 && (

@@ -16,6 +16,7 @@ import {
 import { TrustDrawerProvider, TrustDrawer } from '@/components/TrustDrawer';
 import { AddToStoryProvider, AddToStorySheet } from '@/components/AddToStorySheet';
 import { ExtractClaimProvider, ExtractClaimSheet } from '@/components/ExtractClaimSheet';
+import { CreateBountyProvider, CreateBountySheet } from '@/components/CreateBountySheet';
 import { AppNavbar } from '@/components/AppNavbar';
 import { routing } from '../../../i18n/routing';
 
@@ -60,14 +61,17 @@ export default async function LocaleLayout({
                         <TrustDrawerProvider>
                           <AddToStoryProvider>
                             <ExtractClaimProvider>
-                              <AppNavbar />
-                              <div className="min-h-screen pt-16">{children}</div>
-                              <AppFooter />
-                              <IlluminateModal />
-                              <CorroborateDisputeSheet />
-                              <TrustDrawer />
-                              <AddToStorySheet />
-                              <ExtractClaimSheet />
+                              <CreateBountyProvider>
+                                <AppNavbar />
+                                <div className="min-h-screen pt-16">{children}</div>
+                                <AppFooter />
+                                <IlluminateModal />
+                                <CorroborateDisputeSheet />
+                                <TrustDrawer />
+                                <AddToStorySheet />
+                                <ExtractClaimSheet />
+                                <CreateBountySheet />
+                              </CreateBountyProvider>
                             </ExtractClaimProvider>
                           </AddToStoryProvider>
                         </TrustDrawerProvider>

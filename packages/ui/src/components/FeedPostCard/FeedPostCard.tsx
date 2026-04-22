@@ -51,6 +51,55 @@ export interface FeedPostCardProps {
 }
 
 /**
+ * Calculate contention level from corroboration summary.
+ * Returns a value from 0-1 where higher means more contested.
+ */
+function calculateContention(corroborations: {
+  witnessCount: number;
+  evidenceCount: number;
+  expertiseCount: number;
+  challengeCount: number;
+}): number {
+  const { witnessCount, evidenceCount, expertiseCount, challengeCount } = corroborations;
+  const supportCount = witnessCount + evidenceCount + expertiseCount;
+  const total = supportCount + challengeCount;
+  if (total === 0) return 0;
+  return challengeCount / total;
+}
+
+/**
+ * Get contention display info based on level.
+ */
+function getContentionDisplay(level: number): {
+  label: string;
+  color: string;
+  icon: string;
+} | null {
+  // Only show indicator if there's meaningful contention
+  if (level < 0.15) return null;
+
+  if (level >= 0.5) {
+    return {
+      label: 'Highly contested',
+      color: 'var(--fg-error)',
+      icon: '\u26A0', // Warning sign
+    };
+  }
+  if (level >= 0.3) {
+    return {
+      label: 'Contested',
+      color: 'var(--fg-warning)',
+      icon: '\u25B2', // Triangle up
+    };
+  }
+  return {
+    label: 'Some dispute',
+    color: 'var(--fg-tertiary)',
+    icon: '\u2022', // Bullet
+  };
+}
+
+/**
  * Format a Unix timestamp as a relative time string.
  */
 function formatRelativeTime(timestamp: number): string {
@@ -254,48 +303,72 @@ export function FeedPostCard({
       )}
 
       {/* Corroboration summary */}
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)]">
-          <span className="flex items-center gap-1">
-            <span className="text-[var(--fg-success)]" aria-hidden="true">
-              &#9673;
-            </span>
-            <span>
-              <span className="text-[var(--fg-success)]">
-                {corroborations.witnessCount + corroborations.expertiseCount}
-              </span>{' '}
-              corroborations
-            </span>
-          </span>
-          {corroborations.evidenceCount > 0 && (
-            <span className="flex items-center gap-1">
-              <span aria-hidden="true">&#9889;</span>
-              <span>{corroborations.evidenceCount} evidence</span>
-            </span>
-          )}
-          {corroborations.challengeCount > 0 && (
-            <span className="flex items-center gap-1">
-              <span className="text-[var(--fg-error)]" aria-hidden="true">
-                &#9651;
-              </span>
-              <span>
-                <span className="text-[var(--fg-error)]">{corroborations.challengeCount}</span>{' '}
-                challenge{corroborations.challengeCount !== 1 ? 's' : ''}
-              </span>
-            </span>
-          )}
-        </div>
-        {/* View trust details link */}
-        {onViewTrust !== undefined && (
-          <button
-            type="button"
-            onClick={handleViewTrust}
-            className="text-xs text-[var(--fg-tertiary)] transition-colors hover:text-[var(--fg-accent)]"
-          >
-            View details
-          </button>
-        )}
-      </div>
+      {(() => {
+        const contentionLevel = calculateContention(corroborations);
+        const contentionDisplay = getContentionDisplay(contentionLevel);
+
+        return (
+          <div className="mb-4">
+            {/* Contention indicator - shown when there's meaningful disagreement */}
+            {contentionDisplay !== null && (
+              <div
+                className="mb-2 flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-medium"
+                style={{
+                  backgroundColor: `color-mix(in srgb, ${contentionDisplay.color} 12%, transparent)`,
+                  color: contentionDisplay.color,
+                }}
+              >
+                <span aria-hidden="true">{contentionDisplay.icon}</span>
+                <span>{contentionDisplay.label}</span>
+                <span className="text-[var(--fg-tertiary)]">— needs fact-checking</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4 text-sm text-[var(--fg-secondary)]">
+                <span className="flex items-center gap-1">
+                  <span className="text-[var(--fg-success)]" aria-hidden="true">
+                    &#9673;
+                  </span>
+                  <span>
+                    <span className="text-[var(--fg-success)]">
+                      {corroborations.witnessCount + corroborations.expertiseCount}
+                    </span>{' '}
+                    corroborations
+                  </span>
+                </span>
+                {corroborations.evidenceCount > 0 && (
+                  <span className="flex items-center gap-1">
+                    <span aria-hidden="true">&#9889;</span>
+                    <span>{corroborations.evidenceCount} evidence</span>
+                  </span>
+                )}
+                {corroborations.challengeCount > 0 && (
+                  <span className="flex items-center gap-1">
+                    <span className="text-[var(--fg-error)]" aria-hidden="true">
+                      &#9651;
+                    </span>
+                    <span>
+                      <span className="text-[var(--fg-error)]">{corroborations.challengeCount}</span>{' '}
+                      challenge{corroborations.challengeCount !== 1 ? 's' : ''}
+                    </span>
+                  </span>
+                )}
+              </div>
+              {/* View trust details link */}
+              {onViewTrust !== undefined && (
+                <button
+                  type="button"
+                  onClick={handleViewTrust}
+                  className="text-xs text-[var(--fg-tertiary)] transition-colors hover:text-[var(--fg-accent)]"
+                >
+                  View details
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Action buttons */}
       {showActions && (

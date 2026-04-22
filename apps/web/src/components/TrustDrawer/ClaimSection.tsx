@@ -4,12 +4,16 @@
  * ClaimSection — Display claims extracted from a post in the TrustDrawer.
  *
  * Shows existing claims and provides a button to open the ExtractClaimSheet
- * for adding new claims.
+ * for adding new claims. Also displays bounty status to show the fact-checking
+ * pipeline: Awaiting → Bounty Funded → Under Review → Verdict Issued.
  */
 
 import type { ReactElement } from 'react';
-import type { Claim, Verdict, PostId } from '@cocuyo/types';
+import type { Claim, Verdict, PostId, Campaign } from '@cocuyo/types';
+import { formatPUSDCompact, createPUSDAmount } from '@cocuyo/types';
 import { useExtractClaim } from '@/components/ExtractClaimSheet';
+import { useCreateBounty } from '@/components/CreateBountySheet';
+import { useAppState } from '@/components/AppStateProvider';
 
 interface ClaimSectionProps {
   claims: Claim[];
@@ -31,12 +35,43 @@ const STATUS_DISPLAY: Record<Claim['status'], { label: string; color: string }> 
   unverifiable: { label: 'Unverifiable', color: 'var(--fg-tertiary)' },
 };
 
+/** Get bounty status display for a claim */
+function getBountyStatus(campaigns: Campaign[]): {
+  label: string;
+  amount: string | null;
+  hasCollective: boolean;
+} | null {
+  if (campaigns.length === 0) return null;
+
+  // Find active campaigns
+  const activeCampaigns = campaigns.filter((c) => c.status === 'active');
+  if (activeCampaigns.length === 0) return null;
+
+  // Sum total funding - need to convert to raw bigint for summing, then back to PUSDAmount
+  const totalFundingRaw = activeCampaigns.reduce(
+    (sum, c) => sum + BigInt(c.fundingAmount),
+    0n
+  );
+  const totalFunding = createPUSDAmount(totalFundingRaw);
+
+  // Check if any campaign is assigned to a collective
+  const hasCollective = activeCampaigns.some((c) => c.assignedCollectiveId !== undefined);
+
+  return {
+    label: hasCollective ? 'Under collective review' : 'Bounty funded',
+    amount: formatPUSDCompact(totalFunding),
+    hasCollective,
+  };
+}
+
 export function ClaimSection({
   claims,
   verdicts: _verdicts,
   postId,
 }: ClaimSectionProps): ReactElement {
   const { openSheet } = useExtractClaim();
+  const { openSheet: openBountySheet } = useCreateBounty();
+  const { getClaimCampaigns } = useAppState();
 
   const handleExtractClaim = (): void => {
     openSheet(postId);
@@ -63,6 +98,8 @@ export function ClaimSection({
           {claims.map((claim) => {
             const status = STATUS_DISPLAY[claim.status];
             const verdict = claim.verdict;
+            const claimCampaigns = getClaimCampaigns(claim.id);
+            const bountyStatus = getBountyStatus(claimCampaigns);
 
             return (
               <div
@@ -71,18 +108,53 @@ export function ClaimSection({
               >
                 <p className="mb-2 text-sm text-primary">{claim.statement}</p>
 
-                <div className="flex items-center gap-2">
-                  <span
-                    className="rounded-full px-2 py-0.5 text-xs font-medium"
-                    style={{
-                      backgroundColor: `color-mix(in srgb, ${status.color} 15%, transparent)`,
-                      color: status.color,
-                    }}
+                {/* Status row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="rounded-full px-2 py-0.5 text-xs font-medium"
+                      style={{
+                        backgroundColor: `color-mix(in srgb, ${status.color} 15%, transparent)`,
+                        color: status.color,
+                      }}
+                    >
+                      {status.label}
+                    </span>
+                    {claim.evidence.length > 0 && (
+                      <span className="text-xs text-tertiary">{claim.evidence.length} evidence</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openBountySheet(claim.id)}
+                    className="text-xs text-[var(--fg-accent)] hover:underline"
                   >
-                    {status.label}
-                  </span>
-                  {claim.evidence.length > 0 && (
-                    <span className="text-xs text-tertiary">{claim.evidence.length} evidence</span>
+                    Fund Bounty
+                  </button>
+                </div>
+
+                {/* Bounty/Fact-check status */}
+                <div className="mt-3 flex items-center gap-2 border-t border-subtle pt-3">
+                  {bountyStatus !== null ? (
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${
+                        bountyStatus.hasCollective
+                          ? 'bg-[var(--fg-accent)]/15 text-[var(--fg-accent)]'
+                          : 'bg-[var(--fg-success)]/15 text-[var(--fg-success)]'
+                      }`}
+                    >
+                      <span aria-hidden="true">
+                        {bountyStatus.hasCollective ? '\u2713' : '\u25C9'}
+                      </span>
+                      {bountyStatus.label}
+                      {bountyStatus.amount !== null && !bountyStatus.hasCollective && (
+                        <span className="font-semibold">({bountyStatus.amount})</span>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-tertiary">
+                      Awaiting fact-check — fund a bounty to prioritize
+                    </span>
                   )}
                 </div>
 
@@ -98,9 +170,13 @@ export function ClaimSection({
           })}
         </div>
       ) : (
-        <p className="text-sm text-tertiary">
-          No claims extracted yet. Extract a claim to enable fact-checking.
-        </p>
+        <div className="rounded-nested border border-dashed border-subtle bg-surface-container/50 p-4">
+          <p className="mb-2 text-sm text-secondary">No claims extracted yet</p>
+          <p className="text-xs text-tertiary">
+            Extract specific, verifiable statements from this post to enable fact-checking by
+            collectives. Fund a bounty to prioritize verification.
+          </p>
+        </div>
       )}
     </section>
   );
