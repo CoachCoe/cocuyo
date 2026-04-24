@@ -184,3 +184,11 @@ export {
 
 // Export wallet state management
 export { setConnectedWallet, getConnectedWallet, isWalletConnected } from './service-utils';
+
+// Personhood service
+export {
+  personhoodService,
+  PersonhoodServiceImpl,
+  setPersonhoodLevel,
+  clearPersonhoodCache,
+} from './personhood-service';

@@ -35,6 +35,7 @@ function determineInitialQuality(input: NewCorroboration): EvidenceQuality {
 }
 import { calculateCIDFromJSON } from '@cocuyo/bulletin';
 import { getConnectedCredential } from './service-utils';
+import { personhoodService } from './personhood-service';
 
 // Session cache for corroborations
 const userCorroborations: Corroboration[] = [];
@@ -58,10 +59,16 @@ export class CorroborationServiceImpl implements CorroborationService {
   /**
    * Submit a corroboration.
    */
-  corroborate(newCorroboration: NewCorroboration): Promise<Result<CorroborationId, string>> {
+  async corroborate(newCorroboration: NewCorroboration): Promise<Result<CorroborationId, string>> {
     const dimCredential = getConnectedCredential();
     if (dimCredential === null) {
-      return Promise.resolve(err('Wallet not connected. Please connect to corroborate.'));
+      return err('Wallet not connected. Please connect to corroborate.');
+    }
+
+    // Capability gate: check personhood level allows corroboration
+    const canCorroborate = await personhoodService.canPerform(dimCredential, 'canCorroborate');
+    if (!canCorroborate) {
+      return err('DIM verification required to corroborate.');
     }
 
     const now = Date.now();
@@ -101,7 +108,7 @@ export class CorroborationServiceImpl implements CorroborationService {
     // Add to session cache
     userCorroborations.unshift(corroborationWithId);
 
-    return Promise.resolve(ok(corroborationWithId.id));
+    return ok(corroborationWithId.id);
   }
 }
 

@@ -23,6 +23,9 @@ export type { FeedPostCardProps, PostCampaignInfo } from './components/FeedPostC
 export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';
 
+export { PersonhoodBadge } from './components/PersonhoodBadge';
+export type { PersonhoodBadgeProps } from './components/PersonhoodBadge';
+
 export { PaymentModeBadge } from './components/PaymentModeBadge';
 export type { PaymentModeBadgeProps } from './components/PaymentModeBadge';
 
