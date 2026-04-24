@@ -15,16 +15,31 @@ import { ExploreFilters, type ExploreFilterType } from './ExploreFilters';
 import { FeedPostsList, type ViewMode, type SortMode } from './FeedPostsList';
 
 /**
- * Calculate contention score for sorting.
+ * Calculate contention score for sorting posts by controversy.
  * Higher score = more contested.
+ *
+ * Formula: challengeRatio * sqrt(total) where challengeRatio approaches 1
+ * when challenges equal supports (maximum contention).
+ *
+ * - Uses sqrt(total) to weight by engagement without overemphasizing volume
+ * - Peak contention at 50/50 split (ratio = 0.5), not 100% challenges
+ * - A post with 50 supports + 50 challenges scores higher than 1 challenge + 0 supports
+ *
+ * @returns Score >= 0, higher means more contested
  */
-function getContentionScore(post: Post): number {
+export function getContentionScore(post: Post): number {
   const { witnessCount, evidenceCount, expertiseCount, challengeCount } = post.corroborations;
   const supportCount = witnessCount + evidenceCount + expertiseCount;
   const total = supportCount + challengeCount;
   if (total === 0) return 0;
-  // Weight by total activity so posts with more engagement rank higher
-  return (challengeCount / total) * Math.log(total + 1);
+
+  // Contention peaks when challenges ≈ supports (ratio near 0.5)
+  // Use 4 * ratio * (1 - ratio) to get bell curve peaking at 0.5
+  const ratio = challengeCount / total;
+  const contentionFactor = 4 * ratio * (1 - ratio);
+
+  // Weight by sqrt of engagement (diminishing returns on volume)
+  return contentionFactor * Math.sqrt(total);
 }
 
 export interface ExploreViewProps {

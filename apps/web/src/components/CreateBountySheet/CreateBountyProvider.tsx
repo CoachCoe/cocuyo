@@ -19,6 +19,9 @@ import {
 } from 'react';
 import type { ClaimId } from '@cocuyo/types';
 
+/** Animation duration for sheet transitions (matches CSS duration-200) */
+const SHEET_ANIMATION_DURATION_MS = 200;
+
 interface CreateBountyContextValue {
   /** Whether the sheet is open */
   isOpen: boolean;
@@ -68,7 +71,7 @@ export function CreateBountyProvider({ children }: CreateBountyProviderProps): R
     clearTimeoutRef.current = setTimeout(() => {
       setClaimId(null);
       clearTimeoutRef.current = null;
-    }, 200);
+    }, SHEET_ANIMATION_DURATION_MS);
   }, []);
 
   const value = useMemo(

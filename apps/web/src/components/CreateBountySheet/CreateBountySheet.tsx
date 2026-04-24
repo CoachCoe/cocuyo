@@ -41,9 +41,16 @@ export function CreateBountySheet(): ReactElement | null {
   // Reset form when sheet opens with new claim
   useEffect(() => {
     if (isOpen && claim !== undefined) {
-      // Auto-fill title from claim statement (truncated)
-      const truncatedStatement =
-        claim.statement.length > 80 ? `${claim.statement.slice(0, 80)}...` : claim.statement;
+      // Auto-fill title from claim statement (truncated at word boundary)
+      // Max title length ~100 chars, prefix is 12 chars, so truncate statement at ~88
+      const MAX_STATEMENT_LENGTH = 88;
+      let truncatedStatement = claim.statement;
+      if (claim.statement.length > MAX_STATEMENT_LENGTH) {
+        // Find last space before limit to avoid splitting words
+        const lastSpace = claim.statement.lastIndexOf(' ', MAX_STATEMENT_LENGTH);
+        const cutoff = lastSpace > MAX_STATEMENT_LENGTH / 2 ? lastSpace : MAX_STATEMENT_LENGTH;
+        truncatedStatement = `${claim.statement.slice(0, cutoff)}...`;
+      }
       setTitle(`Fact-check: ${truncatedStatement}`);
       setDescription('');
       setFundingAmount('100');
