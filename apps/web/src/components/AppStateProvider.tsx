@@ -509,7 +509,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       // Use string parsing to avoid floating point multiplication errors
       // e.g., 0.000001 * 1_000_000 can produce 0.9999999999999999 instead of 1
       const amountStr = input.fundingAmount.toFixed(6);
-      const [whole, decimal = ''] = amountStr.split('.');
+      const [whole = '0', decimal = ''] = amountStr.split('.');
       const paddedDecimal = decimal.padEnd(6, '0').slice(0, 6);
       const fundingUnits = BigInt(whole + paddedDecimal);
 
