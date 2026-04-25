@@ -8,7 +8,6 @@
  */
 
 import { useEffect, useRef, useCallback, type ReactElement } from 'react';
-import type { Verdict } from '@cocuyo/types';
 import { formatPUSDCompact } from '@cocuyo/types';
 import { useTrustDrawer } from './TrustDrawerProvider';
 import { useAppState } from '@/components/AppStateProvider';
@@ -20,14 +19,7 @@ const FOCUSABLE_SELECTOR =
 
 export function TrustDrawer(): ReactElement | null {
   const { isOpen, postId, closeDrawer } = useTrustDrawer();
-  const {
-    getPost,
-    getPostClaims,
-    getPostCorroborations,
-    getPostCampaigns,
-    claimVerdicts,
-    verdicts,
-  } = useAppState();
+  const { getPost, getPostClaims, getPostCorroborations, getPostCampaigns } = useAppState();
   const drawerRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
 
@@ -36,14 +28,6 @@ export function TrustDrawer(): ReactElement | null {
   const claims = postId !== null ? getPostClaims(postId) : [];
   const corroborations = postId !== null ? getPostCorroborations(postId) : [];
   const campaigns = postId !== null ? getPostCampaigns(postId) : [];
-
-  // Get verdicts for claims
-  const claimVerdictsData = claims
-    .map((claim) => {
-      const verdictId = claimVerdicts.get(claim.id);
-      return verdictId !== undefined && verdictId !== null ? verdicts.get(verdictId) : undefined;
-    })
-    .filter((v): v is Verdict => v !== undefined);
 
   // Handle keyboard events
   const handleKeyDown = useCallback(
@@ -210,7 +194,7 @@ export function TrustDrawer(): ReactElement | null {
           )}
 
           {/* Claims */}
-          <ClaimSection claims={claims} verdicts={claimVerdictsData} postId={post.id} />
+          <ClaimSection claims={claims} postId={post.id} />
 
           {/* Evidence - Supporting */}
           {supporting.length > 0 && (

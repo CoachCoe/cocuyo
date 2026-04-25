@@ -46,6 +46,10 @@ export interface FeedPostCardProps {
   onDispute?: () => void;
   /** Callback when trust details link is clicked */
   onViewTrust?: () => void;
+  /** Callback when extract claim button is clicked */
+  onExtractClaim?: () => void;
+  /** Whether extract claim is in progress */
+  isExtracting?: boolean;
   /** Whether to show action buttons (corroborate/dispute) */
   showActions?: boolean;
 }
@@ -139,6 +143,8 @@ export function FeedPostCard({
   onCorroborate,
   onDispute,
   onViewTrust,
+  onExtractClaim,
+  isExtracting = false,
   showActions = false,
 }: FeedPostCardProps): ReactElement {
   const { author, content, context, corroborations, verification, chainLinks, createdAt } = post;
@@ -184,6 +190,11 @@ export function FeedPostCard({
   const handleViewTrust = (e: React.MouseEvent): void => {
     e.stopPropagation();
     onViewTrust?.();
+  };
+
+  const handleExtractClaim = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    onExtractClaim?.();
   };
 
   return (
@@ -372,7 +383,7 @@ export function FeedPostCard({
 
       {/* Action buttons */}
       {showActions && (
-        <div className="mb-4 flex items-center gap-3">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={handleCorroborate}
@@ -389,6 +400,52 @@ export function FeedPostCard({
             <span aria-hidden="true">&#9651;</span>
             Dispute
           </button>
+          {onExtractClaim !== undefined && (
+            <button
+              type="button"
+              onClick={handleExtractClaim}
+              disabled={isExtracting}
+              className={`rounded-nested flex items-center gap-1.5 border border-[var(--color-firefly-gold)]/30 px-3 py-1.5 text-sm font-medium text-[var(--color-firefly-gold)] transition-colors hover:bg-[var(--color-firefly-gold)]/10 ${isExtracting ? 'cursor-wait opacity-70' : ''}`}
+            >
+              {isExtracting ? (
+                <>
+                  <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  <span>Extracting...</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                    />
+                  </svg>
+                  <span>Extract Claim</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 

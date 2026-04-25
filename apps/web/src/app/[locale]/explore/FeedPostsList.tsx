@@ -5,7 +5,7 @@
  * Supports toggling between list and map view.
  */
 
-import type { ReactElement, ReactNode } from 'react';
+import { useState, type ReactElement, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
@@ -15,11 +15,15 @@ import {
   AnimatedList,
   EmptyState,
   SkeletonFeedPostCard,
+  useToast,
   type PostCampaignInfo,
 } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
 import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
 import { useTrustDrawer } from '@/components/TrustDrawer';
+import { useAppState } from '@/components/AppStateProvider';
+import { useSigner } from '@/hooks';
+import { extractBestClaim } from '@/lib/ai';
 
 // Dynamic import with SSR disabled - map requires window/Leaflet
 const PostMapView = dynamic(() => import('@/components/Map').then((m) => m.PostMapView), {
@@ -77,6 +81,10 @@ export function FeedPostsList({
   const locale = useLocale();
   const { openSheet: openCorroborateSheet } = useCorroborateDispute();
   const { openDrawer: openTrustDrawer } = useTrustDrawer();
+  const { extractClaim } = useAppState();
+  const { isConnected } = useSigner();
+  const { addToast } = useToast();
+  const [extractingPosts, setExtractingPosts] = useState<Set<string>>(new Set());
 
   const handlePostClick = (post: Post): void => {
     router.push(`/${locale}/post/${post.id}`);
@@ -114,6 +122,47 @@ export function FeedPostsList({
 
   const handleViewTrust = (post: Post): void => {
     openTrustDrawer(post.id);
+  };
+
+  const handleExtractClaim = async (post: Post): Promise<void> => {
+    if (!isConnected) {
+      addToast('Sign in to extract claims', 'warning');
+      return;
+    }
+
+    // Guard against double-click race condition
+    if (extractingPosts.has(post.id)) {
+      return;
+    }
+
+    setExtractingPosts((prev) => new Set(prev).add(post.id));
+
+    try {
+      const aiClaim = await extractBestClaim(post.content.text);
+
+      // Only submit AI-extracted claims, don't fall back to raw text
+      if (aiClaim === null) {
+        addToast('No verifiable claim found in this post', 'warning');
+        return;
+      }
+
+      const claim = await extractClaim(post.id, aiClaim);
+
+      if (claim !== null) {
+        addToast('Claim extracted', 'success');
+        openTrustDrawer(post.id);
+      } else {
+        addToast('Failed to save claim', 'error');
+      }
+    } catch {
+      addToast('Failed to extract claim', 'error');
+    } finally {
+      setExtractingPosts((prev) => {
+        const next = new Set(prev);
+        next.delete(post.id);
+        return next;
+      });
+    }
   };
 
   // Sort selector component
@@ -238,6 +287,10 @@ export function FeedPostsList({
                 onCorroborate={() => handleCorroborate(post)}
                 onDispute={() => handleDispute(post)}
                 onViewTrust={() => handleViewTrust(post)}
+                onExtractClaim={() => {
+                  void handleExtractClaim(post);
+                }}
+                isExtracting={extractingPosts.has(post.id)}
                 showActions
               />
             );

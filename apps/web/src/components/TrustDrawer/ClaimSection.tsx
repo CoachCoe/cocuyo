@@ -9,7 +9,9 @@
  */
 
 import type { ReactElement } from 'react';
-import type { Claim, Verdict, PostId, Campaign } from '@cocuyo/types';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
+import type { Claim, PostId, Campaign } from '@cocuyo/types';
 import { formatPUSDCompact, createPUSDAmount } from '@cocuyo/types';
 import { useExtractClaim } from '@/components/ExtractClaimSheet';
 import { useCreateBounty } from '@/components/CreateBountySheet';
@@ -17,13 +19,8 @@ import { useAppState } from '@/components/AppStateProvider';
 
 interface ClaimSectionProps {
   claims: Claim[];
-  /** Verdicts for the claims (currently displayed inline via claim.verdict) */
-  verdicts: Verdict[];
   postId: PostId;
 }
-
-// Note: verdicts prop is kept for future use when we want to show verdicts
-// from multiple sources. Currently we display claim.verdict inline.
 
 /** Map claim status to display info */
 const STATUS_DISPLAY: Record<Claim['status'], { label: string; color: string }> = {
@@ -66,15 +63,20 @@ function getBountyStatus(campaigns: Campaign[]): {
 
 export function ClaimSection({
   claims,
-  verdicts: _verdicts,
   postId,
 }: ClaimSectionProps): ReactElement {
+  const router = useRouter();
+  const locale = useLocale();
   const { openSheet } = useExtractClaim();
   const { openSheet: openBountySheet } = useCreateBounty();
   const { getClaimCampaigns } = useAppState();
 
   const handleExtractClaim = (): void => {
     openSheet(postId);
+  };
+
+  const handleFactCheck = (claimId: string): void => {
+    router.push(`/${locale}/claim/${claimId}`);
   };
 
   return (
@@ -124,13 +126,22 @@ export function ClaimSection({
                       <span className="text-xs text-tertiary">{claim.evidence.length} evidence</span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => openBountySheet(claim.id)}
-                    className="text-xs text-[var(--fg-accent)] hover:underline"
-                  >
-                    Fund Bounty
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleFactCheck(claim.id)}
+                      className="text-xs text-[var(--color-firefly-gold)] hover:underline"
+                    >
+                      Fact Check
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openBountySheet(claim.id)}
+                      className="text-xs text-[var(--fg-accent)] hover:underline"
+                    >
+                      Fund Bounty
+                    </button>
+                  </div>
                 </div>
 
                 {/* Bounty/Fact-check status */}

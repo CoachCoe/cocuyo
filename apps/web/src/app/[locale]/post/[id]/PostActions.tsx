@@ -17,6 +17,7 @@ import { useCorroborateDispute } from '@/components/CorroborateDisputeSheet';
 import { useTrustDrawer } from '@/components/TrustDrawer';
 import { useAddToStory } from '@/components/AddToStorySheet';
 import { useAppState } from '@/components/AppStateProvider';
+import { extractBestClaim } from '@/lib/ai';
 
 export interface PostActionsProps {
   post: Post;
@@ -78,8 +79,12 @@ export function PostActions({ post, translations: t }: PostActionsProps): ReactE
     setIsExtracting(true);
 
     try {
-      // Extract claim and upload to Bulletin Chain
-      const statement = post.content.title ?? post.content.text.slice(0, 200);
+      // Use AI to extract the best verifiable claim from the post
+      // Falls back to title/text if AI extraction fails or finds no claims
+      const aiClaim = await extractBestClaim(post.content.text);
+      const statement = aiClaim ?? post.content.title ?? post.content.text.slice(0, 200);
+
+      // Upload claim to Bulletin Chain
       const claim = await extractClaim(post.id, statement);
 
       if (claim !== null) {

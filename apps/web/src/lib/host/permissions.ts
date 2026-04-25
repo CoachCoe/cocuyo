@@ -24,9 +24,11 @@ import { isHosted } from './detect';
  */
 const NETWORK_PERMISSIONS = [
   // Map tiles - CARTO basemaps (used by Triangle)
-  'https://basemaps.cartocdn.com',
+  'https://basemaps.cartocdn.com/',
   // Reverse geocoding
-  'https://nominatim.openstreetmap.org',
+  'https://nominatim.openstreetmap.org/',
+  // AI claim extraction worker
+  'https://claim-extractor.cocuyo.workers.dev/',
 ];
 
 // ═══ Device permissions ═══
@@ -45,6 +47,7 @@ export async function requestExternalPermissions(): Promise<void> {
   const all = [
     ...NETWORK_PERMISSIONS.map((pattern) => requestNetwork(pattern)),
     ...DEVICE_PERMISSIONS.map((device) => requestDevice(device)),
+    requestTransactionSubmit(),
   ];
   await Promise.allSettled(all);
 }
@@ -57,6 +60,25 @@ async function requestNetwork(pattern: string): Promise<void> {
     });
     // Wait for permission dialog to complete - we don't need to check result
     // The host persists granted permissions, denied ones degrade gracefully
+    await result.match(
+      () => undefined,
+      () => undefined
+    );
+  } catch {
+    // User denied or host doesn't support this
+  }
+}
+
+/**
+ * Request blanket permission for transaction submissions (preimages).
+ * Once granted, bulletin uploads won't prompt for each transaction.
+ */
+async function requestTransactionSubmit(): Promise<void> {
+  try {
+    const result = hostApi.permission({
+      tag: 'v1',
+      value: { tag: 'TransactionSubmit', value: undefined },
+    });
     await result.match(
       () => undefined,
       () => undefined

@@ -3,14 +3,16 @@
 /**
  * AppStateProvider — Central session state management for the Firefly Network.
  *
- * Manages all session state in memory. No persistence, no mock data.
- * All entities are created through user actions during the session.
+ * Manages session state with localStorage persistence for claims.
+ * Claims are stored on Bulletin Chain and indexed in localStorage for
+ * cross-session persistence.
  *
  * Key design principles:
  * - Single source of truth for all entities
  * - Derived data computed from core entities
  * - Actions return the created/modified entity
  * - Integrates with wallet state via useSigner
+ * - Claims persist across page refreshes via localStorage index
  */
 
 import {
@@ -19,6 +21,7 @@ import {
   useState,
   useCallback,
   useMemo,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
@@ -59,6 +62,12 @@ import {
 } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { uploadToBulletin } from '@/lib/services/service-utils';
+import {
+  indexClaim,
+  loadClaimIndex,
+  fetchClaims,
+  cacheClaim,
+} from '@/lib/services/claim-service';
 import {
   seedPosts,
   seedStoryChains,
@@ -258,6 +267,54 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
   );
   const [claimVerdicts, setClaimVerdicts] = useState<Map<ClaimId, VerdictId | null>>(new Map());
   const [claimCampaigns, setClaimCampaigns] = useState<Map<ClaimId, CampaignId[]>>(new Map());
+
+  // Load persisted claims from localStorage on mount
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadPersistedClaims(): Promise<void> {
+      try {
+        const index = await loadClaimIndex();
+
+        // Fetch all persisted claims from Bulletin Chain
+        const persistedClaims = await fetchClaims(index.all);
+
+        if (!mounted) return;
+
+        // Merge persisted claims with seed data
+        setClaims((prev) => {
+          const merged = new Map(prev);
+          for (const claim of persistedClaims) {
+            merged.set(claim.id, claim);
+            // Also cache in claim-service for consistency
+            cacheClaim(claim);
+          }
+          return merged;
+        });
+
+        // Update postClaims mapping
+        setPostClaims((prev) => {
+          const merged = new Map(prev);
+          for (const [postId, claimIds] of Object.entries(index.byPost)) {
+            const existing = merged.get(postId as PostId) ?? [];
+            const newIds = claimIds.filter((id) => !existing.includes(id as ClaimId));
+            if (newIds.length > 0) {
+              merged.set(postId as PostId, [...existing, ...(newIds as ClaimId[])]);
+            }
+          }
+          return merged;
+        });
+      } catch {
+        // Silently handle errors - localStorage may be unavailable
+      }
+    }
+
+    void loadPersistedClaims();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Compute current user from wallet state
   const currentUser: CurrentUser = useMemo(() => {
@@ -478,6 +535,12 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       // Use CID as the claim ID
       const id = createClaimId(uploadResult.value.cid);
       const claim: Claim = { id, ...claimData };
+
+      // Cache in claim-service for consistency
+      cacheClaim(claim);
+
+      // Persist to localStorage index (survives page refresh)
+      await indexClaim(id, postId);
 
       setClaims((prev) => new Map(prev).set(id, claim));
 
