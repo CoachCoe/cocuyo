@@ -414,6 +414,9 @@
     "dispute": "Dispute",
     "viewTrust": "View Trust",
     "addToStory": "Add to Story",
+    "extractClaim": "Extract Claim",
+    "extracting": "Extracting...",
+    "viewDetails": "View details",
     "topics": {
       "crisis": "Crisis",
       "daily-life": "Daily Life",
@@ -460,6 +463,8 @@
     "extracting": "Extracting...",
     "signInToExtract": "Sign in to extract claims",
     "claimExtracted": "Claim extracted successfully!",
+    "noClaimFound": "No verifiable claim found in this post",
+    "extractionFailed": "AI extraction failed. Please try again.",
     "submitEvidence": "Submit Evidence",
     "signInToSubmit": "Sign in to submit evidence",
     "evidenceSubmitted": "Evidence submitted successfully!",

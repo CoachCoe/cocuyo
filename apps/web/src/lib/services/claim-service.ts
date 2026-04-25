@@ -40,6 +40,7 @@ export type Locale = 'en' | 'es';
 // ============================================================
 
 const CLAIM_INDEX_KEY = 'claim-index';
+const CLAIM_CID_MAP_KEY = 'claim-cid-map';
 
 interface ClaimIndex {
   /** Map of postId -> array of claimIds */
@@ -47,6 +48,13 @@ interface ClaimIndex {
   /** All known claim IDs for global queries */
   all: string[];
 }
+
+/**
+ * Maps original claim CID to its latest CID.
+ * When evidence is added, the claim gets a new CID but we want to track
+ * it under the original ID for index consistency.
+ */
+type ClaimCidMap = Record<string, string>;
 
 /** In-memory cache of fetched claims */
 const claimCache = new Map<ClaimId, Claim>();
@@ -60,6 +68,30 @@ export async function loadClaimIndex(): Promise<ClaimIndex> {
 /** Save the claim index to storage */
 async function saveIndex(index: ClaimIndex): Promise<void> {
   await storage.write(CLAIM_INDEX_KEY, index);
+}
+
+/** Load the CID map from storage */
+async function loadCidMap(): Promise<ClaimCidMap> {
+  const stored = await storage.read<ClaimCidMap>(CLAIM_CID_MAP_KEY);
+  return stored ?? {};
+}
+
+/** Save the CID map to storage */
+async function saveCidMap(map: ClaimCidMap): Promise<void> {
+  await storage.write(CLAIM_CID_MAP_KEY, map);
+}
+
+/** Get the latest CID for a claim (follows the CID chain if updated) */
+async function getLatestCid(claimId: ClaimId): Promise<ClaimId> {
+  const cidMap = await loadCidMap();
+  return (cidMap[claimId] as ClaimId | undefined) ?? claimId;
+}
+
+/** Update the CID mapping when a claim is modified */
+async function updateCidMapping(originalId: ClaimId, newCid: ClaimId): Promise<void> {
+  const cidMap = await loadCidMap();
+  cidMap[originalId] = newCid;
+  await saveCidMap(cidMap);
 }
 
 /** Add a claim to the index (exported for use by AppStateProvider) */
@@ -85,19 +117,28 @@ export function cacheClaim(claim: Claim): void {
   claimCache.set(claim.id, claim);
 }
 
-/** Fetch a claim from cache or chain */
 /** Fetch a claim from cache or chain (exported for AppStateProvider) */
 export async function fetchClaim(claimId: ClaimId): Promise<Claim | null> {
-  // Check cache first
-  const cached = claimCache.get(claimId);
-  if (cached) return cached;
+  // Check for updated CID (claim may have been modified with new evidence)
+  const latestCid = await getLatestCid(claimId);
 
-  // Fetch from chain
-  const claim = await fetchFromBulletin<Claim>(claimId);
+  // Check cache first (using latest CID)
+  const cached = claimCache.get(latestCid);
+  if (cached) {
+    // Also cache under original ID for consistency
+    if (latestCid !== claimId) {
+      claimCache.set(claimId, cached);
+    }
+    return cached;
+  }
+
+  // Fetch from chain using latest CID
+  const claim = await fetchFromBulletin<Claim>(latestCid);
   if (claim) {
-    // Ensure the ID is set (it's stored without ID in the chain data)
+    // Keep original ID for external references, but store under both
     const claimWithId = { ...claim, id: claimId };
     claimCache.set(claimId, claimWithId);
+    claimCache.set(latestCid, claimWithId);
     return claimWithId;
   }
 
@@ -249,7 +290,10 @@ export class ClaimServiceImpl implements ClaimService {
    * Submit evidence for a claim.
    * Updates the claim and re-uploads to chain.
    */
-  async submitEvidence(claimId: ClaimId, evidence: NewClaimEvidence): Promise<Result<void, string>> {
+  async submitEvidence(
+    claimId: ClaimId,
+    evidence: NewClaimEvidence
+  ): Promise<Result<void, string>> {
     const connectedAddress = getConnectedWallet();
     const dimCredential = getConnectedCredential();
 
@@ -284,9 +328,14 @@ export class ClaimServiceImpl implements ClaimService {
       return err(uploadResult.error);
     }
 
-    // Update cache with new version
-    // Note: The CID changes when content changes, but we keep the original ID for consistency
+    const newCid = createClaimId(uploadResult.value.cid);
+
+    // Track the CID update so future fetches get the latest version
+    await updateCidMapping(claimId, newCid);
+
+    // Update cache with new version under both IDs
     claimCache.set(claimId, updatedClaim);
+    claimCache.set(newCid, updatedClaim);
 
     return ok(undefined);
   }

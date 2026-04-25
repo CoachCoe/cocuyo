@@ -42,12 +42,14 @@ const DEVICE_PERMISSIONS: DevicePermission[] = [
 /**
  * Request all permissions from the Host on startup.
  * Runs in parallel so it doesn't block app init.
+ *
+ * Note: TransactionSubmit is NOT requested here — it's requested on-demand
+ * when the first Bulletin upload is attempted, to avoid unnecessary prompts.
  */
 export async function requestExternalPermissions(): Promise<void> {
   const all = [
     ...NETWORK_PERMISSIONS.map((pattern) => requestNetwork(pattern)),
     ...DEVICE_PERMISSIONS.map((device) => requestDevice(device)),
-    requestTransactionSubmit(),
   ];
   await Promise.allSettled(all);
 }
@@ -72,8 +74,10 @@ async function requestNetwork(pattern: string): Promise<void> {
 /**
  * Request blanket permission for transaction submissions (preimages).
  * Once granted, bulletin uploads won't prompt for each transaction.
+ *
+ * Called on-demand before the first Bulletin upload, not at startup.
  */
-async function requestTransactionSubmit(): Promise<void> {
+export async function requestTransactionSubmit(): Promise<void> {
   try {
     const result = hostApi.permission({
       tag: 'v1',

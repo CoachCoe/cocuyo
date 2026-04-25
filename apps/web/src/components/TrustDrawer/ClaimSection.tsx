@@ -45,10 +45,7 @@ function getBountyStatus(campaigns: Campaign[]): {
   if (activeCampaigns.length === 0) return null;
 
   // Sum total funding - need to convert to raw bigint for summing, then back to PUSDAmount
-  const totalFundingRaw = activeCampaigns.reduce(
-    (sum, c) => sum + BigInt(c.fundingAmount),
-    0n
-  );
+  const totalFundingRaw = activeCampaigns.reduce((sum, c) => sum + BigInt(c.fundingAmount), 0n);
   const totalFunding = createPUSDAmount(totalFundingRaw);
 
   // Check if any campaign is assigned to a collective
@@ -61,10 +58,7 @@ function getBountyStatus(campaigns: Campaign[]): {
   };
 }
 
-export function ClaimSection({
-  claims,
-  postId,
-}: ClaimSectionProps): ReactElement {
+export function ClaimSection({ claims, postId }: ClaimSectionProps): ReactElement {
   const router = useRouter();
   const locale = useLocale();
   const { openSheet } = useExtractClaim();
@@ -123,7 +117,9 @@ export function ClaimSection({
                       {status.label}
                     </span>
                     {claim.evidence.length > 0 && (
-                      <span className="text-xs text-tertiary">{claim.evidence.length} evidence</span>
+                      <span className="text-xs text-tertiary">
+                        {claim.evidence.length} evidence
+                      </span>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
@@ -181,7 +177,7 @@ export function ClaimSection({
           })}
         </div>
       ) : (
-        <div className="rounded-nested border border-dashed border-subtle bg-surface-container/50 p-4">
+        <div className="bg-surface-container/50 rounded-nested border border-dashed border-subtle p-4">
           <p className="mb-2 text-sm text-secondary">No claims extracted yet</p>
           <p className="text-xs text-tertiary">
             Extract specific, verifiable statements from this post to enable fact-checking by

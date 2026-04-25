@@ -10,8 +10,7 @@ import type { ExtractedClaim, ExtractClaimsResponse, ExtractClaimsError } from '
 // Cloudflare Worker endpoint for claim extraction
 // Set via NEXT_PUBLIC_CLAIM_EXTRACTOR_URL environment variable
 const CLAIM_EXTRACTOR_URL =
-  process.env.NEXT_PUBLIC_CLAIM_EXTRACTOR_URL ??
-  'https://claim-extractor.cocuyo.workers.dev';
+  process.env.NEXT_PUBLIC_CLAIM_EXTRACTOR_URL ?? 'https://claim-extractor.cocuyo.workers.dev';
 
 /**
  * Extract verifiable claims from text using AI.
@@ -40,7 +39,7 @@ export async function extractClaims(text: string): Promise<ExtractedClaim[]> {
   });
 
   if (!response.ok) {
-    const error = (await response.json().catch(() => ({}))) as ExtractClaimsError;
+    const error = (await response.json().catch(() => ({}))) as Partial<ExtractClaimsError>;
     throw new Error(error.error ?? `Claim extraction failed: ${response.status}`);
   }
 
@@ -58,6 +57,12 @@ export async function extractClaims(text: string): Promise<ExtractedClaim[]> {
   return (data as ExtractClaimsResponse).claims;
 }
 
+/** Result of extractBestClaim - distinguishes between no claims and errors */
+export type ExtractBestClaimResult =
+  | { ok: true; claim: string }
+  | { ok: true; claim: null; reason: 'no_claims' }
+  | { ok: false; reason: 'ai_error'; error: string };
+
 /**
  * Extract claims and return the best single claim for quick extraction.
  *
@@ -65,26 +70,31 @@ export async function extractClaims(text: string): Promise<ExtractedClaim[]> {
  * Returns the first checkable claim, or the first claim if none are checkable.
  *
  * @param text - The text to extract claims from
- * @returns The best claim statement, or null if none found
+ * @returns Result object with the claim or error reason
  */
-export async function extractBestClaim(text: string): Promise<string | null> {
+export async function extractBestClaim(text: string): Promise<ExtractBestClaimResult> {
   try {
     const claims = await extractClaims(text);
 
     if (claims.length === 0) {
-      return null;
+      return { ok: true, claim: null, reason: 'no_claims' };
     }
 
     // Prefer checkable claims
     const checkable = claims.find((c) => c.checkable);
     if (checkable) {
-      return checkable.claim;
+      return { ok: true, claim: checkable.claim };
     }
 
     // Fall back to first claim
-    return claims[0]?.claim ?? null;
-  } catch {
-    // If AI extraction fails, return null (caller can fall back to original behavior)
-    return null;
+    const firstClaim = claims[0]?.claim;
+    if (firstClaim !== undefined && firstClaim !== '') {
+      return { ok: true, claim: firstClaim };
+    }
+
+    return { ok: true, claim: null, reason: 'no_claims' };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'AI extraction failed';
+    return { ok: false, reason: 'ai_error', error: message };
   }
 }

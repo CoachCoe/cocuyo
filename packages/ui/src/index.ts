@@ -18,7 +18,11 @@ export { Footer } from './components/Footer';
 export type { FooterProps } from './components/Footer';
 
 export { FeedPostCard } from './components/FeedPostCard';
-export type { FeedPostCardProps, PostCampaignInfo } from './components/FeedPostCard';
+export type {
+  FeedPostCardProps,
+  FeedPostCardTranslations,
+  PostCampaignInfo,
+} from './components/FeedPostCard';
 
 export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';

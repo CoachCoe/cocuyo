@@ -14,9 +14,9 @@
  * - Manual text input fallback
  */
 
-import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
+import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
-import { canMakeExternalRequests, hasGeolocation } from '@/lib/host/detect';
+import { hasGeolocation } from '@/lib/host/detect';
 import { getGeolocation } from '@/lib/host';
 import { reverseGeocode, formatLocation, type GeoLocation } from '@/lib/geo';
 import { ManualLocationInput } from './ManualLocationInput';
@@ -39,34 +39,6 @@ interface LocationPickerProps {
 
 type InputMode = 'auto' | 'map' | 'manual';
 
-/**
- * Loading spinner for map.
- */
-function MapLoader(): ReactNode {
-  return (
-    <div className="flex h-64 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)]">
-      <div className="flex flex-col items-center gap-2 text-[var(--fg-tertiary)]">
-        <svg className="h-8 w-8 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
-        </svg>
-        <span className="text-sm">Loading map...</span>
-      </div>
-    </div>
-  );
-}
-
 export function LocationPicker({
   value,
   onChange,
@@ -75,7 +47,8 @@ export function LocationPicker({
   disabled = false,
 }: LocationPickerProps): ReactNode {
   const [mode, setMode] = useState<InputMode>('auto');
-  const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
+  // Map is always available since permissions are requested upfront
+  const mapAvailable = true;
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -87,11 +60,6 @@ export function LocationPicker({
     return () => {
       mountedRef.current = false;
     };
-  }, []);
-
-  // Determine if map should be available (requires network for tile loading)
-  useEffect(() => {
-    setMapAvailable(canMakeExternalRequests());
   }, []);
 
   // Handle "Use my location" button
@@ -174,20 +142,11 @@ export function LocationPicker({
     [onChange]
   );
 
-  // Determine effective mode
-  const effectiveMode = mode === 'auto' ? (mapAvailable === true ? 'map' : 'manual') : mode;
+  // Determine effective mode - map is always available since permissions are requested upfront
+  const effectiveMode = mode === 'auto' ? 'map' : mode;
 
-  // Still checking availability
-  if (mapAvailable === null) {
-    return (
-      <div className="space-y-2">
-        {label && (
-          <label className="block text-sm font-medium text-[var(--fg-primary)]">{label}</label>
-        )}
-        <MapLoader />
-      </div>
-    );
-  }
+  // Suppress unused variable warning - kept for backwards compatibility
+  void mapAvailable;
 
   return (
     <div className="space-y-3">
@@ -219,7 +178,7 @@ export function LocationPicker({
               type="button"
               onClick={() => void handleUseMyLocation()}
               disabled={isGettingLocation || disabled}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--fg-accent)] bg-[var(--fg-accent)]/10 px-4 py-2.5 text-sm font-medium text-[var(--fg-accent)] transition-colors hover:bg-[var(--fg-accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-[var(--fg-accent)]/10 hover:bg-[var(--fg-accent)]/20 flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--fg-accent)] px-4 py-2.5 text-sm font-medium text-[var(--fg-accent)] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isGettingLocation ? (
                 <>
@@ -261,7 +220,7 @@ export function LocationPicker({
           )}
 
           {locationError !== null && (
-            <div className="rounded-lg border border-[var(--fg-error)]/30 bg-[var(--fg-error)]/10 px-3 py-2 text-xs text-[var(--fg-error)]">
+            <div className="border-[var(--fg-error)]/30 bg-[var(--fg-error)]/10 rounded-lg border px-3 py-2 text-xs text-[var(--fg-error)]">
               {locationError}
             </div>
           )}

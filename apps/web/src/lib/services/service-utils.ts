@@ -12,6 +12,8 @@ import type { PaginatedResult, Result } from '@cocuyo/types';
 import { ok, err, createDIMCredential, type DIMCredential } from '@cocuyo/types';
 import { getBulletinClient } from '../chain/client';
 import { createLogger } from '../logging';
+import { requestTransactionSubmit } from '../host/permissions';
+import { isHosted } from '../host/detect';
 
 const logger = createLogger('MockServices');
 
@@ -162,6 +164,9 @@ export function filterByTopic<T>(
 // Bulletin Chain Upload
 // ============================================================
 
+/** Track if we've requested transaction permission (avoids repeat prompts) */
+let transactionPermissionRequested = false;
+
 export interface UploadResult {
   cid: string;
   usedFallback: boolean;
@@ -180,6 +185,12 @@ export interface PhotoUploadResult {
  */
 export async function uploadToBulletin(data: unknown): Promise<Result<UploadResult, string>> {
   try {
+    // Request TransactionSubmit permission on first upload (Host mode only)
+    if (!transactionPermissionRequested && isHosted()) {
+      transactionPermissionRequested = true;
+      await requestTransactionSubmit();
+    }
+
     const bulletin = await getBulletinClient();
     const encoder = new TextEncoder();
     const jsonData = encoder.encode(JSON.stringify(data));

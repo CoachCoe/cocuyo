@@ -17,6 +17,7 @@ OPENAI_API_KEY=sk-...
 ### 2. For Production (Vercel)
 
 Add the environment variable in your Vercel project settings:
+
 - Settings → Environment Variables → Add `OPENAI_API_KEY`
 
 ## Usage
@@ -27,7 +28,7 @@ Add the environment variable in your Vercel project settings:
 import { extractClaims, extractBestClaim } from '@/lib/ai';
 
 // Extract all claims
-const claims = await extractClaims("Gas prices have tripled since 2020");
+const claims = await extractClaims('Gas prices have tripled since 2020');
 // [{ claim: "Gas prices have tripled since 2020", checkable: true, topic: "economy", ... }]
 
 // Extract best single claim (for one-click extraction)
@@ -44,6 +45,7 @@ curl -X POST http://localhost:3000/api/extract-claims \
 ```
 
 Response:
+
 ```json
 {
   "claims": [
@@ -109,10 +111,10 @@ Uses `gpt-4o-mini` for fast, cost-effective extraction (~$0.00015 per 1K input t
 
 ## Error Handling
 
-| Status | Meaning |
-|--------|---------|
-| 200 | Success |
-| 400 | Missing or empty text |
-| 500 | API key not configured or extraction failed |
+| Status | Meaning                                     |
+| ------ | ------------------------------------------- |
+| 200    | Success                                     |
+| 400    | Missing or empty text                       |
+| 500    | API key not configured or extraction failed |
 
 Errors never leak internal details or secrets.

@@ -191,6 +191,8 @@ export default async function PostDetailPage({
               extracting: tClaims('extracting'),
               signInToExtract: tClaims('signInToExtract'),
               claimExtracted: tClaims('claimExtracted'),
+              noClaimFound: tClaims('noClaimFound'),
+              extractionFailed: tClaims('extractionFailed'),
               corroborate: tPosts('corroborate'),
               dispute: tPosts('dispute'),
               viewTrust: tPosts('viewTrust'),

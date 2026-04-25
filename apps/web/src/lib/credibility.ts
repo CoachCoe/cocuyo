@@ -93,9 +93,7 @@ export async function calculateCredibilityScore(
 /**
  * Summarize corroboration weights by personhood level.
  */
-export async function summarizeByPersonhood(
-  corroborations: readonly Corroboration[]
-): Promise<{
+export async function summarizeByPersonhood(corroborations: readonly Corroboration[]): Promise<{
   full: { count: number; weight: number };
   lite: { count: number; weight: number };
   none: { count: number; weight: number };

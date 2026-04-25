@@ -184,9 +184,7 @@ export function CreateBountySheet(): ReactElement | null {
           <h2 id="create-bounty-title" className="text-lg font-semibold text-primary">
             Fund a Bounty
           </h2>
-          <p className="mt-1 text-sm text-secondary">
-            Fund fact-checking for this claim
-          </p>
+          <p className="mt-1 text-sm text-secondary">Fund fact-checking for this claim</p>
         </div>
 
         {/* Claim context */}
@@ -236,10 +234,7 @@ export function CreateBountySheet(): ReactElement | null {
 
           {/* Funding Amount */}
           <div>
-            <label
-              htmlFor="bounty-amount"
-              className="mb-2 block text-sm font-medium text-primary"
-            >
+            <label htmlFor="bounty-amount" className="mb-2 block text-sm font-medium text-primary">
               Funding amount (USD)
             </label>
             <div className="relative">
@@ -281,9 +276,7 @@ export function CreateBountySheet(): ReactElement | null {
           </div>
 
           {/* Error message */}
-          {error !== null && (
-            <p className="text-sm text-[var(--fg-error)]">{error}</p>
-          )}
+          {error !== null && <p className="text-sm text-[var(--fg-error)]">{error}</p>}
         </div>
 
         {/* Actions */}

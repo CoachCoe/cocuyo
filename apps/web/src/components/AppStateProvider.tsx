@@ -62,12 +62,7 @@ import {
 } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { uploadToBulletin } from '@/lib/services/service-utils';
-import {
-  indexClaim,
-  loadClaimIndex,
-  fetchClaims,
-  cacheClaim,
-} from '@/lib/services/claim-service';
+import { indexClaim, loadClaimIndex, fetchClaims, cacheClaim } from '@/lib/services/claim-service';
 import {
   seedPosts,
   seedStoryChains,
@@ -304,8 +299,9 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
           }
           return merged;
         });
-      } catch {
-        // Silently handle errors - localStorage may be unavailable
+      } catch (error) {
+        // Log error for debugging - localStorage or Bulletin fetch may have failed
+        console.warn('[AppStateProvider] Failed to load persisted claims:', error);
       }
     }
 

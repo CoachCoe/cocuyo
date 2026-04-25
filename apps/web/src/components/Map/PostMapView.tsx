@@ -12,10 +12,9 @@
  * Falls back to a message when map isn't available (Triangle).
  */
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { canMakeExternalRequests } from '@/lib/host/detect';
 import type { Post, VerificationStatus } from '@cocuyo/types';
 import type { MarkerData, MapLocation } from './BaseMap';
 
@@ -51,69 +50,6 @@ function getPostCoordinates(post: Post): MapLocation | null {
 }
 
 /**
- * Loading state for the map.
- */
-function MapLoader({ className }: { className?: string }): ReactNode {
-  return (
-    <div
-      className={`flex items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] ${className}`}
-    >
-      <div className="flex flex-col items-center gap-2 text-[var(--fg-tertiary)]">
-        <svg className="h-8 w-8 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
-        </svg>
-        <span className="text-sm">Loading map...</span>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Fallback when map is unavailable.
- */
-function MapUnavailable({ className }: { className?: string }): ReactNode {
-  return (
-    <div
-      className={`flex items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-nested)] ${className}`}
-    >
-      <div className="flex flex-col items-center gap-3 p-6 text-center">
-        <svg
-          className="h-12 w-12 text-[var(--fg-tertiary)]"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-          />
-        </svg>
-        <div>
-          <p className="font-medium text-[var(--fg-secondary)]">Map unavailable</p>
-          <p className="mt-1 text-sm text-[var(--fg-tertiary)]">
-            Interactive map requires network access
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
  * Post popup content.
  */
 function PostPopup({ post, locale }: { post: Post; locale: string }): ReactNode {
@@ -146,12 +82,8 @@ export function PostMapView({
   onPostSelect,
   className = 'h-96',
 }: PostMapViewProps): ReactNode {
-  const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
-
-  // Check map availability (requires network for tile loading)
-  useEffect(() => {
-    setMapAvailable(canMakeExternalRequests());
-  }, []);
+  // Map is always available since permissions are requested upfront
+  const [mapAvailable] = useState<boolean>(true);
 
   // Filter posts that have coordinates
   const mappablePosts = posts.filter((p) => getPostCoordinates(p) !== null);
@@ -183,15 +115,8 @@ export function PostMapView({
   // Calculate zoom based on marker spread
   const zoom = markers.length > 0 ? 4 : 2;
 
-  // Still checking availability
-  if (mapAvailable === null) {
-    return <MapLoader className={className} />;
-  }
-
-  // Map not available (inside Triangle)
-  if (!mapAvailable) {
-    return <MapUnavailable className={className} />;
-  }
+  // Suppress unused variable warning - kept for backwards compatibility
+  void mapAvailable;
 
   // No mappable posts
   if (markers.length === 0) {

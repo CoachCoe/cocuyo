@@ -25,6 +25,24 @@ export interface PostCampaignInfo {
   readonly fundingAmount: PUSDAmount;
 }
 
+/** Translations for FeedPostCard action buttons */
+export interface FeedPostCardTranslations {
+  corroborate: string;
+  dispute: string;
+  extractClaim: string;
+  extracting: string;
+  viewDetails: string;
+}
+
+/** Default English translations */
+const defaultTranslations: FeedPostCardTranslations = {
+  corroborate: 'Corroborate',
+  dispute: 'Dispute',
+  extractClaim: 'Extract Claim',
+  extracting: 'Extracting...',
+  viewDetails: 'View details',
+};
+
 export interface FeedPostCardProps {
   /** The post to display */
   post: Post;
@@ -52,6 +70,8 @@ export interface FeedPostCardProps {
   isExtracting?: boolean;
   /** Whether to show action buttons (corroborate/dispute) */
   showActions?: boolean;
+  /** Translations for button labels (defaults to English) */
+  translations?: Partial<FeedPostCardTranslations>;
 }
 
 /**
@@ -146,8 +166,10 @@ export function FeedPostCard({
   onExtractClaim,
   isExtracting = false,
   showActions = false,
+  translations: translationsProp,
 }: FeedPostCardProps): ReactElement {
   const { author, content, context, corroborations, verification, chainLinks, createdAt } = post;
+  const t = { ...defaultTranslations, ...translationsProp };
 
   const handleChainClick = (e: React.MouseEvent): void => {
     e.stopPropagation();
@@ -360,7 +382,9 @@ export function FeedPostCard({
                       &#9651;
                     </span>
                     <span>
-                      <span className="text-[var(--fg-error)]">{corroborations.challengeCount}</span>{' '}
+                      <span className="text-[var(--fg-error)]">
+                        {corroborations.challengeCount}
+                      </span>{' '}
                       challenge{corroborations.challengeCount !== 1 ? 's' : ''}
                     </span>
                   </span>
@@ -373,7 +397,7 @@ export function FeedPostCard({
                   onClick={handleViewTrust}
                   className="text-xs text-[var(--fg-tertiary)] transition-colors hover:text-[var(--fg-accent)]"
                 >
-                  View details
+                  {t.viewDetails}
                 </button>
               )}
             </div>
@@ -390,7 +414,7 @@ export function FeedPostCard({
             className="rounded-nested flex items-center gap-1.5 border border-[var(--fg-success)]/30 px-3 py-1.5 text-sm font-medium text-[var(--fg-success)] transition-colors hover:bg-[var(--fg-success)]/10"
           >
             <span aria-hidden="true">&#9673;</span>
-            Corroborate
+            {t.corroborate}
           </button>
           <button
             type="button"
@@ -398,7 +422,7 @@ export function FeedPostCard({
             className="rounded-nested flex items-center gap-1.5 border border-[var(--fg-error)]/30 px-3 py-1.5 text-sm font-medium text-[var(--fg-error)] transition-colors hover:bg-[var(--fg-error)]/10"
           >
             <span aria-hidden="true">&#9651;</span>
-            Dispute
+            {t.dispute}
           </button>
           {onExtractClaim !== undefined && (
             <button
@@ -424,7 +448,7 @@ export function FeedPostCard({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  <span>Extracting...</span>
+                  <span>{t.extracting}</span>
                 </>
               ) : (
                 <>
@@ -441,7 +465,7 @@ export function FeedPostCard({
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                     />
                   </svg>
-                  <span>Extract Claim</span>
+                  <span>{t.extractClaim}</span>
                 </>
               )}
             </button>

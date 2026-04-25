@@ -8,7 +8,7 @@
 import { useState, type ReactElement, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { Post, ChainId, CampaignId } from '@cocuyo/types';
 import {
   FeedPostCard,
@@ -16,6 +16,7 @@ import {
   EmptyState,
   SkeletonFeedPostCard,
   useToast,
+  type FeedPostCardTranslations,
   type PostCampaignInfo,
 } from '@cocuyo/ui';
 import { SectionHeader } from './SectionHeader';
@@ -79,12 +80,22 @@ export function FeedPostsList({
 }: FeedPostsListProps): ReactElement {
   const router = useRouter();
   const locale = useLocale();
+  const tPosts = useTranslations('posts');
   const { openSheet: openCorroborateSheet } = useCorroborateDispute();
   const { openDrawer: openTrustDrawer } = useTrustDrawer();
   const { extractClaim } = useAppState();
   const { isConnected } = useSigner();
   const { addToast } = useToast();
   const [extractingPosts, setExtractingPosts] = useState<Set<string>>(new Set());
+
+  // Translations for FeedPostCard
+  const feedPostCardTranslations: FeedPostCardTranslations = {
+    corroborate: tPosts('corroborate'),
+    dispute: tPosts('dispute'),
+    extractClaim: tPosts('extractClaim'),
+    extracting: tPosts('extracting'),
+    viewDetails: tPosts('viewDetails'),
+  };
 
   const handlePostClick = (post: Post): void => {
     router.push(`/${locale}/post/${post.id}`);
@@ -138,15 +149,20 @@ export function FeedPostsList({
     setExtractingPosts((prev) => new Set(prev).add(post.id));
 
     try {
-      const aiClaim = await extractBestClaim(post.content.text);
+      const result = await extractBestClaim(post.content.text);
 
-      // Only submit AI-extracted claims, don't fall back to raw text
-      if (aiClaim === null) {
+      // Handle different result types with specific messages
+      if (!result.ok) {
+        addToast(`AI extraction failed: ${result.error}`, 'error');
+        return;
+      }
+
+      if (result.claim === null) {
         addToast('No verifiable claim found in this post', 'warning');
         return;
       }
 
-      const claim = await extractClaim(post.id, aiClaim);
+      const claim = await extractClaim(post.id, result.claim);
 
       if (claim !== null) {
         addToast('Claim extracted', 'success');
@@ -291,6 +307,7 @@ export function FeedPostsList({
                   void handleExtractClaim(post);
                 }}
                 isExtracting={extractingPosts.has(post.id)}
+                translations={feedPostCardTranslations}
                 showActions
               />
             );

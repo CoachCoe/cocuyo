@@ -13,11 +13,7 @@ import {
   personhoodService,
   setPersonhoodLevel as setPersonhoodLevelService,
 } from '@/lib/services/personhood-service';
-import type {
-  PersonhoodLevel,
-  PersonhoodCapabilities,
-  PersonhoodState,
-} from '@cocuyo/types';
+import type { PersonhoodLevel, PersonhoodCapabilities, PersonhoodState } from '@cocuyo/types';
 import { createDIMCredential, getCapabilities } from '@cocuyo/types';
 
 /**
@@ -53,9 +49,7 @@ export function usePersonhood(): PersonhoodInfo {
   const { selectedAccount, isConnected } = useSigner();
   const [level, setLevelState] = useState<PersonhoodLevel>('none');
   const [state, setState] = useState<PersonhoodState | null>(null);
-  const [capabilities, setCapabilities] = useState<PersonhoodCapabilities>(
-    getCapabilities('none')
-  );
+  const [capabilities, setCapabilities] = useState<PersonhoodCapabilities>(getCapabilities('none'));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);

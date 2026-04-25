@@ -410,6 +410,9 @@
     "dispute": "Disputar",
     "viewTrust": "Ver Confianza",
     "addToStory": "Añadir a Historia",
+    "extractClaim": "Extraer Afirmación",
+    "extracting": "Extrayendo...",
+    "viewDetails": "Ver detalles",
     "topics": {
       "crisis": "Crisis",
       "daily-life": "Vida Cotidiana",
@@ -456,6 +459,8 @@
     "extracting": "Extrayendo...",
     "signInToExtract": "Inicia sesión para extraer afirmaciones",
     "claimExtracted": "¡Afirmación extraída exitosamente!",
+    "noClaimFound": "No se encontró ninguna afirmación verificable en esta publicación",
+    "extractionFailed": "La extracción por IA falló. Por favor, intenta de nuevo.",
     "submitEvidence": "Presentar Evidencia",
     "signInToSubmit": "Inicia sesión para presentar evidencia",
     "evidenceSubmitted": "¡Evidencia presentada exitosamente!",

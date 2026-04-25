@@ -26,6 +26,8 @@ export interface PostActionsProps {
     extracting: string;
     signInToExtract: string;
     claimExtracted: string;
+    noClaimFound: string;
+    extractionFailed: string;
     corroborate: string;
     dispute: string;
     viewTrust: string;
@@ -80,12 +82,23 @@ export function PostActions({ post, translations: t }: PostActionsProps): ReactE
 
     try {
       // Use AI to extract the best verifiable claim from the post
-      // Falls back to title/text if AI extraction fails or finds no claims
-      const aiClaim = await extractBestClaim(post.content.text);
-      const statement = aiClaim ?? post.content.title ?? post.content.text.slice(0, 200);
+      const result = await extractBestClaim(post.content.text);
+
+      // Handle different result types with specific messages
+      if (!result.ok) {
+        addToast(t.extractionFailed, 'error');
+        setIsExtracting(false);
+        return;
+      }
+
+      if (result.claim === null) {
+        addToast(t.noClaimFound, 'warning');
+        setIsExtracting(false);
+        return;
+      }
 
       // Upload claim to Bulletin Chain
-      const claim = await extractClaim(post.id, statement);
+      const claim = await extractClaim(post.id, result.claim);
 
       if (claim !== null) {
         addToast(t.claimExtracted, 'success');
