@@ -169,7 +169,6 @@ let transactionPermissionRequested = false;
 
 export interface UploadResult {
   cid: string;
-  usedFallback: boolean;
 }
 
 export interface PhotoUploadResult {
@@ -187,8 +186,12 @@ export async function uploadToBulletin(data: unknown): Promise<Result<UploadResu
   try {
     // Request TransactionSubmit permission on first upload (Host mode only)
     if (!transactionPermissionRequested && isHosted()) {
-      transactionPermissionRequested = true;
-      await requestTransactionSubmit();
+      try {
+        await requestTransactionSubmit();
+        transactionPermissionRequested = true;
+      } catch {
+        // Permission denied or unavailable - don't block future attempts
+      }
     }
 
     const bulletin = await getBulletinClient();
@@ -197,7 +200,7 @@ export async function uploadToBulletin(data: unknown): Promise<Result<UploadResu
     const result = await bulletin.upload(jsonData);
 
     logger.debug('Uploaded to Bulletin Chain', 'uploadToBulletin', { cid: result.cid });
-    return ok({ cid: result.cid, usedFallback: false });
+    return ok({ cid: result.cid });
   } catch (uploadError) {
     const message = uploadError instanceof Error ? uploadError.message : 'Bulletin upload failed';
     logger.swallowed('Bulletin upload failed', 'uploadToBulletin', uploadError);

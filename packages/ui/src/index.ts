@@ -5,7 +5,7 @@
  */
 
 // Components
-export { Button } from './components/Button';
+export { Button, getButtonClassName } from './components/Button';
 export type { ButtonProps } from './components/Button';
 
 export { FireflySymbol } from './components/FireflySymbol';

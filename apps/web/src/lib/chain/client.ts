@@ -8,9 +8,9 @@
 import { getChainAPI, type Environment, type PresetChains, type ChainClient } from '@polkadot-apps/chain-client';
 import { BulletinClient } from '@polkadot-apps/bulletin';
 
-/** Cache entry with environment tracking */
+/** Cache entry with environment tracking - stores promise to prevent race conditions */
 interface CacheEntry<T> {
-  value: T;
+  promise: Promise<T>;
   environment: Environment;
 }
 
@@ -36,7 +36,6 @@ function getEnvironment(): Environment {
  * - assetHub: Asset Hub chain API (tokens, NFTs)
  * - bulletin: Bulletin Chain API (content storage)
  * - individuality: Individuality chain API (DIMs, personhood)
- * - contracts: Ink! contract SDK
  *
  * @example
  * ```ts
@@ -48,13 +47,13 @@ export async function getFireflyChainAPI(): Promise<ChainClient<PresetChains<Env
   const env = getEnvironment();
 
   if (apiCache?.environment === env) {
-    return apiCache.value;
+    return apiCache.promise;
   }
 
-  const api = await getChainAPI(env);
-  apiCache = { value: api, environment: env };
+  const promise = getChainAPI(env);
+  apiCache = { promise, environment: env };
 
-  return api;
+  return promise;
 }
 
 /**
@@ -80,20 +79,28 @@ export async function getBulletinClient(): Promise<BulletinClient> {
   const env = getEnvironment();
 
   if (bulletinCache?.environment === env) {
-    return bulletinCache.value;
+    return bulletinCache.promise;
   }
 
-  const client = await BulletinClient.create(env);
-  bulletinCache = { value: client, environment: env };
+  const promise = BulletinClient.create(env);
+  bulletinCache = { promise, environment: env };
 
-  return client;
+  return promise;
 }
 
 /**
- * Clear cached clients.
+ * Clear cached clients and destroy connections.
  * Useful for testing or environment switching.
  */
-export function clearChainCache(): void {
+export async function clearChainCache(): Promise<void> {
+  if (apiCache) {
+    try {
+      const api = await apiCache.promise;
+      api.destroy();
+    } catch {
+      // Ignore errors during cleanup
+    }
+  }
   apiCache = null;
   bulletinCache = null;
 }

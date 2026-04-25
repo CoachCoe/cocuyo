@@ -16,12 +16,9 @@ import type {
   PaginationParams,
   PaginatedResult,
 } from '@cocuyo/types';
-import { getBulletinClient } from '@/lib/chain/client';
 import { fetchFromBulletin } from '../service-utils';
 
 export type Locale = 'en' | 'es';
-
-const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
 /**
  * Hook providing story chain service operations.
@@ -30,16 +27,6 @@ const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
  */
 export function useChainService(): ChainService {
   const getChain = useCallback(async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
-    if (USE_CHAIN) {
-      try {
-        const bulletin = await getBulletinClient();
-        return await bulletin.fetchJson<StoryChain>(id);
-      } catch {
-        return null;
-      }
-    }
-
-    // Try fetching from Bulletin Chain
     return fetchFromBulletin<StoryChain>(id);
   }, []);
 
