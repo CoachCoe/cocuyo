@@ -209,13 +209,30 @@ export async function uploadToBulletin(data: unknown): Promise<Result<UploadResu
 }
 
 /**
- * Fetch data from Bulletin Chain by CID.
- * Returns null if fetch fails.
+ * Fetch data from Bulletin Chain by CID with optional validation.
+ * Returns null if fetch or validation fails.
+ *
+ * @param cid - Content identifier to fetch
+ * @param validator - Optional function to validate/parse the fetched data
  */
-export async function fetchFromBulletin<T>(cid: string): Promise<T | null> {
+export async function fetchFromBulletin<T>(
+  cid: string,
+  validator?: (data: unknown) => T | null
+): Promise<T | null> {
   try {
     const bulletin = await getBulletinClient();
-    return await bulletin.fetchJson<T>(cid);
+    const data = await bulletin.fetchJson<unknown>(cid);
+
+    if (validator) {
+      const validated = validator(data);
+      if (validated === null) {
+        logger.warn('Bulletin data validation failed', 'fetchFromBulletin', { cid });
+        return null;
+      }
+      return validated;
+    }
+
+    return data as T;
   } catch (fetchError) {
     logger.swallowed('Bulletin fetch failed', 'fetchFromBulletin', fetchError, { cid });
     return null;

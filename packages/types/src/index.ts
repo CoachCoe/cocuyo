@@ -287,3 +287,22 @@ export {
   describePaymentMode,
   getRecommendation,
 } from './payment-mode';
+
+// Validators (runtime type checking for external data)
+export {
+  // Schemas
+  StoryChainSchema,
+  PostSchema,
+  ChainPreviewSchema,
+  PostPreviewSchema,
+  // Parse functions (throw on invalid)
+  parseStoryChain,
+  parsePost,
+  parseChainPreview,
+  parsePostPreview,
+  // Safe parse functions (return null on invalid)
+  safeParseStoryChain,
+  safeParsePost,
+  safeParseChainPreview,
+  safeParsePostPreview,
+} from './validators';

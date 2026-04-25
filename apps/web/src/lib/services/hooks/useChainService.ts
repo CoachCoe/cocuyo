@@ -16,6 +16,7 @@ import type {
   PaginationParams,
   PaginatedResult,
 } from '@cocuyo/types';
+import { safeParseStoryChain } from '@cocuyo/types';
 import { fetchFromBulletin } from '../service-utils';
 
 export type Locale = 'en' | 'es';
@@ -27,7 +28,7 @@ export type Locale = 'en' | 'es';
  */
 export function useChainService(): ChainService {
   const getChain = useCallback(async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
-    return fetchFromBulletin<StoryChain>(id);
+    return fetchFromBulletin<StoryChain>(id, safeParseStoryChain);
   }, []);
 
   const getChains = useCallback(

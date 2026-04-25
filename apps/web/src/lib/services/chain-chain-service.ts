@@ -14,6 +14,7 @@ import type {
   PaginationParams,
   PaginatedResult,
 } from '@cocuyo/types';
+import { safeParseStoryChain } from '@cocuyo/types';
 import { getBulletinClient } from '../chain/client';
 
 /**
@@ -27,12 +28,13 @@ export class ChainChainService implements ChainService {
   /**
    * Get a chain by its CID.
    *
-   * Fetches the chain data from Bulletin Chain and parses it.
+   * Fetches the chain data from Bulletin Chain, validates, and parses it.
    */
   async getChain(id: ChainId, _locale?: string): Promise<StoryChain | null> {
     try {
       const bulletin = await getBulletinClient();
-      return await bulletin.fetchJson<StoryChain>(id);
+      const data = await bulletin.fetchJson<unknown>(id);
+      return safeParseStoryChain(data);
     } catch {
       return null;
     }
