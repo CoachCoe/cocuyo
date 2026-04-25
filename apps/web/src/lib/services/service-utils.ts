@@ -184,14 +184,12 @@ export interface PhotoUploadResult {
  */
 export async function uploadToBulletin(data: unknown): Promise<Result<UploadResult, string>> {
   try {
-    // Request TransactionSubmit permission on first upload (Host mode only)
+    // Request TransactionSubmit permission on first upload (Host mode only).
+    // requestTransactionSubmit() never throws - it handles denial internally.
+    // We set the flag to avoid re-prompting on every upload.
     if (!transactionPermissionRequested && isHosted()) {
-      try {
-        await requestTransactionSubmit();
-        transactionPermissionRequested = true;
-      } catch {
-        // Permission denied or unavailable - don't block future attempts
-      }
+      await requestTransactionSubmit();
+      transactionPermissionRequested = true;
     }
 
     const bulletin = await getBulletinClient();
@@ -208,16 +206,21 @@ export async function uploadToBulletin(data: unknown): Promise<Result<UploadResu
   }
 }
 
+/** Reason why fetchFromBulletin returned null */
+export type FetchFailureReason = 'network_error' | 'not_found' | 'validation_failed';
+
 /**
  * Fetch data from Bulletin Chain by CID with optional validation.
  * Returns null if fetch or validation fails.
  *
  * @param cid - Content identifier to fetch
  * @param validator - Optional function to validate/parse the fetched data
+ * @param onError - Optional callback to receive the failure reason for debugging
  */
 export async function fetchFromBulletin<T>(
   cid: string,
-  validator?: (data: unknown) => T | null
+  validator?: (data: unknown) => T | null,
+  onError?: (reason: FetchFailureReason, details?: unknown) => void
 ): Promise<T | null> {
   try {
     const bulletin = await getBulletinClient();
@@ -226,7 +229,11 @@ export async function fetchFromBulletin<T>(
     if (validator) {
       const validated = validator(data);
       if (validated === null) {
-        logger.warn('Bulletin data validation failed', 'fetchFromBulletin', { cid });
+        logger.warn('Bulletin data validation failed', 'fetchFromBulletin', {
+          cid,
+          receivedKeys: data && typeof data === 'object' ? Object.keys(data) : typeof data,
+        });
+        onError?.('validation_failed', data);
         return null;
       }
       return validated;
@@ -234,7 +241,13 @@ export async function fetchFromBulletin<T>(
 
     return data as T;
   } catch (fetchError) {
-    logger.swallowed('Bulletin fetch failed', 'fetchFromBulletin', fetchError, { cid });
+    const isNotFound =
+      fetchError instanceof Error &&
+      (fetchError.message.includes('404') || fetchError.message.includes('not found'));
+    const reason: FetchFailureReason = isNotFound ? 'not_found' : 'network_error';
+
+    logger.swallowed('Bulletin fetch failed', 'fetchFromBulletin', fetchError, { cid, reason });
+    onError?.(reason, fetchError);
     return null;
   }
 }

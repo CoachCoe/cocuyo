@@ -93,16 +93,26 @@ export async function getBulletinClient(): Promise<BulletinClient> {
  * Useful for testing or environment switching.
  */
 export async function clearChainCache(): Promise<void> {
+  const errors: Error[] = [];
+
   if (apiCache) {
     try {
       const api = await apiCache.promise;
       api.destroy();
-    } catch {
-      // Ignore errors during cleanup
+    } catch (e) {
+      errors.push(e instanceof Error ? e : new Error(String(e)));
     }
   }
+
+  // BulletinClient doesn't expose destroy() - it delegates connections to chain-client
+  // which is destroyed above. We only clear the reference.
+
   apiCache = null;
   bulletinCache = null;
+
+  if (errors.length > 0) {
+    console.warn('Errors during chain cache cleanup:', errors);
+  }
 }
 
 // Re-export environment type for consumers

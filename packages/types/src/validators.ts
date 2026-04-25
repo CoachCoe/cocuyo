@@ -175,6 +175,13 @@ export const PostPreviewSchema = z.object({
 // Validation helpers
 // ============================================================
 
+// NOTE ON CASTS: The `as Type` casts below are safe because:
+// 1. The zod schemas validate all required fields with correct types
+// 2. The .transform() calls convert strings to branded types (ChainId, PostId, etc.)
+// 3. The only difference is zod's optional() returns `T | undefined` while
+//    TypeScript's optional properties with exactOptionalPropertyTypes require `?: T`
+// 4. Tests in validators.test.ts verify schema output matches expected types
+
 /**
  * Validate and parse data as a StoryChain.
  * Throws ZodError if validation fails.
