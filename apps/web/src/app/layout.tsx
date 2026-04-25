@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
 
+const basePath = process.env.GITHUB_PAGES ? '/cocuyo' : '';
+
 export const metadata: Metadata = {
   title: 'Firefly Network — Lights in the Dark',
   icons: {
-    icon: '/favicon.svg',
+    icon: `${basePath}/favicon.svg`,
   },
   description:
     'A surveillance-resistant network for collective intelligence. Anonymous but human. Verified but private. Distributed but connected.',
