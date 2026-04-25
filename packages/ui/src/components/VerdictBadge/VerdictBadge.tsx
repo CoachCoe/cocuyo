@@ -72,16 +72,11 @@ export function VerdictBadge({
 }: VerdictBadgeProps): ReactElement {
   const config = STATUS_CONFIG[status];
 
-  const sizeClasses = size === 'sm'
-    ? 'text-xs px-1.5 py-0.5 gap-1'
-    : 'text-sm px-2 py-1 gap-1.5';
+  const sizeClasses = size === 'sm' ? 'text-xs px-1.5 py-0.5 gap-1' : 'text-sm px-2 py-1 gap-1.5';
 
   return (
     <span
-      className={`
-        inline-flex items-center font-medium rounded-full border
-        ${sizeClasses}
-      `}
+      className={`inline-flex items-center rounded-full border font-medium ${sizeClasses} `}
       style={{
         backgroundColor: config.bgColor,
         color: config.textColor,

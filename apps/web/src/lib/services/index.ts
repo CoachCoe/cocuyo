@@ -25,14 +25,28 @@
  * - true: Use chain services with Bulletin Chain storage
  */
 
-import type { ChainService, BountyService, PostService, ClaimService, CorroborationService } from '@cocuyo/types';
+import type {
+  ChainService,
+  CampaignService,
+  PostService,
+  ClaimService,
+  CorroborationService,
+  VerdictService,
+  CollectiveService,
+  VerdictProposalService,
+} from '@cocuyo/types';
 import { SignalServiceImpl } from './signal-service';
 import { ChainServiceImpl } from './chain-service';
-import { BountyServiceImpl } from './bounty-service';
+import { CampaignServiceImpl } from './campaign-service';
 import { ClaimServiceImpl } from './claim-service';
 import { CorroborationServiceImpl } from './corroboration-service';
 import { ChainSignalService } from './chain-signal-service';
 import { ChainChainService } from './chain-chain-service';
+import { collectiveService as collectiveServiceInstance } from './collective-service';
+import {
+  verdictService as verdictServiceInstance,
+  verdictProposalService as verdictProposalServiceInstance,
+} from './verdict-service';
 
 /**
  * Whether to use chain-backed services.
@@ -68,15 +82,16 @@ export const chainService: ChainService = USE_CHAIN_SERVICES
   : new ChainServiceImpl();
 
 /**
- * Bounty service instance.
+ * Campaign service instance.
  *
- * Provides access to bounty data:
- * - getBounty: Fetch a single bounty by ID
- * - getOpenBounties: Paginated bounty listing with filters
- * - createBounty: Create a new bounty (requires wallet)
- * - contributeToBounty: Link a post to a bounty
+ * Provides access to campaign data:
+ * - getCampaign: Fetch a single campaign by ID
+ * - getCampaigns: Paginated campaign listing with filters
+ * - getActiveCampaigns: Active campaigns
+ * - createCampaign: Create a new campaign (requires wallet)
+ * - contributeToCampaign: Link a post to a campaign
  */
-export const bountyService: BountyService = new BountyServiceImpl();
+export const campaignService: CampaignService = new CampaignServiceImpl();
 
 /**
  * Post service instance.
@@ -108,21 +123,72 @@ export const claimService: ClaimService = new ClaimServiceImpl();
  */
 export const corroborationService: CorroborationService = new CorroborationServiceImpl();
 
+/**
+ * Collective service instance.
+ *
+ * Provides collective membership and data:
+ * - getCollective: Fetch a collective by ID
+ * - isMember: Check if credential is a member
+ * - getMemberRole: Get member's role in collective
+ * - getCollectivesForMember: Get all collectives for a user
+ */
+export const collectiveService: CollectiveService = collectiveServiceInstance;
+
+/**
+ * Verdict service instance.
+ *
+ * Provides verdict functionality:
+ * - getVerdict: Get a verdict by ID
+ * - getVerdictForClaim: Get verdict for a claim
+ * - issueVerdict: Issue a verdict (used by proposal finalization)
+ */
+export const verdictService: VerdictService = verdictServiceInstance;
+
+/**
+ * Verdict proposal service instance.
+ *
+ * Provides multi-sig voting on verdicts:
+ * - createProposal: Create a new verdict proposal
+ * - vote: Cast a vote on a proposal
+ * - getProposalsForClaim: Get all proposals for a claim
+ * - checkAndFinalize: Finalize if threshold reached
+ */
+export const verdictProposalService: VerdictProposalService = verdictProposalServiceInstance;
+
 // Export classes for type checking and direct instantiation
 export { SignalServiceImpl, SignalServiceImpl as MockSignalService } from './signal-service';
 export { ChainServiceImpl, ChainServiceImpl as MockChainService } from './chain-service';
-export { BountyServiceImpl, BountyServiceImpl as MockBountyService } from './bounty-service';
-export { SignalServiceImpl as PostServiceImpl, SignalServiceImpl as MockPostService } from './signal-service';
+export { CampaignServiceImpl } from './campaign-service';
+export {
+  SignalServiceImpl as PostServiceImpl,
+  SignalServiceImpl as MockPostService,
+} from './signal-service';
 export { ClaimServiceImpl, ClaimServiceImpl as MockClaimService } from './claim-service';
-export { CorroborationServiceImpl, CorroborationServiceImpl as MockCorroborationService } from './corroboration-service';
+export {
+  CorroborationServiceImpl,
+  CorroborationServiceImpl as MockCorroborationService,
+} from './corroboration-service';
 export { ChainSignalService } from './chain-signal-service';
 export { ChainChainService } from './chain-chain-service';
+export { CollectiveServiceImpl } from './collective-service';
+export { VerdictServiceImpl, VerdictProposalServiceImpl } from './verdict-service';
 
 // Export service hooks (preferred for new code)
 export {
   useSignalService,
   useChainService,
-  useBountyService,
+  useCampaignService,
   useClaimService,
   useCorroborationService,
 } from './hooks';
+
+// Export wallet state management
+export { setConnectedWallet, getConnectedWallet, isWalletConnected } from './service-utils';
+
+// Personhood service
+export {
+  personhoodService,
+  PersonhoodServiceImpl,
+  setPersonhoodLevel,
+  clearPersonhoodCache,
+} from './personhood-service';

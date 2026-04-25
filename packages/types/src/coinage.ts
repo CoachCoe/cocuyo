@@ -24,21 +24,21 @@ export type CoinExponent = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 
  * Coin denomination values in cents.
  */
 export const COIN_VALUES_CENTS: Record<CoinExponent, number> = {
-  0: 1,       // $0.01
-  1: 2,       // $0.02
-  2: 4,       // $0.04
-  3: 8,       // $0.08
-  4: 16,      // $0.16
-  5: 32,      // $0.32
-  6: 64,      // $0.64
-  7: 128,     // $1.28
-  8: 256,     // $2.56
-  9: 512,     // $5.12
-  10: 1024,   // $10.24
-  11: 2048,   // $20.48
-  12: 4096,   // $40.96
-  13: 8192,   // $81.92
-  14: 16384,  // $163.84
+  0: 1, // $0.01
+  1: 2, // $0.02
+  2: 4, // $0.04
+  3: 8, // $0.08
+  4: 16, // $0.16
+  5: 32, // $0.32
+  6: 64, // $0.64
+  7: 128, // $1.28
+  8: 256, // $2.56
+  9: 512, // $5.12
+  10: 1024, // $10.24
+  11: 2048, // $20.48
+  12: 4096, // $40.96
+  13: 8192, // $81.92
+  14: 16384, // $163.84
 } as const;
 
 /**
@@ -150,7 +150,7 @@ export function decomposeAmountCents(cents: number): CoinExponent[] {
   if (remaining > 0) {
     throw new Error(
       `Cannot exactly represent ${cents} cents with coin denominations. ` +
-      `Remaining: ${remaining} cents. Coins must be multiples of $0.01.`
+        `Remaining: ${remaining} cents. Coins must be multiples of $0.01.`
     );
   }
 
@@ -175,10 +175,7 @@ export function validateSplit(
   outputExponents: readonly CoinExponent[]
 ): string | null {
   const inputValue = COIN_VALUES_CENTS[inputExponent];
-  const outputValue = outputExponents.reduce<number>(
-    (sum, exp) => sum + COIN_VALUES_CENTS[exp],
-    0
-  );
+  const outputValue = outputExponents.reduce<number>((sum, exp) => sum + COIN_VALUES_CENTS[exp], 0);
 
   if (outputValue !== inputValue) {
     return `Split invalid: input value ${inputValue} cents does not match output value ${outputValue} cents`;
@@ -331,8 +328,21 @@ export interface CoinHoldingsSummary {
  */
 export function calculateHoldingsSummary(coins: readonly Coin[]): CoinHoldingsSummary {
   const byDenomination: Record<CoinExponent, number> = {
-    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
-    7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0,
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0,
+    14: 0,
   };
 
   let totalCents = 0;

@@ -92,25 +92,19 @@ export function VerificationBadge({
 }: VerificationBadgeProps): ReactElement {
   const config = getBadgeConfig(status);
 
-  const sizeClasses = size === 'sm'
-    ? 'text-xs px-1.5 py-0.5'
-    : 'text-sm px-2 py-1';
+  const sizeClasses = size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-sm px-2 py-1';
 
   // Don't show badge for unverified content unless explicitly showing label
   if (status === 'unverified' && !showLabel) {
     return <span className="sr-only">Unverified content</span>;
   }
 
-  const title = collectiveName !== undefined
-    ? `${config.label} by ${collectiveName}`
-    : config.label;
+  const title =
+    collectiveName !== undefined ? `${config.label} by ${collectiveName}` : config.label;
 
   return (
     <span
-      className={`
-        inline-flex items-center gap-1 rounded-full font-medium
-        ${config.bgClass} ${config.colorClass} ${sizeClasses}
-      `}
+      className={`inline-flex items-center gap-1 rounded-full font-medium ${config.bgClass} ${config.colorClass} ${sizeClasses} `}
       title={title}
       aria-label={title}
     >

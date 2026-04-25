@@ -20,10 +20,7 @@ export interface BreadcrumbProps {
   /** Custom separator element */
   separator?: ReactNode;
   /** Custom link renderer (for Next.js Link, etc.) */
-  renderLink?: (
-    item: BreadcrumbItem,
-    children: ReactNode
-  ) => ReactElement;
+  renderLink?: (item: BreadcrumbItem, children: ReactNode) => ReactElement;
   /** Additional className */
   className?: string;
 }
@@ -31,18 +28,13 @@ export interface BreadcrumbProps {
 function DefaultSeparator(): ReactElement {
   return (
     <svg
-      className="w-4 h-4 text-[var(--fg-tertiary)]"
+      className="h-4 w-4 text-[var(--fg-tertiary)]"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 5l7 7-7 7"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
     </svg>
   );
 }
@@ -73,14 +65,14 @@ export function Breadcrumb({
                 renderLink !== undefined ? (
                   renderLink(
                     item,
-                    <span className="text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors">
+                    <span className="text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]">
                       {item.label}
                     </span>
                   )
                 ) : (
                   <a
                     href={item.href}
-                    className="text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+                    className="text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
                   >
                     {item.label}
                   </a>
@@ -88,9 +80,7 @@ export function Breadcrumb({
               ) : (
                 <span
                   className={
-                    isLast
-                      ? 'text-[var(--fg-primary)] font-medium'
-                      : 'text-[var(--fg-secondary)]'
+                    isLast ? 'font-medium text-[var(--fg-primary)]' : 'text-[var(--fg-secondary)]'
                   }
                   aria-current={isLast ? 'page' : undefined}
                 >

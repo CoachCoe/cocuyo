@@ -9,7 +9,7 @@
 export type {
   ChainId,
   CorroborationId,
-  BountyId,
+  CampaignId,
   FireflyId,
   CollectiveId,
   VerificationRequestId,
@@ -23,12 +23,14 @@ export type {
   PostId,
   ClaimId,
   VerdictId,
+  OutletId,
+  CommunityId,
 } from './brands';
 
 export {
   createChainId,
   createCorroborationId,
-  createBountyId,
+  createCampaignId,
   createFireflyId,
   createCollectiveId,
   createVerificationRequestId,
@@ -42,6 +44,8 @@ export {
   createPostId,
   createClaimId,
   createVerdictId,
+  createOutletId,
+  createCommunityId,
 } from './brands';
 
 // Post types (replaces Signal types)
@@ -73,6 +77,18 @@ export type {
   Verdict,
   NewVerdict,
 } from './claim';
+
+// Verdict voting types (multi-sig)
+export type {
+  ProposalStatus,
+  VerdictVote,
+  VerdictProposal,
+  NewVerdictProposal,
+  NewVerdictVote,
+  VotingProgress,
+} from './verdict-voting';
+
+export { calculateVotingProgress, hasVoted, getMemberVote } from './verdict-voting';
 
 // Identity types
 export type {
@@ -114,23 +130,39 @@ export type {
 } from './verification';
 
 // Chain types
-export type {
-  ChainStatus,
-  ChainStats,
-  StoryChain,
-  ChainPreview,
-} from './chain';
+export type { ChainStatus, ChainStats, StoryChain, ChainPreview } from './chain';
 
 // Corroboration types
 export type {
   CorroborationType,
   EvidenceType,
+  EvidenceQuality,
   Corroboration,
   CorroborationSummary,
   NewCorroboration,
 } from './corroboration';
 
 export { emptyCorroborationSummary } from './corroboration';
+
+// Campaign types
+export type {
+  CampaignStatus,
+  CampaignSponsor,
+  DeliverableType,
+  CampaignDeliverable,
+  Campaign,
+  CampaignPreview,
+  NewCampaign,
+  CampaignPayout,
+  PayoutDistribution,
+  CampaignContribution,
+  AllocationShare,
+  AllocationInput,
+  AllocationResult,
+} from './campaign';
+
+// Outlet types
+export type { Outlet, OutletPreview } from './outlet';
 
 // Firefly types
 export type {
@@ -141,25 +173,8 @@ export type {
   WalletActions,
 } from './firefly';
 
-// Bounty types
-export type {
-  BountyStatus,
-  Bounty,
-  BountyPreview,
-  NewBounty,
-  BountyPayout,
-  PayoutDistribution,
-  BountyContribution,
-  AllocationShare,
-  AllocationInput,
-  AllocationResult,
-} from './bounty';
-
 // Personhood types
-export type {
-  PersonhoodLevel,
-  PersonhoodCapabilities,
-} from './personhood';
+export type { PersonhoodLevel, PersonhoodCapabilities } from './personhood';
 export {
   PERSONHOOD_CAPABILITIES,
   getCapabilities,
@@ -186,9 +201,12 @@ export type {
   PostService,
   ChainService,
   CorroborationService,
-  BountyService,
+  CampaignService,
+  OutletService,
   ClaimService,
   VerdictService,
+  CollectiveService,
+  VerdictProposalService,
   // Reputation services
   ReputationError,
   TopicReputationScore,
@@ -259,11 +277,7 @@ export {
 } from './coinage';
 
 // Payment mode types
-export type {
-  PaymentMode,
-  PaymentUseCase,
-  PaymentModeContext,
-} from './payment-mode';
+export type { PaymentMode, PaymentUseCase, PaymentModeContext } from './payment-mode';
 export {
   DEFAULT_MODES,
   HIGH_SENSITIVITY_CASES,
@@ -273,3 +287,22 @@ export {
   describePaymentMode,
   getRecommendation,
 } from './payment-mode';
+
+// Validators (runtime type checking for external data)
+export {
+  // Schemas
+  StoryChainSchema,
+  PostSchema,
+  ChainPreviewSchema,
+  PostPreviewSchema,
+  // Parse functions (throw on invalid)
+  parseStoryChain,
+  parsePost,
+  parseChainPreview,
+  parsePostPreview,
+  // Safe parse functions (return null on invalid)
+  safeParseStoryChain,
+  safeParsePost,
+  safeParseChainPreview,
+  safeParsePostPreview,
+} from './validators';

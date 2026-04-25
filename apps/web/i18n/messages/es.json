@@ -108,6 +108,10 @@
       "verificationTrails": {
         "title": "Rastros de Verificación",
         "description": "Cada cadena lleva un rastro de verificación transparente — el historial completo de publicaciones, corroboraciones, cuestionamientos y evidencia. No necesitas confiar en nosotros para saber que algo está verificado. Puedes rastrear el camino tú mismo y ver exactamente cuántos humanos independientes, con qué reputación, hicieron qué afirmaciones."
+      },
+      "campaigns": {
+        "title": "Campañas",
+        "description": "Las campañas son esfuerzos de verificación patrocinados. Medios de comunicación, colectivos o miembros de la comunidad financian una solicitud de información específica — y las luciérnagas que contribuyen evidencia valiosa ganan una parte de la recompensa. Los fondos se mantienen en custodia hasta que se cumplan los entregables. Los pagos pueden ser públicos (pUSD) o privados (Coinage) para proteger la identidad del contribuyente. Esto crea un mercado funcional para el periodismo de investigación."
       }
     },
     "surveillanceResistance": {
@@ -153,12 +157,12 @@
       "body": "Una publicación es una observación, una pieza de evidencia, un testimonio, un dato.\n\nCuando iluminas una publicación, estás contribuyendo información firmada por tu credencial anónima — lista para conectarse con otras publicaciones y formar cadenas de historia.\n\nLas publicaciones ganan peso a través de la corroboración de otros humanos verificados."
     },
     "storiesLabel": "Cadenas de Historia",
-    "openBountiesLabel": "Recompensas Abiertas",
-    "openBountiesInfo": {
-      "title": "¿Qué son las Recompensas Abiertas?",
-      "body": "Las recompensas son financiadas por miembros de la comunidad que necesitan información específica — periodistas, ONGs, comunidades de la diáspora, o cualquiera que busque la verdad sobre el terreno.\n\nLos fondos se mantienen en custodia hasta que se cumpla la recompensa. Cuando contribuyes publicaciones valiosas, ganas una parte del premio.\n\nLos pagos pueden ser públicos (pUSD) o privados (Coinage) para proteger tu identidad. Las recompensas abiertas esperan sus primeras publicaciones — sé el primero en iluminar."
+    "openCampaignsLabel": "Campañas Activas",
+    "openCampaignsInfo": {
+      "title": "¿Qué son las Campañas?",
+      "body": "Las campañas son esfuerzos de verificación de hechos patrocinados por medios de comunicación, colectivos u organizaciones comunitarias que buscan información verificada sobre temas específicos.\n\nLos patrocinadores financian campañas para apoyar la verificación de hechos basada en evidencia. Cuando contribuyes señales valiosas — testimonios, documentos o fuentes verificadas — ayudas a construir la verdad.\n\nLas campañas activas esperan sus primeras contribuciones — sé el primero en iluminar."
     },
-    "noMatchingBountyPosts": "Ninguna publicación ha contribuido a esta recompensa aún.",
+    "noMatchingCampaignPosts": "Ninguna publicación ha contribuido a esta campaña aún.",
     "daysRemaining": "{count} días restantes",
     "hoursRemaining": "{count} horas restantes",
     "expiresSoon": "Expira pronto"
@@ -193,10 +197,10 @@
       "noPosts": "No hay publicaciones de análisis para esta historia aún."
     },
     "helpNeeded": {
-      "title": "Recompensas Abiertas",
-      "description": "Solicitudes financiadas de información",
-      "noBounties": "No hay recompensas abiertas para esta historia.",
-      "createBounty": "Financiar Recompensa"
+      "title": "Campañas Activas",
+      "description": "Esfuerzos de verificación patrocinados",
+      "noCampaigns": "No hay campañas activas para esta historia.",
+      "createCampaign": "Crear Campaña"
     }
   },
   "feed": {
@@ -247,23 +251,23 @@
     "pending": "pendiente",
     "inReview": "en revisión"
   },
-  "bounties": {
-    "title": "Recompensas",
-    "description": "Solicitudes de información financiadas por la comunidad. Contribuye publicaciones para ganar recompensas.",
-    "allBounties": "Todas",
+  "campaigns": {
+    "title": "Campañas",
+    "description": "Esfuerzos de verificación patrocinados por medios y colectivos. Contribuye evidencia para construir la verdad.",
+    "allCampaigns": "Todas",
     "filters": "Filtros",
     "status": "Estado",
-    "statusOpen": "Abierta",
-    "statusFulfilled": "Cumplida",
+    "statusActive": "Activa",
+    "statusCompleted": "Completada",
     "statusExpired": "Expirada",
     "statusCancelled": "Cancelada",
-    "bountyWord": "recompensa",
-    "bountiesWord": "recompensas",
+    "campaignWord": "campaña",
+    "campaignsWord": "campañas",
     "ofWord": "de",
     "clearFilters": "Limpiar filtros",
     "statusLabel": "Estado",
     "filterByTopic": "Filtrar por Tema",
-    "searchPlaceholder": "Buscar recompensas...",
+    "searchPlaceholder": "Buscar campañas...",
     "topicSelected": "tema",
     "topicsSelected": "temas",
     "topics": {
@@ -289,32 +293,22 @@
       "venezuela": "Venezuela"
     },
     "info": {
-      "title": "¿Qué son las Recompensas?",
-      "body": "Las recompensas son solicitudes de información específica financiadas por la comunidad. Cuando tienes conocimiento que cumple con una recompensa, ilumina una publicación y vincúlala a la recompensa.\n\nSi tu publicación contribuye información valiosa, ganas una parte de la recompensa. Los pagos pueden hacerse públicamente vía pUSD o privadamente vía Coinage.\n\nLas recompensas crean un mercado funcional para información investigativa — financiado por las personas que la necesitan."
+      "title": "¿Qué son las Campañas?",
+      "body": "Las campañas son esfuerzos de verificación de hechos patrocinados por medios de comunicación, colectivos de verificadores, u organizaciones comunitarias.\n\nCuando contribuyes señales valiosas — testimonios de testigos, documentos verificados, o fuentes confirmadas — ayudas a construir un registro basado en evidencia.\n\nLas campañas crean incentivos para la verificación de hechos comunitaria, financiadas por las organizaciones que necesitan la verdad."
     },
-    "create": {
-      "title": "Crear Recompensa",
-      "titleLabel": "Título",
-      "titlePlaceholder": "¿Qué información estás buscando?",
-      "descriptionLabel": "Descripción",
-      "descriptionPlaceholder": "Describe en detalle qué tipo de información necesitas, dónde podría encontrarse, y qué constituiría una contribución valiosa...",
-      "topicsLabel": "Temas",
-      "topicsPlaceholder": "Agregar temas relevantes",
-      "locationLabel": "Ubicación",
-      "locationPlaceholder": "Enfoque geográfico (si aplica)",
-      "optional": "opcional",
-      "fundingLabel": "Monto de Financiamiento",
-      "durationLabel": "Duración",
-      "submit": "Crear Recompensa",
-      "creating": "Creando...",
-      "signInRequired": "Inicia sesión para crear una recompensa."
+    "sponsorTypes": {
+      "outlet": "Medio de Comunicación",
+      "collective": "Colectivo",
+      "community": "Comunidad"
     },
-    "createButton": "Crear Recompensa"
+    "sponsoredBy": "Patrocinado por",
+    "deliverables": "Entregables",
+    "progress": "Progreso"
   },
-  "bounty": {
+  "campaign": {
     "breadcrumb": {
-      "bounties": "Recompensas",
-      "detail": "Detalles de la Recompensa"
+      "campaigns": "Campañas",
+      "detail": "Detalles de la Campaña"
     },
     "funding": "Financiamiento",
     "payoutMode": "Modo de Pago",
@@ -325,19 +319,28 @@
     "dayLeft": "1 día restante",
     "daysLeftSuffix": "días restantes",
     "contributingPosts": "Publicaciones Contribuyentes",
-    "noPostsYet": "Ninguna publicación ha contribuido a esta recompensa aún.",
+    "noPostsYet": "Ninguna publicación ha contribuido a esta campaña aún.",
     "postWord": "publicación",
     "postsWord": "publicaciones",
     "illuminate": "Iluminar",
-    "fulfilled": "Esta recompensa ha sido cumplida",
-    "cancelled": "Esta recompensa fue cancelada",
+    "completed": "Esta campaña ha sido completada",
+    "cancelled": "Esta campaña fue cancelada",
     "topics": "Temas",
     "location": "Ubicación",
-    "description": "Qué estamos buscando",
+    "description": "Qué estamos verificando",
     "paymentPublic": "pUSD Público",
     "paymentPrivate": "Privado",
     "whatsThis": "¿Qué es esto?",
-    "posted": "Publicado"
+    "posted": "Publicado",
+    "sponsor": "Patrocinador",
+    "deliverables": "Entregables",
+    "progress": "Progreso",
+    "deliverableTypes": {
+      "evidence_gathered": "Evidencia Recopilada",
+      "sources_verified": "Fuentes Verificadas",
+      "verdict_issued": "Veredicto Emitido",
+      "story_published": "Historia Publicada"
+    }
   },
   "corroboration": {
     "modal": {
@@ -361,7 +364,7 @@
     },
     "referencedLinks": "Enlaces referenciados:",
     "source": "Fuente",
-    "weight": "Peso"
+    "evidence": "Evidencia"
   },
   "post": {
     "topics": "Temas:",
@@ -407,6 +410,9 @@
     "dispute": "Disputar",
     "viewTrust": "Ver Confianza",
     "addToStory": "Añadir a Historia",
+    "extractClaim": "Extraer Afirmación",
+    "extracting": "Extrayendo...",
+    "viewDetails": "Ver detalles",
     "topics": {
       "crisis": "Crisis",
       "daily-life": "Vida Cotidiana",
@@ -453,6 +459,8 @@
     "extracting": "Extrayendo...",
     "signInToExtract": "Inicia sesión para extraer afirmaciones",
     "claimExtracted": "¡Afirmación extraída exitosamente!",
+    "noClaimFound": "No se encontró ninguna afirmación verificable en esta publicación",
+    "extractionFailed": "La extracción por IA falló. Por favor, intenta de nuevo.",
     "submitEvidence": "Presentar Evidencia",
     "signInToSubmit": "Inicia sesión para presentar evidencia",
     "evidenceSubmitted": "¡Evidencia presentada exitosamente!",
@@ -504,12 +512,12 @@
         "description": "Esta historia espera su primera publicación. Contribuye tus observaciones."
       }
     },
-    "bounties": {
-      "title": "Aún no hay recompensas",
-      "description": "Ningún miembro de la comunidad ha publicado recompensas todavía. Vuelve pronto.",
+    "campaigns": {
+      "title": "Aún no hay campañas",
+      "description": "No se han creado campañas de verificación todavía. Vuelve pronto.",
       "filtered": {
-        "title": "No hay recompensas coincidentes",
-        "description": "Intenta ajustar tus filtros para encontrar recompensas."
+        "title": "No hay campañas coincidentes",
+        "description": "Intenta ajustar tus filtros para encontrar campañas."
       }
     },
     "chains": {

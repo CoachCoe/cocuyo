@@ -59,81 +59,61 @@ export function ProfileView({
   if (!isConnected) {
     return (
       <div className="py-16">
-        <EmptyState
-          title={t.signInRequired}
-          description={t.signInDescription}
-        />
+        <EmptyState title={t.signInRequired} description={t.signInDescription} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       {/* User identifier (anonymous) */}
       <div className="text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-[var(--bg-surface-nested)] border border-[var(--border-default)]">
+        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border-default)] bg-[var(--bg-surface-nested)]">
           <span className="text-2xl font-medium text-[var(--fg-primary)]">
             {selectedAccount?.address.slice(0, 2).toUpperCase() ?? 'FF'}
           </span>
         </div>
-        <p className="text-sm text-[var(--fg-tertiary)] font-mono">
+        <p className="font-mono text-sm text-[var(--fg-tertiary)]">
           {selectedAccount?.address.slice(0, 8)}...{selectedAccount?.address.slice(-6)}
         </p>
       </div>
 
       {/* Overall reputation score */}
-      <div className="bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container p-6 text-center">
-        <h2 className="text-sm font-medium text-[var(--fg-secondary)] mb-2">
-          {t.overallScore}
-        </h2>
-        <div className="text-4xl font-display font-bold text-[var(--fg-primary)]">
+      <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6 text-center">
+        <h2 className="mb-2 text-sm font-medium text-[var(--fg-secondary)]">{t.overallScore}</h2>
+        <div className="font-display text-4xl font-bold text-[var(--fg-primary)]">
           {mockReputation.overall}
         </div>
-        <div className="text-xs text-[var(--fg-tertiary)] mt-1">
-          / 100
-        </div>
+        <div className="mt-1 text-xs text-[var(--fg-tertiary)]">/ 100</div>
       </div>
 
       {/* Topic reputation radar */}
-      <div className="bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container p-6">
-        <h2 className="text-lg font-medium text-[var(--fg-primary)] mb-4">
-          {t.topicScores}
-        </h2>
-        <ReputationRadar
-          scores={mockReputation.topics}
-          topicTranslations={topicTranslations}
-        />
+      <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6">
+        <h2 className="mb-4 text-lg font-medium text-[var(--fg-primary)]">{t.topicScores}</h2>
+        <ReputationRadar scores={mockReputation.topics} topicTranslations={topicTranslations} />
       </div>
 
       {/* Contribution stats */}
-      <div className="bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container p-6">
-        <h2 className="text-lg font-medium text-[var(--fg-primary)] mb-4">
-          {t.contributions}
-        </h2>
+      <div className="rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-6">
+        <h2 className="mb-4 text-lg font-medium text-[var(--fg-primary)]">{t.contributions}</h2>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-2xl font-semibold text-[var(--fg-primary)]">
               {mockReputation.contributions.posts}
             </div>
-            <div className="text-sm text-[var(--fg-secondary)]">
-              {t.posts}
-            </div>
+            <div className="text-sm text-[var(--fg-secondary)]">{t.posts}</div>
           </div>
           <div>
             <div className="text-2xl font-semibold text-[var(--fg-success)]">
               {mockReputation.contributions.corroborations}
             </div>
-            <div className="text-sm text-[var(--fg-secondary)]">
-              {t.corroborations}
-            </div>
+            <div className="text-sm text-[var(--fg-secondary)]">{t.corroborations}</div>
           </div>
           <div>
             <div className="text-2xl font-semibold text-[var(--fg-warning)]">
               {mockReputation.contributions.challenges}
             </div>
-            <div className="text-sm text-[var(--fg-secondary)]">
-              {t.challenges}
-            </div>
+            <div className="text-sm text-[var(--fg-secondary)]">{t.challenges}</div>
           </div>
         </div>
       </div>

@@ -8,6 +8,6 @@
 
 export { useSignalService } from './useSignalService';
 export { useChainService } from './useChainService';
-export { useBountyService } from './useBountyService';
+export { useCampaignService } from './useCampaignService';
 export { useClaimService } from './useClaimService';
 export { useCorroborationService } from './useCorroborationService';

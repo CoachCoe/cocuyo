@@ -4,22 +4,23 @@
  * ClaimSection — Display claims extracted from a post in the TrustDrawer.
  *
  * Shows existing claims and provides a button to open the ExtractClaimSheet
- * for adding new claims.
+ * for adding new claims. Also displays bounty status to show the fact-checking
+ * pipeline: Awaiting → Bounty Funded → Under Review → Verdict Issued.
  */
 
 import type { ReactElement } from 'react';
-import type { Claim, Verdict, PostId } from '@cocuyo/types';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
+import type { Claim, PostId, Campaign } from '@cocuyo/types';
+import { formatPUSDCompact, createPUSDAmount } from '@cocuyo/types';
 import { useExtractClaim } from '@/components/ExtractClaimSheet';
+import { useCreateBounty } from '@/components/CreateBountySheet';
+import { useAppState } from '@/components/AppStateProvider';
 
 interface ClaimSectionProps {
   claims: Claim[];
-  /** Verdicts for the claims (currently displayed inline via claim.verdict) */
-  verdicts: Verdict[];
   postId: PostId;
 }
-
-// Note: verdicts prop is kept for future use when we want to show verdicts
-// from multiple sources. Currently we display claim.verdict inline.
 
 /** Map claim status to display info */
 const STATUS_DISPLAY: Record<Claim['status'], { label: string; color: string }> = {
@@ -31,17 +32,51 @@ const STATUS_DISPLAY: Record<Claim['status'], { label: string; color: string }> 
   unverifiable: { label: 'Unverifiable', color: 'var(--fg-tertiary)' },
 };
 
-export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSectionProps): ReactElement {
+/** Get bounty status display for a claim */
+function getBountyStatus(campaigns: Campaign[]): {
+  label: string;
+  amount: string | null;
+  hasCollective: boolean;
+} | null {
+  if (campaigns.length === 0) return null;
+
+  // Find active campaigns
+  const activeCampaigns = campaigns.filter((c) => c.status === 'active');
+  if (activeCampaigns.length === 0) return null;
+
+  // Sum total funding - need to convert to raw bigint for summing, then back to PUSDAmount
+  const totalFundingRaw = activeCampaigns.reduce((sum, c) => sum + BigInt(c.fundingAmount), 0n);
+  const totalFunding = createPUSDAmount(totalFundingRaw);
+
+  // Check if any campaign is assigned to a collective
+  const hasCollective = activeCampaigns.some((c) => c.assignedCollectiveId !== undefined);
+
+  return {
+    label: hasCollective ? 'Under collective review' : 'Bounty funded',
+    amount: formatPUSDCompact(totalFunding),
+    hasCollective,
+  };
+}
+
+export function ClaimSection({ claims, postId }: ClaimSectionProps): ReactElement {
+  const router = useRouter();
+  const locale = useLocale();
   const { openSheet } = useExtractClaim();
+  const { openSheet: openBountySheet } = useCreateBounty();
+  const { getClaimCampaigns } = useAppState();
 
   const handleExtractClaim = (): void => {
     openSheet(postId);
   };
 
+  const handleFactCheck = (claimId: string): void => {
+    router.push(`/${locale}/claim/${claimId}`);
+  };
+
   return (
     <section>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-primary flex items-center gap-2">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-primary">
           <span>Claims ({claims.length})</span>
         </h3>
         <button
@@ -59,35 +94,81 @@ export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSecti
           {claims.map((claim) => {
             const status = STATUS_DISPLAY[claim.status];
             const verdict = claim.verdict;
+            const claimCampaigns = getClaimCampaigns(claim.id);
+            const bountyStatus = getBountyStatus(claimCampaigns);
 
             return (
               <div
                 key={claim.id}
-                className="p-4 rounded-nested bg-surface-container border border-subtle"
+                className="rounded-nested border border-subtle bg-surface-container p-4"
               >
-                <p className="text-sm text-primary mb-2">{claim.statement}</p>
+                <p className="mb-2 text-sm text-primary">{claim.statement}</p>
 
-                <div className="flex items-center gap-2">
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
-                    style={{
-                      backgroundColor: `color-mix(in srgb, ${status.color} 15%, transparent)`,
-                      color: status.color,
-                    }}
-                  >
-                    {status.label}
-                  </span>
-                  {claim.evidence.length > 0 && (
+                {/* Status row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="rounded-full px-2 py-0.5 text-xs font-medium"
+                      style={{
+                        backgroundColor: `color-mix(in srgb, ${status.color} 15%, transparent)`,
+                        color: status.color,
+                      }}
+                    >
+                      {status.label}
+                    </span>
+                    {claim.evidence.length > 0 && (
+                      <span className="text-xs text-tertiary">
+                        {claim.evidence.length} evidence
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleFactCheck(claim.id)}
+                      className="text-xs text-[var(--color-firefly-gold)] hover:underline"
+                    >
+                      Fact Check
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openBountySheet(claim.id)}
+                      className="text-xs text-[var(--fg-accent)] hover:underline"
+                    >
+                      Fund Bounty
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bounty/Fact-check status */}
+                <div className="mt-3 flex items-center gap-2 border-t border-subtle pt-3">
+                  {bountyStatus !== null ? (
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${
+                        bountyStatus.hasCollective
+                          ? 'bg-[var(--fg-accent)]/15 text-[var(--fg-accent)]'
+                          : 'bg-[var(--fg-success)]/15 text-[var(--fg-success)]'
+                      }`}
+                    >
+                      <span aria-hidden="true">
+                        {bountyStatus.hasCollective ? '\u2713' : '\u25C9'}
+                      </span>
+                      {bountyStatus.label}
+                      {bountyStatus.amount !== null && !bountyStatus.hasCollective && (
+                        <span className="font-semibold">({bountyStatus.amount})</span>
+                      )}
+                    </span>
+                  ) : (
                     <span className="text-xs text-tertiary">
-                      {claim.evidence.length} evidence
+                      Awaiting fact-check — fund a bounty to prioritize
                     </span>
                   )}
                 </div>
 
                 {/* Verdict reasoning */}
                 {verdict !== undefined && (
-                  <div className="mt-3 pt-3 border-t border-subtle">
-                    <p className="text-xs text-tertiary mb-1">Verdict reasoning:</p>
+                  <div className="mt-3 border-t border-subtle pt-3">
+                    <p className="mb-1 text-xs text-tertiary">Verdict reasoning:</p>
                     <p className="text-sm text-secondary">{verdict.reasoning}</p>
                   </div>
                 )}
@@ -96,9 +177,13 @@ export function ClaimSection({ claims, verdicts: _verdicts, postId }: ClaimSecti
           })}
         </div>
       ) : (
-        <p className="text-sm text-tertiary">
-          No claims extracted yet. Extract a claim to enable fact-checking.
-        </p>
+        <div className="bg-surface-container/50 rounded-nested border border-dashed border-subtle p-4">
+          <p className="mb-2 text-sm text-secondary">No claims extracted yet</p>
+          <p className="text-xs text-tertiary">
+            Extract specific, verifiable statements from this post to enable fact-checking by
+            collectives. Fund a bounty to prioritize verification.
+          </p>
+        </div>
       )}
     </section>
   );

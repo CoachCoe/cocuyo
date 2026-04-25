@@ -1,6 +1,6 @@
 ---
 name: monorepo
-description: "Implement pnpm workspace and Turborepo patterns. Triggers: monorepo, workspace, turborepo, package, pnpm, filter, dependency"
+description: 'Implement pnpm workspace and Turborepo patterns. Triggers: monorepo, workspace, turborepo, package, pnpm, filter, dependency'
 ---
 
 # Monorepo Skill — pnpm + Turborepo
@@ -17,13 +17,13 @@ description: "Implement pnpm workspace and Turborepo patterns. Triggers: monorep
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| pnpm workspaces only | No npm/yarn | MANDATORY |
-| Turborepo for builds | Cacheable, parallel | MANDATORY |
-| Shared code in packages/ | Not duplicated | MANDATORY |
-| App code in apps/ | Not imported by packages | MANDATORY |
-| @cocuyo/* imports | Never relative across packages | MANDATORY |
+| Rule                     | Enforcement                    | Status    |
+| ------------------------ | ------------------------------ | --------- |
+| pnpm workspaces only     | No npm/yarn                    | MANDATORY |
+| Turborepo for builds     | Cacheable, parallel            | MANDATORY |
+| Shared code in packages/ | Not duplicated                 | MANDATORY |
+| App code in apps/        | Not imported by packages       | MANDATORY |
+| @cocuyo/\* imports       | Never relative across packages | MANDATORY |
 
 ---
 
@@ -65,11 +65,11 @@ packages:
 
 ### Package Naming
 
-| Package | Name | Location |
-|---------|------|----------|
-| Types | `@cocuyo/types` | `packages/types` |
-| UI | `@cocuyo/ui` | `packages/ui` |
-| Web | `@cocuyo/web` | `apps/web` |
+| Package | Name            | Location         |
+| ------- | --------------- | ---------------- |
+| Types   | `@cocuyo/types` | `packages/types` |
+| UI      | `@cocuyo/ui`    | `packages/ui`    |
+| Web     | `@cocuyo/web`   | `apps/web`       |
 
 ---
 
@@ -143,6 +143,7 @@ pnpm --filter ./packages/* build
 ### Cross-Package Imports
 
 ✅ CORRECT:
+
 ```typescript
 // apps/web/src/components/SignalCard.tsx
 import { Signal, SignalId } from '@cocuyo/types';
@@ -150,6 +151,7 @@ import { Button, Card } from '@cocuyo/ui';
 ```
 
 ❌ FAIL:
+
 ```typescript
 // WRONG: Relative paths across packages
 import { Signal } from '../../../packages/types/src/signal';
@@ -157,12 +159,13 @@ import { Button } from '../../packages/ui/src/components/Button';
 
 // WRONG: Importing app code into package
 // packages/ui/src/components/Header.tsx
-import { useWallet } from '@cocuyo/web/hooks';  // FORBIDDEN
+import { useWallet } from '@cocuyo/web/hooks'; // FORBIDDEN
 ```
 
 ### Adding Dependencies
 
 ✅ CORRECT:
+
 ```bash
 # Add to specific package
 pnpm --filter @cocuyo/web add react-query
@@ -175,6 +178,7 @@ pnpm --filter @cocuyo/ui add @cocuyo/types --workspace
 ```
 
 ❌ FAIL:
+
 ```bash
 # WRONG: Adding to wrong scope
 cd apps/web && pnpm add react-query  # Use --filter instead
@@ -186,6 +190,7 @@ pnpm add react  # Should be in specific package
 ### Package.json Setup
 
 ✅ CORRECT:
+
 ```json
 // packages/types/package.json
 {
@@ -202,6 +207,7 @@ pnpm add react  # Should be in specific package
 ```
 
 ❌ FAIL:
+
 ```json
 // WRONG: Missing types field
 {
@@ -293,6 +299,7 @@ pnpm install
 ### Shared Dev Dependencies
 
 Put in root package.json:
+
 - TypeScript
 - ESLint
 - Prettier
@@ -301,6 +308,7 @@ Put in root package.json:
 ### Package-Specific Dependencies
 
 Put in package's package.json:
+
 - Runtime dependencies
 - Package-specific dev tools
 
@@ -329,11 +337,11 @@ Put in package's package.json:
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| Relative cross-package imports | FORBIDDEN | Breaks build |
-| cd into package + pnpm add | FORBIDDEN | Use --filter |
-| Import app code into package | FORBIDDEN | Circular dependency |
-| Skip build before typecheck | FORBIDDEN | Types not generated |
-| Duplicate dependencies | FORBIDDEN | Use workspace protocol |
-| Non-private workspace packages | FORBIDDEN | Not publishing |
+| Pattern                        | Status    | Reason                 |
+| ------------------------------ | --------- | ---------------------- |
+| Relative cross-package imports | FORBIDDEN | Breaks build           |
+| cd into package + pnpm add     | FORBIDDEN | Use --filter           |
+| Import app code into package   | FORBIDDEN | Circular dependency    |
+| Skip build before typecheck    | FORBIDDEN | Types not generated    |
+| Duplicate dependencies         | FORBIDDEN | Use workspace protocol |
+| Non-private workspace packages | FORBIDDEN | Not publishing         |

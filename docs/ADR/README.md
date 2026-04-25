@@ -35,10 +35,10 @@ Each ADR follows this structure:
 
 ## Index
 
-| ADR | Title | Status |
-|-----|-------|--------|
-| [000](./000-template.md) | Template | — |
-| [001](./001-pusd-integration.md) | pUSD Stablecoin Integration | Proposed |
+| ADR                                 | Title                                  | Status   |
+| ----------------------------------- | -------------------------------------- | -------- |
+| [000](./000-template.md)            | Template                               | —        |
+| [001](./001-pusd-integration.md)    | pUSD Stablecoin Integration            | Proposed |
 | [002](./002-coinage-integration.md) | Coinage (Private Payments) Integration | Proposed |
 
 ## References

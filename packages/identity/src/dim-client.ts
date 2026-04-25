@@ -26,12 +26,12 @@ export interface DIMCredentialInfo {
  * Status of DIM verification.
  */
 export type DIMStatus =
-  | 'unknown'      // Haven't checked yet
-  | 'checking'     // Checking credential status
-  | 'unverified'   // No valid credential
-  | 'verified'     // Has valid credential
-  | 'expired'      // Credential has expired
-  | 'error';       // Error during verification
+  | 'unknown' // Haven't checked yet
+  | 'checking' // Checking credential status
+  | 'unverified' // No valid credential
+  | 'verified' // Has valid credential
+  | 'expired' // Credential has expired
+  | 'error'; // Error during verification
 
 /**
  * DIM client for credential management.
@@ -58,7 +58,8 @@ export interface DIMClient {
 }
 
 // Paseo Asset Hub genesis hash for DIM
-const PASEO_ASSET_HUB_GENESIS = '0x862c83e6860dd53eb70de3a93e8e7bbab6bef3dc8fbf9a3e8c532f6e364fd7f2';
+const PASEO_ASSET_HUB_GENESIS =
+  '0x862c83e6860dd53eb70de3a93e8e7bbab6bef3dc8fbf9a3e8c532f6e364fd7f2';
 
 /**
  * Create a DIM client.
@@ -66,15 +67,12 @@ const PASEO_ASSET_HUB_GENESIS = '0x862c83e6860dd53eb70de3a93e8e7bbab6bef3dc8fbf9
  * In Triangle host, this uses the chain provider.
  * In standalone mode, this returns a mock client.
  */
-export async function createDIMClient(
-  options?: {
-    /** For testing: provide a mock credential */
-    mockCredential?: DIMCredentialInfo;
-  }
-): Promise<DIMClient> {
+export async function createDIMClient(options?: {
+  /** For testing: provide a mock credential */
+  mockCredential?: DIMCredentialInfo;
+}): Promise<DIMClient> {
   // Check if we're in Triangle host
-  const isInHost = typeof window !== 'undefined' &&
-    window.self !== window.top;
+  const isInHost = typeof window !== 'undefined' && window.self !== window.top;
 
   if (!isInHost || options?.mockCredential) {
     // Return mock client for development/testing
@@ -88,9 +86,7 @@ export async function createDIMClient(
 /**
  * Mock DIM client for development.
  */
-function createMockDIMClient(
-  mockCredential?: DIMCredentialInfo
-): DIMClient {
+function createMockDIMClient(mockCredential?: DIMCredentialInfo): DIMClient {
   let credential = mockCredential ?? null;
 
   return {
@@ -195,12 +191,28 @@ async function createProductionDIMClient(): Promise<DIMClient> {
 export function generatePseudonym(credential: DIMCredential): string {
   // Use adjective + noun pattern
   const adjectives = [
-    'Bright', 'Swift', 'Quiet', 'Bold', 'Keen',
-    'Wise', 'True', 'Clear', 'Deep', 'Free',
+    'Bright',
+    'Swift',
+    'Quiet',
+    'Bold',
+    'Keen',
+    'Wise',
+    'True',
+    'Clear',
+    'Deep',
+    'Free',
   ];
   const nouns = [
-    'Firefly', 'Beacon', 'Signal', 'Light', 'Spark',
-    'Voice', 'Witness', 'Seeker', 'Watcher', 'Guide',
+    'Firefly',
+    'Beacon',
+    'Signal',
+    'Light',
+    'Spark',
+    'Voice',
+    'Witness',
+    'Seeker',
+    'Watcher',
+    'Guide',
   ];
 
   // Deterministic selection based on credential

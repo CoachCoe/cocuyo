@@ -70,7 +70,7 @@ Follow the coding standards outlined in [CLAUDE.md](../CLAUDE.md):
 - **TypeScript strict mode** — No `any`, no type assertions without justification
 - **Explicit return types** — All exported functions must have typed returns
 - **Co-located tests** — Tests live alongside the code they test
-- **Minimal comments** — Code should be self-documenting; comment *why*, not *what*
+- **Minimal comments** — Code should be self-documenting; comment _why_, not _what_
 
 ### 3. Test Your Changes
 
@@ -182,16 +182,24 @@ export function Button({ variant = 'primary', children }: ButtonProps): ReactEle
 ```typescript
 describe('SignalCard', () => {
   describe('rendering', () => {
-    it('renders signal content', () => { /* ... */ });
-    it('renders author pseudonym', () => { /* ... */ });
+    it('renders signal content', () => {
+      /* ... */
+    });
+    it('renders author pseudonym', () => {
+      /* ... */
+    });
   });
 
   describe('interactions', () => {
-    it('calls onClick when clicked', () => { /* ... */ });
+    it('calls onClick when clicked', () => {
+      /* ... */
+    });
   });
 
   describe('accessibility', () => {
-    it('has proper ARIA labels', () => { /* ... */ });
+    it('has proper ARIA labels', () => {
+      /* ... */
+    });
   });
 });
 ```
@@ -225,15 +233,19 @@ For significant architectural decisions, create an ADR in `docs/ADR/`:
 # ADR-NNN: Title
 
 ## Status
+
 Proposed | Accepted | Deprecated | Superseded
 
 ## Context
+
 What is the issue that we're seeing that is motivating this decision?
 
 ## Decision
+
 What is the change that we're proposing?
 
 ## Consequences
+
 What becomes easier or more difficult as a result?
 ```
 
@@ -261,4 +273,4 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-*Thank you for helping illuminate the darkness.*
+_Thank you for helping illuminate the darkness._

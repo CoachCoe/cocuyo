@@ -17,14 +17,14 @@ export type PaymentMode = 'public' | 'private';
  * Use cases that determine default payment mode.
  */
 export type PaymentUseCase =
-  | 'bounty_payout'      // Paying journalist for bounty fulfillment
-  | 'journalist_salary'  // Regular salary payment to journalist
-  | 'contribution'       // Diaspora/supporter contribution to treasury
-  | 'membership'         // Membership fee payment
-  | 'settlement'         // Inter-outlet payment
-  | 'source_payment'     // Payment to confidential source
-  | 'expense'            // Expense reimbursement
-  | 'offboard'           // Converting to public pUSD for withdrawal
+  | 'bounty_payout' // Paying journalist for bounty fulfillment
+  | 'journalist_salary' // Regular salary payment to journalist
+  | 'contribution' // Diaspora/supporter contribution to treasury
+  | 'membership' // Membership fee payment
+  | 'settlement' // Inter-outlet payment
+  | 'source_payment' // Payment to confidential source
+  | 'expense' // Expense reimbursement
+  | 'offboard' // Converting to public pUSD for withdrawal
   | 'treasury_allocation'; // Treasury paying out to outlets
 
 /**
@@ -48,15 +48,15 @@ export interface PaymentModeContext {
  * Sensitive cases default to private for journalist protection.
  */
 export const DEFAULT_MODES: Record<PaymentUseCase, PaymentMode> = {
-  bounty_payout: 'private',       // Protect journalist identity
-  journalist_salary: 'private',   // Protect employment relationship
-  contribution: 'private',        // Protect contributor identity
-  source_payment: 'private',      // Critical: protect source
-  expense: 'private',             // Protect journalist activities
-  membership: 'public',           // Low sensitivity, needs compliance
-  settlement: 'public',           // Inter-organization, needs audit trail
-  offboard: 'public',             // Required for withdrawal
-  treasury_allocation: 'public',  // Governance transparency
+  bounty_payout: 'private', // Protect journalist identity
+  journalist_salary: 'private', // Protect employment relationship
+  contribution: 'private', // Protect contributor identity
+  source_payment: 'private', // Critical: protect source
+  expense: 'private', // Protect journalist activities
+  membership: 'public', // Low sensitivity, needs compliance
+  settlement: 'public', // Inter-organization, needs audit trail
+  offboard: 'public', // Required for withdrawal
+  treasury_allocation: 'public', // Governance transparency
 };
 
 /**
@@ -72,9 +72,7 @@ export const HIGH_SENSITIVITY_CASES: readonly PaymentUseCase[] = [
 /**
  * Use cases where public mode is required (cannot use private).
  */
-export const PUBLIC_REQUIRED_CASES: readonly PaymentUseCase[] = [
-  'offboard',
-];
+export const PUBLIC_REQUIRED_CASES: readonly PaymentUseCase[] = ['offboard'];
 
 /**
  * Select the appropriate payment mode based on context.

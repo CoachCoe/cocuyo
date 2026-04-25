@@ -13,6 +13,7 @@ The current UX exposes multiple object types (Signal, Post, Claim) to users, cre
 Implement the "single conscious creation" design principle: users only create **Posts**. All other objects (Claims, Evidence, Verdicts) emerge from gestures users already understand.
 
 ### User-Visible Vocabulary
+
 - **Post** - what users create
 - **Corroborate** - supporting evidence gesture
 - **Dispute** - challenging evidence gesture
@@ -21,6 +22,7 @@ Implement the "single conscious creation" design principle: users only create **
 - **Verdict** - collective determination
 
 ### Hidden from Primary UI
+
 - **Signal** - internal/legacy term, replaced by Post
 - **Claim** - internal term, only visible in Trust Drawer
 
@@ -35,6 +37,7 @@ Implement the "single conscious creation" design principle: users only create **
 The current `Signal` type becomes what users call "Post." The current `Post` type is retired.
 
 **Changes to `signal.ts` → merge into `post.ts`:**
+
 - Rename `Signal` → `Post`
 - Rename `SignalId` → `PostId` (use existing PostId brand)
 - Rename `NewSignal` → `NewPost`
@@ -42,6 +45,7 @@ The current `Signal` type becomes what users call "Post." The current `Post` typ
 - Rename all related types: `SignalContent` → `PostContent`, `SignalContext` → `PostContext`, etc.
 
 **Changes to `brands.ts`:**
+
 - Remove `SignalId` (use existing `PostId`)
 - Remove `createSignalId` (use existing `createPostId`)
 - Add `VerdictId` brand type
@@ -57,18 +61,18 @@ The current `Signal` type becomes what users call "Post." The current `Post` typ
 ```typescript
 /** Evidence type for submissions via Corroborate/Dispute */
 export type EvidenceType =
-  | 'source_link'    // URL input
-  | 'document'       // File upload (placeholder)
-  | 'photo'          // Image upload (placeholder)
-  | 'observation';   // Free text firsthand account
+  | 'source_link' // URL input
+  | 'document' // File upload (placeholder)
+  | 'photo' // Image upload (placeholder)
+  | 'observation'; // Free text firsthand account
 
 export interface Corroboration {
   // ... existing fields ...
-  readonly postId: PostId;  // renamed from signalId
+  readonly postId: PostId; // renamed from signalId
 
   // NEW evidence fields (nullable - only present when evidence submitted)
   readonly evidenceType?: EvidenceType;
-  readonly evidenceContent?: string;     // URL, file ref, or text
+  readonly evidenceContent?: string; // URL, file ref, or text
   readonly evidenceDescription?: string; // "What does this show?"
 }
 ```
@@ -76,10 +80,12 @@ export interface Corroboration {
 ### 1.3 Update Bounty and Claim Types
 
 **Changes to `bounty.ts`:**
+
 - Rename `contributingSignals` → `contributingPostIds`
 - Update `BountyContribution.signalId` → `postId`
 
 **Changes to `claim.ts`:**
+
 - Keep `ClaimEvidence` but update `signalId` → `postId` (evidence references the Post it came from)
 - Claim stays internal — UI never shows "Claim" word
 
@@ -92,12 +98,7 @@ export interface Corroboration {
 export type VerdictId = string & { readonly __brand: 'VerdictId' };
 
 /** Verdict status (user-visible) */
-export type VerdictStatus =
-  | 'confirmed'
-  | 'disputed'
-  | 'false'
-  | 'synthetic'
-  | 'inconclusive';
+export type VerdictStatus = 'confirmed' | 'disputed' | 'false' | 'synthetic' | 'inconclusive';
 
 export interface Verdict {
   readonly id: VerdictId;
@@ -132,7 +133,7 @@ interface AppState {
   // User state
   currentUser: {
     isConnected: boolean;
-    isOutletAccount: boolean;  // flag for bounty creation permission
+    isOutletAccount: boolean; // flag for bounty creation permission
     credentialHash: DIMCredential | null;
     pseudonym: string | null;
     createdPostIds: PostId[];
@@ -150,13 +151,17 @@ interface AppState {
 
 interface AppStateActions {
   createPost: (input: NewPost) => Post;
-  submitCorroboration: (postId: PostId, type: 'corroborate' | 'dispute', evidence: EvidenceInput) => Corroboration;
+  submitCorroboration: (
+    postId: PostId,
+    type: 'corroborate' | 'dispute',
+    evidence: EvidenceInput
+  ) => Corroboration;
   extractClaim: (postId: PostId, statement: string) => Claim;
   createBounty: (postId: PostId, input: NewBountyInput) => Bounty;
   issueVerdict: (claimId: ClaimId, verdict: VerdictInput) => Verdict;
   createStory: (title: string, description: string, firstPostId: PostId) => StoryChain;
   addPostToStory: (chainId: ChainId, postId: PostId) => void;
-  toggleOutletMode: () => void;  // for demo purposes
+  toggleOutletMode: () => void; // for demo purposes
 }
 ```
 
@@ -174,6 +179,7 @@ interface AppStateActions {
 Replace current PostCard and SignalCard with unified component supporting all states.
 
 **States to support:**
+
 1. Default (no bounty, no verdict)
 2. Bounty attached, no verdict
 3. Verdict issued
@@ -198,6 +204,7 @@ interface PostCardProps {
 ```
 
 **Visual elements:**
+
 - Author row: avatar + pseudonym + firefly verification indicator
 - Title (if present, Unbounded font, larger)
 - Body text
@@ -214,6 +221,7 @@ Bottom sheet for evidence submission. Opens on Corroborate/Dispute tap.
 **File: `CorroborateDisputeSheet/CorroborateDisputeSheet.tsx`**
 
 **Props:**
+
 ```typescript
 interface CorroborateDisputeSheetProps {
   isOpen: boolean;
@@ -232,6 +240,7 @@ interface EvidenceInput {
 ```
 
 **UI Structure:**
+
 - Header: "Add your evidence" (or "This post is under funded investigation..." if bounty)
 - Evidence type selector: radio buttons for source_link / document / photo / observation
 - Input area: URL input, file upload placeholder, or textarea based on type
@@ -245,6 +254,7 @@ Responsive: bottom sheet on mobile, side drawer on desktop.
 **File: `TrustDrawer/TrustDrawer.tsx`**
 
 **Props:**
+
 ```typescript
 interface TrustDrawerProps {
   isOpen: boolean;
@@ -258,6 +268,7 @@ interface TrustDrawerProps {
 ```
 
 **Sections:**
+
 1. **Claims section**: extracted claim statements, status badges
 2. **Evidence section**: corroborations grouped by type (corroborating/challenging)
 3. **Verdict section**: if exists, show prominently with rationale
@@ -270,6 +281,7 @@ For creating new stories or adding to existing ones.
 **File: `AddToStorySheet/AddToStorySheet.tsx`**
 
 **Two modes:**
+
 - "Start new story": title + description form
 - "Add to existing story": searchable list of user's stories
 
@@ -278,6 +290,7 @@ For creating new stories or adding to existing ones.
 Updated bounty creation flow (outlet/collective only).
 
 **Fields:**
+
 - Title
 - Description
 - Target Post (pre-filled if opened from a Post)
@@ -292,6 +305,7 @@ User-initiated claim extraction from Trust Drawer.
 **File: `ExtractClaimSheet/ExtractClaimSheet.tsx`**
 
 **Fields:**
+
 - Claim statement textarea
 - Submit button
 
@@ -300,6 +314,7 @@ User-initiated claim extraction from Trust Drawer.
 Distinct from VerificationBadge. Shows verdict status with gold accent.
 
 **Statuses with colors:**
+
 - Confirmed: gold background
 - Disputed: amber/warning
 - False: red
@@ -316,16 +331,18 @@ Allows demoing bounty creation without wallet switching.
 
 ### 3.9 IssueVerdictSheet Component
 
-Accessible from TrustDrawer when currentUser.isOutletAccount is true 
+Accessible from TrustDrawer when currentUser.isOutletAccount is true
 and a Claim exists with no current Verdict.
 
 Fields:
+
 - Claim statement (read-only, showing which claim is being adjudicated)
 - Verdict status selector: Confirmed / Disputed / False / Synthetic / Inconclusive
 - Rationale (textarea, required)
 - Submit button: "Issue Verdict"
 
 On submit:
+
 - Verdict is created in AppState
 - Trust drawer updates to show Verdict section
 - Post card updates to show Verdict badge
@@ -340,6 +357,7 @@ On submit:
 **File: `apps/web/src/app/[locale]/signal/[id]/page.tsx`**
 
 Convert to redirect:
+
 ```typescript
 import { redirect } from 'next/navigation';
 
@@ -373,6 +391,7 @@ export default function SignalRedirect({ params }) {
 ### 5.1 Translation Files
 
 Update all translation files to:
+
 - Remove "Signal" terminology in user-facing strings
 - Remove "Claim" from primary UI (keep for trust drawer labels)
 - Use "Post", "Corroborate", "Dispute", "Story", "Bounty", "Verdict"
@@ -401,6 +420,7 @@ Update all translation files to:
 ### 6.2 Demo Flow Testing
 
 Verify these user journeys work:
+
 1. **Casual reader**: Open feed → see empty state → create Post → see it in feed
 2. **Contributor**: Open Post → tap Corroborate → submit evidence → see count update
 3. **Story curator**: Create Post → Add to Story → create new Story → view Story page
@@ -409,10 +429,11 @@ Verify these user journeys work:
 
 ---
 
-### 7.0 Cleanup 
+### 7.0 Cleanup
 
 ## Critical Clarifications
-1. **remove any unneccessary md files 
+
+1. \*\*remove any unneccessary md files
 
 ### Post-Bounty Relationship
 
@@ -420,8 +441,8 @@ Bounties can have multiple contributing posts. Posts can contribute to multiple 
 
 ```typescript
 // In AppState
-postBounties: Map<PostId, BountyId[]>;  // Posts contributing to which bounties
-bountyPosts: Map<BountyId, PostId[]>;   // Bounty's contributing posts
+postBounties: Map<PostId, BountyId[]>; // Posts contributing to which bounties
+bountyPosts: Map<BountyId, PostId[]>; // Bounty's contributing posts
 
 // The "bounty badge" on a PostCard shows the PRIMARY bounty (first attached)
 // Trust drawer shows all bounties a post contributes to
@@ -432,6 +453,7 @@ bountyPosts: Map<BountyId, PostId[]>;   // Bounty's contributing posts
 **Clean break** (not aliasing). Update all references from `SignalId` to `PostId` in one pass. The codebase is small enough and all in TypeScript — the compiler will catch missed references.
 
 Affected locations:
+
 - `Corroboration.signalId` → `postId`
 - `NewCorroboration.signalId` → `postId`
 - `ClaimEvidence.signalId` → `postId`
@@ -460,6 +482,7 @@ For the demo, claims are **user-initiated** (not auto-extracted). Any user can e
 ### User Content Tracking
 
 Add to AppState:
+
 ```typescript
 currentUser: {
   // ... existing fields ...
@@ -474,6 +497,7 @@ currentUser: {
 ## File Checklist
 
 ### Types (packages/types/src/)
+
 - [ ] Merge `signal.ts` content into `post.ts`
 - [ ] Update `brands.ts` (add VerdictId, remove SignalId)
 - [ ] Update `corroboration.ts` (add evidence fields, rename signalId → postId)
@@ -486,12 +510,14 @@ currentUser: {
 - [ ] Delete old `signal.ts`
 
 ### Components (packages/ui/src/components/)
+
 - [ ] Create new `PostCard/` (replaces SignalCard and old PostCard)
 - [ ] Delete old `SignalCard/`
 - [ ] Delete old `PostCard/`
 - [ ] Update `VerificationBadge/` for verdict statuses
 
 ### App Components (apps/web/src/components/)
+
 - [ ] Create `AppStateProvider.tsx`
 - [ ] Create `CorroborateDisputeSheet/`
 - [ ] Create `TrustDrawer/`
@@ -504,6 +530,7 @@ currentUser: {
 - [ ] Create `OutletModeToggle.tsx` (for demo)
 
 ### Routes (apps/web/src/app/[locale]/)
+
 - [ ] Update `explore/` page and components
 - [ ] Update `post/[id]/` page
 - [ ] Convert `signal/[id]/` to redirect
@@ -511,9 +538,11 @@ currentUser: {
 - [ ] Update `bounties/` and `bounty/[id]/`
 
 ### Services (apps/web/src/lib/services/)
+
 - [ ] Update or bypass to use AppStateProvider
 
 ### Translations (apps/web/messages/)
+
 - [ ] Update en.json
 - [ ] Update es.json
 
@@ -537,16 +566,19 @@ After implementation, verify:
 ## Consequences
 
 ### Positive
+
 - Simpler mental model for users (create Posts, not Signals/Posts/Claims)
 - Reduced cognitive load in primary UI
 - More intuitive evidence submission flow
 - Cleaner vocabulary alignment with user expectations
 
 ### Negative
+
 - Significant refactoring effort across types, components, and routes
 - Need to update all translations
 - Existing mock data and tests need updating
 
 ### Neutral
+
 - Claims remain as internal concept for verification workflow
 - Bounties attach to Posts rather than being standalone entities in feed

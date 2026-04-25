@@ -13,11 +13,11 @@
 
 import {
   createChainId,
-  createBountyId,
+  createCampaignId,
   createPostId,
   createClaimId,
   type ChainId,
-  type BountyId,
+  type CampaignId,
   type PostId,
   type ClaimId,
 } from '@cocuyo/types';
@@ -34,14 +34,14 @@ export function validateChainId(id: unknown): ChainId | null {
 }
 
 /**
- * Guard and brand a route parameter as BountyId.
+ * Guard and brand a route parameter as CampaignId.
  * Returns null for empty/non-string inputs. Service layer validates existence.
  */
-export function validateBountyId(id: unknown): BountyId | null {
+export function validateCampaignId(id: unknown): CampaignId | null {
   if (typeof id !== 'string' || id.length === 0) {
     return null;
   }
-  return createBountyId(id);
+  return createCampaignId(id);
 }
 
 /**

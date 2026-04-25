@@ -35,12 +35,10 @@ export default async function ProfilePage({ params }: ProfilePageProps): Promise
       {/* Header */}
       <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-primary)]">
         <div className="container-wide py-8">
-          <h1 className="text-2xl font-display font-medium text-[var(--fg-primary)] mb-2">
+          <h1 className="mb-2 font-display text-2xl font-medium text-[var(--fg-primary)]">
             {tProfile('title')}
           </h1>
-          <p className="text-[var(--fg-secondary)] text-sm max-w-2xl">
-            {tProfile('description')}
-          </p>
+          <p className="max-w-2xl text-sm text-[var(--fg-secondary)]">{tProfile('description')}</p>
         </div>
       </header>
 

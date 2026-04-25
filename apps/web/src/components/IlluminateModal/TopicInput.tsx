@@ -61,9 +61,7 @@ export function TopicInput({
 
   // Filter suggestions based on input and already selected topics
   const filteredSuggestions = SUGGESTED_TOPICS.filter(
-    (topic) =>
-      !topics.includes(topic) &&
-      topic.toLowerCase().includes(inputValue.toLowerCase())
+    (topic) => !topics.includes(topic) && topic.toLowerCase().includes(inputValue.toLowerCase())
   );
 
   const addTopic = useCallback(
@@ -131,18 +129,14 @@ export function TopicInput({
         case 'ArrowDown':
           event.preventDefault();
           if (showSuggestions && filteredSuggestions.length > 0) {
-            setHighlightedIndex((prev) =>
-              prev < filteredSuggestions.length - 1 ? prev + 1 : 0
-            );
+            setHighlightedIndex((prev) => (prev < filteredSuggestions.length - 1 ? prev + 1 : 0));
           }
           break;
 
         case 'ArrowUp':
           event.preventDefault();
           if (showSuggestions && filteredSuggestions.length > 0) {
-            setHighlightedIndex((prev) =>
-              prev > 0 ? prev - 1 : filteredSuggestions.length - 1
-            );
+            setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : filteredSuggestions.length - 1));
           }
           break;
 
@@ -174,10 +168,7 @@ export function TopicInput({
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
-      if (
-        containerRef.current != null &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current != null && !containerRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     };
@@ -189,14 +180,14 @@ export function TopicInput({
   return (
     <div ref={containerRef} className="relative">
       <div
-        className="flex flex-wrap gap-2 p-3 bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg focus-within:border-[var(--color-accent)] transition-colors"
+        className="flex flex-wrap gap-2 rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-elevated)] p-3 transition-colors focus-within:border-[var(--color-accent)]"
         onClick={() => inputRef.current?.focus()}
       >
         {/* Selected topic pills */}
         {topics.map((topic) => (
           <span
             key={topic}
-            className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] rounded-full"
+            className="inline-flex items-center gap-1 rounded-full bg-[var(--color-bg-tertiary)] px-3 py-1 text-sm text-[var(--color-text-primary)]"
           >
             {topic}
             <button
@@ -205,11 +196,11 @@ export function TopicInput({
                 e.stopPropagation();
                 removeTopic(topic);
               }}
-              className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
+              className="text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-primary)]"
               aria-label={`Remove ${topic}`}
             >
               <svg
-                className="w-3 h-3"
+                className="h-3 w-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -240,7 +231,7 @@ export function TopicInput({
             }
           }}
           placeholder={topics.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[120px] bg-transparent text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none"
+          className="min-w-[120px] flex-1 bg-transparent text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none"
           autoComplete="off"
           aria-expanded={showSuggestions}
           aria-haspopup="listbox"
@@ -253,7 +244,7 @@ export function TopicInput({
         <ul
           id="topic-suggestions"
           role="listbox"
-          className="absolute z-10 w-full mt-1 max-h-48 overflow-y-auto bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] rounded-lg shadow-lg"
+          className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-elevated)] shadow-lg"
         >
           {filteredSuggestions.map((suggestion, index) => (
             <li
@@ -261,14 +252,11 @@ export function TopicInput({
               role="option"
               aria-selected={index === highlightedIndex}
               onClick={() => handleSuggestionClick(suggestion)}
-              className={`
-                px-4 py-2 text-sm cursor-pointer transition-colors
-                ${
-                  index === highlightedIndex
-                    ? 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]'
-                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)]'
-                }
-              `}
+              className={`cursor-pointer px-4 py-2 text-sm transition-colors ${
+                index === highlightedIndex
+                  ? 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)]'
+              } `}
             >
               {suggestion}
             </li>

@@ -10,23 +10,21 @@ import type { ChainId, PostId } from './brands';
 
 /** Status of a story chain */
 export type ChainStatus =
-  | 'emerging'     // Few posts, still forming
-  | 'active'       // Actively receiving posts and corroborations
-  | 'established'  // Well-corroborated, stable
-  | 'contested';   // Significant challenges, under dispute
+  | 'emerging' // Few posts, still forming
+  | 'active' // Actively receiving posts and corroborations
+  | 'established' // Well-corroborated, stable
+  | 'contested'; // Significant challenges, under dispute
 
 /** Summary statistics for a chain */
 export interface ChainStats {
   /** Total number of posts in this chain */
   readonly postCount: number;
   /** Total corroborations across all posts */
-  readonly totalCorroborations: number;
+  readonly corroborationCount: number;
   /** Total challenges across all posts */
-  readonly totalChallenges: number;
+  readonly challengeCount: number;
   /** Number of unique fireflies who contributed */
   readonly contributorCount: number;
-  /** Aggregate reputation weight of all corroborations */
-  readonly totalWeight: number;
 }
 
 /**
@@ -68,6 +66,6 @@ export interface ChainPreview {
   readonly location?: string;
   readonly status: ChainStatus;
   readonly postCount: number;
-  readonly totalCorroborations: number;
+  readonly corroborationCount: number;
   readonly updatedAt: number;
 }

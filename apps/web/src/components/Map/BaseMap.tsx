@@ -4,11 +4,11 @@
  * BaseMap — Core Leaflet map wrapper with dark theme.
  *
  * Provides:
- * - OpenStreetMap tiles
+ * - CARTO Voyager tiles (works inside Triangle sandbox)
  * - Custom marker icons (firefly gold, verified green, challenged red)
  * - Click handling
  * - Fly-to animation
- * - Current location detection
+ * - Current location detection (via Host API when in Triangle)
  *
  * Must be lazy-loaded to avoid SSR issues with Leaflet.
  */
@@ -108,11 +108,7 @@ const markerIcons = {
 /**
  * Internal component to handle map click events.
  */
-function MapClickHandler({
-  onClick,
-}: {
-  onClick?: (location: MapLocation) => void;
-}): null {
+function MapClickHandler({ onClick }: { onClick?: (location: MapLocation) => void }): null {
   useMapEvents({
     click(e) {
       onClick?.({ lat: e.latlng.lat, lon: e.latlng.lng });
@@ -136,6 +132,24 @@ function FlyToLocation({ location }: { location: MapLocation | null }): null {
   return null;
 }
 
+// ═══ Hooks ═══
+
+/**
+ * Hook to get the user's current location.
+ * Handles host API permission request when running inside Triangle.
+ */
+export function useCurrentLocation(): {
+  getLocation: () => Promise<MapLocation>;
+} {
+  const getLocation = async (): Promise<MapLocation> => {
+    const { getGeolocation } = await import('@/lib/host');
+    const pos = await getGeolocation({ timeout: 10000 });
+    return { lat: pos.coords.latitude, lon: pos.coords.longitude };
+  };
+
+  return { getLocation };
+}
+
 /**
  * Base map component with dark theme styling.
  */
@@ -155,7 +169,9 @@ export function BaseMap({
   const selectedMarker = markers.find((m) => m.id === selectedMarkerId);
 
   return (
-    <div className={`rounded-lg overflow-hidden border border-[var(--border-default)] ${className}`}>
+    <div
+      className={`relative isolate overflow-hidden rounded-lg border border-[var(--border-default)] ${className}`}
+    >
       <MapContainer
         center={[center.lat, center.lon]}
         zoom={zoom}
@@ -163,25 +179,20 @@ export function BaseMap({
         style={{ background: 'var(--bg-surface-nested)' }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
 
         {/* Map click handler */}
         {onClick && <MapClickHandler onClick={onClick} />}
 
         {/* Fly to selected marker */}
-        {selectedMarker && (
-          <FlyToLocation location={selectedMarker.position} />
-        )}
+        {selectedMarker && <FlyToLocation location={selectedMarker.position} />}
 
         {/* User location marker */}
         {showUserLocation && userLocation && (
           <>
-            <Marker
-              position={[userLocation.lat, userLocation.lon]}
-              icon={markerIcons.gold}
-            >
+            <Marker position={[userLocation.lat, userLocation.lon]} icon={markerIcons.gold}>
               <Popup>Your location</Popup>
             </Marker>
             {radiusMeters !== undefined && radiusMeters > 0 && (

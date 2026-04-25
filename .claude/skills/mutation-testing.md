@@ -1,6 +1,6 @@
 ---
 name: mutation-testing
-description: "Implement mutation testing with Stryker for test quality validation. Triggers: mutation, stryker, test quality, coverage, killed, survived"
+description: 'Implement mutation testing with Stryker for test quality validation. Triggers: mutation, stryker, test quality, coverage, killed, survived'
 ---
 
 # Mutation Testing Skill — Stryker
@@ -17,12 +17,12 @@ description: "Implement mutation testing with Stryker for test quality validatio
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| 80%+ mutation score | CI gate for critical code | MANDATORY |
-| 100% for security code | Cryptographic, auth paths | MANDATORY |
-| No survived mutants in core logic | Fix or document | MANDATORY |
-| Run before release | Part of release checklist | MANDATORY |
+| Rule                              | Enforcement               | Status    |
+| --------------------------------- | ------------------------- | --------- |
+| 80%+ mutation score               | CI gate for critical code | MANDATORY |
+| 100% for security code            | Cryptographic, auth paths | MANDATORY |
+| No survived mutants in core logic | Fix or document           | MANDATORY |
+| Run before release                | Part of release checklist | MANDATORY |
 
 ---
 
@@ -38,12 +38,12 @@ Traditional coverage measures which lines execute. Mutation testing measures whe
 
 ### Mutation Examples
 
-| Original | Mutant | Test Should |
-|----------|--------|-------------|
-| `if (a > b)` | `if (a >= b)` | Fail for edge case |
-| `return true` | `return false` | Fail for return value |
-| `a + b` | `a - b` | Fail for arithmetic |
-| `arr.length` | `0` | Fail for array operations |
+| Original      | Mutant         | Test Should               |
+| ------------- | -------------- | ------------------------- |
+| `if (a > b)`  | `if (a >= b)`  | Fail for edge case        |
+| `return true` | `return false` | Fail for return value     |
+| `a + b`       | `a - b`        | Fail for arithmetic       |
+| `arr.length`  | `0`            | Fail for array operations |
 
 ---
 
@@ -66,18 +66,14 @@ export default {
   testRunner: 'vitest',
   checkers: ['typescript'],
   tsconfigFile: 'tsconfig.json',
-  mutate: [
-    'src/**/*.ts',
-    '!src/**/*.test.ts',
-    '!src/**/*.d.ts',
-  ],
+  mutate: ['src/**/*.ts', '!src/**/*.test.ts', '!src/**/*.d.ts'],
   timeoutMS: 10000,
   concurrency: 4,
   // Thresholds
   thresholds: {
     high: 80,
     low: 60,
-    break: 50,  // Fail build below this
+    break: 50, // Fail build below this
   },
 };
 ```
@@ -97,13 +93,13 @@ export default {
 
 ## Mutation Score Targets
 
-| Code Type | Minimum Score | Target Score |
-|-----------|---------------|--------------|
-| General application | 60% | 80% |
-| Business logic | 80% | 90% |
-| Security-critical | 100% | 100% |
-| Cryptographic | 100% | 100% |
-| Financial calculations | 100% | 100% |
+| Code Type              | Minimum Score | Target Score |
+| ---------------------- | ------------- | ------------ |
+| General application    | 60%           | 80%          |
+| Business logic         | 80%           | 90%          |
+| Security-critical      | 100%          | 100%         |
+| Cryptographic          | 100%          | 100%         |
+| Financial calculations | 100%          | 100%         |
 
 ---
 
@@ -112,35 +108,38 @@ export default {
 ### Weak Tests (Mutants Survive)
 
 ❌ Before: Low mutation score
+
 ```typescript
 // Test only checks that function doesn't throw
 it('calculates reputation weight', () => {
   const result = calculateWeight([{ weight: 10 }, { weight: 20 }]);
-  expect(result).toBeDefined();  // WEAK: Mutant survives
+  expect(result).toBeDefined(); // WEAK: Mutant survives
 });
 ```
 
 ✅ After: High mutation score
+
 ```typescript
 // Test verifies specific output
 it('calculates reputation weight as sum', () => {
   const result = calculateWeight([{ weight: 10 }, { weight: 20 }]);
-  expect(result).toBe(30);  // STRONG: Kills arithmetic mutants
+  expect(result).toBe(30); // STRONG: Kills arithmetic mutants
 });
 
 it('returns 0 for empty array', () => {
-  expect(calculateWeight([])).toBe(0);  // STRONG: Kills length mutants
+  expect(calculateWeight([])).toBe(0); // STRONG: Kills length mutants
 });
 
 it('handles negative weights', () => {
   const result = calculateWeight([{ weight: -5 }, { weight: 15 }]);
-  expect(result).toBe(10);  // STRONG: Kills sign mutants
+  expect(result).toBe(10); // STRONG: Kills sign mutants
 });
 ```
 
 ### Boundary Conditions
 
 ❌ Before: Missing boundary test
+
 ```typescript
 it('validates signal length', () => {
   expect(() => validateSignal({ text: 'short' })).toThrow();
@@ -148,6 +147,7 @@ it('validates signal length', () => {
 ```
 
 ✅ After: Boundary coverage
+
 ```typescript
 it('rejects signals under 10 characters', () => {
   expect(() => validateSignal({ text: '9 chars!' })).toThrow();
@@ -165,6 +165,7 @@ it('accepts signals with 11+ characters', () => {
 ### Boolean Logic
 
 ❌ Before: Incomplete boolean coverage
+
 ```typescript
 it('checks verification status', () => {
   const lite = { status: ProofOfPersonhoodStatus.Lite };
@@ -173,6 +174,7 @@ it('checks verification status', () => {
 ```
 
 ✅ After: All branches covered
+
 ```typescript
 it('allows Lite status to illuminate', () => {
   expect(canIlluminate({ status: ProofOfPersonhoodStatus.Lite })).toBe(true);
@@ -193,41 +195,41 @@ it('denies NoStatus to illuminate', () => {
 
 ### Arithmetic Mutants
 
-| Original | Mutants |
-|----------|---------|
-| `a + b` | `a - b`, `a * b`, `a / b` |
-| `a++` | `a--` |
-| `a * 2` | `a / 2` |
+| Original | Mutants                   |
+| -------- | ------------------------- |
+| `a + b`  | `a - b`, `a * b`, `a / b` |
+| `a++`    | `a--`                     |
+| `a * 2`  | `a / 2`                   |
 
 **Kill by**: Testing specific numeric outputs
 
 ### Conditional Mutants
 
-| Original | Mutants |
-|----------|---------|
-| `a > b` | `a >= b`, `a < b`, `a <= b` |
-| `a === b` | `a !== b` |
-| `a && b` | `a || b`, `true`, `false` |
+| Original  | Mutants                     |
+| --------- | --------------------------- | --- | ------------------- |
+| `a > b`   | `a >= b`, `a < b`, `a <= b` |
+| `a === b` | `a !== b`                   |
+| `a && b`  | `a                          |     | b`, `true`, `false` |
 
 **Kill by**: Testing boundary values and boolean combinations
 
 ### Return Value Mutants
 
-| Original | Mutants |
-|----------|---------|
-| `return true` | `return false` |
-| `return x` | `return 0`, `return null` |
-| `return arr` | `return []` |
+| Original      | Mutants                   |
+| ------------- | ------------------------- |
+| `return true` | `return false`            |
+| `return x`    | `return 0`, `return null` |
+| `return arr`  | `return []`               |
 
 **Kill by**: Asserting specific return values
 
 ### String Mutants
 
-| Original | Mutants |
-|----------|---------|
-| `"hello"` | `""` |
-| `str.length` | `0` |
-| `str.trim()` | `str` |
+| Original     | Mutants |
+| ------------ | ------- |
+| `"hello"`    | `""`    |
+| `str.length` | `0`     |
+| `str.trim()` | `str`   |
 
 **Kill by**: Testing string content and length
 
@@ -257,7 +259,7 @@ Mutant:   weight >= 0
 // Add test for zero weight
 it('excludes corroborations with zero weight', () => {
   const corroborations = [
-    { weight: 0 },  // Should be excluded
+    { weight: 0 }, // Should be excluded
     { weight: 10 },
   ];
   expect(calculateTotalWeight(corroborations)).toBe(10);
@@ -331,15 +333,11 @@ Files that MUST have 100% mutation score:
 // Focus mutation testing on security code
 export default {
   // ...
-  mutate: [
-    'src/**/auth/**/*.ts',
-    'src/**/crypto/**/*.ts',
-    'src/**/validation/**/*.ts',
-  ],
+  mutate: ['src/**/auth/**/*.ts', 'src/**/crypto/**/*.ts', 'src/**/validation/**/*.ts'],
   thresholds: {
     high: 100,
     low: 100,
-    break: 100,  // Zero tolerance
+    break: 100, // Zero tolerance
   },
 };
 ```
@@ -358,12 +356,12 @@ export default {
 
 ### When Survivors Are Acceptable
 
-| Scenario | Action |
-|----------|--------|
-| Dead code (never executed) | Delete the code |
-| Logging statements | Exclude from mutation |
-| Equivalent mutants | Document why |
-| Test timeout issues | Increase timeout |
+| Scenario                   | Action                |
+| -------------------------- | --------------------- |
+| Dead code (never executed) | Delete the code       |
+| Logging statements         | Exclude from mutation |
+| Equivalent mutants         | Document why          |
+| Test timeout issues        | Increase timeout      |
 
 ### Excluding Code
 
@@ -376,11 +374,11 @@ logger.debug('Processing signal', { id: signal.id });
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| Test without assertions | FORBIDDEN | 0% mutation kill rate |
-| `expect(x).toBeDefined()` only | FORBIDDEN | Misses value mutants |
-| Skip mutation testing | FORBIDDEN | False confidence in coverage |
-| Accept <60% in business logic | FORBIDDEN | Untested code paths |
-| Accept <100% in security code | FORBIDDEN | Security critical |
-| Disable for "complex" code | FORBIDDEN | Complex code needs most testing |
+| Pattern                        | Status    | Reason                          |
+| ------------------------------ | --------- | ------------------------------- |
+| Test without assertions        | FORBIDDEN | 0% mutation kill rate           |
+| `expect(x).toBeDefined()` only | FORBIDDEN | Misses value mutants            |
+| Skip mutation testing          | FORBIDDEN | False confidence in coverage    |
+| Accept <60% in business logic  | FORBIDDEN | Untested code paths             |
+| Accept <100% in security code  | FORBIDDEN | Security critical               |
+| Disable for "complex" code     | FORBIDDEN | Complex code needs most testing |

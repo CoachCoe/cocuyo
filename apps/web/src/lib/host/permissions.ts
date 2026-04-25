@@ -1,9 +1,9 @@
 /**
- * Host API remote permissions
+ * Host API permissions
  *
- * Requests network access permissions from Triangle sandbox.
- * The sandbox blocks all external HTTP(S) by default — products must
- * request permission via the Host API, which prompts the user.
+ * Requests network and device permissions from Triangle sandbox.
+ * The sandbox blocks all external HTTP(S) and device access by default —
+ * products must request permission via the Host API, which prompts the user.
  *
  * Once granted, permissions persist in the host's storage.
  *
@@ -15,40 +15,117 @@
 
 import { hostApi } from '@novasamatech/product-sdk';
 
+import { isHosted } from './detect';
+
+// ═══ Network permissions ═══
+
 /**
  * URL patterns that Firefly Network needs access to.
  */
-const REQUIRED_PERMISSIONS = [
-  // Map tiles - OpenStreetMap uses subdomains a/b/c.tile.openstreetmap.org
-  'https://*.tile.openstreetmap.org',
-  // Map tiles - CARTO basemaps
-  'https://basemaps.cartocdn.com',
+const NETWORK_PERMISSIONS = [
+  // Map tiles - CARTO basemaps (used by Triangle)
+  'https://basemaps.cartocdn.com/',
   // Reverse geocoding
-  'https://nominatim.openstreetmap.org',
+  'https://nominatim.openstreetmap.org/',
+  // AI claim extraction worker
+  'https://claim-extractor.cocuyo.workers.dev/',
+];
+
+// ═══ Device permissions ═══
+
+type DevicePermission = 'Camera' | 'Microphone' | 'Location';
+
+const DEVICE_PERMISSIONS: DevicePermission[] = [
+  'Location', // Geolocation for map/distance
 ];
 
 /**
- * Request remote network permissions from the Host.
+ * Request all permissions from the Host on startup.
+ * Runs in parallel so it doesn't block app init.
  *
- * Should be called early when running inside Triangle.
- * Each pattern triggers a user-facing permission dialog
- * (only on first request — granted permissions are persisted).
- *
- * Failures are silently caught — the map will degrade gracefully.
+ * Note: TransactionSubmit is NOT requested here — it's requested on-demand
+ * when the first Bulletin upload is attempted, to avoid unnecessary prompts.
  */
 export async function requestExternalPermissions(): Promise<void> {
-  for (const pattern of REQUIRED_PERMISSIONS) {
-    try {
-      const result = await hostApi.permission({
-        tag: 'v1',
-        value: { tag: 'ExternalRequest', value: pattern },
-      });
-      // We don't need to check the result - just requesting is enough.
-      // The host persists granted permissions, and denied requests
-      // result in graceful degradation (map tiles won't load).
-      void result;
-    } catch {
-      // User denied or host doesn't support this yet
-    }
+  const all = [
+    ...NETWORK_PERMISSIONS.map((pattern) => requestNetwork(pattern)),
+    ...DEVICE_PERMISSIONS.map((device) => requestDevice(device)),
+  ];
+  await Promise.allSettled(all);
+}
+
+async function requestNetwork(pattern: string): Promise<void> {
+  try {
+    const result = hostApi.permission({
+      tag: 'v1',
+      value: { tag: 'ExternalRequest', value: pattern },
+    });
+    // Wait for permission dialog to complete - we don't need to check result
+    // The host persists granted permissions, denied ones degrade gracefully
+    await result.match(
+      () => undefined,
+      () => undefined
+    );
+  } catch {
+    // User denied or host doesn't support this
   }
+}
+
+/**
+ * Request blanket permission for transaction submissions (preimages).
+ * Once granted, bulletin uploads won't prompt for each transaction.
+ *
+ * Called on-demand before the first Bulletin upload, not at startup.
+ */
+export async function requestTransactionSubmit(): Promise<void> {
+  try {
+    const result = hostApi.permission({
+      tag: 'v1',
+      value: { tag: 'TransactionSubmit', value: undefined },
+    });
+    await result.match(
+      () => undefined,
+      () => undefined
+    );
+  } catch {
+    // User denied or host doesn't support this
+  }
+}
+
+async function requestDevice(device: DevicePermission): Promise<void> {
+  try {
+    const result = hostApi.devicePermission({
+      tag: 'v1',
+      value: device,
+    });
+    // Wait for permission dialog to complete
+    await result.match(
+      () => undefined,
+      () => undefined
+    );
+  } catch {
+    // User denied or host doesn't support this
+  }
+}
+
+// ═══ Safe browser API wrappers ═══
+
+/**
+ * Get user's geolocation — requests Host API permission first if in Triangle.
+ * Use this instead of navigator.geolocation.getCurrentPosition() directly.
+ *
+ * @throws Error if geolocation is not available
+ */
+export async function getGeolocation(options?: PositionOptions): Promise<GeolocationPosition> {
+  if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+    throw new Error('Geolocation not available');
+  }
+
+  if (isHosted()) {
+    await requestDevice('Location');
+  }
+
+  return new Promise<GeolocationPosition>((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(resolve, reject, options)
+  );
 }

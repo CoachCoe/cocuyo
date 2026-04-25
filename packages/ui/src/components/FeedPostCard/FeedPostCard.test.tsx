@@ -30,7 +30,6 @@ const mockPost: Post = {
     evidenceCount: 2,
     expertiseCount: 1,
     challengeCount: 0,
-    totalWeight: 8.5,
   },
   verification: { status: 'unverified' },
   createdAt: Math.floor(Date.now() / 1000) - 3600, // 1 hour ago
@@ -122,11 +121,7 @@ describe('FeedPostCard', () => {
     it('calls onChainClick when chain link clicked', () => {
       const handleChainClick = vi.fn();
       render(
-        <FeedPostCard
-          post={mockPost}
-          chainTitle="Water Quality"
-          onChainClick={handleChainClick}
-        />
+        <FeedPostCard post={mockPost} chainTitle="Water Quality" onChainClick={handleChainClick} />
       );
       fireEvent.click(screen.getByText('Water Quality'));
       expect(handleChainClick).toHaveBeenCalledWith(mockPost.chainLinks[0]);
@@ -217,8 +212,13 @@ describe('FeedPostCard', () => {
       // Create a new post without location fields (omitted, not undefined)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { location: _authorLoc, ...authorWithoutLocation } = mockPost.author;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { locationName: _locName, location: _loc, ...contextWithoutLocation } = mockPost.context;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const {
+        locationName: _locName,
+        location: _loc,
+        ...contextWithoutLocation
+      } = mockPost.context;
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       const postNoLocation: Post = {
         ...mockPost,
         author: authorWithoutLocation,

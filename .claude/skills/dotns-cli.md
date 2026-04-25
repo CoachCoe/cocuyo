@@ -1,6 +1,6 @@
 ---
 name: dotns-cli
-description: "Deploy frontends and manage domains using dotns CLI. Triggers: deploy, dotns, bulletin, upload, domain, register, frontend, CLI"
+description: 'Deploy frontends and manage domains using dotns CLI. Triggers: deploy, dotns, bulletin, upload, domain, register, frontend, CLI'
 ---
 
 # dotns CLI Deployment Skill
@@ -17,13 +17,13 @@ description: "Deploy frontends and manage domains using dotns CLI. Triggers: dep
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| Use Bun for CLI | Node 22+ WebSocket issues | MANDATORY |
+| Rule                           | Enforcement               | Status    |
+| ------------------------------ | ------------------------- | --------- |
+| Use Bun for CLI                | Node 22+ WebSocket issues | MANDATORY |
 | PoP status before registration | Required for domain names | MANDATORY |
-| Bulletin auth before upload | Authorization required | MANDATORY |
-| Upload before content set | CID needed first | MANDATORY |
-| No .dot suffix in CLI | Just the label | MANDATORY |
+| Bulletin auth before upload    | Authorization required    | MANDATORY |
+| Upload before content set      | CID needed first          | MANDATORY |
+| No .dot suffix in CLI          | Just the label            | MANDATORY |
 
 ---
 
@@ -44,12 +44,12 @@ dotns <command> [options]
 
 All commands accept these auth flags:
 
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--mnemonic` / `-m` | 12-word seed phrase | `-m "word1 word2..."` |
-| `--key-uri` | SURI format (dev only) | `--key-uri "//Alice"` |
-| `--account` | Named keystore account | `--account main` |
-| `--rpc` | Custom RPC endpoint | `--rpc wss://custom.rpc` |
+| Flag                | Description            | Example                  |
+| ------------------- | ---------------------- | ------------------------ |
+| `--mnemonic` / `-m` | 12-word seed phrase    | `-m "word1 word2..."`    |
+| `--key-uri`         | SURI format (dev only) | `--key-uri "//Alice"`    |
+| `--account`         | Named keystore account | `--account main`         |
+| `--rpc`             | Custom RPC endpoint    | `--rpc wss://custom.rpc` |
 
 ### Environment Variables
 
@@ -104,11 +104,11 @@ $CLI content view <your-domain-label>
 
 ### Access Your Deployment
 
-| Gateway | URL Pattern |
-|---------|-------------|
-| Paseo Gateway | `https://<domain>.paseo.li/` |
-| IPFS Gateway | `https://ipfs.io/ipfs/<cid>` |
-| dweb.link | `https://dweb.link/ipfs/<cid>` |
+| Gateway       | URL Pattern                    |
+| ------------- | ------------------------------ |
+| Paseo Gateway | `https://<domain>.paseo.li/`   |
+| IPFS Gateway  | `https://ipfs.io/ipfs/<cid>`   |
+| dweb.link     | `https://dweb.link/ipfs/<cid>` |
 
 ---
 
@@ -201,10 +201,10 @@ auth set --mnemonic "your seed phrase"
 
 ### RPC Endpoints
 
-| Network | RPC URL |
-|---------|---------|
-| Asset Hub Paseo | `wss://asset-hub-paseo-rpc.n.dwellir.com` |
-| Bulletin Paseo | `wss://bulletin.dotspark.app` |
+| Network            | RPC URL                                    |
+| ------------------ | ------------------------------------------ |
+| Asset Hub Paseo    | `wss://asset-hub-paseo-rpc.n.dwellir.com`  |
+| Bulletin Paseo     | `wss://bulletin.dotspark.app`              |
 | Asset Hub Polkadot | `wss://polkadot-asset-hub-rpc.polkadot.io` |
 
 ### Contract Addresses (Paseo)
@@ -223,6 +223,7 @@ DOTNS_CONTENT_RESOLVER: 0x7756DF72CBc7f062e7403cD59e45fBc78bed1cD7
 ### Correct Deployment Order
 
 ✅ CORRECT:
+
 ```bash
 # 1. PoP first
 pop set lite -m "$MNEMONIC"
@@ -244,6 +245,7 @@ content set myapp $CID -m "$MNEMONIC"
 ```
 
 ❌ FAIL:
+
 ```bash
 # WRONG: Trying to set content before upload
 content set myapp <some-cid> -m "$MNEMONIC"
@@ -261,6 +263,7 @@ bulletin upload ./dist -m "$MNEMONIC"
 ### Domain Name Format
 
 ✅ CORRECT:
+
 ```bash
 # Just the label, no TLD
 register domain --name myapp -m "$MNEMONIC"
@@ -269,6 +272,7 @@ content set myapp $CID -m "$MNEMONIC"
 ```
 
 ❌ FAIL:
+
 ```bash
 # WRONG: Including .dot suffix
 register domain --name myapp.dot -m "$MNEMONIC"
@@ -278,13 +282,13 @@ register domain --name myapp.dot -m "$MNEMONIC"
 
 ## Common Errors & Fixes
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| "Requires Personhood Lite" | No PoP status | `pop set lite -m ...` |
-| "Account is not authorized" | No bulletin auth | `bulletin authorize <addr> -m ...` |
-| "WebSocket connection failed" | Using Node (not Bun) | Use `bun run` instead |
-| "Insufficient balance" | Low PAS balance | Fund account with testnet PAS |
-| "Domain already registered" | Name taken | Choose different name |
+| Error                         | Cause                | Fix                                |
+| ----------------------------- | -------------------- | ---------------------------------- |
+| "Requires Personhood Lite"    | No PoP status        | `pop set lite -m ...`              |
+| "Account is not authorized"   | No bulletin auth     | `bulletin authorize <addr> -m ...` |
+| "WebSocket connection failed" | Using Node (not Bun) | Use `bun run` instead              |
+| "Insufficient balance"        | Low PAS balance      | Fund account with testnet PAS      |
+| "Domain already registered"   | Name taken           | Choose different name              |
 
 ---
 
@@ -321,12 +325,12 @@ echo "Deployed! Access at: https://${DOMAIN_NAME}.paseo.li/"
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| Use Node instead of Bun | FORBIDDEN | WebSocket issues |
-| Mix --mnemonic and --key-uri | FORBIDDEN | Explicit error |
-| Include .dot in domain name | FORBIDDEN | Just use label |
-| Skip PoP setup | FORBIDDEN | Registration fails |
-| Skip bulletin authorization | FORBIDDEN | Upload fails |
-| Set content before upload | FORBIDDEN | No CID available |
-| Use HTTP for RPC | FORBIDDEN | Needs WebSocket |
+| Pattern                      | Status    | Reason             |
+| ---------------------------- | --------- | ------------------ |
+| Use Node instead of Bun      | FORBIDDEN | WebSocket issues   |
+| Mix --mnemonic and --key-uri | FORBIDDEN | Explicit error     |
+| Include .dot in domain name  | FORBIDDEN | Just use label     |
+| Skip PoP setup               | FORBIDDEN | Registration fails |
+| Skip bulletin authorization  | FORBIDDEN | Upload fails       |
+| Set content before upload    | FORBIDDEN | No CID available   |
+| Use HTTP for RPC             | FORBIDDEN | Needs WebSocket    |

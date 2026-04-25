@@ -6,33 +6,28 @@
  * on-chain attestations.
  */
 
-import type {
-  PostId,
-  CollectiveId,
-  VerificationRequestId,
-  DIMCredential,
-} from './brands';
+import type { PostId, CollectiveId, VerificationRequestId, DIMCredential } from './brands';
 
 /**
  * Verification status of a post.
  */
 export type VerificationStatus =
-  | 'unverified'  // No verification requested
-  | 'pending'     // Verification requested, waiting for collective
-  | 'in_review'   // Collective is actively reviewing
-  | 'verified'    // Collective confirmed as accurate
-  | 'disputed'    // Evidence is conflicting
-  | 'false'       // Collective determined to be inaccurate
-  | 'synthetic';  // Content is AI-generated
+  | 'unverified' // No verification requested
+  | 'pending' // Verification requested, waiting for collective
+  | 'in_review' // Collective is actively reviewing
+  | 'verified' // Collective confirmed as accurate
+  | 'disputed' // Evidence is conflicting
+  | 'false' // Collective determined to be inaccurate
+  | 'synthetic'; // Content is AI-generated
 
 /**
  * Status of a verification request workflow.
  */
 export type VerificationRequestStatus =
-  | 'pending'     // Waiting for collective to pick up
-  | 'in_review'   // Evidence being gathered
-  | 'voting'      // Members voting on verdict
-  | 'completed';  // Verdict finalized
+  | 'pending' // Waiting for collective to pick up
+  | 'in_review' // Evidence being gathered
+  | 'voting' // Members voting on verdict
+  | 'completed'; // Verdict finalized
 
 /**
  * Evidence submitted during verification.

@@ -43,7 +43,7 @@ export function TruncatedText({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-[var(--fg-accent)] hover:underline font-medium"
+        className="font-medium text-[var(--fg-accent)] hover:underline"
       >
         {isExpanded ? collapseLabel : expandLabel}
       </button>

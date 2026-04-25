@@ -7,20 +7,35 @@
  */
 
 import type {
-  BountyId,
+  CampaignId,
   ChainId,
   ClaimId,
   CorroborationId,
   DIMCredential,
   EscrowId,
+  OutletId,
   PolkadotAddress,
   PostId,
   TransactionHash,
   VerdictId,
 } from './brands';
-import type { Bounty, BountyPayout, BountyPreview, NewBounty } from './bounty';
+import type {
+  Campaign,
+  CampaignPayout,
+  CampaignPreview,
+  CampaignStatus,
+  NewCampaign,
+} from './campaign';
 import type { ChainPreview, StoryChain } from './chain';
-import type { Claim, ClaimPreview, ClaimStatus, NewClaim, NewClaimEvidence, NewVerdict, Verdict } from './claim';
+import type {
+  Claim,
+  ClaimPreview,
+  ClaimStatus,
+  NewClaim,
+  NewClaimEvidence,
+  NewVerdict,
+  Verdict,
+} from './claim';
 import type { NewPost, Post, PostPreview, PostStatus } from './post';
 import type {
   Coin,
@@ -33,6 +48,7 @@ import type {
 } from './coinage';
 import type { Corroboration, NewCorroboration } from './corroboration';
 import type { PUSDAmount, PUSDBalance } from './currency';
+import type { Outlet, OutletPreview } from './outlet';
 import type { PaymentMode } from './payment-mode';
 import type { PersonhoodLevel, PersonhoodCapabilities } from './personhood';
 import type { ReputationTopic } from './reputation-topics';
@@ -143,34 +159,54 @@ export interface CorroborationService {
   getPostCorroborations(postId: PostId): Promise<readonly Corroboration[]>;
 
   /** Submit a corroboration */
-  corroborate(
-    corroboration: NewCorroboration
-  ): Promise<Result<CorroborationId, string>>;
+  corroborate(corroboration: NewCorroboration): Promise<Result<CorroborationId, string>>;
 }
 
 /**
- * Bounty service interface.
+ * Campaign service interface.
  */
-export interface BountyService {
-  /** Get a single bounty by ID */
-  getBounty(id: BountyId, locale?: string): Promise<Bounty | null>;
+export interface CampaignService {
+  /** Get a single campaign by ID */
+  getCampaign(id: CampaignId, locale?: string): Promise<Campaign | null>;
 
-  /** Get open bounties, optionally filtered */
-  getOpenBounties(params: {
+  /** Get campaigns, optionally filtered */
+  getCampaigns(params: {
+    status?: CampaignStatus;
+    topic?: string;
+    location?: string;
+    sponsorType?: 'outlet' | 'collective' | 'community';
+    locale?: string;
+    pagination: PaginationParams;
+  }): Promise<PaginatedResult<CampaignPreview>>;
+
+  /** Get active campaigns */
+  getActiveCampaigns(params: {
     topic?: string;
     location?: string;
     locale?: string;
     pagination: PaginationParams;
-  }): Promise<PaginatedResult<BountyPreview>>;
+  }): Promise<PaginatedResult<CampaignPreview>>;
 
-  /** Create a new bounty */
-  createBounty(bounty: NewBounty): Promise<Result<BountyId, string>>;
+  /** Create a new campaign */
+  createCampaign(campaign: NewCampaign): Promise<Result<CampaignId, string>>;
 
-  /** Contribute a post to a bounty */
-  contributeToBounty(
-    bountyId: BountyId,
-    postId: PostId
-  ): Promise<Result<void, string>>;
+  /** Contribute a post to a campaign */
+  contributeToCampaign(campaignId: CampaignId, postId: PostId): Promise<Result<void, string>>;
+}
+
+/**
+ * Outlet service interface.
+ */
+export interface OutletService {
+  /** Get an outlet by ID */
+  getOutlet(id: OutletId): Promise<Outlet | null>;
+
+  /** Get outlets, optionally filtered */
+  getOutlets(params: {
+    country?: string;
+    topic?: string;
+    pagination: PaginationParams;
+  }): Promise<PaginatedResult<OutletPreview>>;
 }
 
 // ============================================================================
@@ -206,10 +242,7 @@ export interface ClaimService {
   extractClaim(claim: NewClaim): Promise<Result<ClaimId, string>>;
 
   /** Submit evidence to a claim */
-  submitEvidence(
-    claimId: ClaimId,
-    evidence: NewClaimEvidence
-  ): Promise<Result<void, string>>;
+  submitEvidence(claimId: ClaimId, evidence: NewClaimEvidence): Promise<Result<void, string>>;
 }
 
 // ============================================================================
@@ -228,6 +261,80 @@ export interface VerdictService {
 
   /** Issue a verdict on a claim */
   issueVerdict(verdict: NewVerdict): Promise<Result<VerdictId, string>>;
+}
+
+// ============================================================================
+// Collective Service
+// ============================================================================
+
+import type { Collective, CollectivePreview, MemberRole, CollectiveMember } from './collective';
+import type { CollectiveId } from './brands';
+
+/**
+ * Collective service interface.
+ *
+ * Provides access to collective data and membership verification.
+ */
+export interface CollectiveService {
+  /** Get a collective by ID */
+  getCollective(id: CollectiveId): Promise<Collective | null>;
+
+  /** Get all collectives */
+  getCollectives(params: {
+    topic?: string;
+    pagination: PaginationParams;
+  }): Promise<PaginatedResult<CollectivePreview>>;
+
+  /** Check if a credential is a member of a collective */
+  isMember(collectiveId: CollectiveId, credential: DIMCredential): Promise<boolean>;
+
+  /** Get a member's role in a collective */
+  getMemberRole(collectiveId: CollectiveId, credential: DIMCredential): Promise<MemberRole | null>;
+
+  /** Get member details */
+  getMember(
+    collectiveId: CollectiveId,
+    credential: DIMCredential
+  ): Promise<CollectiveMember | null>;
+
+  /** Get collectives a credential belongs to */
+  getCollectivesForMember(credential: DIMCredential): Promise<readonly CollectivePreview[]>;
+}
+
+// ============================================================================
+// Verdict Proposal Service (Multi-sig Voting)
+// ============================================================================
+
+import type {
+  VerdictProposal,
+  NewVerdictProposal,
+  NewVerdictVote,
+  VerdictVote,
+} from './verdict-voting';
+
+/**
+ * Verdict proposal service interface.
+ *
+ * Manages multi-sig voting on verdict proposals.
+ */
+export interface VerdictProposalService {
+  /** Get a proposal by ID */
+  getProposal(proposalId: string): Promise<VerdictProposal | null>;
+
+  /** Get all proposals for a claim */
+  getProposalsForClaim(claimId: ClaimId): Promise<readonly VerdictProposal[]>;
+
+  /** Get active proposals for a collective */
+  getActiveProposalsForCollective(collectiveId: CollectiveId): Promise<readonly VerdictProposal[]>;
+
+  /** Create a new verdict proposal */
+  createProposal(proposal: NewVerdictProposal): Promise<Result<string, string>>;
+
+  /** Cast a vote on a proposal */
+  vote(proposalId: string, vote: NewVerdictVote): Promise<Result<VerdictVote, string>>;
+
+  /** Check and finalize a proposal if threshold reached */
+  checkAndFinalize(proposalId: string): Promise<Result<VerdictId | null, string>>;
 }
 
 // ============================================================================
@@ -287,16 +394,10 @@ export interface ReputationService {
   getReputation(credential: DIMCredential): Promise<ReputationProfile | null>;
 
   /** Get reputation score for a specific topic */
-  getTopicScore(
-    credential: DIMCredential,
-    topic: ReputationTopic
-  ): Promise<number>;
+  getTopicScore(credential: DIMCredential, topic: ReputationTopic): Promise<number>;
 
   /** Get average reputation across specified topics */
-  getAverageScore(
-    credential: DIMCredential,
-    topics: readonly ReputationTopic[]
-  ): Promise<number>;
+  getAverageScore(credential: DIMCredential, topics: readonly ReputationTopic[]): Promise<number>;
 
   /**
    * Record a corroboration event.
@@ -399,7 +500,11 @@ export interface PersonhoodService {
  * Error types for payment operations.
  */
 export type PaymentError =
-  | { readonly type: 'INSUFFICIENT_BALANCE'; readonly available: PUSDAmount; readonly required: PUSDAmount }
+  | {
+      readonly type: 'INSUFFICIENT_BALANCE';
+      readonly available: PUSDAmount;
+      readonly required: PUSDAmount;
+    }
   | { readonly type: 'INVALID_ADDRESS'; readonly address: string }
   | { readonly type: 'BELOW_MINIMUM'; readonly amount: PUSDAmount; readonly minimum: PUSDAmount }
   | { readonly type: 'TRANSACTION_FAILED'; readonly reason: string }
@@ -436,7 +541,11 @@ export interface PaymentService {
  * Error types for escrow operations.
  */
 export type EscrowError =
-  | { readonly type: 'INSUFFICIENT_BALANCE'; readonly available: PUSDAmount; readonly required: PUSDAmount }
+  | {
+      readonly type: 'INSUFFICIENT_BALANCE';
+      readonly available: PUSDAmount;
+      readonly required: PUSDAmount;
+    }
   | { readonly type: 'ESCROW_NOT_FOUND'; readonly escrowId: EscrowId }
   | { readonly type: 'ESCROW_ALREADY_SETTLED'; readonly escrowId: EscrowId }
   | { readonly type: 'INVALID_DISTRIBUTION'; readonly reason: string }
@@ -444,13 +553,13 @@ export type EscrowError =
   | { readonly type: 'TRANSACTION_FAILED'; readonly reason: string };
 
 /**
- * Escrow state for a bounty.
+ * Escrow state for a campaign.
  */
 export interface EscrowState {
   /** Escrow identifier */
   readonly id: EscrowId;
-  /** Associated bounty */
-  readonly bountyId: BountyId;
+  /** Associated campaign */
+  readonly campaignId: CampaignId;
   /** Funder's address */
   readonly funderAddress: PolkadotAddress;
   /** Funder's DIM credential */
@@ -470,12 +579,12 @@ export interface EscrowState {
 }
 
 /**
- * Escrow service for bounty fund management.
+ * Escrow service for campaign fund management.
  */
 export interface EscrowService {
-  /** Create a new escrow for a bounty */
+  /** Create a new escrow for a campaign */
   createEscrow(params: {
-    bountyId: BountyId;
+    campaignId: CampaignId;
     funderAddress: PolkadotAddress;
     funderCredential: DIMCredential;
     amount: PUSDAmount;
@@ -485,10 +594,10 @@ export interface EscrowService {
   /** Get escrow state */
   getEscrow(escrowId: EscrowId): Promise<EscrowState | null>;
 
-  /** Get escrow by bounty ID */
-  getEscrowByBounty(bountyId: BountyId): Promise<EscrowState | null>;
+  /** Get escrow by campaign ID */
+  getEscrowByCampaign(campaignId: CampaignId): Promise<EscrowState | null>;
 
-  /** Release funds to bounty contributors */
+  /** Release funds to campaign contributors */
   releaseFunds(params: {
     escrowId: EscrowId;
     distributions: readonly {
@@ -497,7 +606,7 @@ export interface EscrowService {
       postId: PostId;
       amount: PUSDAmount;
     }[];
-  }): Promise<Result<BountyPayout, EscrowError>>;
+  }): Promise<Result<CampaignPayout, EscrowError>>;
 
   /** Refund funds to funder */
   refundFunds(escrowId: EscrowId): Promise<Result<TransactionHash, EscrowError>>;
@@ -544,20 +653,13 @@ export interface CoinageService {
   }): Promise<Result<Coin[], CoinageError>>;
 
   /** Prepare transfer (returns keys to share off-chain) */
-  prepareTransfer(params: {
-    coins: readonly Coin[];
-    expiresInSeconds?: number;
-  }): TransferPackage;
+  prepareTransfer(params: { coins: readonly Coin[]; expiresInSeconds?: number }): TransferPackage;
 
   /** Claim incoming transfer */
-  claimTransfer(params: {
-    keys: readonly string[];
-  }): Promise<Result<Coin[], CoinageError>>;
+  claimTransfer(params: { keys: readonly string[] }): Promise<Result<Coin[], CoinageError>>;
 
   /** Cancel pending transfer (reclaim coins to self) */
-  cancelTransfer(params: {
-    coins: readonly Coin[];
-  }): Promise<Result<Coin[], CoinageError>>;
+  cancelTransfer(params: { coins: readonly Coin[] }): Promise<Result<Coin[], CoinageError>>;
 
   /** Recycle coins to reset age */
   recycleCoin(params: {

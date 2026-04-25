@@ -66,7 +66,10 @@ describe('Result Type Helpers', () => {
     });
 
     it('creates an error result with a custom error type', () => {
-      interface CustomError { code: string; details: string }
+      interface CustomError {
+        code: string;
+        details: string;
+      }
       const customError: CustomError = { code: 'INVALID', details: 'Invalid input' };
       const result = err(customError);
       expect(result.ok).toBe(false);

@@ -7,7 +7,7 @@
  * - Claims extracted from the post
  * - Corroborations and disputes
  * - Verdicts
- * - Bounty information
+ * - Campaign information
  */
 
 import {
@@ -16,6 +16,8 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
@@ -42,7 +44,24 @@ export function TrustDrawerProvider({ children }: TrustDrawerProviderProps): Rea
   const [isOpen, setIsOpen] = useState(false);
   const [postId, setPostId] = useState<PostId | null>(null);
 
+  // Track timeout for cleanup
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clearTimeoutRef.current !== null) {
+        clearTimeout(clearTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const openDrawer = useCallback((id: PostId): void => {
+    // Cancel any pending clear timeout when reopening
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
     setPostId(id);
     setIsOpen(true);
   }, []);
@@ -50,8 +69,9 @@ export function TrustDrawerProvider({ children }: TrustDrawerProviderProps): Rea
   const closeDrawer = useCallback((): void => {
     setIsOpen(false);
     // Clear state after animation
-    setTimeout(() => {
+    clearTimeoutRef.current = setTimeout(() => {
       setPostId(null);
+      clearTimeoutRef.current = null;
     }, 200);
   }, []);
 
@@ -65,11 +85,7 @@ export function TrustDrawerProvider({ children }: TrustDrawerProviderProps): Rea
     [isOpen, postId, openDrawer, closeDrawer]
   );
 
-  return (
-    <TrustDrawerContext.Provider value={value}>
-      {children}
-    </TrustDrawerContext.Provider>
-  );
+  return <TrustDrawerContext.Provider value={value}>{children}</TrustDrawerContext.Provider>;
 }
 
 /**

@@ -9,6 +9,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ClaimStatusBadge } from '@cocuyo/ui';
 import { validateClaimId } from '@/lib/utils/validators';
 import { ClaimActions } from './ClaimActions';
+import { VerdictVotingPanel } from '@/components/VerdictVoting';
 
 interface ClaimDetailPageProps {
   params: Promise<{ locale: string; id: string }>;
@@ -31,10 +32,10 @@ function ClaimNotFound({ locale }: { locale: string }): ReactNode {
   return (
     <main className="min-h-screen bg-[var(--bg-default)]">
       <div className="border-b border-[var(--border-default)]">
-        <div className="container max-w-3xl mx-auto px-4 py-4">
+        <div className="container mx-auto max-w-3xl px-4 py-4">
           <Link
             href={`/${locale}/posts`}
-            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
           >
             <span aria-hidden="true">&larr;</span>
             <span>Back to Posts</span>
@@ -42,16 +43,14 @@ function ClaimNotFound({ locale }: { locale: string }): ReactNode {
         </div>
       </div>
 
-      <div className="container max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-display text-[var(--fg-primary)] mb-4">
-          Claim Not Found
-        </h1>
-        <p className="text-[var(--fg-secondary)] mb-8">
+      <div className="container mx-auto max-w-3xl px-4 py-16 text-center">
+        <h1 className="mb-4 font-display text-2xl text-[var(--fg-primary)]">Claim Not Found</h1>
+        <p className="mb-8 text-[var(--fg-secondary)]">
           This claim doesn&apos;t exist or hasn&apos;t been extracted yet.
         </p>
         <Link
           href={`/${locale}/posts`}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--bg-default)] font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2 font-medium text-[var(--bg-default)] transition-opacity hover:opacity-90"
         >
           Browse Posts
         </Link>
@@ -60,7 +59,9 @@ function ClaimNotFound({ locale }: { locale: string }): ReactNode {
   );
 }
 
-export default async function ClaimDetailPage({ params }: ClaimDetailPageProps): Promise<ReactElement> {
+export default async function ClaimDetailPage({
+  params,
+}: ClaimDetailPageProps): Promise<ReactElement> {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const tClaims = await getTranslations('claims');
@@ -109,10 +110,21 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
         <div className="container-wide py-6">
           <Link
             href={sourcePost !== null ? `/${locale}/post/${sourcePost.id}` : `/${locale}/posts`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             <span>{tClaims('backToPost')}</span>
           </Link>
@@ -123,7 +135,7 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
       <article className="py-8">
         <div className="container-wide max-w-3xl">
           {/* Status badge and meta */}
-          <div className="flex items-center gap-3 mb-4">
+          <div className="mb-4 flex items-center gap-3">
             <ClaimStatusBadge
               status={claim.status}
               size="md"
@@ -142,17 +154,17 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
           </div>
 
           {/* Claim statement */}
-          <blockquote className="text-xl font-medium text-[var(--fg-primary)] mb-6 pl-4 border-l-2 border-[var(--color-firefly-gold)]">
+          <blockquote className="mb-6 border-l-2 border-[var(--color-firefly-gold)] pl-4 text-xl font-medium text-[var(--fg-primary)]">
             &ldquo;{claim.statement}&rdquo;
           </blockquote>
 
           {/* Source post link */}
           {sourcePost !== null && (
-            <div className="mb-6 p-4 bg-[var(--bg-surface-nested)] rounded-container">
-              <p className="text-xs text-[var(--fg-tertiary)] mb-1">{tClaims('extractedFrom')}</p>
+            <div className="mb-6 rounded-container bg-[var(--bg-surface-nested)] p-4">
+              <p className="mb-1 text-xs text-[var(--fg-tertiary)]">{tClaims('extractedFrom')}</p>
               <Link
                 href={`/${locale}/post/${sourcePost.id}`}
-                className="text-sm text-[var(--fg-primary)] hover:text-[var(--color-firefly-gold)] transition-colors"
+                className="text-sm text-[var(--fg-primary)] transition-colors hover:text-[var(--color-firefly-gold)]"
               >
                 {sourcePost.content.title}
               </Link>
@@ -160,11 +172,11 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
           )}
 
           {/* Topics */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="mb-8 flex flex-wrap gap-2">
             {claim.topics.map((topic) => (
               <span
                 key={topic}
-                className="text-xs px-2 py-1 rounded-full bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)]"
+                className="rounded-full bg-[var(--bg-surface-nested)] px-2 py-1 text-xs text-[var(--fg-secondary)]"
               >
                 {topicTranslations[topic] ?? topic.replace(/-/g, ' ')}
               </span>
@@ -184,15 +196,31 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
             }}
           />
 
+          {/* Collective verdict voting */}
+          <div className="mb-8">
+            <VerdictVotingPanel
+              claimId={claim.id}
+              claimStatement={claim.statement}
+              translations={{
+                title: tClaims('collectiveVerification'),
+                noProposals: tClaims('noActiveProposals'),
+                createProposal: tClaims('createProposal'),
+                castYourVote: tClaims('castYourVote'),
+                alreadyVoted: tClaims('alreadyVoted'),
+                notAMember: tClaims('joinCollectiveToVote'),
+                connectWallet: tClaims('connectToVote'),
+                loading: tClaims('loading'),
+              }}
+            />
+          </div>
+
           {/* Verdict section (if exists) */}
           {claim.verdict !== undefined && (
-            <section className="mb-8 p-4 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-container">
-              <h2 className="text-sm font-medium text-[var(--fg-primary)] mb-2">
+            <section className="mb-8 rounded-container border border-[var(--border-default)] bg-[var(--bg-surface-nested)] p-4">
+              <h2 className="mb-2 text-sm font-medium text-[var(--fg-primary)]">
                 {tClaims('verdict')}
               </h2>
-              <p className="text-sm text-[var(--fg-secondary)] mb-2">
-                {claim.verdict.reasoning}
-              </p>
+              <p className="mb-2 text-sm text-[var(--fg-secondary)]">{claim.verdict.reasoning}</p>
               <p className="text-xs text-[var(--fg-tertiary)]">
                 {tClaims('issuedOn')} {new Date(claim.verdict.issuedAt).toLocaleDateString()}
               </p>
@@ -203,12 +231,12 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
           <div className="space-y-8">
             {/* Supporting evidence */}
             <section>
-              <h2 className="text-lg font-display font-medium text-[var(--fg-primary)] mb-4 flex items-center gap-2">
+              <h2 className="mb-4 flex items-center gap-2 font-display text-lg font-medium text-[var(--fg-primary)]">
                 <span className="text-[var(--fg-success)]">+</span>
                 {tClaims('supportingEvidence')} ({supportingEvidence.length})
               </h2>
               {supportingEvidence.length === 0 ? (
-                <p className="text-sm text-[var(--fg-tertiary)] italic">
+                <p className="text-sm italic text-[var(--fg-tertiary)]">
                   {tClaims('noSupportingEvidence')}
                 </p>
               ) : (
@@ -216,14 +244,14 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
                   {supportingEvidence.map((e) => (
                     <div
                       key={e.postId}
-                      className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--fg-success)]/20 rounded-container"
+                      className="border-[var(--fg-success)]/20 rounded-container border bg-[var(--bg-surface-nested)] p-4"
                     >
                       {e.post !== null && (
                         <Link
                           href={`/${locale}/post/${e.post.id}`}
-                          className="block hover:opacity-80 transition-opacity"
+                          className="block transition-opacity hover:opacity-80"
                         >
-                          <p className="text-sm text-[var(--fg-primary)] line-clamp-2 mb-2">
+                          <p className="mb-2 line-clamp-2 text-sm text-[var(--fg-primary)]">
                             {e.post.content.text}
                           </p>
                           <p className="text-xs text-[var(--fg-tertiary)]">
@@ -232,7 +260,7 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
                         </Link>
                       )}
                       {e.note !== undefined && (
-                        <p className="text-xs text-[var(--fg-secondary)] mt-2 italic">
+                        <p className="mt-2 text-xs italic text-[var(--fg-secondary)]">
                           Note: {e.note}
                         </p>
                       )}
@@ -244,12 +272,12 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
 
             {/* Contradicting evidence */}
             <section>
-              <h2 className="text-lg font-display font-medium text-[var(--fg-primary)] mb-4 flex items-center gap-2">
+              <h2 className="mb-4 flex items-center gap-2 font-display text-lg font-medium text-[var(--fg-primary)]">
                 <span className="text-[var(--fg-error)]">-</span>
                 {tClaims('contradictingEvidence')} ({contradictingEvidence.length})
               </h2>
               {contradictingEvidence.length === 0 ? (
-                <p className="text-sm text-[var(--fg-tertiary)] italic">
+                <p className="text-sm italic text-[var(--fg-tertiary)]">
                   {tClaims('noContradictingEvidence')}
                 </p>
               ) : (
@@ -257,14 +285,14 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
                   {contradictingEvidence.map((e) => (
                     <div
                       key={e.postId}
-                      className="p-4 bg-[var(--bg-surface-nested)] border border-[var(--fg-error)]/20 rounded-container"
+                      className="border-[var(--fg-error)]/20 rounded-container border bg-[var(--bg-surface-nested)] p-4"
                     >
                       {e.post !== null && (
                         <Link
                           href={`/${locale}/post/${e.post.id}`}
-                          className="block hover:opacity-80 transition-opacity"
+                          className="block transition-opacity hover:opacity-80"
                         >
-                          <p className="text-sm text-[var(--fg-primary)] line-clamp-2 mb-2">
+                          <p className="mb-2 line-clamp-2 text-sm text-[var(--fg-primary)]">
                             {e.post.content.text}
                           </p>
                           <p className="text-xs text-[var(--fg-tertiary)]">
@@ -273,7 +301,7 @@ export default async function ClaimDetailPage({ params }: ClaimDetailPageProps):
                         </Link>
                       )}
                       {e.note !== undefined && (
-                        <p className="text-xs text-[var(--fg-secondary)] mt-2 italic">
+                        <p className="mt-2 text-xs italic text-[var(--fg-secondary)]">
                           Note: {e.note}
                         </p>
                       )}

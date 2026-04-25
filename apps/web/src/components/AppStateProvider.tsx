@@ -3,14 +3,16 @@
 /**
  * AppStateProvider — Central session state management for the Firefly Network.
  *
- * Manages all session state in memory. No persistence, no mock data.
- * All entities are created through user actions during the session.
+ * Manages session state with localStorage persistence for claims.
+ * Claims are stored on Bulletin Chain and indexed in localStorage for
+ * cross-session persistence.
  *
  * Key design principles:
  * - Single source of truth for all entities
  * - Derived data computed from core entities
  * - Actions return the created/modified entity
  * - Integrates with wallet state via useSigner
+ * - Claims persist across page refreshes via localStorage index
  */
 
 import {
@@ -19,6 +21,7 @@ import {
   useState,
   useCallback,
   useMemo,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
@@ -30,10 +33,11 @@ import type {
   CorroborationId,
   CorroborationType,
   EvidenceType,
+  EvidenceQuality,
   Claim,
   ClaimId,
-  Bounty,
-  BountyId,
+  Campaign,
+  CampaignId,
   StoryChain,
   ChainId,
   Verdict,
@@ -45,11 +49,12 @@ import {
   createPostId,
   createChainId,
   createClaimId,
-  createBountyId,
+  createCampaignId,
   createCorroborationId,
   createVerdictId,
   createDIMCredential,
   createCollectiveId,
+  createOutletId,
   createPUSDAmount,
   createEscrowId,
   createTransactionHash,
@@ -57,16 +62,17 @@ import {
 } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
 import { uploadToBulletin } from '@/lib/services/service-utils';
+import { indexClaim, loadClaimIndex, fetchClaims, cacheClaim } from '@/lib/services/claim-service';
 import {
   seedPosts,
   seedStoryChains,
-  seedBounties,
+  seedCampaigns,
   seedCorroborations,
   seedClaims,
   seedPostClaims,
   seedPostCorroborations,
-  seedPostBounties,
-  seedBountyPosts,
+  seedPostCampaigns,
+  seedCampaignPosts,
 } from '@/lib/seed-data';
 
 // ============================================================================
@@ -80,13 +86,14 @@ export interface EvidenceInput {
   description?: string;
 }
 
-/** Input for creating a bounty */
-export interface NewBountyInput {
+/** Input for creating a campaign */
+export interface NewCampaignInput {
   title: string;
   description: string;
   topics: string[];
   fundingAmount: number;
   expiresInDays: number;
+  targetClaimIds?: ClaimId[];
 }
 
 /** Input for issuing a verdict */
@@ -119,7 +126,7 @@ interface AppState {
   posts: Map<PostId, Post>;
   corroborations: Map<CorroborationId, Corroboration>;
   claims: Map<ClaimId, Claim>;
-  bounties: Map<BountyId, Bounty>;
+  campaigns: Map<CampaignId, Campaign>;
   storyChains: Map<ChainId, StoryChain>;
   verdicts: Map<VerdictId, Verdict>;
 
@@ -129,9 +136,10 @@ interface AppState {
   // Derived mappings
   postClaims: Map<PostId, ClaimId[]>;
   postCorroborations: Map<PostId, CorroborationId[]>;
-  postBounties: Map<PostId, BountyId[]>;
-  bountyPosts: Map<BountyId, PostId[]>;
+  postCampaigns: Map<PostId, CampaignId[]>;
+  campaignPosts: Map<CampaignId, PostId[]>;
   claimVerdicts: Map<ClaimId, VerdictId | null>;
+  claimCampaigns: Map<ClaimId, CampaignId[]>;
 }
 
 /** Actions available on the app state */
@@ -146,14 +154,19 @@ interface AppStateActions {
   ) => Promise<Corroboration | null>;
   /** Extract a claim from a post (uploads to Bulletin Chain) */
   extractClaim: (postId: PostId, statement: string, topics?: string[]) => Promise<Claim | null>;
-  /** Create a bounty (requires outlet mode) */
-  createBounty: (input: NewBountyInput, targetPostId?: PostId) => Bounty | null;
-  /** Contribute a post to a bounty */
-  contributeToBounty: (bountyId: BountyId, postId: PostId) => boolean;
+  /** Create a campaign (requires outlet mode) */
+  createCampaign: (input: NewCampaignInput, targetPostId?: PostId) => Campaign | null;
+  /** Contribute a post to a campaign */
+  contributeToCampaign: (campaignId: CampaignId, postId: PostId) => boolean;
   /** Issue a verdict on a claim (requires outlet mode) */
   issueVerdict: (claimId: ClaimId, verdict: VerdictInput) => Verdict | null;
   /** Create a new story chain */
-  createStory: (title: string, description: string, firstPostId: PostId, topics?: string[]) => StoryChain | null;
+  createStory: (
+    title: string,
+    description: string,
+    firstPostId: PostId,
+    topics?: string[]
+  ) => StoryChain | null;
   /** Add a post to an existing story */
   addPostToStory: (chainId: ChainId, postId: PostId) => boolean;
   /** Toggle outlet mode for demos */
@@ -162,14 +175,15 @@ interface AppStateActions {
   // Getters for convenience
   getPost: (id: PostId) => Post | undefined;
   getClaim: (id: ClaimId) => Claim | undefined;
-  getBounty: (id: BountyId) => Bounty | undefined;
+  getCampaign: (id: CampaignId) => Campaign | undefined;
   getStory: (id: ChainId) => StoryChain | undefined;
   getPostClaims: (postId: PostId) => Claim[];
   getPostCorroborations: (postId: PostId) => Corroboration[];
-  getPostBounties: (postId: PostId) => Bounty[];
+  getPostCampaigns: (postId: PostId) => Campaign[];
+  getClaimCampaigns: (claimId: ClaimId) => Campaign[];
   getAllPosts: () => Post[];
   getAllClaims: () => Claim[];
-  getAllBounties: () => Bounty[];
+  getAllCampaigns: () => Campaign[];
   getAllStories: () => StoryChain[];
 }
 
@@ -215,10 +229,16 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
 
   // Core entity state (initialized with seed data)
   const [posts, setPosts] = useState<Map<PostId, Post>>(() => new Map(seedPosts));
-  const [corroborations, setCorroborations] = useState<Map<CorroborationId, Corroboration>>(() => new Map(seedCorroborations));
+  const [corroborations, setCorroborations] = useState<Map<CorroborationId, Corroboration>>(
+    () => new Map(seedCorroborations)
+  );
   const [claims, setClaims] = useState<Map<ClaimId, Claim>>(() => new Map(seedClaims));
-  const [bounties, setBounties] = useState<Map<BountyId, Bounty>>(() => new Map(seedBounties));
-  const [storyChains, setStoryChains] = useState<Map<ChainId, StoryChain>>(() => new Map(seedStoryChains));
+  const [campaigns, setCampaigns] = useState<Map<CampaignId, Campaign>>(
+    () => new Map(seedCampaigns)
+  );
+  const [storyChains, setStoryChains] = useState<Map<ChainId, StoryChain>>(
+    () => new Map(seedStoryChains)
+  );
   const [verdicts, setVerdicts] = useState<Map<VerdictId, Verdict>>(new Map());
 
   // User state
@@ -228,11 +248,69 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
   const [corroborationIds, setCorroborationIds] = useState<CorroborationId[]>([]);
 
   // Derived mappings (initialized with seed data)
-  const [postClaims, setPostClaims] = useState<Map<PostId, ClaimId[]>>(() => new Map(seedPostClaims));
-  const [postCorroborations, setPostCorroborations] = useState<Map<PostId, CorroborationId[]>>(() => new Map(seedPostCorroborations));
-  const [postBounties, setPostBounties] = useState<Map<PostId, BountyId[]>>(() => new Map(seedPostBounties));
-  const [bountyPosts, setBountyPosts] = useState<Map<BountyId, PostId[]>>(() => new Map(seedBountyPosts));
+  const [postClaims, setPostClaims] = useState<Map<PostId, ClaimId[]>>(
+    () => new Map(seedPostClaims)
+  );
+  const [postCorroborations, setPostCorroborations] = useState<Map<PostId, CorroborationId[]>>(
+    () => new Map(seedPostCorroborations)
+  );
+  const [postCampaigns, setPostCampaigns] = useState<Map<PostId, CampaignId[]>>(
+    () => new Map(seedPostCampaigns)
+  );
+  const [campaignPosts, setCampaignPosts] = useState<Map<CampaignId, PostId[]>>(
+    () => new Map(seedCampaignPosts)
+  );
   const [claimVerdicts, setClaimVerdicts] = useState<Map<ClaimId, VerdictId | null>>(new Map());
+  const [claimCampaigns, setClaimCampaigns] = useState<Map<ClaimId, CampaignId[]>>(new Map());
+
+  // Load persisted claims from localStorage on mount
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadPersistedClaims(): Promise<void> {
+      try {
+        const index = await loadClaimIndex();
+
+        // Fetch all persisted claims from Bulletin Chain
+        const persistedClaims = await fetchClaims(index.all);
+
+        if (!mounted) return;
+
+        // Merge persisted claims with seed data
+        setClaims((prev) => {
+          const merged = new Map(prev);
+          for (const claim of persistedClaims) {
+            merged.set(claim.id, claim);
+            // Also cache in claim-service for consistency
+            cacheClaim(claim);
+          }
+          return merged;
+        });
+
+        // Update postClaims mapping
+        setPostClaims((prev) => {
+          const merged = new Map(prev);
+          for (const [postId, claimIds] of Object.entries(index.byPost)) {
+            const existing = merged.get(postId as PostId) ?? [];
+            const newIds = claimIds.filter((id) => !existing.includes(id as ClaimId));
+            if (newIds.length > 0) {
+              merged.set(postId as PostId, [...existing, ...(newIds as ClaimId[])]);
+            }
+          }
+          return merged;
+        });
+      } catch (error) {
+        // Log error for debugging - localStorage or Bulletin fetch may have failed
+        console.warn('[AppStateProvider] Failed to load persisted claims:', error);
+      }
+    }
+
+    void loadPersistedClaims();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Compute current user from wallet state
   const currentUser: CurrentUser = useMemo(() => {
@@ -261,489 +339,603 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       createdStoryIds,
       corroborationIds,
     };
-  }, [isConnected, selectedAccount, isOutletAccount, createdPostIds, createdStoryIds, corroborationIds]);
+  }, [
+    isConnected,
+    selectedAccount,
+    isOutletAccount,
+    createdPostIds,
+    createdStoryIds,
+    corroborationIds,
+  ]);
 
   // ============================================================================
   // Actions
   // ============================================================================
 
-  const createPost = useCallback((input: NewPost): Post | null => {
-    if (!currentUser.isConnected || currentUser.credentialHash === null || currentUser.pseudonym === null) {
-      return null;
-    }
+  const createPost = useCallback(
+    (input: NewPost): Post | null => {
+      if (
+        !currentUser.isConnected ||
+        currentUser.credentialHash === null ||
+        currentUser.pseudonym === null
+      ) {
+        return null;
+      }
 
-    const now = Date.now();
-    const id = createPostId(generateId());
+      const now = Date.now();
+      const id = createPostId(generateId());
 
-    const post: Post = {
-      id,
-      author: {
-        id: selectedAccount?.address ?? '',
-        credentialHash: currentUser.credentialHash,
-        pseudonym: currentUser.pseudonym,
-        disclosureLevel: 'anonymous',
-      },
-      content: {
-        ...(input.content.title !== undefined && { title: input.content.title }),
-        text: input.content.text,
-        ...(input.content.links !== undefined && { links: input.content.links }),
-        ...(input.content.media !== undefined && { media: input.content.media }),
-      },
-      context: {
-        topics: [...input.context.topics],
-        ...(input.context.locationName !== undefined && { locationName: input.context.locationName }),
-        ...(input.context.location !== undefined && { location: input.context.location }),
-        ...(input.context.timeframe !== undefined && { timeframe: input.context.timeframe }),
-      },
-      dimSignature: currentUser.credentialHash,
-      status: 'published',
-      chainLinks: input.chainLinks ?? [],
-      corroborations: emptyCorroborationSummary(),
-      verification: { status: 'unverified' },
-      createdAt: now,
-    };
+      const post: Post = {
+        id,
+        author: {
+          id: selectedAccount?.address ?? '',
+          credentialHash: currentUser.credentialHash,
+          pseudonym: currentUser.pseudonym,
+          disclosureLevel: 'anonymous',
+        },
+        content: {
+          ...(input.content.title !== undefined && { title: input.content.title }),
+          text: input.content.text,
+          ...(input.content.links !== undefined && { links: input.content.links }),
+          ...(input.content.media !== undefined && { media: input.content.media }),
+        },
+        context: {
+          topics: [...input.context.topics],
+          ...(input.context.locationName !== undefined && {
+            locationName: input.context.locationName,
+          }),
+          ...(input.context.location !== undefined && { location: input.context.location }),
+          ...(input.context.timeframe !== undefined && { timeframe: input.context.timeframe }),
+        },
+        dimSignature: currentUser.credentialHash,
+        status: 'published',
+        chainLinks: input.chainLinks ?? [],
+        corroborations: emptyCorroborationSummary(),
+        verification: { status: 'unverified' },
+        createdAt: now,
+      };
 
-    setPosts(prev => new Map(prev).set(id, post));
-    setCreatedPostIds(prev => [...prev, id]);
+      setPosts((prev) => new Map(prev).set(id, post));
+      setCreatedPostIds((prev) => [...prev, id]);
 
-    return post;
-  }, [currentUser, selectedAccount]);
+      return post;
+    },
+    [currentUser, selectedAccount]
+  );
 
-  const submitCorroboration = useCallback(async (
-    postId: PostId,
-    type: 'corroborate' | 'dispute',
-    evidence?: EvidenceInput
-  ): Promise<Corroboration | null> => {
-    if (!currentUser.isConnected || !currentUser.credentialHash) {
-      return null;
-    }
+  const submitCorroboration = useCallback(
+    async (
+      postId: PostId,
+      type: 'corroborate' | 'dispute',
+      evidence?: EvidenceInput
+    ): Promise<Corroboration | null> => {
+      if (!currentUser.isConnected || !currentUser.credentialHash) {
+        return null;
+      }
 
-    const post = posts.get(postId);
-    if (!post) {
-      return null;
-    }
+      const post = posts.get(postId);
+      if (!post) {
+        return null;
+      }
 
-    const now = Date.now();
+      const now = Date.now();
 
-    const corroborationType: CorroborationType = type === 'dispute' ? 'challenge' :
-      evidence?.type === 'observation' ? 'witness' : 'evidence';
+      const corroborationType: CorroborationType =
+        type === 'dispute'
+          ? 'challenge'
+          : evidence?.type === 'observation'
+            ? 'witness'
+            : 'evidence';
 
-    // Build corroboration without ID first (ID will be CID from Bulletin)
-    const corroborationData = {
-      postId,
-      type: corroborationType,
-      dimSignature: currentUser.credentialHash,
-      weight: 1,
-      createdAt: now,
-      ...(evidence !== undefined && {
-        evidenceType: evidence.type,
-        evidenceContent: evidence.content,
-        ...(evidence.description !== undefined && { evidenceDescription: evidence.description }),
-      }),
-    };
+      // Determine evidence quality based on type and evidence
+      const quality: EvidenceQuality =
+        type === 'dispute'
+          ? 'unverified'
+          : evidence?.type === 'observation'
+            ? 'observation'
+            : evidence
+              ? 'documented'
+              : 'unverified';
 
-    // Upload to Bulletin Chain
-    const uploadResult = await uploadToBulletin(corroborationData);
-    if (!uploadResult.ok) {
-      // Bulletin upload failed - return null
-      return null;
-    }
+      // Build corroboration without ID first (ID will be CID from Bulletin)
+      const corroborationData = {
+        postId,
+        type: corroborationType,
+        dimSignature: currentUser.credentialHash,
+        quality,
+        createdAt: now,
+        ...(evidence !== undefined && {
+          evidenceType: evidence.type,
+          evidenceContent: evidence.content,
+          ...(evidence.description !== undefined && { evidenceDescription: evidence.description }),
+        }),
+      };
 
-    // Use CID as the corroboration ID
-    const id = createCorroborationId(uploadResult.value.cid);
-    const corroboration: Corroboration = { id, ...corroborationData };
+      // Upload to Bulletin Chain
+      const uploadResult = await uploadToBulletin(corroborationData);
+      if (!uploadResult.ok) {
+        // Bulletin upload failed - return null
+        return null;
+      }
 
-    setCorroborations(prev => new Map(prev).set(id, corroboration));
-    setCorroborationIds(prev => [...prev, id]);
+      // Use CID as the corroboration ID
+      const id = createCorroborationId(uploadResult.value.cid);
+      const corroboration: Corroboration = { id, ...corroborationData };
 
-    // Update post-corroborations mapping
-    setPostCorroborations(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(postId) ?? [];
-      newMap.set(postId, [...existing, id]);
-      return newMap;
-    });
+      setCorroborations((prev) => new Map(prev).set(id, corroboration));
+      setCorroborationIds((prev) => [...prev, id]);
 
-    // Update post's corroboration summary
-    setPosts(prev => {
-      const newMap = new Map(prev);
-      const existingPost = newMap.get(postId);
-      if (existingPost) {
-        const summary = { ...existingPost.corroborations };
-        if (type === 'dispute') {
-          summary.challengeCount += 1;
-        } else if (evidence?.type === 'observation') {
-          summary.witnessCount += 1;
-        } else {
-          summary.evidenceCount += 1;
+      // Update post-corroborations mapping
+      setPostCorroborations((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(postId) ?? [];
+        newMap.set(postId, [...existing, id]);
+        return newMap;
+      });
+
+      // Update post's corroboration summary
+      setPosts((prev) => {
+        const newMap = new Map(prev);
+        const existingPost = newMap.get(postId);
+        if (existingPost) {
+          const summary = { ...existingPost.corroborations };
+          if (type === 'dispute') {
+            summary.challengeCount += 1;
+          } else if (evidence?.type === 'observation') {
+            summary.witnessCount += 1;
+          } else {
+            summary.evidenceCount += 1;
+          }
+          newMap.set(postId, { ...existingPost, corroborations: summary });
         }
-        summary.totalWeight += 1;
-        newMap.set(postId, { ...existingPost, corroborations: summary });
+        return newMap;
+      });
+
+      return corroboration;
+    },
+    [currentUser, posts]
+  );
+
+  const extractClaim = useCallback(
+    async (postId: PostId, statement: string, topics?: string[]): Promise<Claim | null> => {
+      if (!currentUser.isConnected || !currentUser.credentialHash) {
+        return null;
       }
-      return newMap;
-    });
 
-    return corroboration;
-  }, [currentUser, posts]);
+      const post = posts.get(postId);
+      if (!post) {
+        return null;
+      }
 
-  const extractClaim = useCallback(async (
-    postId: PostId,
-    statement: string,
-    topics?: string[]
-  ): Promise<Claim | null> => {
-    if (!currentUser.isConnected || !currentUser.credentialHash) {
-      return null;
-    }
+      const now = Date.now();
 
-    const post = posts.get(postId);
-    if (!post) {
-      return null;
-    }
+      // Build claim without ID first (ID will be CID from Bulletin)
+      const claimData = {
+        statement,
+        sourcePostId: postId,
+        extractedBy: currentUser.credentialHash,
+        topics: topics ?? [...post.context.topics],
+        evidence: [],
+        status: 'pending' as const,
+        createdAt: now,
+        updatedAt: now,
+      };
 
-    const now = Date.now();
+      // Upload to Bulletin Chain
+      const uploadResult = await uploadToBulletin(claimData);
+      if (!uploadResult.ok) {
+        // Bulletin upload failed - return null
+        return null;
+      }
 
-    // Build claim without ID first (ID will be CID from Bulletin)
-    const claimData = {
-      statement,
-      sourcePostId: postId,
-      extractedBy: currentUser.credentialHash,
-      topics: topics ?? [...post.context.topics],
-      evidence: [],
-      status: 'pending' as const,
-      createdAt: now,
-      updatedAt: now,
-    };
+      // Use CID as the claim ID
+      const id = createClaimId(uploadResult.value.cid);
+      const claim: Claim = { id, ...claimData };
 
-    // Upload to Bulletin Chain
-    const uploadResult = await uploadToBulletin(claimData);
-    if (!uploadResult.ok) {
-      // Bulletin upload failed - return null
-      return null;
-    }
+      // Cache in claim-service for consistency
+      cacheClaim(claim);
 
-    // Use CID as the claim ID
-    const id = createClaimId(uploadResult.value.cid);
-    const claim: Claim = { id, ...claimData };
+      // Persist to localStorage index (survives page refresh)
+      await indexClaim(id, postId);
 
-    setClaims(prev => new Map(prev).set(id, claim));
+      setClaims((prev) => new Map(prev).set(id, claim));
 
-    // Update post-claims mapping
-    setPostClaims(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(postId) ?? [];
-      newMap.set(postId, [...existing, id]);
-      return newMap;
-    });
-
-    return claim;
-  }, [currentUser, posts]);
-
-  const createBounty = useCallback((
-    input: NewBountyInput,
-    targetPostId?: PostId
-  ): Bounty | null => {
-    if (!currentUser.isConnected || !currentUser.credentialHash || !currentUser.isOutletAccount) {
-      return null;
-    }
-
-    const now = Date.now();
-    const id = createBountyId(generateId());
-    const expiresAt = now + (input.expiresInDays * 24 * 60 * 60 * 1000);
-    // Convert dollars to cents (bigint) for PUSDAmount
-    const fundingCents = BigInt(Math.round(input.fundingAmount * 100));
-
-    const bounty: Bounty = {
-      id,
-      title: input.title,
-      description: input.description,
-      topics: input.topics,
-      fundingAmount: createPUSDAmount(fundingCents),
-      funderCredential: currentUser.credentialHash,
-      escrowId: createEscrowId(`escrow-${generateId()}`),
-      fundingTxHash: createTransactionHash(`0x${generateId()}`),
-      contributingPostIds: targetPostId ? [targetPostId] : [],
-      status: 'open',
-      payoutMode: 'public',
-      createdAt: now,
-      expiresAt,
-    };
-
-    setBounties(prev => new Map(prev).set(id, bounty));
-
-    // If there's a target post, update the mappings
-    if (targetPostId) {
-      setPostBounties(prev => {
+      // Update post-claims mapping
+      setPostClaims((prev) => {
         const newMap = new Map(prev);
-        const existing = newMap.get(targetPostId) ?? [];
-        newMap.set(targetPostId, [...existing, id]);
+        const existing = newMap.get(postId) ?? [];
+        newMap.set(postId, [...existing, id]);
         return newMap;
       });
 
-      setBountyPosts(prev => {
-        const newMap = new Map(prev);
-        newMap.set(id, [targetPostId]);
-        return newMap;
-      });
-    }
+      return claim;
+    },
+    [currentUser, posts]
+  );
 
-    return bounty;
-  }, [currentUser]);
+  const createCampaign = useCallback(
+    (input: NewCampaignInput, targetPostId?: PostId): Campaign | null => {
+      // Allow any connected user with credentials (personhood check happens in UI)
+      if (!currentUser.isConnected || !currentUser.credentialHash || !currentUser.pseudonym) {
+        return null;
+      }
 
-  const contributeToBounty = useCallback((bountyId: BountyId, postId: PostId): boolean => {
-    if (!currentUser.isConnected) {
-      return false;
-    }
+      const now = Date.now();
+      const id = createCampaignId(generateId());
+      const expiresAt = now + input.expiresInDays * 24 * 60 * 60 * 1000;
 
-    const bounty = bounties.get(bountyId);
-    const post = posts.get(postId);
-    if (!bounty || !post) {
-      return false;
-    }
+      // Convert dollars to smallest unit (6 decimals, 1 pUSD = 1,000,000 units)
+      // Use string parsing to avoid floating point multiplication errors
+      // e.g., 0.000001 * 1_000_000 can produce 0.9999999999999999 instead of 1
+      const amountStr = input.fundingAmount.toFixed(6);
+      const [whole = '0', decimal = ''] = amountStr.split('.');
+      const paddedDecimal = decimal.padEnd(6, '0').slice(0, 6);
+      const fundingUnits = BigInt(whole + paddedDecimal);
 
-    // Update bounty
-    setBounties(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(bountyId);
-      if (existing && !existing.contributingPostIds.includes(postId)) {
-        newMap.set(bountyId, {
-          ...existing,
-          contributingPostIds: [...existing.contributingPostIds, postId],
+      // Use outlet sponsor if in outlet mode, otherwise firefly sponsor
+      const sponsor: Campaign['sponsor'] = currentUser.isOutletAccount
+        ? {
+            type: 'outlet',
+            id: createOutletId('demo-outlet'),
+            name: 'Demo Outlet',
+          }
+        : {
+            type: 'firefly',
+            credential: currentUser.credentialHash,
+            pseudonym: currentUser.pseudonym,
+          };
+
+      const campaign: Campaign = {
+        id,
+        title: input.title,
+        description: input.description,
+        topics: input.topics,
+        sponsor,
+        fundingAmount: createPUSDAmount(fundingUnits),
+        escrowId: createEscrowId(`escrow-${generateId()}`),
+        fundingTxHash: createTransactionHash(`0x${generateId()}`),
+        contributingPostIds: targetPostId ? [targetPostId] : [],
+        ...(input.targetClaimIds !== undefined &&
+          input.targetClaimIds.length > 0 && { targetClaimIds: input.targetClaimIds }),
+        deliverables: [{ type: 'evidence_gathered', target: 10, current: 0 }],
+        payoutMode: 'public',
+        status: 'active',
+        createdAt: now,
+        expiresAt,
+      };
+
+      setCampaigns((prev) => new Map(prev).set(id, campaign));
+
+      // If there's a target post, update the mappings
+      if (targetPostId) {
+        setPostCampaigns((prev) => {
+          const newMap = new Map(prev);
+          const existing = newMap.get(targetPostId) ?? [];
+          newMap.set(targetPostId, [...existing, id]);
+          return newMap;
+        });
+
+        setCampaignPosts((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(id, [targetPostId]);
+          return newMap;
         });
       }
-      return newMap;
-    });
 
-    // Update mappings
-    setPostBounties(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(postId) ?? [];
-      if (!existing.includes(bountyId)) {
-        newMap.set(postId, [...existing, bountyId]);
+      // Update claim-campaign mappings
+      if (input.targetClaimIds !== undefined && input.targetClaimIds.length > 0) {
+        setClaimCampaigns((prev) => {
+          const newMap = new Map(prev);
+          for (const claimId of input.targetClaimIds ?? []) {
+            const existing = newMap.get(claimId) ?? [];
+            newMap.set(claimId, [...existing, id]);
+          }
+          return newMap;
+        });
       }
-      return newMap;
-    });
 
-    setBountyPosts(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(bountyId) ?? [];
-      if (!existing.includes(postId)) {
-        newMap.set(bountyId, [...existing, postId]);
+      return campaign;
+    },
+    [currentUser]
+  );
+
+  const contributeToCampaign = useCallback(
+    (campaignId: CampaignId, postId: PostId): boolean => {
+      if (!currentUser.isConnected) {
+        return false;
       }
-      return newMap;
-    });
 
-    return true;
-  }, [currentUser, bounties, posts]);
+      const campaign = campaigns.get(campaignId);
+      const post = posts.get(postId);
+      if (!campaign || !post) {
+        return false;
+      }
 
-  const issueVerdict = useCallback((claimId: ClaimId, input: VerdictInput): Verdict | null => {
-    if (!currentUser.isConnected || !currentUser.isOutletAccount) {
-      return null;
-    }
+      // Update campaign
+      setCampaigns((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(campaignId);
+        if (existing && !existing.contributingPostIds.includes(postId)) {
+          newMap.set(campaignId, {
+            ...existing,
+            contributingPostIds: [...existing.contributingPostIds, postId],
+          });
+        }
+        return newMap;
+      });
 
-    const claim = claims.get(claimId);
-    if (!claim) {
-      return null;
-    }
+      // Update mappings
+      setPostCampaigns((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(postId) ?? [];
+        if (!existing.includes(campaignId)) {
+          newMap.set(postId, [...existing, campaignId]);
+        }
+        return newMap;
+      });
 
-    const now = Date.now();
-    const id = createVerdictId(generateId());
-    const collectiveId = createCollectiveId('demo-collective');
+      setCampaignPosts((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(campaignId) ?? [];
+        if (!existing.includes(postId)) {
+          newMap.set(campaignId, [...existing, postId]);
+        }
+        return newMap;
+      });
 
-    const verdict: Verdict = {
-      id,
-      claimId,
-      collectiveId,
-      status: input.status,
-      rationale: input.rationale,
-      issuedAt: now,
-    };
+      return true;
+    },
+    [currentUser, campaigns, posts]
+  );
 
-    setVerdicts(prev => new Map(prev).set(id, verdict));
+  const issueVerdict = useCallback(
+    (claimId: ClaimId, input: VerdictInput): Verdict | null => {
+      if (!currentUser.isConnected || !currentUser.isOutletAccount) {
+        return null;
+      }
 
-    // Update claim-verdicts mapping
-    setClaimVerdicts(prev => {
-      const newMap = new Map(prev);
-      newMap.set(claimId, id);
-      return newMap;
-    });
+      const claim = claims.get(claimId);
+      if (!claim) {
+        return null;
+      }
 
-    // Update claim status based on verdict
-    setClaims(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(claimId);
-      if (existing) {
-        // Map VerdictStatus to ClaimStatus
-        const statusMap: Record<VerdictStatus, Claim['status']> = {
-          confirmed: 'verified',
-          disputed: 'disputed',
-          false: 'false',
-          synthetic: 'false',
-          inconclusive: 'unverifiable',
-        };
-        const newStatus = statusMap[input.status];
+      const now = Date.now();
+      const id = createVerdictId(generateId());
+      const collectiveId = createCollectiveId('demo-collective');
 
-        newMap.set(claimId, {
-          ...existing,
-          status: newStatus,
-          verdict: {
+      const verdict: Verdict = {
+        id,
+        claimId,
+        collectiveId,
+        status: input.status,
+        rationale: input.rationale,
+        issuedAt: now,
+      };
+
+      setVerdicts((prev) => new Map(prev).set(id, verdict));
+
+      // Update claim-verdicts mapping
+      setClaimVerdicts((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(claimId, id);
+        return newMap;
+      });
+
+      // Update claim status based on verdict
+      setClaims((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(claimId);
+        if (existing) {
+          // Map VerdictStatus to ClaimStatus
+          const statusMap: Record<VerdictStatus, Claim['status']> = {
+            confirmed: 'verified',
+            disputed: 'disputed',
+            false: 'false',
+            synthetic: 'false',
+            inconclusive: 'unverifiable',
+          };
+          const newStatus = statusMap[input.status];
+
+          newMap.set(claimId, {
+            ...existing,
             status: newStatus,
-            collectiveId,
-            reasoning: input.rationale,
-            issuedAt: now,
-          },
-          updatedAt: now,
-        });
+            verdict: {
+              status: newStatus,
+              collectiveId,
+              reasoning: input.rationale,
+              issuedAt: now,
+            },
+            updatedAt: now,
+          });
+        }
+        return newMap;
+      });
+
+      return verdict;
+    },
+    [currentUser, claims]
+  );
+
+  const createStory = useCallback(
+    (
+      title: string,
+      description: string,
+      firstPostId: PostId,
+      topics?: string[]
+    ): StoryChain | null => {
+      if (!currentUser.isConnected) {
+        return null;
       }
-      return newMap;
-    });
 
-    return verdict;
-  }, [currentUser, claims]);
-
-  const createStory = useCallback((
-    title: string,
-    description: string,
-    firstPostId: PostId,
-    topics?: string[]
-  ): StoryChain | null => {
-    if (!currentUser.isConnected) {
-      return null;
-    }
-
-    const post = posts.get(firstPostId);
-    if (!post) {
-      return null;
-    }
-
-    const now = Date.now();
-    const id = createChainId(generateId());
-
-    const chain: StoryChain = {
-      id,
-      title,
-      description,
-      topics: topics ?? [...post.context.topics],
-      status: 'emerging',
-      postIds: [firstPostId],
-      stats: {
-        postCount: 1,
-        totalCorroborations: 0,
-        totalChallenges: 0,
-        contributorCount: 1,
-        totalWeight: 0,
-      },
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    setStoryChains(prev => new Map(prev).set(id, chain));
-    setCreatedStoryIds(prev => [...prev, id]);
-
-    // Update post's chainLinks
-    setPosts(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(firstPostId);
-      if (existing) {
-        newMap.set(firstPostId, {
-          ...existing,
-          chainLinks: [...existing.chainLinks, id],
-        });
+      const post = posts.get(firstPostId);
+      if (!post) {
+        return null;
       }
-      return newMap;
-    });
 
-    return chain;
-  }, [currentUser, posts]);
+      const now = Date.now();
+      const id = createChainId(generateId());
 
-  const addPostToStory = useCallback((chainId: ChainId, postId: PostId): boolean => {
-    if (!currentUser.isConnected) {
-      return false;
-    }
+      const chain: StoryChain = {
+        id,
+        title,
+        description,
+        topics: topics ?? [...post.context.topics],
+        status: 'emerging',
+        postIds: [firstPostId],
+        stats: {
+          postCount: 1,
+          corroborationCount: 0,
+          challengeCount: 0,
+          contributorCount: 1,
+        },
+        createdAt: now,
+        updatedAt: now,
+      };
 
-    const chain = storyChains.get(chainId);
-    const post = posts.get(postId);
-    if (!chain || !post) {
-      return false;
-    }
+      setStoryChains((prev) => new Map(prev).set(id, chain));
+      setCreatedStoryIds((prev) => [...prev, id]);
 
-    if (chain.postIds.includes(postId)) {
-      return false; // Already in chain
-    }
+      // Update post's chainLinks
+      setPosts((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(firstPostId);
+        if (existing) {
+          newMap.set(firstPostId, {
+            ...existing,
+            chainLinks: [...existing.chainLinks, id],
+          });
+        }
+        return newMap;
+      });
 
-    const now = Date.now();
+      return chain;
+    },
+    [currentUser, posts]
+  );
 
-    // Update chain
-    setStoryChains(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(chainId);
-      if (existing) {
-        newMap.set(chainId, {
-          ...existing,
-          postIds: [...existing.postIds, postId],
-          stats: {
-            ...existing.stats,
-            postCount: existing.stats.postCount + 1,
-          },
-          updatedAt: now,
-        });
+  const addPostToStory = useCallback(
+    (chainId: ChainId, postId: PostId): boolean => {
+      if (!currentUser.isConnected) {
+        return false;
       }
-      return newMap;
-    });
 
-    // Update post's chainLinks
-    setPosts(prev => {
-      const newMap = new Map(prev);
-      const existing = newMap.get(postId);
-      if (existing && !existing.chainLinks.includes(chainId)) {
-        newMap.set(postId, {
-          ...existing,
-          chainLinks: [...existing.chainLinks, chainId],
-        });
+      const chain = storyChains.get(chainId);
+      const post = posts.get(postId);
+      if (!chain || !post) {
+        return false;
       }
-      return newMap;
-    });
 
-    return true;
-  }, [currentUser, storyChains, posts]);
+      if (chain.postIds.includes(postId)) {
+        return false; // Already in chain
+      }
+
+      const now = Date.now();
+
+      // Update chain
+      setStoryChains((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(chainId);
+        if (existing) {
+          newMap.set(chainId, {
+            ...existing,
+            postIds: [...existing.postIds, postId],
+            stats: {
+              ...existing.stats,
+              postCount: existing.stats.postCount + 1,
+            },
+            updatedAt: now,
+          });
+        }
+        return newMap;
+      });
+
+      // Update post's chainLinks
+      setPosts((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(postId);
+        if (existing && !existing.chainLinks.includes(chainId)) {
+          newMap.set(postId, {
+            ...existing,
+            chainLinks: [...existing.chainLinks, chainId],
+          });
+        }
+        return newMap;
+      });
+
+      return true;
+    },
+    [currentUser, storyChains, posts]
+  );
 
   const toggleOutletMode = useCallback((): void => {
-    setIsOutletAccount(prev => !prev);
+    setIsOutletAccount((prev) => !prev);
   }, []);
 
   // ============================================================================
   // Getters
   // ============================================================================
 
-  const getPost = useCallback((id: PostId): Post | undefined => {
-    return posts.get(id);
-  }, [posts]);
+  const getPost = useCallback(
+    (id: PostId): Post | undefined => {
+      return posts.get(id);
+    },
+    [posts]
+  );
 
-  const getClaim = useCallback((id: ClaimId): Claim | undefined => {
-    return claims.get(id);
-  }, [claims]);
+  const getClaim = useCallback(
+    (id: ClaimId): Claim | undefined => {
+      return claims.get(id);
+    },
+    [claims]
+  );
 
-  const getBounty = useCallback((id: BountyId): Bounty | undefined => {
-    return bounties.get(id);
-  }, [bounties]);
+  const getCampaign = useCallback(
+    (id: CampaignId): Campaign | undefined => {
+      return campaigns.get(id);
+    },
+    [campaigns]
+  );
 
-  const getStory = useCallback((id: ChainId): StoryChain | undefined => {
-    return storyChains.get(id);
-  }, [storyChains]);
+  const getStory = useCallback(
+    (id: ChainId): StoryChain | undefined => {
+      return storyChains.get(id);
+    },
+    [storyChains]
+  );
 
-  const getPostClaims = useCallback((postId: PostId): Claim[] => {
-    const claimIds = postClaims.get(postId) ?? [];
-    return claimIds.map(id => claims.get(id)).filter((c): c is Claim => c !== undefined);
-  }, [postClaims, claims]);
+  const getPostClaims = useCallback(
+    (postId: PostId): Claim[] => {
+      const claimIds = postClaims.get(postId) ?? [];
+      return claimIds.map((id) => claims.get(id)).filter((c): c is Claim => c !== undefined);
+    },
+    [postClaims, claims]
+  );
 
-  const getPostCorroborations = useCallback((postId: PostId): Corroboration[] => {
-    const ids = postCorroborations.get(postId) ?? [];
-    return ids.map(id => corroborations.get(id)).filter((c): c is Corroboration => c !== undefined);
-  }, [postCorroborations, corroborations]);
+  const getPostCorroborations = useCallback(
+    (postId: PostId): Corroboration[] => {
+      const ids = postCorroborations.get(postId) ?? [];
+      return ids
+        .map((id) => corroborations.get(id))
+        .filter((c): c is Corroboration => c !== undefined);
+    },
+    [postCorroborations, corroborations]
+  );
 
-  const getPostBounties = useCallback((postId: PostId): Bounty[] => {
-    const ids = postBounties.get(postId) ?? [];
-    return ids.map(id => bounties.get(id)).filter((b): b is Bounty => b !== undefined);
-  }, [postBounties, bounties]);
+  const getPostCampaigns = useCallback(
+    (postId: PostId): Campaign[] => {
+      const ids = postCampaigns.get(postId) ?? [];
+      return ids.map((id) => campaigns.get(id)).filter((c): c is Campaign => c !== undefined);
+    },
+    [postCampaigns, campaigns]
+  );
+
+  const getClaimCampaigns = useCallback(
+    (claimId: ClaimId): Campaign[] => {
+      const ids = claimCampaigns.get(claimId) ?? [];
+      return ids.map((id) => campaigns.get(id)).filter((c): c is Campaign => c !== undefined);
+    },
+    [claimCampaigns, campaigns]
+  );
 
   const getAllPosts = useCallback((): Post[] => {
     return Array.from(posts.values()).sort((a, b) => b.createdAt - a.createdAt);
@@ -753,9 +945,9 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     return Array.from(claims.values()).sort((a, b) => b.createdAt - a.createdAt);
   }, [claims]);
 
-  const getAllBounties = useCallback((): Bounty[] => {
-    return Array.from(bounties.values()).sort((a, b) => b.createdAt - a.createdAt);
-  }, [bounties]);
+  const getAllCampaigns = useCallback((): Campaign[] => {
+    return Array.from(campaigns.values()).sort((a, b) => b.createdAt - a.createdAt);
+  }, [campaigns]);
 
   const getAllStories = useCallback((): StoryChain[] => {
     return Array.from(storyChains.values()).sort((a, b) => b.updatedAt - a.updatedAt);
@@ -765,84 +957,87 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
   // Context Value
   // ============================================================================
 
-  const value = useMemo((): AppStateContextValue => ({
-    // State
-    posts,
-    corroborations,
-    claims,
-    bounties,
-    storyChains,
-    verdicts,
-    currentUser,
-    postClaims,
-    postCorroborations,
-    postBounties,
-    bountyPosts,
-    claimVerdicts,
+  const value = useMemo(
+    (): AppStateContextValue => ({
+      // State
+      posts,
+      corroborations,
+      claims,
+      campaigns,
+      storyChains,
+      verdicts,
+      currentUser,
+      postClaims,
+      postCorroborations,
+      postCampaigns,
+      campaignPosts,
+      claimVerdicts,
+      claimCampaigns,
 
-    // Actions
-    createPost,
-    submitCorroboration,
-    extractClaim,
-    createBounty,
-    contributeToBounty,
-    issueVerdict,
-    createStory,
-    addPostToStory,
-    toggleOutletMode,
+      // Actions
+      createPost,
+      submitCorroboration,
+      extractClaim,
+      createCampaign,
+      contributeToCampaign,
+      issueVerdict,
+      createStory,
+      addPostToStory,
+      toggleOutletMode,
 
-    // Getters
-    getPost,
-    getClaim,
-    getBounty,
-    getStory,
-    getPostClaims,
-    getPostCorroborations,
-    getPostBounties,
-    getAllPosts,
-    getAllClaims,
-    getAllBounties,
-    getAllStories,
-  }), [
-    posts,
-    corroborations,
-    claims,
-    bounties,
-    storyChains,
-    verdicts,
-    currentUser,
-    postClaims,
-    postCorroborations,
-    postBounties,
-    bountyPosts,
-    claimVerdicts,
-    createPost,
-    submitCorroboration,
-    extractClaim,
-    createBounty,
-    contributeToBounty,
-    issueVerdict,
-    createStory,
-    addPostToStory,
-    toggleOutletMode,
-    getPost,
-    getClaim,
-    getBounty,
-    getStory,
-    getPostClaims,
-    getPostCorroborations,
-    getPostBounties,
-    getAllPosts,
-    getAllClaims,
-    getAllBounties,
-    getAllStories,
-  ]);
-
-  return (
-    <AppStateContext.Provider value={value}>
-      {children}
-    </AppStateContext.Provider>
+      // Getters
+      getPost,
+      getClaim,
+      getCampaign,
+      getStory,
+      getPostClaims,
+      getPostCorroborations,
+      getPostCampaigns,
+      getClaimCampaigns,
+      getAllPosts,
+      getAllClaims,
+      getAllCampaigns,
+      getAllStories,
+    }),
+    [
+      posts,
+      corroborations,
+      claims,
+      campaigns,
+      storyChains,
+      verdicts,
+      currentUser,
+      postClaims,
+      postCorroborations,
+      postCampaigns,
+      campaignPosts,
+      claimVerdicts,
+      claimCampaigns,
+      createPost,
+      submitCorroboration,
+      extractClaim,
+      createCampaign,
+      contributeToCampaign,
+      issueVerdict,
+      createStory,
+      addPostToStory,
+      toggleOutletMode,
+      getPost,
+      getClaim,
+      getCampaign,
+      getStory,
+      getPostClaims,
+      getPostCorroborations,
+      getPostCampaigns,
+      getClaimCampaigns,
+      getAllPosts,
+      getAllClaims,
+      getAllCampaigns,
+      getAllStories,
+    ]
   );
+
+  return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }
 
 // ============================================================================

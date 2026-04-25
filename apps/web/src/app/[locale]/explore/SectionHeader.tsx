@@ -31,9 +31,7 @@ export function SectionHeader({
 
   return (
     <div className={`flex items-center gap-2 ${className ?? 'mb-4'}`}>
-      <h2 className="text-sm font-semibold text-secondary uppercase tracking-wide">
-        {title}
-      </h2>
+      <h2 className="text-sm font-semibold uppercase tracking-wide text-secondary">{title}</h2>
       {showInfo && (
         <InfoPopover title={infoTitle} position="bottom">
           {infoBody}

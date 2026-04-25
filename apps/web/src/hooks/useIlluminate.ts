@@ -10,14 +10,11 @@
  * const { openModal } = useIlluminate();
  * openModal(); // Open from navbar
  * openModal({ chainId: 'chain-001' }); // Open from chain page
- * openModal({ bountyId: 'bounty-001' }); // Open from bounty page
+ * openModal({ campaignId: 'campaign-001' }); // Open from campaign page
  */
 
 import { useContext } from 'react';
-import {
-  IlluminateContext,
-  type IlluminateContextValue,
-} from '@/components/IlluminateProvider';
+import { IlluminateContext, type IlluminateContextValue } from '@/components/IlluminateProvider';
 
 export function useIlluminate(): IlluminateContextValue {
   const context = useContext(IlluminateContext);

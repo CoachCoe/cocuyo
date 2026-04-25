@@ -81,8 +81,7 @@ export async function initHostDetection(): Promise<boolean> {
       ]);
 
       // Skip Spektr injection on dot.li (causes reload loop)
-      const isDotLi = typeof window !== 'undefined' &&
-        window.location.hostname.endsWith('.dot.li');
+      const isDotLi = typeof window !== 'undefined' && window.location.hostname.endsWith('.dot.li');
 
       if (!isDotLi) {
         // Inject the Spektr extension which enables host communication
@@ -138,13 +137,15 @@ export function getAccountsProvider(): AccountsProviderType | null {
 /**
  * Check if external (cross-origin) network requests will work.
  *
- * In Triangle sandbox, cross-origin fetch/XHR is blocked by the host.
- * Only same-origin requests (to Service Worker) are allowed.
- * Outside Triangle, network is always available.
+ * Returns true because permissions for external domains (like CARTO map tiles)
+ * are requested on startup via the Host API. If the user grants permission,
+ * requests work. If denied, they'll fail naturally but the map should still
+ * attempt to load.
+ *
+ * @deprecated This check is no longer needed since permissions are requested upfront.
  */
 export function canMakeExternalRequests(): boolean {
-  // Cross-origin requests are blocked in Triangle sandbox
-  return !isInsideContainer();
+  return true;
 }
 
 /**
@@ -153,22 +154,4 @@ export function canMakeExternalRequests(): boolean {
  */
 export function hasGeolocation(): boolean {
   return typeof navigator !== 'undefined' && 'geolocation' in navigator;
-}
-
-/**
- * Get current position using browser geolocation API.
- */
-export function getCurrentPosition(): Promise<GeolocationPosition> {
-  return new Promise((resolve, reject) => {
-    if (!hasGeolocation()) {
-      reject(new Error('Geolocation not available'));
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
-      enableHighAccuracy: false,
-      timeout: 10000,
-      maximumAge: 300000, // 5 minutes
-    });
-  });
 }

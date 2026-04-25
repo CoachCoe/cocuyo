@@ -12,6 +12,8 @@ import type { PaginatedResult, Result } from '@cocuyo/types';
 import { ok, err, createDIMCredential, type DIMCredential } from '@cocuyo/types';
 import { getBulletinClient } from '../chain/client';
 import { createLogger } from '../logging';
+import { requestTransactionSubmit } from '../host/permissions';
+import { isHosted } from '../host/detect';
 
 const logger = createLogger('MockServices');
 
@@ -56,15 +58,39 @@ export function getConnectedCredential(): DIMCredential | null {
 // ============================================================
 
 const ADJECTIVES = [
-  'Swift', 'Bright', 'Silent', 'Golden', 'Crystal',
-  'Shadow', 'Thunder', 'Cosmic', 'Ember', 'Frost',
-  'Mystic', 'Lunar', 'Solar', 'Wild', 'Ancient',
+  'Swift',
+  'Bright',
+  'Silent',
+  'Golden',
+  'Crystal',
+  'Shadow',
+  'Thunder',
+  'Cosmic',
+  'Ember',
+  'Frost',
+  'Mystic',
+  'Lunar',
+  'Solar',
+  'Wild',
+  'Ancient',
 ];
 
 const NOUNS = [
-  'Firefly', 'Phoenix', 'Condor', 'Jaguar', 'Quetzal',
-  'Orchid', 'Ceiba', 'Cacao', 'Ocelot', 'Toucan',
-  'Macaw', 'Iguana', 'Tapir', 'Manatee', 'Harpy',
+  'Firefly',
+  'Phoenix',
+  'Condor',
+  'Jaguar',
+  'Quetzal',
+  'Orchid',
+  'Ceiba',
+  'Cacao',
+  'Ocelot',
+  'Toucan',
+  'Macaw',
+  'Iguana',
+  'Tapir',
+  'Manatee',
+  'Harpy',
 ];
 
 /**
@@ -92,10 +118,7 @@ export interface PaginationParams {
  * Apply pagination to an array of items.
  * Returns a PaginatedResult with items, total count, and hasMore flag.
  */
-export function paginate<T>(
-  items: T[],
-  pagination: PaginationParams
-): PaginatedResult<T> {
+export function paginate<T>(items: T[], pagination: PaginationParams): PaginatedResult<T> {
   const total = items.length;
   const start = pagination.offset;
   const end = start + pagination.limit;
@@ -134,18 +157,24 @@ export function filterByTopic<T>(
 ): T[] {
   if (topic === undefined) return items;
   const topicLower = topic.toLowerCase();
-  return items.filter((item) =>
-    getTopics(item).some((t) => t.toLowerCase().includes(topicLower))
-  );
+  return items.filter((item) => getTopics(item).some((t) => t.toLowerCase().includes(topicLower)));
 }
 
 // ============================================================
 // Bulletin Chain Upload
 // ============================================================
 
+/** Track if we've requested transaction permission (avoids repeat prompts) */
+let transactionPermissionRequested = false;
+
 export interface UploadResult {
   cid: string;
-  usedFallback: boolean;
+}
+
+export interface PhotoUploadResult {
+  cid: string;
+  mimeType: string;
+  size: number;
 }
 
 /**
@@ -155,13 +184,21 @@ export interface UploadResult {
  */
 export async function uploadToBulletin(data: unknown): Promise<Result<UploadResult, string>> {
   try {
+    // Request TransactionSubmit permission on first upload (Host mode only).
+    // requestTransactionSubmit() never throws - it handles denial internally.
+    // We set the flag to avoid re-prompting on every upload.
+    if (!transactionPermissionRequested && isHosted()) {
+      await requestTransactionSubmit();
+      transactionPermissionRequested = true;
+    }
+
     const bulletin = await getBulletinClient();
     const encoder = new TextEncoder();
     const jsonData = encoder.encode(JSON.stringify(data));
     const result = await bulletin.upload(jsonData);
 
     logger.debug('Uploaded to Bulletin Chain', 'uploadToBulletin', { cid: result.cid });
-    return ok({ cid: result.cid, usedFallback: false });
+    return ok({ cid: result.cid });
   } catch (uploadError) {
     const message = uploadError instanceof Error ? uploadError.message : 'Bulletin upload failed';
     logger.swallowed('Bulletin upload failed', 'uploadToBulletin', uploadError);
@@ -169,16 +206,93 @@ export async function uploadToBulletin(data: unknown): Promise<Result<UploadResu
   }
 }
 
+/** Reason why fetchFromBulletin returned null */
+export type FetchFailureReason = 'network_error' | 'not_found' | 'validation_failed';
+
 /**
- * Fetch data from Bulletin Chain by CID.
- * Returns null if fetch fails.
+ * Fetch data from Bulletin Chain by CID with optional validation.
+ * Returns null if fetch or validation fails.
+ *
+ * @param cid - Content identifier to fetch
+ * @param validator - Optional function to validate/parse the fetched data
+ * @param onError - Optional callback to receive the failure reason for debugging
  */
-export async function fetchFromBulletin<T>(cid: string): Promise<T | null> {
+export async function fetchFromBulletin<T>(
+  cid: string,
+  validator?: (data: unknown) => T | null,
+  onError?: (reason: FetchFailureReason, details?: unknown) => void
+): Promise<T | null> {
   try {
     const bulletin = await getBulletinClient();
-    return await bulletin.fetchJson<T>(cid);
+    const data = await bulletin.fetchJson<unknown>(cid);
+
+    if (validator) {
+      const validated = validator(data);
+      if (validated === null) {
+        logger.warn('Bulletin data validation failed', 'fetchFromBulletin', {
+          cid,
+          receivedKeys: data && typeof data === 'object' ? Object.keys(data) : typeof data,
+        });
+        onError?.('validation_failed', data);
+        return null;
+      }
+      return validated;
+    }
+
+    return data as T;
   } catch (fetchError) {
-    logger.swallowed('Bulletin fetch failed', 'fetchFromBulletin', fetchError, { cid });
+    const isNotFound =
+      fetchError instanceof Error &&
+      (fetchError.message.includes('404') || fetchError.message.includes('not found'));
+    const reason: FetchFailureReason = isNotFound ? 'not_found' : 'network_error';
+
+    logger.swallowed('Bulletin fetch failed', 'fetchFromBulletin', fetchError, { cid, reason });
+    onError?.(reason, fetchError);
+    return null;
+  }
+}
+
+/**
+ * Upload a photo file to Bulletin Chain.
+ * Returns the CID and metadata on success.
+ */
+export async function uploadPhotoToBulletin(
+  file: File
+): Promise<Result<PhotoUploadResult, string>> {
+  try {
+    const bulletin = await getBulletinClient();
+    const arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const result = await bulletin.upload(bytes);
+
+    logger.debug('Uploaded photo to Bulletin Chain', 'uploadPhotoToBulletin', {
+      cid: result.cid,
+      mimeType: file.type,
+      size: file.size,
+    });
+
+    return ok({
+      cid: result.cid,
+      mimeType: file.type,
+      size: file.size,
+    });
+  } catch (uploadError) {
+    const message = uploadError instanceof Error ? uploadError.message : 'Photo upload failed';
+    logger.swallowed('Photo upload failed', 'uploadPhotoToBulletin', uploadError);
+    return err(message);
+  }
+}
+
+/**
+ * Fetch photo bytes from Bulletin Chain by CID.
+ * Returns null if fetch fails.
+ */
+export async function fetchPhotoFromBulletin(cid: string): Promise<Uint8Array | null> {
+  try {
+    const bulletin = await getBulletinClient();
+    return await bulletin.fetchBytes(cid);
+  } catch (fetchError) {
+    logger.swallowed('Photo fetch failed', 'fetchPhotoFromBulletin', fetchError, { cid });
     return null;
   }
 }

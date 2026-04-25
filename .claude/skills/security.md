@@ -1,6 +1,6 @@
 ---
 name: security
-description: "Implement surveillance-resistant security patterns. Triggers: security, privacy, encryption, CSP, headers, validation, audit, logging, PII"
+description: 'Implement surveillance-resistant security patterns. Triggers: security, privacy, encryption, CSP, headers, validation, audit, logging, PII'
 ---
 
 # Security Skill — Firefly Network
@@ -19,20 +19,21 @@ description: "Implement surveillance-resistant security patterns. Triggers: secu
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| Zero PII collection | No emails, IPs, fingerprints | MANDATORY |
-| No cookies | Stateless patterns only | MANDATORY |
-| No third-party tracking | Self-hosted metrics only | MANDATORY |
-| Fail toward privacy | Errors reveal nothing | MANDATORY |
-| Defense in depth | Multiple security layers | MANDATORY |
-| Minimal dependencies | Justify every package | MANDATORY |
+| Rule                    | Enforcement                  | Status    |
+| ----------------------- | ---------------------------- | --------- |
+| Zero PII collection     | No emails, IPs, fingerprints | MANDATORY |
+| No cookies              | Stateless patterns only      | MANDATORY |
+| No third-party tracking | Self-hosted metrics only     | MANDATORY |
+| Fail toward privacy     | Errors reveal nothing        | MANDATORY |
+| Defense in depth        | Multiple security layers     | MANDATORY |
+| Minimal dependencies    | Justify every package        | MANDATORY |
 
 ---
 
 ## Threat Model
 
 **Primary adversaries:** Governments, corporations, and hostile actors who want to:
+
 - Identify fireflies
 - Suppress information
 - Compromise verification trails
@@ -43,23 +44,23 @@ description: "Implement surveillance-resistant security patterns. Triggers: secu
 
 ### NEVER Collect
 
-| Data Type | Status | Rationale |
-|-----------|--------|-----------|
-| Email addresses | FORBIDDEN | Not needed, can't be subpoenaed |
-| IP addresses | FORBIDDEN | Don't log, configure reverse proxy |
-| Device fingerprints | FORBIDDEN | No canvas, WebGL, font enumeration |
-| User agent strings | FORBIDDEN | Fingerprinting vector |
-| Cookies | FORBIDDEN | No cookies, period |
-| localStorage/sessionStorage | FORBIDDEN | Use memory-only tokens |
+| Data Type                   | Status    | Rationale                          |
+| --------------------------- | --------- | ---------------------------------- |
+| Email addresses             | FORBIDDEN | Not needed, can't be subpoenaed    |
+| IP addresses                | FORBIDDEN | Don't log, configure reverse proxy |
+| Device fingerprints         | FORBIDDEN | No canvas, WebGL, font enumeration |
+| User agent strings          | FORBIDDEN | Fingerprinting vector              |
+| Cookies                     | FORBIDDEN | No cookies, period                 |
+| localStorage/sessionStorage | FORBIDDEN | Use memory-only tokens             |
 
 ### Allowed Collection
 
-| Data Type | Constraints |
-|-----------|-------------|
-| DIM credentials | Public by design |
-| Signal content | User-submitted, hashed |
-| Corroboration records | Public verification data |
-| Aggregate metrics | Non-identifying counts only |
+| Data Type             | Constraints                 |
+| --------------------- | --------------------------- |
+| DIM credentials       | Public by design            |
+| Signal content        | User-submitted, hashed      |
+| Corroboration records | Public verification data    |
+| Aggregate metrics     | Non-identifying counts only |
 
 ---
 
@@ -68,6 +69,7 @@ description: "Implement surveillance-resistant security patterns. Triggers: secu
 ### Error Handling
 
 ✅ CORRECT:
+
 ```typescript
 catch (error) {
   logger.error('Signal submission failed', {
@@ -79,6 +81,7 @@ catch (error) {
 ```
 
 ❌ FAIL:
+
 ```typescript
 catch (error) {
   logger.error('Signal submission failed', {
@@ -93,12 +96,14 @@ catch (error) {
 ### Session Management
 
 ✅ CORRECT:
+
 ```typescript
 // Token lives in JavaScript memory only, never persisted
 const [token, setToken] = useState<string | null>(null);
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Persisted storage — FORBIDDEN
 document.cookie = 'session=...';
@@ -134,7 +139,10 @@ const securityHeaders = [
   { key: 'Referrer-Policy', value: 'no-referrer' },
   { key: 'X-DNS-Prefetch-Control', value: 'off' },
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+  },
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
   { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
   { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
@@ -151,31 +159,31 @@ const securityHeaders = [
 import { z } from 'zod';
 
 export const SignalContentSchema = z.object({
-  text: z.string()
+  text: z
+    .string()
     .min(10, 'Signal must be at least 10 characters')
     .max(5000, 'Signal must be under 5000 characters')
-    .refine(
-      (val) => !containsMaliciousPatterns(val),
-      'Content contains disallowed patterns'
-    ),
+    .refine((val) => !containsMaliciousPatterns(val), 'Content contains disallowed patterns'),
   media: z.array(MediaAttachmentSchema).max(5).optional(),
   links: z.array(z.string().url()).max(10).optional(),
 });
 
-export const TopicTagSchema = z.string()
-  .min(2).max(50)
+export const TopicTagSchema = z
+  .string()
+  .min(2)
+  .max(50)
   .regex(/^[a-zA-Z0-9\s\-]+$/, 'Topics must be alphanumeric');
 ```
 
 ### Validation Rules
 
-| Type | Constraints |
-|------|-------------|
+| Type    | Constraints                                |
+| ------- | ------------------------------------------ |
 | Strings | Max length, no HTML, XSS patterns rejected |
-| Numbers | Range-checked, no NaN/Infinity |
-| Arrays | Max length, each element validated |
-| URLs | Valid URL, no javascript:/data: schemes |
-| Files | Magic bytes check, size limit, virus scan |
+| Numbers | Range-checked, no NaN/Infinity             |
+| Arrays  | Max length, each element validated         |
+| URLs    | Valid URL, no javascript:/data: schemes    |
+| Files   | Magic bytes check, size limit, virus scan  |
 
 ---
 
@@ -201,10 +209,19 @@ export const logger = {
 
 function assertNoSensitiveData(meta?: Record<string, unknown>): void {
   if (!meta) return;
-  const sensitiveKeys = ['ip', 'address', 'credential', 'dim', 'email', 'phone', 'name', 'userAgent'];
+  const sensitiveKeys = [
+    'ip',
+    'address',
+    'credential',
+    'dim',
+    'email',
+    'phone',
+    'name',
+    'userAgent',
+  ];
   const keys = Object.keys(meta);
   for (const key of keys) {
-    if (sensitiveKeys.some(s => key.toLowerCase().includes(s))) {
+    if (sensitiveKeys.some((s) => key.toLowerCase().includes(s))) {
       throw new Error(`SECURITY: Attempted to log sensitive key "${key}". This is a bug.`);
     }
   }
@@ -213,14 +230,14 @@ function assertNoSensitiveData(meta?: Record<string, unknown>): void {
 
 ### Logging Matrix
 
-| ✅ Log | ❌ Never Log |
-|--------|-------------|
-| Error codes | IP addresses |
-| Timestamps | DIM credentials |
-| Feature counts | Signal content |
-| Performance metrics | User agent strings |
-| | Referrer URLs |
-| | Stack traces (prod) |
+| ✅ Log              | ❌ Never Log        |
+| ------------------- | ------------------- |
+| Error codes         | IP addresses        |
+| Timestamps          | DIM credentials     |
+| Feature counts      | Signal content      |
+| Performance metrics | User agent strings  |
+|                     | Referrer URLs       |
+|                     | Stack traces (prod) |
 
 ---
 
@@ -237,21 +254,21 @@ pnpm audit --audit-level=high
 
 ### Dependency Rules
 
-| Rule | Enforcement |
-|------|-------------|
-| Justify every dependency | Document why needed |
-| Prefer audited packages | @polkadot/*, tweetnacl, @noble/* |
-| Lock everything | Commit pnpm-lock.yaml |
-| Review before update | Read changelogs |
-| SRI for external resources | integrity="sha384-..." |
+| Rule                       | Enforcement                      |
+| -------------------------- | -------------------------------- |
+| Justify every dependency   | Document why needed              |
+| Prefer audited packages    | @polkadot/_, tweetnacl, @noble/_ |
+| Lock everything            | Commit pnpm-lock.yaml            |
+| Review before update       | Read changelogs                  |
+| SRI for external resources | integrity="sha384-..."           |
 
 ### Approved Crypto Libraries
 
-| Library | Use Case |
-|---------|----------|
+| Library               | Use Case                  |
+| --------------------- | ------------------------- |
 | @polkadot/util-crypto | Polkadot ecosystem crypto |
-| tweetnacl | Tiny, audited, no deps |
-| @noble/* | Audited, no deps |
+| tweetnacl             | Tiny, audited, no deps    |
+| @noble/\*             | Audited, no deps          |
 
 **NEVER roll custom cryptography.**
 
@@ -259,15 +276,15 @@ pnpm audit --audit-level=high
 
 ## Third-Party Service Policy
 
-| Category | Policy |
-|----------|--------|
-| Analytics | NO third-party. Self-hosted aggregate only |
-| Fonts | Google Fonts with SRI. Self-host long-term |
-| CDNs | Minimize. Self-host static assets |
-| Auth providers | NONE. DIM handles identity |
-| Payment processors | NONE. On-chain payments only |
-| Error tracking | Self-hosted only (e.g., Sentry self-hosted) |
-| CI/CD | GitHub Actions acceptable |
+| Category           | Policy                                      |
+| ------------------ | ------------------------------------------- |
+| Analytics          | NO third-party. Self-hosted aggregate only  |
+| Fonts              | Google Fonts with SRI. Self-host long-term  |
+| CDNs               | Minimize. Self-host static assets           |
+| Auth providers     | NONE. DIM handles identity                  |
+| Payment processors | NONE. On-chain payments only                |
+| Error tracking     | Self-hosted only (e.g., Sentry self-hosted) |
+| CI/CD              | GitHub Actions acceptable                   |
 
 **The rule:** If a service can see our users' data, we don't use it.
 
@@ -304,18 +321,18 @@ pnpm audit --audit-level=high
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| `eval()` | FORBIDDEN | Code injection |
-| `Function()` | FORBIDDEN | Code injection |
-| `innerHTML` | FORBIDDEN | XSS vector |
-| `dangerouslySetInnerHTML` | FORBIDDEN | XSS vector (unless sanitized) |
-| Inline event handlers | FORBIDDEN | CSP violation |
-| External scripts without SRI | FORBIDDEN | Supply chain risk |
-| Third-party analytics | FORBIDDEN | Privacy violation |
-| Cookie usage | FORBIDDEN | Tracking vector |
-| localStorage for auth | FORBIDDEN | XSS accessible |
-| Custom crypto | FORBIDDEN | Use audited libraries |
+| Pattern                      | Status    | Reason                        |
+| ---------------------------- | --------- | ----------------------------- |
+| `eval()`                     | FORBIDDEN | Code injection                |
+| `Function()`                 | FORBIDDEN | Code injection                |
+| `innerHTML`                  | FORBIDDEN | XSS vector                    |
+| `dangerouslySetInnerHTML`    | FORBIDDEN | XSS vector (unless sanitized) |
+| Inline event handlers        | FORBIDDEN | CSP violation                 |
+| External scripts without SRI | FORBIDDEN | Supply chain risk             |
+| Third-party analytics        | FORBIDDEN | Privacy violation             |
+| Cookie usage                 | FORBIDDEN | Tracking vector               |
+| localStorage for auth        | FORBIDDEN | XSS accessible                |
+| Custom crypto                | FORBIDDEN | Use audited libraries         |
 
 ---
 

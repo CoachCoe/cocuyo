@@ -48,9 +48,7 @@ describe('logger', () => {
 
     it('should not throw when calling error with context', () => {
       const log = createLogger('test');
-      expect(() =>
-        log.error('error message', new Error('test'), { extra: 'data' })
-      ).not.toThrow();
+      expect(() => log.error('error message', new Error('test'), { extra: 'data' })).not.toThrow();
     });
 
     it('should handle non-Error objects in error logs', () => {

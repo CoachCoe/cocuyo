@@ -18,8 +18,8 @@ export const MAX_POST_PHOTOS = 3;
 
 /** Status of a post */
 export type PostStatus =
-  | 'published'  // Live and visible
-  | 'archived';  // Hidden but preserved
+  | 'published' // Live and visible
+  | 'archived'; // Hidden but preserved
 
 /** Geographic coordinate for location context */
 export interface GeoCoordinate {

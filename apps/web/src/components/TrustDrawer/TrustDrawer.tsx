@@ -4,11 +4,10 @@
  * TrustDrawer — Detailed verification information for a post.
  *
  * Responsive: bottom sheet on mobile, side drawer on desktop.
- * Shows claims, evidence, verdicts, and bounty information.
+ * Shows claims, evidence, verdicts, and campaign information.
  */
 
 import { useEffect, useRef, useCallback, type ReactElement } from 'react';
-import type { Verdict } from '@cocuyo/types';
 import { formatPUSDCompact } from '@cocuyo/types';
 import { useTrustDrawer } from './TrustDrawerProvider';
 import { useAppState } from '@/components/AppStateProvider';
@@ -20,7 +19,7 @@ const FOCUSABLE_SELECTOR =
 
 export function TrustDrawer(): ReactElement | null {
   const { isOpen, postId, closeDrawer } = useTrustDrawer();
-  const { getPost, getPostClaims, getPostCorroborations, getPostBounties, claimVerdicts, verdicts } = useAppState();
+  const { getPost, getPostClaims, getPostCorroborations, getPostCampaigns } = useAppState();
   const drawerRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
 
@@ -28,13 +27,7 @@ export function TrustDrawer(): ReactElement | null {
   const post = postId !== null ? getPost(postId) : undefined;
   const claims = postId !== null ? getPostClaims(postId) : [];
   const corroborations = postId !== null ? getPostCorroborations(postId) : [];
-  const bounties = postId !== null ? getPostBounties(postId) : [];
-
-  // Get verdicts for claims
-  const claimVerdictsData = claims.map((claim) => {
-    const verdictId = claimVerdicts.get(claim.id);
-    return verdictId !== undefined && verdictId !== null ? verdicts.get(verdictId) : undefined;
-  }).filter((v): v is Verdict => v !== undefined);
+  const campaigns = postId !== null ? getPostCampaigns(postId) : [];
 
   // Handle keyboard events
   const handleKeyDown = useCallback(
@@ -86,8 +79,7 @@ export function TrustDrawer(): ReactElement | null {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
 
-      const firstFocusable =
-        drawerRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       if (firstFocusable !== null && firstFocusable !== undefined) {
         firstFocusable.focus();
       } else {
@@ -124,7 +116,7 @@ export function TrustDrawer(): ReactElement | null {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-overlay backdrop-blur-sm animate-backdrop-in"
+        className="animate-backdrop-in absolute inset-0 bg-overlay backdrop-blur-sm"
         aria-hidden="true"
       />
 
@@ -132,24 +124,21 @@ export function TrustDrawer(): ReactElement | null {
       <div
         ref={drawerRef}
         tabIndex={-1}
-        className="relative w-full sm:max-w-md h-full overflow-y-auto bg-surface-nested border-l border-DEFAULT shadow-3 animate-slide-in-right"
+        className="animate-slide-in-right relative h-full w-full overflow-y-auto border-DEFAULT border-l bg-surface-nested shadow-3 sm:max-w-md"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-surface-nested border-b border-DEFAULT">
-          <h2
-            id="trust-drawer-title"
-            className="text-xl font-bold text-primary"
-          >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-DEFAULT border-b bg-surface-nested p-4 sm:p-6">
+          <h2 id="trust-drawer-title" className="text-xl font-bold text-primary">
             Trust & Verification
           </h2>
           <button
             type="button"
             onClick={closeDrawer}
-            className="p-2 text-secondary hover:text-primary transition-colors rounded-nested hover:bg-surface-hover"
+            className="rounded-nested p-2 text-secondary transition-colors hover:bg-surface-hover hover:text-primary"
             aria-label="Close drawer"
           >
             <svg
-              className="w-5 h-5"
+              className="h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -166,42 +155,38 @@ export function TrustDrawer(): ReactElement | null {
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-6">
+        <div className="space-y-6 p-4 sm:p-6">
           {/* Post summary */}
-          <div className="p-4 rounded-nested bg-surface-container border border-subtle">
+          <div className="rounded-nested border border-subtle bg-surface-container p-4">
             {post.content.title !== undefined && (
-              <h3 className="font-medium text-primary mb-2">{post.content.title}</h3>
+              <h3 className="mb-2 font-medium text-primary">{post.content.title}</h3>
             )}
-            <p className="text-sm text-secondary line-clamp-3">
-              {post.content.text}
-            </p>
-            <p className="text-xs text-tertiary mt-2">
-              by {post.author.pseudonym}
-            </p>
+            <p className="line-clamp-3 text-sm text-secondary">{post.content.text}</p>
+            <p className="mt-2 text-xs text-tertiary">by {post.author.pseudonym}</p>
           </div>
 
-          {/* Bounties */}
-          {bounties.length > 0 && (
+          {/* Campaigns */}
+          {campaigns.length > 0 && (
             <section>
-              <h3 className="text-sm font-medium text-primary mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
                 <span className="text-[var(--color-firefly-gold)]">💰</span>
-                Active Bounties
+                Active Campaigns
               </h3>
               <div className="space-y-3">
-                {bounties.map((bounty) => (
+                {campaigns.map((campaign) => (
                   <div
-                    key={bounty.id}
-                    className="p-4 rounded-nested bg-[var(--color-firefly-gold)]/10 border border-[var(--color-firefly-gold)]/30"
+                    key={campaign.id}
+                    className="bg-[var(--color-firefly-gold)]/10 border-[var(--color-firefly-gold)]/30 rounded-nested border p-4"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-medium text-[var(--color-firefly-gold)]">
-                        {bounty.title}
+                        {campaign.title}
                       </span>
                       <span className="text-sm font-bold text-[var(--color-firefly-gold)]">
-                        {formatPUSDCompact(bounty.fundingAmount)}
+                        {formatPUSDCompact(campaign.fundingAmount)}
                       </span>
                     </div>
-                    <p className="text-xs text-secondary">{bounty.description}</p>
+                    <p className="text-xs text-secondary">{campaign.description}</p>
                   </div>
                 ))}
               </div>
@@ -209,7 +194,7 @@ export function TrustDrawer(): ReactElement | null {
           )}
 
           {/* Claims */}
-          <ClaimSection claims={claims} verdicts={claimVerdictsData} postId={post.id} />
+          <ClaimSection claims={claims} postId={post.id} />
 
           {/* Evidence - Supporting */}
           {supporting.length > 0 && (
@@ -230,12 +215,10 @@ export function TrustDrawer(): ReactElement | null {
           )}
 
           {/* Empty state */}
-          {claims.length === 0 && corroborations.length === 0 && bounties.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-secondary text-sm">
-                No verification activity yet
-              </p>
-              <p className="text-tertiary text-xs mt-1">
+          {claims.length === 0 && corroborations.length === 0 && campaigns.length === 0 && (
+            <div className="py-8 text-center">
+              <p className="text-sm text-secondary">No verification activity yet</p>
+              <p className="mt-1 text-xs text-tertiary">
                 Be the first to corroborate or dispute this post
               </p>
             </div>

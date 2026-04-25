@@ -75,8 +75,7 @@ export function ExtractClaimSheet(): ReactElement | null {
 
       // Focus first focusable element
       requestAnimationFrame(() => {
-        const firstFocusable =
-          sheetRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+        const firstFocusable = sheetRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
         firstFocusable?.focus();
       });
 
@@ -122,7 +121,7 @@ export function ExtractClaimSheet(): ReactElement | null {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 animate-in fade-in duration-200"
+      className="animate-in fade-in fixed inset-0 z-50 flex items-end justify-center bg-black/60 duration-200"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -130,35 +129,33 @@ export function ExtractClaimSheet(): ReactElement | null {
     >
       <div
         ref={sheetRef}
-        className="w-full max-w-lg bg-[var(--bg-surface-main)] rounded-t-2xl animate-in slide-in-from-bottom duration-300"
+        className="animate-in slide-in-from-bottom w-full max-w-lg rounded-t-2xl bg-[var(--bg-surface-main)] duration-300"
       >
         {/* Handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-12 h-1 rounded-full bg-[var(--border-default)]" />
+        <div className="flex justify-center pb-2 pt-3">
+          <div className="h-1 w-12 rounded-full bg-[var(--border-default)]" />
         </div>
 
         {/* Header */}
-        <div className="px-6 pb-4 border-b border-[var(--border-default)]">
+        <div className="border-b border-[var(--border-default)] px-6 pb-4">
           <h2 id="extract-claim-title" className="text-lg font-semibold text-primary">
             Extract a Claim
           </h2>
-          <p className="text-sm text-secondary mt-1">
+          <p className="mt-1 text-sm text-secondary">
             Identify a specific, verifiable statement from this post
           </p>
         </div>
 
         {/* Post context */}
         {post !== undefined && (
-          <div className="px-6 py-4 bg-[var(--bg-surface-nested)] border-b border-[var(--border-default)]">
-            <p className="text-sm text-secondary line-clamp-3">
-              {post.content.text}
-            </p>
+          <div className="border-b border-[var(--border-default)] bg-[var(--bg-surface-nested)] px-6 py-4">
+            <p className="line-clamp-3 text-sm text-secondary">{post.content.text}</p>
           </div>
         )}
 
         {/* Form */}
         <div className="px-6 py-6">
-          <label htmlFor="claim-statement" className="block text-sm font-medium text-primary mb-2">
+          <label htmlFor="claim-statement" className="mb-2 block text-sm font-medium text-primary">
             Claim statement
           </label>
           <textarea
@@ -167,7 +164,7 @@ export function ExtractClaimSheet(): ReactElement | null {
             onChange={(e) => setStatement(e.target.value)}
             placeholder="Enter a specific, verifiable statement (e.g., 'Hospital X reported 50% medication shortage on March 15')"
             rows={3}
-            className="w-full px-4 py-3 bg-surface-muted border border-DEFAULT rounded-nested text-primary placeholder-tertiary focus:outline-none focus:border-accent transition-colors resize-none"
+            className="placeholder-tertiary w-full resize-none rounded-nested border border-DEFAULT bg-surface-muted px-4 py-3 text-primary transition-colors focus:border-accent focus:outline-none"
             disabled={isSubmitting}
           />
           <p className="mt-2 text-xs text-tertiary">
@@ -176,20 +173,22 @@ export function ExtractClaimSheet(): ReactElement | null {
         </div>
 
         {/* Actions */}
-        <div className="px-6 pb-8 flex gap-3">
+        <div className="flex gap-3 px-6 pb-8">
           <button
             type="button"
             onClick={closeSheet}
-            className="flex-1 py-3 px-4 rounded-nested text-sm font-medium text-secondary border border-[var(--border-default)] hover:bg-[var(--bg-surface-nested)] transition-colors"
+            className="flex-1 rounded-nested border border-[var(--border-default)] px-4 py-3 text-sm font-medium text-secondary transition-colors hover:bg-[var(--bg-surface-nested)]"
             disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="button"
-            onClick={() => { void handleSubmit(); }}
+            onClick={() => {
+              void handleSubmit();
+            }}
             disabled={statement.trim().length === 0 || isSubmitting}
-            className="flex-1 py-3 px-4 rounded-nested text-sm font-medium bg-[var(--fg-accent)] text-[var(--bg-primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+            className="flex-1 rounded-nested bg-[var(--fg-accent)] px-4 py-3 text-sm font-medium text-[var(--bg-primary)] transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? 'Extracting...' : 'Extract Claim'}
           </button>

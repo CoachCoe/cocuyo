@@ -79,10 +79,7 @@ export function useFireflyReputation(
         const credHash = toCredentialHash(credential);
         const topicHash = toTopicHash(topic);
         // Type assertion: getScore returns uint16 per ABI, ethers returns bigint
-        const score = (await contract.getFunction('getScore')(
-          credHash,
-          topicHash
-        )) as bigint;
+        const score = (await contract.getFunction('getScore')(credHash, topicHash)) as bigint;
         return Number(score);
       } catch (err) {
         log.error('Failed to get score', err, { credential, topic });
@@ -100,10 +97,7 @@ export function useFireflyReputation(
         const credHash = toCredentialHash(credential);
         const topicHash = toTopicHash(topic);
         // Type assertion: getTopicScore returns TopicScore struct per ABI
-        const result = (await contract.getFunction('getTopicScore')(
-          credHash,
-          topicHash
-        )) as {
+        const result = (await contract.getFunction('getTopicScore')(credHash, topicHash)) as {
           score: bigint;
           corroborationsGiven: bigint;
           corroborationsReceived: bigint;
@@ -143,10 +137,7 @@ export function useFireflyReputation(
         const credHash = toCredentialHash(credential);
         const topicHashes = topics.map(toTopicHash);
         // Type assertion: getScores returns uint16[] per ABI, ethers returns bigint[]
-        const scores = (await contract.getFunction('getScores')(
-          credHash,
-          topicHashes
-        )) as bigint[];
+        const scores = (await contract.getFunction('getScores')(credHash, topicHashes)) as bigint[];
 
         const result = new Map<string, number>();
         topics.forEach((topic, i) => {
@@ -206,9 +197,7 @@ export function useFireflyReputation(
         const contract = getReadContract();
         const topicHash = toTopicHash(topic);
         // Type assertion: isRegisteredTopic returns bool per ABI
-        const result = (await contract.getFunction('isRegisteredTopic')(
-          topicHash
-        )) as boolean;
+        const result = (await contract.getFunction('isRegisteredTopic')(topicHash)) as boolean;
         return result;
       } catch {
         return false;

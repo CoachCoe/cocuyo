@@ -12,14 +12,16 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
   type ReactNode,
   type ReactElement,
 } from 'react';
-import type { Post, BountyId, PUSDAmount } from '@cocuyo/types';
+import type { Post, CampaignId, PUSDAmount } from '@cocuyo/types';
 
-/** Bounty info for display in the sheet */
-export interface SheetBountyInfo {
-  readonly id: BountyId;
+/** Campaign info for display in the sheet */
+export interface SheetCampaignInfo {
+  readonly id: CampaignId;
   readonly title: string;
   readonly fundingAmount: PUSDAmount;
 }
@@ -31,7 +33,7 @@ export type CorroborateDisputeMode = 'corroborate' | 'dispute';
 export interface OpenSheetOptions {
   post: Post;
   mode: CorroborateDisputeMode;
-  bounty?: SheetBountyInfo;
+  campaign?: SheetCampaignInfo;
 }
 
 interface CorroborateDisputeContextValue {
@@ -41,8 +43,8 @@ interface CorroborateDisputeContextValue {
   post: Post | null;
   /** The mode (corroborate or dispute) */
   mode: CorroborateDisputeMode;
-  /** Optional bounty info */
-  bounty: SheetBountyInfo | null;
+  /** Optional campaign info */
+  campaign: SheetCampaignInfo | null;
   /** Open the sheet */
   openSheet: (options: OpenSheetOptions) => void;
   /** Close the sheet */
@@ -55,25 +57,45 @@ interface CorroborateDisputeProviderProps {
   children: ReactNode;
 }
 
-export function CorroborateDisputeProvider({ children }: CorroborateDisputeProviderProps): ReactElement {
+export function CorroborateDisputeProvider({
+  children,
+}: CorroborateDisputeProviderProps): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState<Post | null>(null);
   const [mode, setMode] = useState<CorroborateDisputeMode>('corroborate');
-  const [bounty, setBounty] = useState<SheetBountyInfo | null>(null);
+  const [campaign, setCampaign] = useState<SheetCampaignInfo | null>(null);
+
+  // Track timeout for cleanup
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clearTimeoutRef.current !== null) {
+        clearTimeout(clearTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const openSheet = useCallback((options: OpenSheetOptions): void => {
+    // Cancel any pending clear timeout when reopening
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
     setPost(options.post);
     setMode(options.mode);
-    setBounty(options.bounty ?? null);
+    setCampaign(options.campaign ?? null);
     setIsOpen(true);
   }, []);
 
   const closeSheet = useCallback((): void => {
     setIsOpen(false);
     // Clear state after animation completes
-    setTimeout(() => {
+    clearTimeoutRef.current = setTimeout(() => {
       setPost(null);
-      setBounty(null);
+      setCampaign(null);
+      clearTimeoutRef.current = null;
     }, 200);
   }, []);
 
@@ -82,11 +104,11 @@ export function CorroborateDisputeProvider({ children }: CorroborateDisputeProvi
       isOpen,
       post,
       mode,
-      bounty,
+      campaign,
       openSheet,
       closeSheet,
     }),
-    [isOpen, post, mode, bounty, openSheet, closeSheet]
+    [isOpen, post, mode, campaign, openSheet, closeSheet]
   );
 
   return (

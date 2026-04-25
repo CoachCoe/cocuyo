@@ -32,10 +32,10 @@ function PostNotFound({ locale }: { locale: string }): ReactNode {
   return (
     <main className="min-h-screen bg-[var(--bg-default)]">
       <div className="border-b border-[var(--border-default)]">
-        <div className="container max-w-3xl mx-auto px-4 py-4">
+        <div className="container mx-auto max-w-3xl px-4 py-4">
           <Link
             href={`/${locale}/posts`}
-            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
           >
             <span aria-hidden="true">&larr;</span>
             <span>Back to Posts</span>
@@ -43,16 +43,14 @@ function PostNotFound({ locale }: { locale: string }): ReactNode {
         </div>
       </div>
 
-      <div className="container max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-display text-[var(--fg-primary)] mb-4">
-          Post Not Found
-        </h1>
-        <p className="text-[var(--fg-secondary)] mb-8">
+      <div className="container mx-auto max-w-3xl px-4 py-16 text-center">
+        <h1 className="mb-4 font-display text-2xl text-[var(--fg-primary)]">Post Not Found</h1>
+        <p className="mb-8 text-[var(--fg-secondary)]">
           This post doesn&apos;t exist or hasn&apos;t been created yet.
         </p>
         <Link
           href={`/${locale}/posts`}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--bg-default)] font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2 font-medium text-[var(--bg-default)] transition-opacity hover:opacity-90"
         >
           Browse Posts
         </Link>
@@ -61,7 +59,9 @@ function PostNotFound({ locale }: { locale: string }): ReactNode {
   );
 }
 
-export default async function PostDetailPage({ params }: PostDetailPageProps): Promise<ReactElement> {
+export default async function PostDetailPage({
+  params,
+}: PostDetailPageProps): Promise<ReactElement> {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const tPosts = await getTranslations('posts');
@@ -99,10 +99,21 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
         <div className="container-wide py-6">
           <Link
             href={`/${locale}/posts`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[var(--fg-secondary)] transition-colors hover:text-[var(--fg-primary)]"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             <span>{tPosts('backToPosts')}</span>
           </Link>
@@ -113,12 +124,12 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
       <article className="py-8">
         <div className="container-wide max-w-3xl">
           {/* Title */}
-          <h1 className="text-2xl font-display font-medium text-[var(--fg-primary)] mb-4">
+          <h1 className="mb-4 font-display text-2xl font-medium text-[var(--fg-primary)]">
             {post.content.title}
           </h1>
 
           {/* Meta info */}
-          <div className="flex flex-wrap items-center gap-3 mb-6 text-sm text-[var(--fg-secondary)]">
+          <div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-[var(--fg-secondary)]">
             <span>By {post.author.pseudonym}</span>
             {post.context.locationName !== undefined && (
               <>
@@ -131,11 +142,11 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
           </div>
 
           {/* Topics */}
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="mb-6 flex flex-wrap gap-2">
             {post.context.topics.map((topic) => (
               <span
                 key={topic}
-                className="text-xs px-2 py-1 rounded-full bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)]"
+                className="rounded-full bg-[var(--bg-surface-nested)] px-2 py-1 text-xs text-[var(--fg-secondary)]"
               >
                 {topicTranslations[topic] ?? topic.replace(/-/g, ' ')}
               </span>
@@ -143,9 +154,9 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
           </div>
 
           {/* Post content */}
-          <div className="prose prose-invert max-w-none mb-8">
+          <div className="prose prose-invert mb-8 max-w-none">
             {post.content.text.split('\n\n').map((paragraph, index) => (
-              <p key={index} className="text-[var(--fg-primary)] leading-relaxed mb-4">
+              <p key={index} className="mb-4 leading-relaxed text-[var(--fg-primary)]">
                 {paragraph}
               </p>
             ))}
@@ -153,8 +164,8 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
 
           {/* Links */}
           {post.content.links !== undefined && post.content.links.length > 0 && (
-            <div className="mb-8 p-4 bg-[var(--bg-surface-nested)] rounded-container">
-              <h3 className="text-sm font-medium text-[var(--fg-primary)] mb-2">
+            <div className="mb-8 rounded-container bg-[var(--bg-surface-nested)] p-4">
+              <h3 className="mb-2 text-sm font-medium text-[var(--fg-primary)]">
                 {tPosts('sources')}
               </h3>
               <ul className="space-y-1">
@@ -162,7 +173,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
                   <li key={index}>
                     <ExternalLink
                       href={link}
-                      className="text-sm text-[var(--color-firefly-gold)] hover:underline break-all"
+                      className="break-all text-sm text-[var(--color-firefly-gold)] hover:underline"
                     >
                       {link}
                     </ExternalLink>
@@ -180,6 +191,8 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
               extracting: tClaims('extracting'),
               signInToExtract: tClaims('signInToExtract'),
               claimExtracted: tClaims('claimExtracted'),
+              noClaimFound: tClaims('noClaimFound'),
+              extractionFailed: tClaims('extractionFailed'),
               corroborate: tPosts('corroborate'),
               dispute: tPosts('dispute'),
               viewTrust: tPosts('viewTrust'),
@@ -190,7 +203,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
           {/* Extracted Claims Section */}
           {claims.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-lg font-display font-medium text-[var(--fg-primary)] mb-4">
+              <h2 className="mb-4 font-display text-lg font-medium text-[var(--fg-primary)]">
                 {tClaims('extractedClaims')} ({claims.length})
               </h2>
               <div className="space-y-3">
@@ -227,7 +240,6 @@ export default async function PostDetailPage({ params }: PostDetailPageProps): P
               </div>
             </section>
           )}
-
         </div>
       </article>
     </main>

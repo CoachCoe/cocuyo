@@ -16,12 +16,10 @@ import type {
   PaginationParams,
   PaginatedResult,
 } from '@cocuyo/types';
-import { getBulletinClient } from '@/lib/chain/client';
+import { safeParseStoryChain } from '@cocuyo/types';
 import { fetchFromBulletin } from '../service-utils';
 
 export type Locale = 'en' | 'es';
-
-const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
 
 /**
  * Hook providing story chain service operations.
@@ -29,22 +27,9 @@ const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
  * All operations are read-only and work without wallet connection.
  */
 export function useChainService(): ChainService {
-  const getChain = useCallback(
-    async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
-      if (USE_CHAIN) {
-        try {
-          const bulletin = await getBulletinClient();
-          return await bulletin.fetchJson<StoryChain>(id);
-        } catch {
-          return null;
-        }
-      }
-
-      // Try fetching from Bulletin Chain
-      return fetchFromBulletin<StoryChain>(id);
-    },
-    []
-  );
+  const getChain = useCallback(async (id: ChainId, _locale = 'en'): Promise<StoryChain | null> => {
+    return fetchFromBulletin<StoryChain>(id, safeParseStoryChain);
+  }, []);
 
   const getChains = useCallback(
     async (_params: {

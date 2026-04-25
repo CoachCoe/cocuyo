@@ -1,14 +1,14 @@
 /**
- * Explore page — Browse active story chains, bounties, and recent signals.
+ * Explore page — Browse active story chains, campaigns, and recent signals.
  *
  * Two-column layout:
- * - Left: Filters sidebar (story chains + bounties)
- * - Right: Signal feed (filterable by story or bounty)
+ * - Left: Filters sidebar (story chains + campaigns)
+ * - Right: Signal feed (filterable by story or campaign)
  */
 
 import type { ReactElement } from 'react';
 import { chainService, signalService } from '@/lib/services';
-import type { ChainId, BountyId, BountyPreview } from '@cocuyo/types';
+import type { ChainId, CampaignId, CampaignPreview } from '@cocuyo/types';
 import { ExploreView } from './ExploreView';
 import { ExploreHeader } from './ExploreHeader';
 import { IlluminateFAB } from './IlluminateFAB';
@@ -32,12 +32,12 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
     locale,
   });
 
-  // Bounty-to-posts and chain-to-bounties relationships require indexing.
+  // Campaign-to-posts and chain-to-campaigns relationships require indexing.
   // Pass empty maps/arrays to avoid showing incorrect associations.
-  // Bounties are shown in the dedicated /bounties page instead.
-  const bountyPostsMap: Record<BountyId, string[]> = {};
-  const chainBountyMap: Record<ChainId, BountyPreview[]> = {};
-  const orphanBounties: BountyPreview[] = [];
+  // Campaigns are shown in the dedicated /campaigns page instead.
+  const campaignPostsMap: Record<CampaignId, string[]> = {};
+  const chainCampaignMap: Record<ChainId, CampaignPreview[]> = {};
+  const orphanCampaigns: CampaignPreview[] = [];
 
   // Chain titles map - populated from featured chains
   // Note: PostPreview doesn't track chain membership, so we use chain data
@@ -49,7 +49,7 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
   // Parse info popover content - split by double newlines for paragraphs
   const storiesInfoBody = t('storiesInfo.body')
     .split('\n\n')
-    .map((paragraph, index) => (
+    .map((paragraph: string, index: number) => (
       <p key={index} className={index > 0 ? 'mt-3' : ''}>
         {paragraph}
       </p>
@@ -57,15 +57,15 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
 
   const postsInfoBody = t('postsInfo.body')
     .split('\n\n')
-    .map((paragraph, index) => (
+    .map((paragraph: string, index: number) => (
       <p key={index} className={index > 0 ? 'mt-3' : ''}>
         {paragraph}
       </p>
     ));
 
-  const openBountiesInfoBody = t('openBountiesInfo.body')
+  const openCampaignsInfoBody = t('openCampaignsInfo.body')
     .split('\n\n')
-    .map((paragraph, index) => (
+    .map((paragraph: string, index: number) => (
       <p key={index} className={index > 0 ? 'mt-3' : ''}>
         {paragraph}
       </p>
@@ -86,25 +86,25 @@ export default async function ExplorePage({ params }: ExplorePageProps): Promise
           <div className="container-wide">
             <ExploreView
               chains={featuredChains}
-              chainBountyMap={chainBountyMap}
-              orphanBounties={orphanBounties}
-              bountyPostsMap={bountyPostsMap}
+              chainCampaignMap={chainCampaignMap}
+              orphanCampaigns={orphanCampaigns}
+              campaignPostsMap={campaignPostsMap}
               posts={[...recentPosts.items]}
               chainTitles={chainTitles}
               hasMore={recentPosts.hasMore}
               translations={{
                 allPosts: t('allPosts'),
                 storiesLabel: t('storiesLabel'),
-                openBountiesLabel: t('openBountiesLabel'),
+                openCampaignsLabel: t('openCampaignsLabel'),
                 recentPostsLabel: t('recentPosts'),
                 storiesInfoTitle: t('storiesInfo.title'),
                 postsInfoTitle: t('postsInfo.title'),
-                openBountiesInfoTitle: t('openBountiesInfo.title'),
-                noMatchingBountyPosts: t('noMatchingBountyPosts'),
+                openCampaignsInfoTitle: t('openCampaignsInfo.title'),
+                noMatchingCampaignPosts: t('noMatchingCampaignPosts'),
               }}
               storiesInfoBody={storiesInfoBody}
               postsInfoBody={postsInfoBody}
-              openBountiesInfoBody={openBountiesInfoBody}
+              openCampaignsInfoBody={openCampaignsInfoBody}
             />
           </div>
         </section>

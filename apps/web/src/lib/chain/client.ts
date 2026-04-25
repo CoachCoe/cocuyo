@@ -5,16 +5,16 @@
  * Lazily initializes and caches the chain API.
  */
 
-import { getChainAPI, type Environment, type ChainAPI } from '@polkadot-apps/chain-client';
+import { getChainAPI, type Environment, type PresetChains, type ChainClient } from '@polkadot-apps/chain-client';
 import { BulletinClient } from '@polkadot-apps/bulletin';
 
-/** Cache entry with environment tracking */
+/** Cache entry with environment tracking - stores promise to prevent race conditions */
 interface CacheEntry<T> {
-  value: T;
+  promise: Promise<T>;
   environment: Environment;
 }
 
-let apiCache: CacheEntry<ChainAPI<Environment>> | null = null;
+let apiCache: CacheEntry<ChainClient<PresetChains<Environment>>> | null = null;
 let bulletinCache: CacheEntry<BulletinClient> | null = null;
 
 /**
@@ -36,7 +36,6 @@ function getEnvironment(): Environment {
  * - assetHub: Asset Hub chain API (tokens, NFTs)
  * - bulletin: Bulletin Chain API (content storage)
  * - individuality: Individuality chain API (DIMs, personhood)
- * - contracts: Ink! contract SDK
  *
  * @example
  * ```ts
@@ -44,17 +43,17 @@ function getEnvironment(): Environment {
  * const byteFee = await api.bulletin.query.TransactionStorage.ByteFee.getValue();
  * ```
  */
-export async function getFireflyChainAPI(): Promise<ChainAPI<Environment>> {
+export async function getFireflyChainAPI(): Promise<ChainClient<PresetChains<Environment>>> {
   const env = getEnvironment();
 
   if (apiCache?.environment === env) {
-    return apiCache.value;
+    return apiCache.promise;
   }
 
-  const api = await getChainAPI(env);
-  apiCache = { value: api, environment: env };
+  const promise = getChainAPI(env);
+  apiCache = { promise, environment: env };
 
-  return api;
+  return promise;
 }
 
 /**
@@ -80,22 +79,40 @@ export async function getBulletinClient(): Promise<BulletinClient> {
   const env = getEnvironment();
 
   if (bulletinCache?.environment === env) {
-    return bulletinCache.value;
+    return bulletinCache.promise;
   }
 
-  const client = await BulletinClient.create(env);
-  bulletinCache = { value: client, environment: env };
+  const promise = BulletinClient.create(env);
+  bulletinCache = { promise, environment: env };
 
-  return client;
+  return promise;
 }
 
 /**
- * Clear cached clients.
+ * Clear cached clients and destroy connections.
  * Useful for testing or environment switching.
  */
-export function clearChainCache(): void {
+export async function clearChainCache(): Promise<void> {
+  const errors: Error[] = [];
+
+  if (apiCache) {
+    try {
+      const api = await apiCache.promise;
+      api.destroy();
+    } catch (e) {
+      errors.push(e instanceof Error ? e : new Error(String(e)));
+    }
+  }
+
+  // BulletinClient doesn't expose destroy() - it delegates connections to chain-client
+  // which is destroyed above. We only clear the reference.
+
   apiCache = null;
   bulletinCache = null;
+
+  if (errors.length > 0) {
+    console.warn('Errors during chain cache cleanup:', errors);
+  }
 }
 
 // Re-export environment type for consumers

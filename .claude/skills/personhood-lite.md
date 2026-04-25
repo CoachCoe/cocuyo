@@ -1,6 +1,6 @@
 ---
 name: personhood-lite
-description: "Implement DIM proof-of-personhood verification for firefly identity. Triggers: DIM, personhood, identity, verification, credential, proof, lite, full"
+description: 'Implement DIM proof-of-personhood verification for firefly identity. Triggers: DIM, personhood, identity, verification, credential, proof, lite, full'
 ---
 
 # Personhood Lite Skill — DIM Integration
@@ -17,12 +17,12 @@ description: "Implement DIM proof-of-personhood verification for firefly identit
 
 ## Global Invariants
 
-| Rule | Enforcement | Status |
-|------|-------------|--------|
-| DIM is the ONLY identity source | No email, no OAuth, no SSO | MANDATORY |
-| Never store credentials in plaintext | Memory-only or encrypted keystore | MANDATORY |
-| Verification status affects reputation | Lite vs Full determines weight | MANDATORY |
-| Anonymous but human | Identity proves personhood, not identity | MANDATORY |
+| Rule                                   | Enforcement                              | Status    |
+| -------------------------------------- | ---------------------------------------- | --------- |
+| DIM is the ONLY identity source        | No email, no OAuth, no SSO               | MANDATORY |
+| Never store credentials in plaintext   | Memory-only or encrypted keystore        | MANDATORY |
+| Verification status affects reputation | Lite vs Full determines weight           | MANDATORY |
+| Anonymous but human                    | Identity proves personhood, not identity | MANDATORY |
 
 ---
 
@@ -30,21 +30,21 @@ description: "Implement DIM proof-of-personhood verification for firefly identit
 
 ```typescript
 enum ProofOfPersonhoodStatus {
-  NoStatus = 0,           // Unverified (restricted access)
-  ProofOfPersonhoodLite = 1,  // Lighter verification (partial access)
-  ProofOfPersonhoodFull = 2,  // Full verification (full access)
-  Reserved = 3            // Governance-controlled
+  NoStatus = 0, // Unverified (restricted access)
+  ProofOfPersonhoodLite = 1, // Lighter verification (partial access)
+  ProofOfPersonhoodFull = 2, // Full verification (full access)
+  Reserved = 3, // Governance-controlled
 }
 ```
 
 ### Status Implications
 
-| Status | Network Access | Reputation Weight | Use Case |
-|--------|----------------|-------------------|----------|
-| NoStatus | View only | None | Anonymous browsing |
-| Lite | Illuminate + Corroborate | 0.5x multiplier | Quick onboarding |
-| Full | Full access + Bounties | 1.0x multiplier | Full participation |
-| Reserved | Governance only | N/A | System accounts |
+| Status   | Network Access           | Reputation Weight | Use Case           |
+| -------- | ------------------------ | ----------------- | ------------------ |
+| NoStatus | View only                | None              | Anonymous browsing |
+| Lite     | Illuminate + Corroborate | 0.5x multiplier   | Quick onboarding   |
+| Full     | Full access + Bounties   | 1.0x multiplier   | Full participation |
+| Reserved | Governance only          | N/A               | System accounts    |
 
 ---
 
@@ -60,8 +60,8 @@ export type DIMCredential = string & { readonly __brand: 'DIMCredential' };
 export interface FireflyIdentity {
   readonly credential: DIMCredential;
   readonly status: ProofOfPersonhoodStatus;
-  readonly verifiedAt: number;  // Unix timestamp
-  readonly expiresAt: number;   // Credentials may have TTL
+  readonly verifiedAt: number; // Unix timestamp
+  readonly expiresAt: number; // Credentials may have TTL
 }
 
 /** Verification result from DIM oracle */
@@ -92,23 +92,23 @@ interface KeystoreV1 {
 interface EncryptedAccount {
   alias: string;
   encrypted: {
-    ciphertext: string;  // Base64
-    nonce: string;       // Base64
-    salt: string;        // Base64
+    ciphertext: string; // Base64
+    nonce: string; // Base64
+    salt: string; // Base64
   };
-  address: string;       // SS58 format
+  address: string; // SS58 format
   status: ProofOfPersonhoodStatus;
 }
 ```
 
 ### Encryption Requirements
 
-| Component | Algorithm | Rationale |
-|-----------|-----------|-----------|
-| Key derivation | scrypt | Memory-hard, password-based |
-| Encryption | AES-256-GCM | Authenticated encryption |
-| Nonce | 12 bytes random | GCM standard |
-| Salt | 16 bytes random | Per-account unique |
+| Component      | Algorithm       | Rationale                   |
+| -------------- | --------------- | --------------------------- |
+| Key derivation | scrypt          | Memory-hard, password-based |
+| Encryption     | AES-256-GCM     | Authenticated encryption    |
+| Nonce          | 12 bytes random | GCM standard                |
+| Salt           | 16 bytes random | Per-account unique          |
 
 ---
 
@@ -117,10 +117,11 @@ interface EncryptedAccount {
 ### Credential Handling
 
 ✅ CORRECT:
+
 ```typescript
 // Credential lives in memory only
 function verifyAndUseCredential(password: string): DIMCredential {
-  const keystore = loadKeystore();  // From encrypted file
+  const keystore = loadKeystore(); // From encrypted file
   const decrypted = decryptWithScrypt(keystore.encrypted, password);
   // Use decrypted credential...
   // Clear from memory when done
@@ -129,20 +130,22 @@ function verifyAndUseCredential(password: string): DIMCredential {
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Storing credential in plaintext
-localStorage.setItem('dimCredential', credential);  // FORBIDDEN
+localStorage.setItem('dimCredential', credential); // FORBIDDEN
 
 // Storing in session storage
-sessionStorage.setItem('cred', JSON.stringify(cred));  // FORBIDDEN
+sessionStorage.setItem('cred', JSON.stringify(cred)); // FORBIDDEN
 
 // Logging credentials
-console.log('Credential:', credential);  // FORBIDDEN
+console.log('Credential:', credential); // FORBIDDEN
 ```
 
 ### Verification Flow
 
 ✅ CORRECT:
+
 ```typescript
 // Check status before privileged actions
 async function illuminate(signal: NewSignal): Promise<SignalId> {
@@ -153,15 +156,14 @@ async function illuminate(signal: NewSignal): Promise<SignalId> {
   }
 
   // Lite users can illuminate, Full users get higher weight
-  const reputationMultiplier = identity.status === ProofOfPersonhoodStatus.Full
-    ? 1.0
-    : 0.5;
+  const reputationMultiplier = identity.status === ProofOfPersonhoodStatus.Full ? 1.0 : 0.5;
 
   return submitSignal(signal, identity.credential, reputationMultiplier);
 }
 ```
 
 ❌ FAIL:
+
 ```typescript
 // Skipping verification status check
 async function illuminate(signal: NewSignal): Promise<SignalId> {
@@ -177,12 +179,12 @@ async function illuminate(signal: NewSignal): Promise<SignalId> {
 
 Support multiple authentication methods (from dotns patterns):
 
-| Method | Source | Use Case |
-|--------|--------|----------|
-| Keystore | Encrypted file + password | Persistent identity |
-| Mnemonic | 12/24 word phrase | Recovery |
-| Key URI | SURI string | Development/testing |
-| Extension | Polkadot.js extension | Browser wallet |
+| Method    | Source                    | Use Case            |
+| --------- | ------------------------- | ------------------- |
+| Keystore  | Encrypted file + password | Persistent identity |
+| Mnemonic  | 12/24 word phrase         | Recovery            |
+| Key URI   | SURI string               | Development/testing |
+| Extension | Polkadot.js extension     | Browser wallet      |
 
 ### Keystore Loading
 
@@ -249,7 +251,7 @@ function validateCredential(credential: unknown): credential is DIMCredential {
 interface VerificationRequest {
   readonly credential: DIMCredential;
   readonly challengeNonce: string;
-  readonly signature: string;  // Proves ownership
+  readonly signature: string; // Proves ownership
   readonly requestedStatus: ProofOfPersonhoodStatus;
 }
 
@@ -257,7 +259,7 @@ interface OracleResponse {
   readonly verified: boolean;
   readonly status: ProofOfPersonhoodStatus;
   readonly expiresAt: number;
-  readonly oracleSignature: string;  // For on-chain verification
+  readonly oracleSignature: string; // For on-chain verification
 }
 ```
 
@@ -284,7 +286,7 @@ function FireflyStatus({ identity }: { identity: FireflyIdentity }) {
   }[identity.status];
 
   return (
-    <div className="text-sm text-secondary">
+    <div className="text-secondary text-sm">
       <span className="text-corroborated">{statusLabel}</span>
       {/* NEVER show credential in UI */}
     </div>
@@ -299,7 +301,7 @@ function VerificationPrompt({ currentStatus }: { currentStatus: ProofOfPersonhoo
   if (currentStatus === ProofOfPersonhoodStatus.Full) return null;
 
   return (
-    <div className="border border-accent/30 p-4 rounded">
+    <div className="border-accent/30 rounded border p-4">
       {currentStatus === ProofOfPersonhoodStatus.NoStatus && (
         <p>Verify your humanity to participate in the network.</p>
       )}
@@ -329,12 +331,12 @@ function VerificationPrompt({ currentStatus }: { currentStatus: ProofOfPersonhoo
 
 ## Anti-Patterns
 
-| Pattern | Status | Reason |
-|---------|--------|--------|
-| Store credential in browser storage | FORBIDDEN | XSS accessible |
-| Log credentials | FORBIDDEN | Security breach |
+| Pattern                              | Status    | Reason                 |
+| ------------------------------------ | --------- | ---------------------- |
+| Store credential in browser storage  | FORBIDDEN | XSS accessible         |
+| Log credentials                      | FORBIDDEN | Security breach        |
 | Use weak KDF (PBKDF2 low iterations) | FORBIDDEN | Brute-force vulnerable |
-| Skip status check before actions | FORBIDDEN | Privilege escalation |
-| Display full credential in UI | FORBIDDEN | Information leak |
-| Hardcode oracle URLs | FORBIDDEN | Use configuration |
-| Trust client-side status | FORBIDDEN | Verify on server |
+| Skip status check before actions     | FORBIDDEN | Privilege escalation   |
+| Display full credential in UI        | FORBIDDEN | Information leak       |
+| Hardcode oracle URLs                 | FORBIDDEN | Use configuration      |
+| Trust client-side status             | FORBIDDEN | Verify on server       |

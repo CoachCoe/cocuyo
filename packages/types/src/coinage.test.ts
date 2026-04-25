@@ -248,9 +248,9 @@ describe('calculateHoldingsSummary', () => {
 
   it('calculates summary for multiple coins', () => {
     const coins = [
-      makeCoin(7, 2),  // $1.28, age 2
-      makeCoin(6, 5),  // $0.64, age 5
-      makeCoin(0, 0),  // $0.01, age 0
+      makeCoin(7, 2), // $1.28, age 2
+      makeCoin(6, 5), // $0.64, age 5
+      makeCoin(0, 0), // $0.01, age 0
     ];
 
     const summary = calculateHoldingsSummary(coins);
@@ -265,10 +265,10 @@ describe('calculateHoldingsSummary', () => {
 
   it('counts coins needing recycling', () => {
     const coins = [
-      makeCoin(7, COINAGE_CONFIG.maxAge),     // Must recycle
+      makeCoin(7, COINAGE_CONFIG.maxAge), // Must recycle
       makeCoin(6, COINAGE_CONFIG.maxAge + 1), // Must recycle
       makeCoin(5, COINAGE_CONFIG.minAgeForRecycling - 1), // Soon
-      makeCoin(4, 0),  // Fresh
+      makeCoin(4, 0), // Fresh
     ];
 
     const summary = calculateHoldingsSummary(coins);

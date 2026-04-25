@@ -3,8 +3,8 @@
 /**
  * Corroboration service hook.
  *
- * Provides corroboration operations with integrated wallet state from useSigner().
- * Handles both mock and chain implementations based on NEXT_PUBLIC_USE_CHAIN.
+ * This hook wraps the singleton corroborationService to provide wallet state integration.
+ * All data is stored in the singleton's cache to avoid cache divergence.
  */
 
 import { useCallback, useRef } from 'react';
@@ -16,20 +16,14 @@ import type {
   NewCorroboration,
   Result,
 } from '@cocuyo/types';
-import { ok, err, createCorroborationId, createDIMCredential } from '@cocuyo/types';
-import { calculateCIDFromJSON } from '@cocuyo/bulletin';
 import { useSigner } from '@/lib/context/SignerContext';
-
-const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
-
-// Session cache for corroborations
-const userCorroborations: Corroboration[] = [];
+import { corroborationService, setConnectedWallet } from '../index';
 
 /**
  * Hook providing corroboration service operations.
  *
- * Write operations use wallet state from useSigner().
- * Read operations work without wallet connection.
+ * All operations delegate to the singleton corroborationService to ensure
+ * consistent caching. Write operations use wallet state from useSigner().
  */
 export function useCorroborationService(): CorroborationService {
   const { selectedAccount, isConnected } = useSigner();
@@ -40,15 +34,15 @@ export function useCorroborationService(): CorroborationService {
   const connectedRef = useRef(isConnected);
   connectedRef.current = isConnected;
 
+  // Sync wallet state to singleton service when account changes
+  if (selectedAccount) {
+    setConnectedWallet(selectedAccount.address);
+  }
+
+  // Delegate read operations directly to singleton
   const getPostCorroborations = useCallback(
     async (postId: PostId): Promise<readonly Corroboration[]> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return [];
-      }
-
-      // Mock implementation - return corroborations for this post
-      return userCorroborations.filter((c) => c.postId === postId);
+      return corroborationService.getPostCorroborations(postId);
     },
     []
   );
@@ -59,54 +53,14 @@ export function useCorroborationService(): CorroborationService {
       const connected = connectedRef.current;
 
       if (!connected || !account) {
-        return err('Wallet not connected. Please connect to corroborate.');
+        return { ok: false, error: 'Wallet not connected. Please connect to corroborate.' };
       }
 
-      if (USE_CHAIN) {
-        return err(
-          'On-chain corroboration requires DIM signing infrastructure. ' +
-          'Use mock mode (NEXT_PUBLIC_USE_CHAIN=false) for demos.'
-        );
-      }
+      // Sync wallet state to singleton
+      setConnectedWallet(account.address);
 
-      // Mock implementation
-      const connectedAddress = account.address;
-      const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
-      const now = Date.now();
-
-      const corroboration: Corroboration = {
-        id: '' as CorroborationId,
-        postId: newCorroboration.postId,
-        type: newCorroboration.type,
-        dimSignature: dimCredential,
-        weight: 1.0, // Default weight, would be calculated from reputation
-        createdAt: now,
-        ...(newCorroboration.note !== undefined && { note: newCorroboration.note }),
-        ...(newCorroboration.evidencePostId !== undefined && {
-          evidencePostId: newCorroboration.evidencePostId,
-        }),
-        ...(newCorroboration.evidenceType !== undefined && {
-          evidenceType: newCorroboration.evidenceType,
-        }),
-        ...(newCorroboration.evidenceContent !== undefined && {
-          evidenceContent: newCorroboration.evidenceContent,
-        }),
-        ...(newCorroboration.evidenceDescription !== undefined && {
-          evidenceDescription: newCorroboration.evidenceDescription,
-        }),
-      };
-
-      // Generate CID-based ID
-      const cid = calculateCIDFromJSON(corroboration);
-      const corroborationWithId: Corroboration = {
-        ...corroboration,
-        id: createCorroborationId(cid),
-      };
-
-      // Add to session cache
-      userCorroborations.unshift(corroborationWithId);
-
-      return ok(corroborationWithId.id);
+      // Delegate to singleton service which maintains the unified cache
+      return corroborationService.corroborate(newCorroboration);
     },
     []
   );

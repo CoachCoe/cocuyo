@@ -24,13 +24,13 @@ pUSD is a Polkadot-native stablecoin that enables censorship-resistant payments 
 
 ### Why pUSD?
 
-| Challenge | Traditional Finance | pUSD Solution |
-|-----------|--------------------|--------------|
-| Bank account frozen | Outlet loses all funds | Funds in user-controlled wallets |
-| Payment processor blocks region | No way to receive donations | Direct wallet-to-wallet transfers |
-| Hyperinflation | Local currency worthless | Stable USD-pegged value |
-| Wire transfer fees | 3-5% fees + delays | <$0.01 fees, instant settlement |
-| Diaspora contributions | Complex international transfers | Simple wallet transfer |
+| Challenge                       | Traditional Finance             | pUSD Solution                     |
+| ------------------------------- | ------------------------------- | --------------------------------- |
+| Bank account frozen             | Outlet loses all funds          | Funds in user-controlled wallets  |
+| Payment processor blocks region | No way to receive donations     | Direct wallet-to-wallet transfers |
+| Hyperinflation                  | Local currency worthless        | Stable USD-pegged value           |
+| Wire transfer fees              | 3-5% fees + delays              | <$0.01 fees, instant settlement   |
+| Diaspora contributions          | Complex international transfers | Simple wallet transfer            |
 
 ### Core Principle
 
@@ -71,6 +71,7 @@ The Firefly Network creates **real, recurring demand** for pUSD through multiple
 ```
 
 **pUSD Flow:**
+
 - Funder deposits pUSD to create bounty
 - pUSD held in escrow until fulfillment
 - On verification, pUSD released to contributing firefly(s)
@@ -112,6 +113,7 @@ The Firefly Network creates **real, recurring demand** for pUSD through multiple
 ```
 
 **pUSD Flow:**
+
 - Supporters contribute pUSD monthly (crowdstacking)
 - Treasury holds pUSD as stable reserve
 - Optional: Deploy pUSD in DeFi for yield
@@ -147,6 +149,7 @@ The Firefly Network creates **real, recurring demand** for pUSD through multiple
 ```
 
 **pUSD Flow:**
+
 - Outlets pay journalists in pUSD
 - Cross-border payments without banking friction
 - Stable value protects purchasing power
@@ -177,6 +180,7 @@ The Firefly Network creates **real, recurring demand** for pUSD through multiple
 ```
 
 **pUSD Flow:**
+
 - Outlets pay each other for collaboration
 - No SWIFT fees or correspondent banking
 - Instant settlement
@@ -211,6 +215,7 @@ The Firefly Network creates **real, recurring demand** for pUSD through multiple
 ```
 
 **pUSD Flow:**
+
 - Monthly membership fees in pUSD
 - Verification staking locks pUSD
 - Accurate corroborators earn from slashed stakes
@@ -293,13 +298,13 @@ packages/
 
 ### Phase Overview
 
-| Phase | Focus | Duration | Prerequisite |
-|-------|-------|----------|--------------|
-| 1 | Currency Foundation | 1-2 weeks | — |
-| 2 | Bounty Payments | 3-4 weeks | Phase 1 |
-| 3 | Treasury Infrastructure | 4-6 weeks | Phase 2 |
-| 4 | Contributor Payments | 2-3 weeks | Phase 3 |
-| 5 | Membership & Premium | 3-4 weeks | Phase 4 |
+| Phase | Focus                   | Duration  | Prerequisite |
+| ----- | ----------------------- | --------- | ------------ |
+| 1     | Currency Foundation     | 1-2 weeks | —            |
+| 2     | Bounty Payments         | 3-4 weeks | Phase 1      |
+| 3     | Treasury Infrastructure | 4-6 weeks | Phase 2      |
+| 4     | Contributor Payments    | 2-3 weeks | Phase 3      |
+| 5     | Membership & Premium    | 3-4 weeks | Phase 4      |
 
 ### Dependency Graph
 
@@ -390,10 +395,13 @@ export function parsePUSD(amount: string): PUSDAmount {
  * Format pUSD amount for display.
  * @example formatPUSD(100_500_000n) => "100.50 pUSD"
  */
-export function formatPUSD(amount: PUSDAmount, options?: {
-  includeSymbol?: boolean;
-  minimumFractionDigits?: number;
-}): string {
+export function formatPUSD(
+  amount: PUSDAmount,
+  options?: {
+    includeSymbol?: boolean;
+    minimumFractionDigits?: number;
+  }
+): string {
   const { includeSymbol = true, minimumFractionDigits = 2 } = options ?? {};
   const value = Number(amount) / 10 ** PUSD.decimals;
   const formatted = value.toLocaleString('en-US', {
@@ -468,13 +476,7 @@ Create `/packages/types/src/currency.test.ts`:
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import {
-  parsePUSD,
-  formatPUSD,
-  addPUSD,
-  subtractPUSD,
-  createPUSDAmount,
-} from './currency';
+import { parsePUSD, formatPUSD, addPUSD, subtractPUSD, createPUSDAmount } from './currency';
 
 describe('pUSD Currency', () => {
   describe('parsePUSD', () => {
@@ -774,11 +776,7 @@ export function createAssetHubClient(config: AssetHubConfig) {
      */
     watchTransfers(
       address: PolkadotAddress,
-      callback: (transfer: {
-        from: PolkadotAddress;
-        amount: PUSDAmount;
-        txHash: string;
-      }) => void
+      callback: (transfer: { from: PolkadotAddress; amount: PUSDAmount; txHash: string }) => void
     ): () => void {
       // TODO: Subscribe to transfer events
       throw new Error('Not implemented');
@@ -900,10 +898,7 @@ export function createEscrowService(config: EscrowConfig): EscrowService {
       }
 
       // Verify distribution amounts sum to escrow amount
-      const totalDistribution = distributions.reduce(
-        (sum, d) => sum + d.amount,
-        0n
-      );
+      const totalDistribution = distributions.reduce((sum, d) => sum + d.amount, 0n);
       if (totalDistribution !== escrow.amount) {
         return {
           success: false,
@@ -1157,7 +1152,9 @@ export interface TreasuryService {
   }): Promise<readonly TreasuryAllocation[]>;
 
   /** Submit a governance proposal */
-  submitProposal(proposal: Omit<TreasuryProposal, 'id' | 'approvals' | 'status' | 'createdAt'>): Promise<TreasuryProposal>;
+  submitProposal(
+    proposal: Omit<TreasuryProposal, 'id' | 'approvals' | 'status' | 'createdAt'>
+  ): Promise<TreasuryProposal>;
 
   /** Approve a proposal */
   approveProposal(proposalId: string, approver: PolkadotAddress): Promise<TreasuryProposal>;
@@ -1325,10 +1322,7 @@ export function createContributionHandler(config: ContributionFlowConfig) {
      * Generate contribution transaction params.
      * Returns data for wallet to sign.
      */
-    prepareContribution(params: {
-      contributorAddress: PolkadotAddress;
-      amount: PUSDAmount;
-    }) {
+    prepareContribution(params: { contributorAddress: PolkadotAddress; amount: PUSDAmount }) {
       return {
         to: config.treasuryAddress,
         amount: params.amount,
@@ -1344,18 +1338,15 @@ export function createContributionHandler(config: ContributionFlowConfig) {
     watchContributions(
       onContribution: (contribution: Omit<Contribution, 'id'>) => void
     ): () => void {
-      return assetHub.watchTransfers(
-        config.treasuryAddress,
-        (transfer) => {
-          onContribution({
-            contributorAddress: transfer.from,
-            amount: transfer.amount,
-            txHash: transfer.txHash as TransactionHash,
-            isRecurring: false, // Determined by off-chain logic
-            createdAt: Date.now(),
-          });
-        }
-      );
+      return assetHub.watchTransfers(config.treasuryAddress, (transfer) => {
+        onContribution({
+          contributorAddress: transfer.from,
+          amount: transfer.amount,
+          txHash: transfer.txHash as TransactionHash,
+          isRecurring: false, // Determined by off-chain logic
+          createdAt: Date.now(),
+        });
+      });
     },
   };
 }
@@ -1415,12 +1406,12 @@ export interface Payment {
 }
 
 export type PaymentType =
-  | 'salary'          // Regular payroll
-  | 'stipend'         // Recurring support
-  | 'per_piece'       // Payment per article/investigation
-  | 'bounty_payout'   // Bounty fulfillment
-  | 'expense'         // Expense reimbursement
-  | 'grant';          // Grant distribution
+  | 'salary' // Regular payroll
+  | 'stipend' // Recurring support
+  | 'per_piece' // Payment per article/investigation
+  | 'bounty_payout' // Bounty fulfillment
+  | 'expense' // Expense reimbursement
+  | 'grant'; // Grant distribution
 
 /**
  * Batch payment for payroll.
@@ -1586,9 +1577,8 @@ export function createPaymentService(config: PaymentServiceConfig): PaymentServi
           params.direction === 'sent'
             ? payment.fromAddress === params.address
             : params.direction === 'received'
-            ? payment.toAddress === params.address
-            : payment.fromAddress === params.address ||
-              payment.toAddress === params.address;
+              ? payment.toAddress === params.address
+              : payment.fromAddress === params.address || payment.toAddress === params.address;
 
         const matchesType = !params.type || payment.type === params.type;
 
@@ -1633,26 +1623,26 @@ import type { PUSDAmount, TransactionHash } from './currency';
  * Membership tier.
  */
 export type MembershipTier =
-  | 'free'        // Basic access, no pUSD required
-  | 'supporter'   // $5/month - early access, badge
-  | 'patron'      // $25/month - voting rights, private channels
-  | 'guardian';   // $100/month - governance, direct bounty creation
+  | 'free' // Basic access, no pUSD required
+  | 'supporter' // $5/month - early access, badge
+  | 'patron' // $25/month - voting rights, private channels
+  | 'guardian'; // $100/month - governance, direct bounty creation
 
 /**
  * Membership tier configuration.
  */
-export const MEMBERSHIP_TIERS: Record<MembershipTier, {
-  name: string;
-  monthlyFee: PUSDAmount;
-  features: readonly string[];
-}> = {
+export const MEMBERSHIP_TIERS: Record<
+  MembershipTier,
+  {
+    name: string;
+    monthlyFee: PUSDAmount;
+    features: readonly string[];
+  }
+> = {
   free: {
     name: 'Observer',
     monthlyFee: 0n as PUSDAmount,
-    features: [
-      'Read all public signals',
-      'Basic corroboration',
-    ],
+    features: ['Read all public signals', 'Basic corroboration'],
   },
   supporter: {
     name: 'Supporter',
@@ -1730,20 +1720,19 @@ export interface MembershipService {
   }): Promise<Membership>;
 
   /** Upgrade/downgrade tier */
-  changeTier(params: {
-    credential: DIMCredential;
-    newTier: MembershipTier;
-  }): Promise<Membership>;
+  changeTier(params: { credential: DIMCredential; newTier: MembershipTier }): Promise<Membership>;
 
   /** Cancel subscription */
   cancel(credential: DIMCredential): Promise<Membership>;
 
   /** Process recurring payments (called by scheduler) */
-  processRenewals(): Promise<readonly {
-    credential: DIMCredential;
-    success: boolean;
-    error?: string;
-  }[]>;
+  processRenewals(): Promise<
+    readonly {
+      credential: DIMCredential;
+      success: boolean;
+      error?: string;
+    }[]
+  >;
 }
 ```
 
@@ -1753,26 +1742,26 @@ export interface MembershipService {
 
 ### Year 1 (Conservative)
 
-| Use Case | Monthly Volume | Annual Volume |
-|----------|----------------|---------------|
-| Bounty Creation | 50-100 bounties × $200 avg | $120K-240K |
-| Bounty Payouts | 80% fulfillment rate | $96K-192K |
-| Treasury Contributions | 5,000 contributors × $20 | $1.2M |
-| Journalist Payments | 5 outlets × 10 journalists × $400 | $240K |
-| Membership Fees | 2,000 paid members × $15 avg | $360K |
-| **Total pUSD Volume** | | **$2M-2.2M** |
+| Use Case               | Monthly Volume                    | Annual Volume |
+| ---------------------- | --------------------------------- | ------------- |
+| Bounty Creation        | 50-100 bounties × $200 avg        | $120K-240K    |
+| Bounty Payouts         | 80% fulfillment rate              | $96K-192K     |
+| Treasury Contributions | 5,000 contributors × $20          | $1.2M         |
+| Journalist Payments    | 5 outlets × 10 journalists × $400 | $240K         |
+| Membership Fees        | 2,000 paid members × $15 avg      | $360K         |
+| **Total pUSD Volume**  |                                   | **$2M-2.2M**  |
 
 ### Year 3 (Growth)
 
-| Use Case | Monthly Volume | Annual Volume |
-|----------|----------------|---------------|
-| Bounty Creation | 500-1000 bounties × $300 avg | $1.8M-3.6M |
-| Bounty Payouts | 80% fulfillment rate | $1.4M-2.9M |
-| Treasury Contributions | 50,000 contributors × $25 | $15M |
-| Journalist Payments | 50 outlets × 15 journalists × $600 | $5.4M |
-| Membership Fees | 20,000 paid members × $20 avg | $4.8M |
-| Alliance Settlements | 100 outlets × $5K/month | $6M |
-| **Total pUSD Volume** | | **$35M-38M** |
+| Use Case               | Monthly Volume                     | Annual Volume |
+| ---------------------- | ---------------------------------- | ------------- |
+| Bounty Creation        | 500-1000 bounties × $300 avg       | $1.8M-3.6M    |
+| Bounty Payouts         | 80% fulfillment rate               | $1.4M-2.9M    |
+| Treasury Contributions | 50,000 contributors × $25          | $15M          |
+| Journalist Payments    | 50 outlets × 15 journalists × $600 | $5.4M         |
+| Membership Fees        | 20,000 paid members × $20 avg      | $4.8M         |
+| Alliance Settlements   | 100 outlets × $5K/month            | $6M           |
+| **Total pUSD Volume**  |                                    | **$35M-38M**  |
 
 ### Key Metrics to Track
 
@@ -1804,6 +1793,7 @@ interface PUSDMetrics {
 ### Current State (No Ramps)
 
 Without on/off ramps, early adoption will be limited to:
+
 - Crypto-native diaspora members
 - NGOs/foundations comfortable with crypto
 - Journalists already using crypto for security
@@ -1848,6 +1838,7 @@ Fiat → CEX (Kraken, Coinbase) → DOT → Asset Hub → Swap to pUSD
 ### Phase 3: Direct Integration
 
 When ramps are available:
+
 - Embed ramp widgets in Firefly Network app
 - One-click contribution from bank account
 - Automatic conversion to pUSD on deposit

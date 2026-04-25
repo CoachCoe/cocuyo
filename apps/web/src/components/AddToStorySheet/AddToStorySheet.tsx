@@ -71,8 +71,7 @@ export function AddToStorySheet(): ReactElement | null {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
 
-      const firstFocusable =
-        sheetRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusable = sheetRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       if (firstFocusable !== null && firstFocusable !== undefined) {
         firstFocusable.focus();
       }
@@ -126,7 +125,7 @@ export function AddToStorySheet(): ReactElement | null {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="add-to-story-title"
@@ -134,7 +133,7 @@ export function AddToStorySheet(): ReactElement | null {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-overlay backdrop-blur-sm animate-backdrop-in"
+        className="animate-backdrop-in absolute inset-0 bg-overlay backdrop-blur-sm"
         aria-hidden="true"
       />
 
@@ -142,24 +141,21 @@ export function AddToStorySheet(): ReactElement | null {
       <div
         ref={sheetRef}
         tabIndex={-1}
-        className="relative w-full sm:max-w-lg max-h-[90vh] overflow-y-auto bg-surface-nested border border-DEFAULT rounded-t-container sm:rounded-container shadow-3 animate-slide-up sm:animate-scale-in"
+        className="animate-slide-up sm:animate-scale-in relative max-h-[90vh] w-full overflow-y-auto rounded-t-container border border-DEFAULT bg-surface-nested shadow-3 sm:max-w-lg sm:rounded-container"
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-4 sm:p-6 bg-surface-nested border-b border-DEFAULT">
-          <h2
-            id="add-to-story-title"
-            className="text-xl font-bold text-primary"
-          >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-DEFAULT border-b bg-surface-nested p-4 sm:p-6">
+          <h2 id="add-to-story-title" className="text-xl font-bold text-primary">
             Add to Story
           </h2>
           <button
             type="button"
             onClick={closeSheet}
-            className="p-2 text-secondary hover:text-primary transition-colors rounded-nested hover:bg-surface-hover"
+            className="rounded-nested p-2 text-secondary transition-colors hover:bg-surface-hover hover:text-primary"
             aria-label="Close"
           >
             <svg
-              className="w-5 h-5"
+              className="h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -176,15 +172,13 @@ export function AddToStorySheet(): ReactElement | null {
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-6">
+        <div className="space-y-6 p-4 sm:p-6">
           {/* Post preview */}
-          <div className="p-4 rounded-nested bg-surface-container border border-subtle">
+          <div className="rounded-nested border border-subtle bg-surface-container p-4">
             {post.content.title !== undefined && (
-              <p className="text-sm font-medium text-primary mb-1">{post.content.title}</p>
+              <p className="mb-1 text-sm font-medium text-primary">{post.content.title}</p>
             )}
-            <p className="text-sm text-secondary line-clamp-2">
-              {post.content.text}
-            </p>
+            <p className="line-clamp-2 text-sm text-secondary">{post.content.text}</p>
           </div>
 
           {/* Mode tabs */}
@@ -193,7 +187,7 @@ export function AddToStorySheet(): ReactElement | null {
               <button
                 type="button"
                 onClick={() => setMode('select')}
-                className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
                   mode === 'select'
                     ? 'border-[var(--fg-accent)] text-[var(--fg-accent)]'
                     : 'border-transparent text-secondary hover:text-primary'
@@ -204,7 +198,7 @@ export function AddToStorySheet(): ReactElement | null {
               <button
                 type="button"
                 onClick={() => setMode('create')}
-                className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
                   mode === 'create'
                     ? 'border-[var(--fg-accent)] text-[var(--fg-accent)]'
                     : 'border-transparent text-secondary hover:text-primary'
@@ -224,10 +218,10 @@ export function AddToStorySheet(): ReactElement | null {
                   type="button"
                   onClick={() => handleAddToStory(story.id)}
                   disabled={isSubmitting || story.postIds.includes(postId)}
-                  className="w-full p-4 rounded-nested bg-surface-container border border-subtle text-left hover:border-[var(--fg-accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full rounded-nested border border-subtle bg-surface-container p-4 text-left transition-colors hover:border-[var(--fg-accent)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <p className="text-sm font-medium text-primary">{story.title}</p>
-                  <p className="text-xs text-tertiary mt-1">
+                  <p className="mt-1 text-xs text-tertiary">
                     {story.stats.postCount} posts
                     {story.postIds.includes(postId) && ' • Already in this story'}
                   </p>
@@ -240,29 +234,27 @@ export function AddToStorySheet(): ReactElement | null {
           {mode === 'create' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-primary mb-2">
-                  Story Title
-                </label>
+                <label className="mb-2 block text-sm font-medium text-primary">Story Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Give your story a name..."
-                  className="w-full px-4 py-3 rounded-nested bg-surface-container border border-DEFAULT text-primary placeholder:text-tertiary focus:outline-none focus:border-[var(--fg-accent)] transition-colors"
+                  className="w-full rounded-nested border border-DEFAULT bg-surface-container px-4 py-3 text-primary transition-colors placeholder:text-tertiary focus:border-[var(--fg-accent)] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-primary mb-2">
+                <label className="mb-2 block text-sm font-medium text-primary">
                   Description
-                  <span className="text-tertiary font-normal"> (optional)</span>
+                  <span className="font-normal text-tertiary"> (optional)</span>
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="What is this story about?"
                   rows={3}
-                  className="w-full px-4 py-3 rounded-nested bg-surface-container border border-DEFAULT text-primary placeholder:text-tertiary focus:outline-none focus:border-[var(--fg-accent)] transition-colors resize-none"
+                  className="w-full resize-none rounded-nested border border-DEFAULT bg-surface-container px-4 py-3 text-primary transition-colors placeholder:text-tertiary focus:border-[var(--fg-accent)] focus:outline-none"
                 />
               </div>
 
@@ -270,7 +262,7 @@ export function AddToStorySheet(): ReactElement | null {
                 type="button"
                 onClick={handleCreateStory}
                 disabled={title.trim().length === 0 || isSubmitting}
-                className="w-full py-3 px-6 rounded-nested font-medium bg-[var(--fg-accent)] text-[var(--bg-primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full rounded-nested bg-[var(--fg-accent)] px-6 py-3 font-medium text-[var(--bg-primary)] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? 'Creating...' : 'Create Story'}
               </button>

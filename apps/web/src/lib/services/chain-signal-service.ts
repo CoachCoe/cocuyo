@@ -23,7 +23,7 @@ import type {
   Result,
   NewPost,
 } from '@cocuyo/types';
-import { err } from '@cocuyo/types';
+import { err, safeParsePost } from '@cocuyo/types';
 import { getBulletinClient } from '../chain/client';
 
 /**
@@ -36,14 +36,14 @@ export class ChainSignalService implements PostService {
   /**
    * Get a post by its CID.
    *
-   * Fetches the post data from Bulletin Chain and parses it.
-   * Returns null if the post doesn't exist or parsing fails.
+   * Fetches the post data from Bulletin Chain, validates, and parses it.
+   * Returns null if the post doesn't exist or validation fails.
    */
   async getPost(id: PostId, _locale?: string): Promise<Post | null> {
     try {
       const bulletin = await getBulletinClient();
-      const stored = await bulletin.fetchJson<Post>(id);
-      return stored;
+      const data = await bulletin.fetchJson<unknown>(id);
+      return safeParsePost(data);
     } catch {
       return null;
     }
@@ -100,6 +100,26 @@ export class ChainSignalService implements PostService {
   }
 
   /**
+   * Get all posts (for /posts page).
+   *
+   * TODO: Implement indexing for efficient queries.
+   * Returns empty results until indexing is available.
+   *
+   * Note: This method is an extended implementation detail, not part of
+   * the core PostService interface. Used by the posts listing page.
+   */
+  getAllPosts(_params: {
+    pagination: PaginationParams;
+    locale?: string;
+  }): Promise<PaginatedResult<PostPreview>> {
+    return Promise.resolve({
+      items: [],
+      total: 0,
+      hasMore: false,
+    });
+  }
+
+  /**
    * Illuminate a new post.
    *
    * GUARD: This method requires real DIM signing infrastructure.
@@ -124,7 +144,7 @@ export class ChainSignalService implements PostService {
     return Promise.resolve(
       err(
         'On-chain illumination requires DIM signing infrastructure. ' +
-        'Use PostServiceImpl (NEXT_PUBLIC_USE_CHAIN=false) for demos.'
+          'Use PostServiceImpl (NEXT_PUBLIC_USE_CHAIN=false) for demos.'
       )
     );
   }

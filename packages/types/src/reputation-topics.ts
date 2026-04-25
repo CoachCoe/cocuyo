@@ -16,14 +16,14 @@
  * - Relevant to investigative journalism and civic intelligence
  */
 export type ReputationTopic =
-  | 'economy'        // Prices, inflation, employment, business
-  | 'health'         // Healthcare, hospitals, medicine, public health
-  | 'politics'       // Government, elections, officials, policy
+  | 'economy' // Prices, inflation, employment, business
+  | 'health' // Healthcare, hospitals, medicine, public health
+  | 'politics' // Government, elections, officials, policy
   | 'infrastructure' // Utilities, roads, public services, transport
-  | 'human-rights'   // Detention, press freedom, protests, civil liberties
-  | 'environment'    // Pollution, water, land use, climate
-  | 'security'       // Crime, safety, policing, conflict
-  | 'education';     // Schools, universities, access, quality
+  | 'human-rights' // Detention, press freedom, protests, civil liberties
+  | 'environment' // Pollution, water, land use, climate
+  | 'security' // Crime, safety, policing, conflict
+  | 'education'; // Schools, universities, access, quality
 
 /**
  * All reputation topics as an array (for iteration).

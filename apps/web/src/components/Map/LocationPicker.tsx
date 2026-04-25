@@ -7,24 +7,22 @@
  * - Running inside Triangle (network restricted)
  * - Map fails to load
  * - User prefers manual input
+ *
+ * Features:
+ * - "Use my location" button with Host API permission handling
+ * - Click-to-select on map
+ * - Manual text input fallback
  */
 
-import {
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from 'react';
+import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
-import { canMakeExternalRequests } from '@/lib/host/detect';
+import { hasGeolocation } from '@/lib/host/detect';
+import { getGeolocation } from '@/lib/host';
 import { reverseGeocode, formatLocation, type GeoLocation } from '@/lib/geo';
 import { ManualLocationInput } from './ManualLocationInput';
 
 // Dynamic import with SSR disabled - Leaflet requires window
-const BaseMap = dynamic(
-  () => import('./BaseMap').then((m) => m.BaseMap),
-  { ssr: false }
-);
+const BaseMap = dynamic(() => import('./BaseMap').then((m) => m.BaseMap), { ssr: false });
 
 export interface LocationPickerValue {
   coordinates: GeoLocation | undefined;
@@ -41,38 +39,6 @@ interface LocationPickerProps {
 
 type InputMode = 'auto' | 'map' | 'manual';
 
-/**
- * Loading spinner for map.
- */
-function MapLoader(): ReactNode {
-  return (
-    <div className="h-64 bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-lg flex items-center justify-center">
-      <div className="flex flex-col items-center gap-2 text-[var(--fg-tertiary)]">
-        <svg
-          className="w-8 h-8 animate-spin"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
-        </svg>
-        <span className="text-sm">Loading map...</span>
-      </div>
-    </div>
-  );
-}
-
 export function LocationPicker({
   value,
   onChange,
@@ -81,13 +47,52 @@ export function LocationPicker({
   disabled = false,
 }: LocationPickerProps): ReactNode {
   const [mode, setMode] = useState<InputMode>('auto');
-  const [mapAvailable, setMapAvailable] = useState<boolean | null>(null);
+  // Map is always available since permissions are requested upfront
+  const mapAvailable = true;
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
-  // Determine if map should be available (requires network for tile loading)
+  // Track mounted state to prevent state updates after unmount
+  const mountedRef = useRef(true);
   useEffect(() => {
-    setMapAvailable(canMakeExternalRequests());
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
+
+  // Handle "Use my location" button
+  const handleUseMyLocation = useCallback(async (): Promise<void> => {
+    if (disabled) return;
+
+    setIsGettingLocation(true);
+    setLocationError(null);
+
+    try {
+      const pos = await getGeolocation({ timeout: 10000 });
+      const location = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+
+      // Reverse geocode to get location name
+      setIsGeocoding(true);
+      const result = await reverseGeocode(location.lat, location.lon);
+
+      // Guard: don't update state if unmounted during async operations
+      if (!mountedRef.current) return;
+
+      const locationName = result !== null ? formatLocation(result) : '';
+      onChange({ coordinates: location, locationName });
+    } catch {
+      if (mountedRef.current) {
+        setLocationError('Could not get your location. Click on the map instead.');
+      }
+    } finally {
+      if (mountedRef.current) {
+        setIsGettingLocation(false);
+        setIsGeocoding(false);
+      }
+    }
+  }, [disabled, onChange]);
 
   // Handle map click - reverse geocode the location
   const handleMapClick = useCallback(
@@ -98,6 +103,10 @@ export function LocationPicker({
 
       try {
         const result = await reverseGeocode(location.lat, location.lon);
+
+        // Guard: don't update state if unmounted
+        if (!mountedRef.current) return;
+
         const locationName = result ? formatLocation(result) : '';
 
         onChange({
@@ -105,13 +114,18 @@ export function LocationPicker({
           locationName,
         });
       } catch {
+        // Guard: don't update state if unmounted
+        if (!mountedRef.current) return;
+
         // If geocoding fails, still set coordinates
         onChange({
           coordinates: location,
           locationName: '',
         });
       } finally {
-        setIsGeocoding(false);
+        if (mountedRef.current) {
+          setIsGeocoding(false);
+        }
       }
     },
     [disabled, onChange]
@@ -128,32 +142,18 @@ export function LocationPicker({
     [onChange]
   );
 
-  // Determine effective mode
-  const effectiveMode =
-    mode === 'auto' ? (mapAvailable === true ? 'map' : 'manual') : mode;
+  // Determine effective mode - map is always available since permissions are requested upfront
+  const effectiveMode = mode === 'auto' ? 'map' : mode;
 
-  // Still checking availability
-  if (mapAvailable === null) {
-    return (
-      <div className="space-y-2">
-        {label && (
-          <label className="block text-sm font-medium text-[var(--fg-primary)]">
-            {label}
-          </label>
-        )}
-        <MapLoader />
-      </div>
-    );
-  }
+  // Suppress unused variable warning - kept for backwards compatibility
+  void mapAvailable;
 
   return (
     <div className="space-y-3">
       {/* Label and mode toggle */}
       <div className="flex items-center justify-between">
         {label && (
-          <label className="block text-sm font-medium text-[var(--fg-primary)]">
-            {label}
-          </label>
+          <label className="block text-sm font-medium text-[var(--fg-primary)]">{label}</label>
         )}
 
         {mapAvailable && (
@@ -161,7 +161,7 @@ export function LocationPicker({
             <button
               type="button"
               onClick={() => setMode(effectiveMode === 'map' ? 'manual' : 'map')}
-              className="px-2 py-1 rounded text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] hover:bg-[var(--bg-surface-nested)] transition-colors"
+              className="rounded px-2 py-1 text-[var(--fg-secondary)] transition-colors hover:bg-[var(--bg-surface-nested)] hover:text-[var(--fg-primary)]"
             >
               {effectiveMode === 'map' ? 'Type instead' : 'Use map'}
             </button>
@@ -171,7 +171,64 @@ export function LocationPicker({
 
       {/* Map view */}
       {effectiveMode === 'map' && (
-        <div className="space-y-2">
+        <div className="space-y-3">
+          {/* Use my location button */}
+          {hasGeolocation() && (
+            <button
+              type="button"
+              onClick={() => void handleUseMyLocation()}
+              disabled={isGettingLocation || disabled}
+              className="bg-[var(--fg-accent)]/10 hover:bg-[var(--fg-accent)]/20 flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--fg-accent)] px-4 py-2.5 text-sm font-medium text-[var(--fg-accent)] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isGettingLocation ? (
+                <>
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  <span>Getting location...</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="3" fill="currentColor" />
+                  </svg>
+                  <span>Use my location</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {locationError !== null && (
+            <div className="border-[var(--fg-error)]/30 bg-[var(--fg-error)]/10 rounded-lg border px-3 py-2 text-xs text-[var(--fg-error)]">
+              {locationError}
+            </div>
+          )}
+
+          <p className="text-center text-xs text-[var(--fg-tertiary)]">
+            or click on the map to select a location
+          </p>
+
           <BaseMap
             center={value.coordinates ?? { lat: 20, lon: 0 }}
             zoom={value.coordinates ? 12 : 2}
@@ -194,7 +251,7 @@ export function LocationPicker({
           {value.coordinates && (
             <div className="flex items-center gap-2 text-sm">
               <svg
-                className="w-4 h-4 text-[var(--fg-tertiary)]"
+                className="h-4 w-4 text-[var(--fg-tertiary)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -207,13 +264,9 @@ export function LocationPicker({
                 />
               </svg>
               {isGeocoding ? (
-                <span className="text-[var(--fg-tertiary)]">
-                  Looking up location...
-                </span>
+                <span className="text-[var(--fg-tertiary)]">Looking up location...</span>
               ) : value.locationName ? (
-                <span className="text-[var(--fg-primary)]">
-                  {value.locationName}
-                </span>
+                <span className="text-[var(--fg-primary)]">{value.locationName}</span>
               ) : (
                 <span className="text-[var(--fg-tertiary)]">
                   {value.coordinates.lat.toFixed(4)}, {value.coordinates.lon.toFixed(4)}
@@ -221,10 +274,6 @@ export function LocationPicker({
               )}
             </div>
           )}
-
-          <p className="text-xs text-[var(--fg-tertiary)]">
-            Click the map to select a location
-          </p>
         </div>
       )}
 

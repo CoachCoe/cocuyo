@@ -6,8 +6,8 @@
  * Note: Named "Signal" for backwards compatibility.
  * In the new UX model, "Signal" is now "Post" in user-facing contexts.
  *
- * Provides post operations with integrated wallet state from useSigner().
- * Handles both mock and chain implementations based on NEXT_PUBLIC_USE_CHAIN.
+ * This hook wraps the singleton signalService to provide wallet state integration.
+ * All data is stored in the singleton's cache to avoid cache divergence.
  */
 
 import { useCallback, useRef } from 'react';
@@ -23,30 +23,17 @@ import type {
   Result,
   NewPost,
 } from '@cocuyo/types';
-import { ok, err, createPostId, createDIMCredential, emptyCorroborationSummary } from '@cocuyo/types';
+import { err } from '@cocuyo/types';
 import { useSigner } from '@/lib/context/SignerContext';
-import { getBulletinClient } from '@/lib/chain/client';
-import {
-  generatePseudonym,
-  paginate,
-  filterByTopic,
-  filterByString,
-  uploadToBulletin,
-  fetchFromBulletin,
-} from '../service-utils';
+import { signalService, type SignalServiceImpl, setConnectedWallet } from '../index';
 
 export type Locale = 'en' | 'es';
-
-const USE_CHAIN = process.env.NEXT_PUBLIC_USE_CHAIN === 'true';
-
-// Session cache for user-created posts (shared across hook instances)
-const userPosts: Post[] = [];
 
 /**
  * Hook providing post service operations.
  *
- * All write operations use wallet state from useSigner().
- * Read operations work without wallet connection.
+ * All operations delegate to the singleton signalService to ensure
+ * consistent caching. Write operations use wallet state from useSigner().
  */
 export function useSignalService(): PostService {
   const { selectedAccount, isConnected } = useSigner();
@@ -58,37 +45,19 @@ export function useSignalService(): PostService {
   const connectedRef = useRef(isConnected);
   connectedRef.current = isConnected;
 
-  const getPost = useCallback(
-    async (id: PostId, _locale = 'en'): Promise<Post | null> => {
-      // Check user posts first
-      const userPost = userPosts.find((p) => p.id === id);
-      if (userPost) return userPost;
+  // Sync wallet state to singleton service when account changes
+  if (selectedAccount) {
+    setConnectedWallet(selectedAccount.address);
+  }
 
-      if (USE_CHAIN) {
-        try {
-          const bulletin = await getBulletinClient();
-          return await bulletin.fetchJson<Post>(id);
-        } catch {
-          return null;
-        }
-      }
-
-      // Try fetching from Bulletin Chain as fallback
-      return fetchFromBulletin<Post>(id);
-    },
-    []
-  );
+  // Delegate read operations directly to singleton
+  const getPost = useCallback(async (id: PostId, locale = 'en'): Promise<Post | null> => {
+    return signalService.getPost(id, locale as 'en' | 'es');
+  }, []);
 
   const getChainPosts = useCallback(
-    async (chainId: ChainId, _locale = 'en'): Promise<readonly Post[]> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return [];
-      }
-
-      // Return user-created posts for this chain
-      const userChainPosts = userPosts.filter((p) => p.chainLinks.includes(chainId));
-      return userChainPosts;
+    async (chainId: ChainId, locale = 'en'): Promise<readonly Post[]> => {
+      return signalService.getChainPosts(chainId, locale as 'en' | 'es');
     },
     []
   );
@@ -101,132 +70,50 @@ export function useSignalService(): PostService {
       pagination: PaginationParams;
       locale?: string;
     }): Promise<PaginatedResult<PostPreview>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return { items: [], total: 0, hasMore: false };
-      }
-
-      // Return user-created posts only
-      let filtered = [...userPosts];
-
-      filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
-      filtered = filterByString(filtered, (p) => p.context.locationName, params.location);
-      filtered.sort((a, b) => b.createdAt - a.createdAt);
-
-      // Convert to previews
-      const previews: PostPreview[] = filtered.map((post) => ({
-        id: post.id,
-        ...(post.content.title !== undefined && { title: post.content.title }),
-        excerpt: post.content.text.slice(0, 200),
-        topics: [...post.context.topics],
-        ...(post.context.locationName !== undefined && { locationName: post.context.locationName }),
-        status: post.status,
-        corroborationCount: post.corroborations.witnessCount + post.corroborations.expertiseCount,
-        challengeCount: post.corroborations.challengeCount,
-        createdAt: post.createdAt,
-      }));
-
-      return paginate(previews, params.pagination);
+      return signalService.getRecentPosts({
+        ...params,
+        locale: (params.locale ?? 'en') as 'en' | 'es',
+      });
     },
     []
   );
 
   const getRecentPostsForDisplay = useCallback(
-    (params: {
+    async (params: {
       topic?: string;
       location?: string;
       status?: PostStatus;
       pagination: PaginationParams;
       locale?: string;
     }): Promise<PaginatedResult<Post>> => {
-      if (USE_CHAIN) {
-        // Chain implementation - requires indexing
-        return Promise.resolve({ items: [], total: 0, hasMore: false });
+      // Use extended method if available
+      const service = signalService as SignalServiceImpl;
+      if ('getRecentPostsForDisplay' in service) {
+        return service.getRecentPostsForDisplay({
+          ...params,
+          locale: (params.locale ?? 'en') as 'en' | 'es',
+        });
       }
-
-      // Return full post objects for display components
-      let filtered = [...userPosts];
-
-      filtered = filterByTopic(filtered, (p) => [...p.context.topics], params.topic);
-      filtered = filterByString(filtered, (p) => p.context.locationName, params.location);
-      filtered.sort((a, b) => b.createdAt - a.createdAt);
-
-      return Promise.resolve(paginate(filtered, params.pagination));
+      // Fallback: getRecentPosts doesn't return full posts, so return empty
+      return { items: [], total: 0, hasMore: false };
     },
     []
   );
 
-  const illuminate = useCallback(
-    async (post: NewPost): Promise<Result<PostId, string>> => {
-      const account = accountRef.current;
-      const connected = connectedRef.current;
+  const illuminate = useCallback(async (post: NewPost): Promise<Result<PostId, string>> => {
+    const account = accountRef.current;
+    const connected = connectedRef.current;
 
-      if (!connected || !account) {
-        return err('Wallet not connected. Please connect your wallet to illuminate.');
-      }
+    if (!connected || !account) {
+      return err('Wallet not connected. Please connect your wallet to illuminate.');
+    }
 
-      if (USE_CHAIN) {
-        // Chain implementation requires DIM signing infrastructure
-        return err(
-          'On-chain illumination requires DIM signing infrastructure. ' +
-          'Use mock mode (NEXT_PUBLIC_USE_CHAIN=false) for demos.'
-        );
-      }
+    // Sync wallet state to singleton
+    setConnectedWallet(account.address);
 
-      // Session-cached implementation
-      const connectedAddress = account.address;
-      const dimCredential = createDIMCredential(`dim-${connectedAddress.slice(2, 14)}`);
-      const now = Date.now();
-
-      const fullPost: Post = {
-        id: '' as PostId,
-        author: {
-          id: connectedAddress,
-          credentialHash: dimCredential,
-          pseudonym: generatePseudonym(connectedAddress),
-          disclosureLevel: 'anonymous',
-        },
-        content: {
-          ...(post.content.title !== undefined && { title: post.content.title }),
-          text: post.content.text,
-          ...(post.content.links && { links: post.content.links }),
-          ...(post.content.media && { media: post.content.media }),
-        },
-        context: {
-          topics: [...post.context.topics],
-          ...(post.context.locationName !== undefined && { locationName: post.context.locationName }),
-          ...(post.context.location !== undefined && { location: post.context.location }),
-          ...(post.context.timeframe !== undefined && { timeframe: post.context.timeframe }),
-        },
-        dimSignature: dimCredential,
-        status: 'published',
-        corroborations: emptyCorroborationSummary(),
-        verification: {
-          status: 'unverified',
-        },
-        chainLinks: post.chainLinks ?? [],
-        createdAt: now,
-      };
-
-      // Upload to Bulletin Chain (with local fallback)
-      const uploadResult = await uploadToBulletin(fullPost);
-      if (!uploadResult.ok) {
-        return err(uploadResult.error);
-      }
-
-      // Update with CID
-      const postWithId: Post = {
-        ...fullPost,
-        id: createPostId(uploadResult.value.cid),
-      };
-
-      // Add to session cache
-      userPosts.unshift(postWithId);
-
-      return ok(postWithId.id);
-    },
-    []
-  );
+    // Delegate to singleton service which maintains the unified cache
+    return signalService.illuminate(post);
+  }, []);
 
   return {
     getPost,

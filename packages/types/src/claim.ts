@@ -13,11 +13,11 @@ import type { ClaimId, CollectiveId, DIMCredential, PostId, VerdictId } from './
 
 /** Status of a claim in the verification workflow */
 export type ClaimStatus =
-  | 'pending'       // Extracted, waiting for evidence
-  | 'under_review'  // Being reviewed by a collective
-  | 'verified'      // Confirmed as accurate
-  | 'disputed'      // Evidence is conflicting
-  | 'false'         // Determined to be inaccurate
+  | 'pending' // Extracted, waiting for evidence
+  | 'under_review' // Being reviewed by a collective
+  | 'verified' // Confirmed as accurate
+  | 'disputed' // Evidence is conflicting
+  | 'false' // Determined to be inaccurate
   | 'unverifiable'; // Cannot be verified (insufficient evidence)
 
 /**
@@ -133,10 +133,10 @@ export interface NewClaimEvidence {
  * These map to the badge colors shown on posts.
  */
 export type VerdictStatus =
-  | 'confirmed'     // Claim is accurate (gold badge)
-  | 'disputed'      // Evidence is conflicting (amber badge)
-  | 'false'         // Claim is inaccurate (red badge)
-  | 'synthetic'     // Content is AI-generated (orange badge)
+  | 'confirmed' // Claim is accurate (gold badge)
+  | 'disputed' // Evidence is conflicting (amber badge)
+  | 'false' // Claim is inaccurate (red badge)
+  | 'synthetic' // Content is AI-generated (orange badge)
   | 'inconclusive'; // Cannot determine (gray badge)
 
 /**

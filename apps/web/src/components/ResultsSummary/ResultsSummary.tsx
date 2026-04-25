@@ -13,9 +13,9 @@ interface ResultsSummaryProps {
   filteredCount: number;
   /** Total count before filtering */
   totalCount: number;
-  /** Singular word for item (e.g., "bounty") */
+  /** Singular word for item (e.g., "campaign") */
   singularWord: string;
-  /** Plural word for items (e.g., "bounties") */
+  /** Plural word for items (e.g., "campaigns") */
   pluralWord: string;
   /** "of" connector word */
   ofWord: string;
@@ -42,13 +42,12 @@ export function ResultsSummary({
       <p className="text-secondary">
         {isFiltered ? (
           <>
-            <span className="text-primary font-medium">{filteredCount}</span>
-            {' '}{ofWord}{' '}{totalCount}{' '}{countWord}
+            <span className="font-medium text-primary">{filteredCount}</span> {ofWord} {totalCount}{' '}
+            {countWord}
           </>
         ) : (
           <>
-            <span className="text-primary font-medium">{totalCount}</span>
-            {' '}{countWord}
+            <span className="font-medium text-primary">{totalCount}</span> {countWord}
           </>
         )}
       </p>
@@ -56,7 +55,7 @@ export function ResultsSummary({
         <button
           type="button"
           onClick={onClear}
-          className="text-[var(--color-firefly-gold)] hover:underline font-medium"
+          className="font-medium text-[var(--color-firefly-gold)] hover:underline"
         >
           {clearLabel}
         </button>

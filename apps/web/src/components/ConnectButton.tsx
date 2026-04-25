@@ -28,10 +28,7 @@ export function ConnectButton(): ReactNode {
   if (isConnected && selectedAccount) {
     return (
       <div className="flex items-center gap-2">
-        <div
-          className="h-2 w-2 rounded-full bg-[var(--color-corroborated)]"
-          title="Connected"
-        />
+        <div className="h-2 w-2 rounded-full bg-[var(--color-corroborated)]" title="Connected" />
         <span className="text-sm text-[var(--fg-secondary)]">
           {selectedAccount.name ?? truncateAddress(selectedAccount.address, 6, 4)}
         </span>
@@ -44,7 +41,7 @@ export function ConnectButton(): ReactNode {
     return (
       <div className="flex items-center gap-2">
         <div
-          className="h-2 w-2 rounded-full bg-[var(--fg-tertiary)] animate-pulse"
+          className="h-2 w-2 animate-pulse rounded-full bg-[var(--fg-tertiary)]"
           title="Connecting..."
         />
         <span className="text-sm text-[var(--fg-tertiary)]">...</span>
@@ -55,10 +52,7 @@ export function ConnectButton(): ReactNode {
   // Disconnected - show red dot
   return (
     <div className="flex items-center gap-2">
-      <div
-        className="h-2 w-2 rounded-full bg-[var(--color-challenged)]/60"
-        title="Disconnected"
-      />
+      <div className="bg-[var(--color-challenged)]/60 h-2 w-2 rounded-full" title="Disconnected" />
     </div>
   );
 }

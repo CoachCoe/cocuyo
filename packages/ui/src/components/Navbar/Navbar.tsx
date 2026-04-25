@@ -100,11 +100,11 @@ export function Navbar({
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-16 bg-[var(--bg-surface-main)] border-b border-[var(--border-default)]"
+      className="fixed top-0 right-0 left-0 z-50 h-16 border-b border-[var(--border-default)] bg-[var(--bg-surface-main)]"
       role="banner"
     >
       <nav
-        className="container-wide h-full flex items-center justify-between"
+        className="container-wide flex h-full items-center justify-between"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -115,38 +115,33 @@ export function Navbar({
           aria-label={homeLabel}
         >
           <FireflySymbol size={20} color="gold" />
-          <span className="font-semibold text-lg tracking-tight">
-            {brandName}
-          </span>
+          <span className="text-lg font-semibold tracking-tight">{brandName}</span>
           {stageBadge != null && (
-            <span className="px-1.5 py-0.5 text-[10px] font-medium tracking-wide border border-[var(--border-emphasis)] rounded text-[var(--fg-secondary)]">
+            <span className="rounded border border-[var(--border-emphasis)] px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-[var(--fg-secondary)]">
               {stageBadge}
             </span>
           )}
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden items-center gap-6 md:flex">
           {/* Navigation links */}
           <ul className="flex items-center gap-6">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`
-                    font-medium text-sm transition-colors relative
-                    ${
-                      isActive(link.href)
-                        ? 'text-[var(--fg-primary)]'
-                        : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
-                    }
-                  `}
+                  className={`relative text-sm font-medium transition-colors ${
+                    isActive(link.href)
+                      ? 'text-[var(--fg-primary)]'
+                      : 'text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]'
+                  } `}
                   aria-current={isActive(link.href) ? 'page' : undefined}
                 >
                   {link.label}
                   {isActive(link.href) && (
                     <span
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[var(--fg-accent)]"
+                      className="absolute right-0 -bottom-1 left-0 h-0.5 bg-[var(--fg-accent)]"
                       aria-hidden="true"
                     />
                   )}
@@ -156,29 +151,23 @@ export function Navbar({
           </ul>
 
           {walletSlot != null && (
-            <div className="border-l border-[var(--border-default)] pl-6">
-              {walletSlot}
-            </div>
+            <div className="border-l border-[var(--border-default)] pl-6">{walletSlot}</div>
           )}
 
-          {actionsSlot != null && (
-            <div className="flex items-center gap-2">
-              {actionsSlot}
-            </div>
-          )}
+          {actionsSlot != null && <div className="flex items-center gap-2">{actionsSlot}</div>}
         </div>
 
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="md:hidden p-2 text-[var(--fg-primary)]"
+          className="p-2 text-[var(--fg-primary)] md:hidden"
           onClick={toggleMobileMenu}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-menu"
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
         >
           <svg
-            className="w-6 h-6"
+            className="h-6 w-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -207,7 +196,7 @@ export function Navbar({
       {isMobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="md:hidden fixed inset-0 top-16 bg-[var(--bg-surface-main)] border-t border-[var(--border-default)] z-40"
+          className="fixed inset-0 top-16 z-40 border-t border-[var(--border-default)] bg-[var(--bg-surface-main)] md:hidden"
         >
           <div className="container-wide py-6">
             <ul className="flex flex-col gap-4">
@@ -215,16 +204,15 @@ export function Navbar({
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className={`
-                      block py-2 font-medium text-lg
-                      ${
-                        isActive(link.href)
-                          ? 'text-[var(--fg-primary)]'
-                          : 'text-[var(--fg-secondary)]'
-                      }
-                    `}
+                    className={`block py-2 text-lg font-medium ${
+                      isActive(link.href)
+                        ? 'text-[var(--fg-primary)]'
+                        : 'text-[var(--fg-secondary)]'
+                    } `}
                     aria-current={isActive(link.href) ? 'page' : undefined}
-                    onClick={() => { setIsMobileMenuOpen(false); }}
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                    }}
                   >
                     {link.label}
                   </Link>
@@ -232,14 +220,10 @@ export function Navbar({
               ))}
             </ul>
             {walletSlot != null && (
-              <div className="mt-6 pt-6 border-t border-[var(--border-default)]">
-                {walletSlot}
-              </div>
+              <div className="mt-6 border-t border-[var(--border-default)] pt-6">{walletSlot}</div>
             )}
             {actionsSlot != null && (
-              <div className="mt-4 flex items-center gap-2">
-                {actionsSlot}
-              </div>
+              <div className="mt-4 flex items-center gap-2">{actionsSlot}</div>
             )}
             <div className="mt-6">
               <Button

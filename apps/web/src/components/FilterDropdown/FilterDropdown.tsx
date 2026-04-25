@@ -72,10 +72,7 @@ export function FilterDropdown<T extends string | null>({
     return (
       <>
         {opt?.color !== undefined && (
-          <span
-            className="w-2 h-2 rounded-full shrink-0"
-            style={{ backgroundColor: opt.color }}
-          />
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: opt.color }} />
         )}
         <span>{opt?.label ?? placeholder}</span>
       </>
@@ -105,23 +102,18 @@ export function FilterDropdown<T extends string | null>({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`
-          inline-flex items-center gap-2 px-3 py-2 rounded-lg
-          text-sm font-medium transition-all duration-150
-          border
-          ${
-            hasSelection
-              ? 'bg-[var(--color-firefly-gold)]/10 border-[var(--color-firefly-gold)]/30 text-[var(--color-firefly-gold)]'
-              : 'bg-[var(--bg-surface-nested)] border-[var(--border-subtle)] text-secondary hover:border-[var(--border-emphasis)]'
-          }
-        `}
+        className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-150 ${
+          hasSelection
+            ? 'bg-[var(--color-firefly-gold)]/10 border-[var(--color-firefly-gold)]/30 text-[var(--color-firefly-gold)]'
+            : 'border-[var(--border-subtle)] bg-[var(--bg-surface-nested)] text-secondary hover:border-[var(--border-emphasis)]'
+        } `}
         style={{ minWidth }}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
         {getButtonLabel()}
         <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -132,12 +124,7 @@ export function FilterDropdown<T extends string | null>({
 
       {isOpen && (
         <div
-          className="
-            absolute top-full left-0 mt-1 z-50
-            min-w-[220px] max-h-[300px] overflow-y-auto
-            bg-[var(--bg-surface-container)] border border-[var(--border-default)]
-            rounded-lg shadow-3
-          "
+          className="absolute left-0 top-full z-50 mt-1 max-h-[300px] min-w-[220px] overflow-y-auto rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface-container)] shadow-3"
           role="listbox"
           aria-multiselectable={isMulti}
         >
@@ -145,7 +132,7 @@ export function FilterDropdown<T extends string | null>({
             <button
               type="button"
               onClick={handleClearAll}
-              className="w-full text-left px-3 py-2 text-xs text-tertiary hover:text-secondary border-b border-[var(--border-subtle)]"
+              className="w-full border-b border-[var(--border-subtle)] px-3 py-2 text-left text-xs text-tertiary hover:text-secondary"
             >
               {clearAllLabel}
             </button>
@@ -162,39 +149,42 @@ export function FilterDropdown<T extends string | null>({
                 role="option"
                 aria-selected={isSelected}
                 onClick={() => handleSelect(option.value)}
-                className={`
-                  w-full text-left px-3 py-2.5 text-sm
-                  flex items-center gap-2 transition-colors
-                  ${
-                    isSelected
-                      ? isMulti
-                        ? 'bg-[var(--color-firefly-gold)]/10 text-[var(--color-firefly-gold)]'
-                        : 'bg-[var(--bg-surface-hover)] text-primary font-medium'
-                      : 'text-secondary hover:text-primary hover:bg-[var(--bg-surface-hover)]'
-                  }
-                `}
+                className={`flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm transition-colors ${
+                  isSelected
+                    ? isMulti
+                      ? 'bg-[var(--color-firefly-gold)]/10 text-[var(--color-firefly-gold)]'
+                      : 'bg-[var(--bg-surface-hover)] font-medium text-primary'
+                    : 'text-secondary hover:bg-[var(--bg-surface-hover)] hover:text-primary'
+                } `}
               >
                 {isMulti && (
                   <span
-                    className={`
-                      w-4 h-4 rounded border flex items-center justify-center shrink-0
-                      ${
-                        isSelected
-                          ? 'bg-[var(--color-firefly-gold)] border-[var(--color-firefly-gold)]'
-                          : 'border-[var(--border-emphasis)]'
-                      }
-                    `}
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                      isSelected
+                        ? 'border-[var(--color-firefly-gold)] bg-[var(--color-firefly-gold)]'
+                        : 'border-[var(--border-emphasis)]'
+                    } `}
                   >
                     {isSelected && (
-                      <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      <svg
+                        className="h-3 w-3 text-black"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     )}
                   </span>
                 )}
                 {option.color !== undefined && (
                   <span
-                    className="w-2 h-2 rounded-full shrink-0"
+                    className="h-2 w-2 shrink-0 rounded-full"
                     style={{ backgroundColor: option.color }}
                   />
                 )}

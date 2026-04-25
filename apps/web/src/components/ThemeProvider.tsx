@@ -40,8 +40,13 @@ export function ThemeProvider({ children }: ThemeProviderProps): ReactElement {
 
   // Initialize theme from storage or system preference
   useEffect(() => {
+    let cancelled = false;
+
     const loadTheme = async (): Promise<void> => {
       const stored = await storage.read<Theme>(STORAGE_KEY);
+
+      // Guard: don't update state if unmounted
+      if (cancelled) return;
 
       if (stored === 'light' || stored === 'dark') {
         setThemeState(stored);
@@ -53,6 +58,10 @@ export function ThemeProvider({ children }: ThemeProviderProps): ReactElement {
     };
 
     void loadTheme();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Apply theme to document and persist
@@ -80,7 +89,5 @@ export function ThemeProvider({ children }: ThemeProviderProps): ReactElement {
     [theme, toggleTheme, setTheme]
   );
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

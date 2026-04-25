@@ -22,10 +22,7 @@ export interface UploadOptions {
  * Calculate CID for bytes (no chain interaction).
  * Use this to get content addresses before actual upload.
  */
-export function prepareBulletinUpload(
-  data: Uint8Array,
-  options: UploadOptions = {}
-): UploadResult {
+export function prepareBulletinUpload(data: Uint8Array, options: UploadOptions = {}): UploadResult {
   const cid = calculateCID(data);
   const gateway = options.environment === 'PREVIEWNET' ? IPFS_GATEWAYS.PREVIEWNET : undefined;
 

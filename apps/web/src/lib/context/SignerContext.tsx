@@ -130,9 +130,19 @@ const DISCONNECTED_STATE: UseSignerResult = {
   status: 'disconnected',
   isConnected: false,
   isInHost: false,
-  connect: () => Promise.resolve({ ok: false, error: new SignerNotConnectedError() } as Result<SignerAccount[], PolkadotSignerError>),
-  disconnect: () => { /* no-op when disconnected */ },
-  selectAccount: () => ({ ok: false, error: new SignerNotConnectedError() } as Result<SignerAccount, PolkadotSignerError>),
+  connect: () =>
+    Promise.resolve({ ok: false, error: new SignerNotConnectedError() } as Result<
+      SignerAccount[],
+      PolkadotSignerError
+    >),
+  disconnect: () => {
+    /* no-op when disconnected */
+  },
+  selectAccount: () =>
+    ({ ok: false, error: new SignerNotConnectedError() }) as Result<
+      SignerAccount,
+      PolkadotSignerError
+    >,
   getSigner: () => null,
   signRaw: () => Promise.resolve({ ok: false, error: new SignerNotConnectedError() }),
 };

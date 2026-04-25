@@ -29,7 +29,9 @@ export type GenesisHash = (typeof CHAINS)[ChainId];
  * @param genesisHash - The genesis hash of the chain to connect to
  * @returns A PAPI provider or null if not available
  */
-export function createChainClient(genesisHash: GenesisHash): ReturnType<typeof createPapiProvider> | null {
+export function createChainClient(
+  genesisHash: GenesisHash
+): ReturnType<typeof createPapiProvider> | null {
   try {
     return createPapiProvider(genesisHash);
   } catch {
@@ -41,6 +43,8 @@ export function createChainClient(genesisHash: GenesisHash): ReturnType<typeof c
 /**
  * Create a client for a known chain by ID.
  */
-export function createKnownChainClient(chainId: ChainId): ReturnType<typeof createPapiProvider> | null {
+export function createKnownChainClient(
+  chainId: ChainId
+): ReturnType<typeof createPapiProvider> | null {
   return createChainClient(CHAINS[chainId]);
 }

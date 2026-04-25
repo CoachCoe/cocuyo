@@ -1,2 +1,2 @@
 export { FeedPostCard } from './FeedPostCard';
-export type { FeedPostCardProps, PostBountyInfo } from './FeedPostCard';
+export type { FeedPostCardProps, FeedPostCardTranslations, PostCampaignInfo } from './FeedPostCard';

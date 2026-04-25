@@ -15,7 +15,7 @@ Despite this, Efecto Cocuyo continues to report. Their experience reveals a fund
 
 The project is named after the **cocuyo** (Pyrophorus noctilucus), a bioluminescent click beetle found throughout the Caribbean and Latin America. In Venezuelan tradition, these beetles were collected in jars to light paths through darkness. The phrase "Efecto Cocuyo" (The Firefly Effect) refers to how many small lights can collectively illuminate what power wants hidden.
 
-*Millions of tiny sparks can illuminate an entire nation.*
+_Millions of tiny sparks can illuminate an entire nation._
 
 ---
 
@@ -63,12 +63,15 @@ The Firefly Alliance is an **epistemic network nation** — a translocal communi
 Rather than individual outlets fighting alone, the Alliance creates shared infrastructure across three layers:
 
 ### Identity Layer
+
 Who belongs to the network and how trust is verified — without exposing real-world identity.
 
 ### Treasury Layer
+
 How capital is pooled, protected, and deployed for long-term resilience — not dependent on any single grant or payment processor.
 
 ### Governance Layer
+
 How the alliance coordinates participation, accountability, and collective priorities over time.
 
 ---
@@ -78,27 +81,33 @@ How the alliance coordinates participation, accountability, and collective prior
 The Firefly Alliance operates through three interconnected applications:
 
 ### dApp 1: Epistemic Nation Portal
+
 **Crowdstacking Membership**
 
 Transforms supporters from passive donors into stakeholders in pooled capital:
+
 - Contributions build a shared capital base across multiple outlets
 - Professional investment management preserves principal
 - Investment income funds operations sustainably
 - Diaspora communities can support journalism without centralized payment rails
 
 ### dApp 2: Newsroom OS
+
 **Tools for Outlets, Collectives & Journalists**
 
 Coordination infrastructure for professional journalism:
+
 - Newsroom management and collaboration tools
 - Cross-outlet story coordination
 - Collective fact-checking workflows
 - Journalist credentialing and reputation
 
 ### dApp 3: F-Network (This Codebase)
+
 **A Social Platform for Verified Voices**
 
 The public-facing layer where verified humans share and corroborate information:
+
 - Anonymous but human (DIM proof-of-personhood)
 - Signal-based information sharing (not social posts)
 - Collective verification and fact-checking
@@ -120,6 +129,7 @@ Verified human participants. Each firefly:
 - Can never be fully de-anonymized by the network
 
 This matters because:
+
 - **Whistleblowers** can share information without exposure
 - **Journalists** can protect sources cryptographically
 - **Citizens** in repressive environments can participate safely
@@ -217,6 +227,7 @@ Bounties solve the **diaspora problem**: people who have left hostile environmen
 9. **Journalism Integration**: A Newsroom OS outlet picks up the verified chain for professional investigation and publication.
 
 Throughout this process:
+
 - No one knows anyone's real identity
 - All information is cryptographically linked
 - The verification trail is transparent and auditable
@@ -228,17 +239,20 @@ Throughout this process:
 ## Why This Architecture
 
 ### Solving Financial Asphyxiation
+
 - **Bulletin Chain storage** — Content persists without servers that can be seized
 - **Polkadot treasury integration** — Funding flows without traditional banking
 - **Bounty system** — Diaspora support without payment processor dependencies
 
 ### Solving the Digital Tenant Trap
+
 - **No algorithmic suppression** — No engagement-optimizing feed
 - **No de-platforming** — Decentralized identity cannot be "banned"
 - **No Terms of Service** — Protocol rules, not corporate policy
 - **Content-addressed storage** — Signals exist independently of any platform
 
 ### Solving the Migration Paradox
+
 - **Alliance-level network effects** — Multiple outlets share one audience surface
 - **Verified identity portability** — One credential works across the ecosystem
 - **Value alignment** — Users join for mission, not features
@@ -283,15 +297,15 @@ Throughout this process:
 
 ## The Path Forward
 
-| Phase | Focus | Status |
-|-------|-------|--------|
-| Phase 1 | Static demo with mock data | Current |
-| Phase 2 | DIM integration for identity verification | Planned |
+| Phase   | Focus                                         | Status  |
+| ------- | --------------------------------------------- | ------- |
+| Phase 1 | Static demo with mock data                    | Current |
+| Phase 2 | DIM integration for identity verification     | Planned |
 | Phase 3 | Bulletin Chain integration for signal storage | Planned |
-| Phase 4 | Full corroboration and reputation system | Planned |
-| Phase 5 | Collective governance and bounty system | Planned |
-| Phase 6 | Newsroom OS integration | Future |
-| Phase 7 | Epistemic Nation Portal integration | Future |
+| Phase 4 | Full corroboration and reputation system      | Planned |
+| Phase 5 | Collective governance and bounty system       | Planned |
+| Phase 6 | Newsroom OS integration                       | Future  |
+| Phase 7 | Epistemic Nation Portal integration           | Future  |
 
 ---
 
@@ -314,4 +328,4 @@ This is not a theoretical exercise. It is infrastructure for people who face rea
 
 ---
 
-*Lights in the dark.*
+_Lights in the dark._

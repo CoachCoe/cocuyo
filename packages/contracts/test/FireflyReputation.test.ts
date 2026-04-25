@@ -86,7 +86,9 @@ describe('FireflyReputation', function () {
           authorDelta
         );
 
-      expect(await reputation.getScore(credential1, economyTopic)).to.equal(500 + corroboratorDelta);
+      expect(await reputation.getScore(credential1, economyTopic)).to.equal(
+        500 + corroboratorDelta
+      );
       expect(await reputation.getScore(credential2, economyTopic)).to.equal(500 + authorDelta);
     });
 
@@ -152,7 +154,9 @@ describe('FireflyReputation', function () {
 
       const scoreDelta = -50;
 
-      await reputation.connect(updater).recordChallenge(credential1, economyTopic, signalId, scoreDelta);
+      await reputation
+        .connect(updater)
+        .recordChallenge(credential1, economyTopic, signalId, scoreDelta);
 
       expect(await reputation.getScore(credential1, economyTopic)).to.equal(500 + scoreDelta);
     });
@@ -249,19 +253,17 @@ describe('FireflyReputation', function () {
     it('should revert if topic already registered', async function () {
       const { reputation, owner } = await loadFixture(deployFixture);
 
-      await expect(reputation.connect(owner).registerTopic('economy')).to.be.revertedWithCustomError(
-        reputation,
-        'TopicAlreadyRegistered'
-      );
+      await expect(
+        reputation.connect(owner).registerTopic('economy')
+      ).to.be.revertedWithCustomError(reputation, 'TopicAlreadyRegistered');
     });
 
     it('non-owner cannot add updaters', async function () {
       const { reputation, other } = await loadFixture(deployFixture);
 
-      await expect(reputation.connect(other).addUpdater(other.address)).to.be.revertedWithCustomError(
-        reputation,
-        'OwnableUnauthorizedAccount'
-      );
+      await expect(
+        reputation.connect(other).addUpdater(other.address)
+      ).to.be.revertedWithCustomError(reputation, 'OwnableUnauthorizedAccount');
     });
   });
 

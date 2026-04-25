@@ -67,18 +67,23 @@ export function WorkbenchFilters({
 }: WorkbenchFiltersProps): ReactElement {
   const isFiltered = activeStatus !== null || activeTopics.length > 0 || searchQuery.length > 0;
 
-  const statusOptions = useMemo<FilterOption<ClaimStatus | null>[]>(() => [
-    { value: null, label: t.all },
-    { value: 'pending', label: t.pending },
-    { value: 'under_review', label: t.underReview },
-  ], [t]);
+  const statusOptions = useMemo<FilterOption<ClaimStatus | null>[]>(
+    () => [
+      { value: null, label: t.all },
+      { value: 'pending', label: t.pending },
+      { value: 'under_review', label: t.underReview },
+    ],
+    [t]
+  );
 
-  const topicOptions = useMemo<FilterOption<string>[]>(() =>
-    topics.map((topic) => ({
-      value: topic,
-      label: topicTranslations[topic] ?? topic.replace(/-/g, ' '),
-    })),
-  [topics, topicTranslations]);
+  const topicOptions = useMemo<FilterOption<string>[]>(
+    () =>
+      topics.map((topic) => ({
+        value: topic,
+        label: topicTranslations[topic] ?? topic.replace(/-/g, ' '),
+      })),
+    [topics, topicTranslations]
+  );
 
   const handleClearAll = (): void => {
     onStatusChange(null);
@@ -95,7 +100,7 @@ export function WorkbenchFilters({
           value={searchQuery}
           onChange={onSearchChange}
           placeholder={t.searchPlaceholder}
-          className="flex-1 min-w-[200px] max-w-md"
+          className="min-w-[200px] max-w-md flex-1"
         />
 
         {/* Status dropdown */}

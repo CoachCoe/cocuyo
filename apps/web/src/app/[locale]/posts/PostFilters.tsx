@@ -75,13 +75,13 @@ export function PostFilters({
       {/* Search and topic filter row */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Search input */}
-        <div className="flex-1 min-w-[200px] max-w-md">
+        <div className="min-w-[200px] max-w-md flex-1">
           <input
             type="text"
             placeholder={t.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-nested)] border border-[var(--border-default)] rounded-md text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-firefly-gold)]/50 focus:border-[var(--color-firefly-gold)]/50"
+            className="focus:ring-[var(--color-firefly-gold)]/50 focus:border-[var(--color-firefly-gold)]/50 w-full rounded-md border border-[var(--border-default)] bg-[var(--bg-surface-nested)] px-3 py-2 text-sm text-[var(--fg-primary)] placeholder:text-[var(--fg-tertiary)] focus:outline-none focus:ring-1"
           />
         </div>
 
@@ -92,13 +92,11 @@ export function PostFilters({
               key={topic}
               type="button"
               onClick={() => handleTopicToggle(topic)}
-              className={`
-                px-3 py-1.5 text-xs rounded-full border transition-colors
-                ${activeTopics.includes(topic)
-                  ? 'bg-[var(--color-firefly-gold)] text-[var(--bg-primary)] border-[var(--color-firefly-gold)]'
-                  : 'bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)] border-[var(--border-default)] hover:border-[var(--fg-tertiary)]'
-                }
-              `}
+              className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                activeTopics.includes(topic)
+                  ? 'border-[var(--color-firefly-gold)] bg-[var(--color-firefly-gold)] text-[var(--bg-primary)]'
+                  : 'border-[var(--border-default)] bg-[var(--bg-surface-nested)] text-[var(--fg-secondary)] hover:border-[var(--fg-tertiary)]'
+              } `}
             >
               {topicTranslations[topic] ?? topic.replace(/-/g, ' ')}
             </button>

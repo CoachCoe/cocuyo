@@ -5,7 +5,7 @@
  */
 
 // Components
-export { Button } from './components/Button';
+export { Button, getButtonClassName } from './components/Button';
 export type { ButtonProps } from './components/Button';
 
 export { FireflySymbol } from './components/FireflySymbol';
@@ -18,19 +18,20 @@ export { Footer } from './components/Footer';
 export type { FooterProps } from './components/Footer';
 
 export { FeedPostCard } from './components/FeedPostCard';
-export type { FeedPostCardProps, PostBountyInfo } from './components/FeedPostCard';
+export type {
+  FeedPostCardProps,
+  FeedPostCardTranslations,
+  PostCampaignInfo,
+} from './components/FeedPostCard';
 
 export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';
 
-export { BountyStatusBadge } from './components/BountyStatusBadge';
-export type { BountyStatusBadgeProps } from './components/BountyStatusBadge';
+export { PersonhoodBadge } from './components/PersonhoodBadge';
+export type { PersonhoodBadgeProps } from './components/PersonhoodBadge';
 
 export { PaymentModeBadge } from './components/PaymentModeBadge';
 export type { PaymentModeBadgeProps } from './components/PaymentModeBadge';
-
-export { BountyCard } from './components/BountyCard';
-export type { BountyCardProps } from './components/BountyCard';
 
 export { PostCard } from './components/PostCard';
 export type { PostCardProps, PostCardTranslations } from './components/PostCard';
@@ -56,7 +57,14 @@ export type { ToastProviderProps, ToastData, ToastVariant } from './components/T
 export { ErrorBoundary } from './components/ErrorBoundary';
 export type { ErrorBoundaryProps } from './components/ErrorBoundary';
 
-export { Skeleton, SkeletonText, SkeletonCard, SkeletonPostCard, SkeletonClaimCard, SkeletonFeedPostCard } from './components/Skeleton';
+export {
+  Skeleton,
+  SkeletonText,
+  SkeletonCard,
+  SkeletonPostCard,
+  SkeletonClaimCard,
+  SkeletonFeedPostCard,
+} from './components/Skeleton';
 export type { SkeletonProps } from './components/Skeleton';
 
 export { Breadcrumb } from './components/Breadcrumb';
