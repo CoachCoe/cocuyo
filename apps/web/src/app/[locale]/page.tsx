@@ -59,21 +59,21 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
               </span>
             </div>
 
-            {/* Secondary link to About */}
+            {/* Primary CTA - Enter the app */}
             <div className="mb-6">
-              <Link
-                href="/about"
-                className="text-sm text-secondary transition-colors hover:text-primary"
-              >
-                {t('cta.howItWorks')}
+              <Link href="/explore">
+                <Button variant="illuminate" size="lg">
+                  {tActions('illuminate')}
+                </Button>
               </Link>
             </div>
 
-            {/* Primary CTA - Enter the app */}
-            <Link href="/explore">
-              <Button variant="illuminate" size="lg">
-                {tActions('illuminate')}
-              </Button>
+            {/* Secondary link to About */}
+            <Link
+              href="/about"
+              className="text-sm text-secondary transition-colors hover:text-primary"
+            >
+              {t('cta.howItWorks')}
             </Link>
           </div>
         </section>

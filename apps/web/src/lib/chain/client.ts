@@ -5,7 +5,7 @@
  * Lazily initializes and caches the chain API.
  */
 
-import { getChainAPI, type Environment, type ChainAPI } from '@polkadot-apps/chain-client';
+import { getChainAPI, type Environment, type PresetChains, type ChainClient } from '@polkadot-apps/chain-client';
 import { BulletinClient } from '@polkadot-apps/bulletin';
 
 /** Cache entry with environment tracking */
@@ -14,7 +14,7 @@ interface CacheEntry<T> {
   environment: Environment;
 }
 
-let apiCache: CacheEntry<ChainAPI<Environment>> | null = null;
+let apiCache: CacheEntry<ChainClient<PresetChains<Environment>>> | null = null;
 let bulletinCache: CacheEntry<BulletinClient> | null = null;
 
 /**
@@ -44,7 +44,7 @@ function getEnvironment(): Environment {
  * const byteFee = await api.bulletin.query.TransactionStorage.ByteFee.getValue();
  * ```
  */
-export async function getFireflyChainAPI(): Promise<ChainAPI<Environment>> {
+export async function getFireflyChainAPI(): Promise<ChainClient<PresetChains<Environment>>> {
   const env = getEnvironment();
 
   if (apiCache?.environment === env) {
