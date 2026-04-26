@@ -130,7 +130,15 @@ export default async function PostDetailPage({
 
           {/* Meta info */}
           <div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-[var(--fg-secondary)]">
-            <span>By {post.author.pseudonym}</span>
+            <span>
+              By{' '}
+              <Link
+                href={`/${locale}/profile/${post.author.credentialHash}`}
+                className="text-[var(--fg-primary)] hover:text-[var(--fg-accent)] hover:underline"
+              >
+                {post.author.pseudonym}
+              </Link>
+            </span>
             {post.context.locationName !== undefined && (
               <>
                 <span className="text-[var(--fg-tertiary)]">•</span>
