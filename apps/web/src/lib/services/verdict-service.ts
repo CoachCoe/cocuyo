@@ -142,17 +142,19 @@ export class VerdictProposalServiceImpl implements VerdictProposalService {
     return fetchFromBulletin<VerdictProposal>(proposalId);
   }
 
-  async getProposalsForClaim(claimId: ClaimId): Promise<readonly VerdictProposal[]> {
+  getProposalsForClaim(claimId: ClaimId): Promise<readonly VerdictProposal[]> {
     // Return all proposals for this claim from cache
-    return proposalsCache.filter((p) => p.claimId === claimId);
+    return Promise.resolve(proposalsCache.filter((p) => p.claimId === claimId));
   }
 
-  async getActiveProposalsForCollective(
+  getActiveProposalsForCollective(
     collectiveId: CollectiveId
   ): Promise<readonly VerdictProposal[]> {
     const now = Date.now();
-    return proposalsCache.filter(
-      (p) => p.collectiveId === collectiveId && p.status === 'voting' && p.expiresAt > now
+    return Promise.resolve(
+      proposalsCache.filter(
+        (p) => p.collectiveId === collectiveId && p.status === 'voting' && p.expiresAt > now
+      )
     );
   }
 
