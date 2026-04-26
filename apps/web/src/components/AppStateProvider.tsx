@@ -766,7 +766,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
 
       const claim = claims.get(claimId);
       // Only allow submission of pending claims
-      if (!claim || claim.status !== 'pending') {
+      if (claim?.status !== 'pending') {
         return false;
       }
 
@@ -774,7 +774,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       setClaims((prev) => {
         const newMap = new Map(prev);
         const existing = newMap.get(claimId);
-        if (existing && existing.status === 'pending') {
+        if (existing?.status === 'pending') {
           newMap.set(claimId, {
             ...existing,
             status: 'under_review',

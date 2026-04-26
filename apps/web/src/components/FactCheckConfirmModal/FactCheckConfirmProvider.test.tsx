@@ -3,9 +3,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { act } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
-import type { ReactNode } from 'react';
+import { act, type ReactNode } from 'react';
 import { FactCheckConfirmProvider, useFactCheckConfirm } from './FactCheckConfirmProvider';
 import { createClaimId } from '@cocuyo/types';
 
@@ -18,7 +17,7 @@ describe('FactCheckConfirmProvider', () => {
     vi.useRealTimers();
   });
 
-  const wrapper = ({ children }: { children: ReactNode }) => (
+  const wrapper = ({ children }: { children: ReactNode }): ReactNode => (
     <FactCheckConfirmProvider>{children}</FactCheckConfirmProvider>
   );
 
@@ -177,6 +176,7 @@ describe('FactCheckConfirmProvider', () => {
 describe('useFactCheckConfirm', () => {
   it('throws error when used outside provider', () => {
     // Suppress console.error for this test
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {

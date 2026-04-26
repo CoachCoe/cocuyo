@@ -3,7 +3,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { act } from 'react';
 import userEvent from '@testing-library/user-event';
 import { ProfileEditForm } from './ProfileEditForm';
 import { createDIMCredential, createFireflyId } from '@cocuyo/types';
@@ -47,6 +48,7 @@ vi.mock('@/lib/services', () => ({
 }));
 
 import { fireflyService } from '@/lib/services';
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const mockUpdateProfile = vi.mocked(fireflyService.updateProfile);
 
 const defaultTranslations = {

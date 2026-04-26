@@ -112,7 +112,7 @@ export function PublicProfileView({
             )}
             {/* Pseudonym */}
             <p
-              className={`${disclosureLevel === 'public' && publicInfo?.displayName ? 'text-sm text-[var(--fg-secondary)]' : 'font-display text-xl font-medium text-[var(--fg-primary)]'}`}
+              className={disclosureLevel === 'public' && publicInfo?.displayName ? 'text-sm text-[var(--fg-secondary)]' : 'font-display text-xl font-medium text-[var(--fg-primary)]'}
             >
               {pseudonym}
             </p>
