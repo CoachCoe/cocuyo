@@ -5,7 +5,9 @@
  * how much identity information they disclose. Anonymous by default.
  */
 
-import type { FireflyId, DIMCredential, CollectiveId } from './brands';
+import type { FireflyId, DIMCredential, CollectiveId, PostId } from './brands';
+import type { MemberRole } from './collective';
+import type { PersonhoodLevel } from './personhood';
 
 /**
  * How much identity the user chooses to disclose.
@@ -121,4 +123,75 @@ export interface NewFireflyProfile {
   readonly disclosureLevel: DisclosureLevel;
   readonly publicInfo?: PublicProfileInfo;
   readonly followedTopics?: readonly string[];
+}
+
+/**
+ * Fact-checker verification status.
+ * Derived from collective membership and verification count.
+ */
+export type FactCheckerStatus = 'none' | 'verified' | 'suspended';
+
+/**
+ * Summary of a firefly's membership in a collective.
+ * Used for displaying collective badges on profiles.
+ */
+export interface CollectiveMembershipSummary {
+  readonly collectiveId: CollectiveId;
+  readonly collectiveName: string;
+  readonly role: MemberRole;
+  readonly joinedAt: number;
+  readonly verificationsCompleted: number;
+}
+
+/**
+ * Editable profile fields only — narrow type for updates.
+ * System-determined fields (badges, reputation) are not editable.
+ */
+export interface FireflyProfileUpdate {
+  readonly pseudonym: string;
+  readonly disclosureLevel: DisclosureLevel;
+  readonly publicInfo?: {
+    readonly displayName?: string;
+    readonly location?: string;
+    readonly bio?: string;
+  };
+}
+
+/**
+ * Assembled public profile view.
+ * Combines stored editable data with derived system fields.
+ */
+export interface PublicFireflyProfile {
+  /** DIM credential hash (the public identifier) */
+  readonly credentialHash: DIMCredential;
+  /** User-chosen pseudonym (always visible) */
+  readonly pseudonym: string;
+  /** How much identity to disclose */
+  readonly disclosureLevel: DisclosureLevel;
+  /** Personhood verification level (derived from personhoodService) */
+  readonly personhoodLevel: PersonhoodLevel;
+  /** Public info (filtered by disclosure level) */
+  readonly publicInfo?: PublicProfileInfo;
+  /** Contribution statistics */
+  readonly stats: FireflyStats;
+  /** Reputation scores */
+  readonly reputation: ReputationScore;
+  /** Collective memberships (derived from collectiveService) */
+  readonly collectiveMemberships: readonly CollectiveMembershipSummary[];
+  /** Fact-checker status (derived from verification count) */
+  readonly factCheckerStatus: FactCheckerStatus;
+  /** When profile was created */
+  readonly createdAt: number;
+}
+
+/**
+ * Preview of a post for profile display.
+ */
+export interface PostPreviewForProfile {
+  readonly id: PostId;
+  readonly title?: string;
+  readonly excerpt: string;
+  readonly topics: readonly string[];
+  readonly corroborationCount: number;
+  readonly createdAt: number;
 }

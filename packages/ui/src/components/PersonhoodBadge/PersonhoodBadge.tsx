@@ -10,6 +10,13 @@
 import type { ReactElement } from 'react';
 import type { PersonhoodLevel } from '@cocuyo/types';
 
+/** Translation labels for personhood levels */
+export interface PersonhoodBadgeLabels {
+  full: string;
+  lite: string;
+  none: string;
+}
+
 export interface PersonhoodBadgeProps {
   /** The personhood level to display */
   level: PersonhoodLevel;
@@ -17,6 +24,8 @@ export interface PersonhoodBadgeProps {
   size?: 'sm' | 'md';
   /** Show label text alongside icon */
   showLabel?: boolean;
+  /** Optional custom labels for translation */
+  labels?: PersonhoodBadgeLabels;
 }
 
 interface BadgeConfig {
@@ -26,19 +35,25 @@ interface BadgeConfig {
   bgClass: string;
 }
 
-function getBadgeConfig(level: PersonhoodLevel): BadgeConfig {
+const DEFAULT_LABELS: PersonhoodBadgeLabels = {
+  full: 'Verified',
+  lite: 'Lite',
+  none: 'Unverified',
+};
+
+function getBadgeConfig(level: PersonhoodLevel, labels: PersonhoodBadgeLabels): BadgeConfig {
   switch (level) {
     case 'full':
       return {
         icon: '◆',
-        label: 'Verified',
+        label: labels.full,
         colorClass: 'text-[var(--fg-success)]',
         bgClass: 'bg-[var(--fg-success)]/10',
       };
     case 'lite':
       return {
         icon: '◇',
-        label: 'Lite',
+        label: labels.lite,
         colorClass: 'text-[var(--fg-secondary)]',
         bgClass: 'bg-[var(--bg-surface-nested)]',
       };
@@ -46,7 +61,7 @@ function getBadgeConfig(level: PersonhoodLevel): BadgeConfig {
     default:
       return {
         icon: '○',
-        label: 'Unverified',
+        label: labels.none,
         colorClass: 'text-[var(--fg-tertiary)]',
         bgClass: 'bg-transparent',
       };
@@ -57,8 +72,9 @@ export function PersonhoodBadge({
   level,
   size = 'sm',
   showLabel = false,
+  labels = DEFAULT_LABELS,
 }: PersonhoodBadgeProps): ReactElement {
-  const config = getBadgeConfig(level);
+  const config = getBadgeConfig(level, labels);
 
   const sizeClasses = size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-sm px-2 py-1';
 

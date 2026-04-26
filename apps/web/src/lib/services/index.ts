@@ -192,3 +192,10 @@ export {
   setPersonhoodLevel,
   clearPersonhoodCache,
 } from './personhood-service';
+
+// Firefly profile service
+export {
+  fireflyService,
+  FireflyProfileServiceImpl,
+  clearProfileCache,
+} from './firefly-service';

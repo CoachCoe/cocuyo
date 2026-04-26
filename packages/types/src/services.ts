@@ -20,6 +20,12 @@ import type {
   VerdictId,
 } from './brands';
 import type {
+  FireflyProfile,
+  FireflyProfileUpdate,
+  PublicFireflyProfile,
+  PostPreviewForProfile,
+} from './identity';
+import type {
   Campaign,
   CampaignPayout,
   CampaignPreview,
@@ -703,4 +709,51 @@ export interface PaymentRouter {
   preparePrivatePayment(params: {
     amountCents: number;
   }): Promise<Result<TransferPackage, CoinageError>>;
+}
+
+// ============================================================================
+// Firefly Profile Service
+// ============================================================================
+
+/**
+ * Firefly profile service interface.
+ *
+ * Manages firefly profiles, combining stored editable data with
+ * system-derived fields (personhood level, collective memberships).
+ */
+export interface FireflyProfileService {
+  /**
+   * Get a public profile by credential hash.
+   * Assembles stored data with derived system fields.
+   * Filters publicInfo based on disclosure level.
+   */
+  getPublicProfile(
+    credentialHash: DIMCredential,
+    locale?: string
+  ): Promise<PublicFireflyProfile | null>;
+
+  /**
+   * Get the user's own full profile.
+   * Returns all data without disclosure filtering.
+   */
+  getOwnProfile(credentialHash: DIMCredential): Promise<FireflyProfile | null>;
+
+  /**
+   * Update editable profile fields.
+   * Only pseudonym, disclosureLevel, and publicInfo can be updated.
+   */
+  updateProfile(
+    credentialHash: DIMCredential,
+    updates: FireflyProfileUpdate
+  ): Promise<Result<FireflyProfile, string>>;
+
+  /**
+   * Get posts authored by a credential.
+   * Returns paginated post previews for profile display.
+   */
+  getPostsByAuthor(
+    credentialHash: DIMCredential,
+    pagination: PaginationParams,
+    locale?: string
+  ): Promise<PaginatedResult<PostPreviewForProfile>>;
 }

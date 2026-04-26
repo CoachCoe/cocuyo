@@ -1,7 +1,8 @@
 /**
  * Profile page — Private firefly profile with reputation dashboard.
  *
- * Shows topic-weighted reputation scores for the connected user.
+ * Shows topic-weighted reputation scores for the connected user
+ * and allows editing profile fields.
  * This is a private page - users can only view their own profile.
  */
 
@@ -17,6 +18,7 @@ export default async function ProfilePage({ params }: ProfilePageProps): Promise
   const { locale } = await params;
   setRequestLocale(locale);
   const tProfile = await getTranslations('profile');
+  const tProfileEdit = await getTranslations('profileEdit');
   const tPosts = await getTranslations('posts');
 
   // Build topic translation map for common topics
@@ -58,6 +60,42 @@ export default async function ProfilePage({ params }: ProfilePageProps): Promise
               corroborations: tProfile('corroborations'),
               challenges: tProfile('challenges'),
               noActivity: tProfile('noActivity'),
+              loadError: tProfile('loadError'),
+              retry: tProfile('retry'),
+              collectives: tProfileEdit('collectives'),
+              noCollectives: tProfileEdit('noCollectives'),
+              // Edit form translations
+              editProfile: tProfileEdit('editProfile'),
+              save: tProfileEdit('save'),
+              saving: tProfileEdit('saving'),
+              cancel: tProfileEdit('cancel'),
+              pseudonym: tProfileEdit('pseudonym'),
+              pseudonymHint: tProfileEdit('pseudonymHint'),
+              displayName: tProfileEdit('displayName'),
+              displayNameHint: tProfileEdit('displayNameHint'),
+              location: tProfileEdit('location'),
+              locationHint: tProfileEdit('locationHint'),
+              bio: tProfileEdit('bio'),
+              bioHint: tProfileEdit('bioHint'),
+              disclosureLevel: tProfileEdit('disclosureLevel'),
+              anonymous: tProfileEdit('anonymous'),
+              anonymousDesc: tProfileEdit('anonymousDesc'),
+              partial: tProfileEdit('partial'),
+              partialDesc: tProfileEdit('partialDesc'),
+              public: tProfileEdit('public'),
+              publicDesc: tProfileEdit('publicDesc'),
+              saved: tProfileEdit('saved'),
+              saveFailed: tProfileEdit('saveFailed'),
+              // Badge translations
+              personhood: {
+                full: tProfileEdit('personhood.full'),
+                lite: tProfileEdit('personhood.lite'),
+                none: tProfileEdit('personhood.none'),
+              },
+              factChecker: {
+                verified: tProfileEdit('factChecker.verified'),
+                suspended: tProfileEdit('factChecker.suspended'),
+              },
             }}
           />
         </div>

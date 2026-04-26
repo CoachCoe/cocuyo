@@ -1,1 +1,5 @@
-export { PersonhoodBadge, type PersonhoodBadgeProps } from './PersonhoodBadge';
+export {
+  PersonhoodBadge,
+  type PersonhoodBadgeProps,
+  type PersonhoodBadgeLabels,
+} from './PersonhoodBadge';

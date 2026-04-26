@@ -501,7 +501,66 @@
     "posts": "Posts",
     "corroborations": "Corroborations",
     "challenges": "Challenges",
-    "noActivity": "No activity yet. Illuminate posts and corroborate to build your reputation."
+    "noActivity": "No activity yet. Illuminate posts and corroborate to build your reputation.",
+    "loadError": "Failed to load profile",
+    "retry": "Try Again"
+  },
+  "publicProfile": {
+    "title": "Firefly Profile",
+    "backToExplore": "Back to Stories",
+    "memberSince": "Member since",
+    "noCollectives": "Not a member of any collectives",
+    "noPosts": "No posts yet",
+    "posts": "Posts",
+    "corroborations": "Corroborations",
+    "reputation": "Reputation",
+    "collectives": "Collectives",
+    "recentPosts": "Recent Posts",
+    "notFound": "Profile Not Found",
+    "notFoundDescription": "This profile does not exist or has been removed.",
+    "personhood": {
+      "full": "Verified",
+      "lite": "Lite",
+      "none": "Unverified"
+    },
+    "factChecker": {
+      "verified": "Verified Fact-Checker",
+      "suspended": "Suspended"
+    }
+  },
+  "profileEdit": {
+    "editProfile": "Edit Profile",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "pseudonym": "Pseudonym",
+    "pseudonymHint": "Your public display name",
+    "displayName": "Display Name",
+    "displayNameHint": "Optional real name or organization",
+    "location": "Location",
+    "locationHint": "City, region, or general area",
+    "bio": "Bio",
+    "bioHint": "A short description about yourself",
+    "disclosureLevel": "Privacy Level",
+    "anonymous": "Anonymous",
+    "anonymousDesc": "Only your pseudonym is visible",
+    "partial": "Partial",
+    "partialDesc": "Pseudonym and location are visible",
+    "public": "Public",
+    "publicDesc": "Display name, location, and bio are visible",
+    "saved": "Profile saved",
+    "saveFailed": "Failed to save profile",
+    "collectives": "Collectives",
+    "noCollectives": "Not a member of any collectives",
+    "personhood": {
+      "full": "Verified",
+      "lite": "Lite",
+      "none": "Unverified"
+    },
+    "factChecker": {
+      "verified": "Verified Fact-Checker",
+      "suspended": "Suspended"
+    }
   },
   "emptyStates": {
     "posts": {

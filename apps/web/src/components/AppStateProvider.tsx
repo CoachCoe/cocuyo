@@ -160,6 +160,8 @@ interface AppStateActions {
   contributeToCampaign: (campaignId: CampaignId, postId: PostId) => boolean;
   /** Issue a verdict on a claim (requires outlet mode) */
   issueVerdict: (claimId: ClaimId, verdict: VerdictInput) => Verdict | null;
+  /** Submit a claim for fact-checking by collectives */
+  submitClaimForFactCheck: (claimId: ClaimId) => boolean;
   /** Create a new story chain */
   createStory: (
     title: string,
@@ -756,6 +758,37 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
     [currentUser, claims]
   );
 
+  const submitClaimForFactCheck = useCallback(
+    (claimId: ClaimId): boolean => {
+      if (!currentUser.isConnected) {
+        return false;
+      }
+
+      const claim = claims.get(claimId);
+      // Only allow submission of pending claims
+      if (!claim || claim.status !== 'pending') {
+        return false;
+      }
+
+      // Update claim status to under_review to indicate it's been submitted
+      setClaims((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(claimId);
+        if (existing && existing.status === 'pending') {
+          newMap.set(claimId, {
+            ...existing,
+            status: 'under_review',
+            updatedAt: Date.now(),
+          });
+        }
+        return newMap;
+      });
+
+      return true;
+    },
+    [currentUser, claims]
+  );
+
   const createStory = useCallback(
     (
       title: string,
@@ -981,6 +1014,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       createCampaign,
       contributeToCampaign,
       issueVerdict,
+      submitClaimForFactCheck,
       createStory,
       addPostToStory,
       toggleOutletMode,
@@ -1019,6 +1053,7 @@ export function AppStateProvider({ children }: AppStateProviderProps): ReactElem
       createCampaign,
       contributeToCampaign,
       issueVerdict,
+      submitClaimForFactCheck,
       createStory,
       addPostToStory,
       toggleOutletMode,

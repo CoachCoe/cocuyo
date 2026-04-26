@@ -28,7 +28,13 @@ export { VerificationBadge } from './components/VerificationBadge';
 export type { VerificationBadgeProps } from './components/VerificationBadge';
 
 export { PersonhoodBadge } from './components/PersonhoodBadge';
-export type { PersonhoodBadgeProps } from './components/PersonhoodBadge';
+export type { PersonhoodBadgeProps, PersonhoodBadgeLabels } from './components/PersonhoodBadge';
+
+export { FactCheckerBadge } from './components/FactCheckerBadge';
+export type { FactCheckerBadgeProps, FactCheckerBadgeLabels } from './components/FactCheckerBadge';
+
+export { CollectiveMembershipBadge } from './components/CollectiveMembershipBadge';
+export type { CollectiveMembershipBadgeProps } from './components/CollectiveMembershipBadge';
 
 export { PaymentModeBadge } from './components/PaymentModeBadge';
 export type { PaymentModeBadgeProps } from './components/PaymentModeBadge';

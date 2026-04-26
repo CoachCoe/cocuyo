@@ -20,6 +20,8 @@ import type {
   ClaimId,
   Outlet,
   OutletId,
+  DIMCredential,
+  FireflyProfileUpdate,
 } from '@cocuyo/types';
 import {
   createPostId,
@@ -448,3 +450,93 @@ export const SEED_POST_IDS = ['seed-post-001', 'seed-post-002', 'seed-post-003']
 export const SEED_CHAIN_IDS = ['seed-chain-001'];
 export const SEED_CAMPAIGN_IDS = ['seed-campaign-001'];
 export const SEED_CLAIM_IDS = ['seed-claim-001'];
+
+// ============================================================================
+// Seed Credentials and Profile Data
+// ============================================================================
+
+/**
+ * Seed DIM credentials for generating static profile pages.
+ */
+export const SEED_CREDENTIALS: readonly DIMCredential[] = [
+  DIM_CREDENTIAL_1,
+  DIM_CREDENTIAL_2,
+  DIM_CREDENTIAL_3,
+];
+
+/**
+ * Credential ID strings for use in generateStaticParams.
+ */
+export const SEED_CREDENTIAL_IDS = [
+  'dim-seed-user-001',
+  'dim-seed-user-002',
+  'dim-seed-user-003',
+];
+
+/**
+ * Localized profile data for seed users.
+ * Contains only editable fields - system fields are derived at runtime.
+ */
+const seedProfileData = {
+  'dim-seed-user-001': {
+    en: {
+      pseudonym: 'MediaWatcher',
+      disclosureLevel: 'partial' as const,
+      publicInfo: {
+        location: 'Caracas, Venezuela',
+        bio: 'Monitoring media narratives and documenting disinformation patterns across Latin America.',
+      },
+    },
+    es: {
+      pseudonym: 'MediaWatcher',
+      disclosureLevel: 'partial' as const,
+      publicInfo: {
+        location: 'Caracas, Venezuela',
+        bio: 'Monitoreando narrativas mediáticas y documentando patrones de desinformación en América Latina.',
+      },
+    },
+  },
+  'dim-seed-user-002': {
+    en: {
+      pseudonym: 'DataAnalyst',
+      disclosureLevel: 'anonymous' as const,
+    },
+    es: {
+      pseudonym: 'DataAnalyst',
+      disclosureLevel: 'anonymous' as const,
+    },
+  },
+  'dim-seed-user-003': {
+    en: {
+      pseudonym: 'SocialMonitor',
+      disclosureLevel: 'public' as const,
+      publicInfo: {
+        displayName: 'Social Media Research Team',
+        location: 'Remote',
+        bio: 'Tracking coordinated social media campaigns and analyzing engagement patterns.',
+      },
+    },
+    es: {
+      pseudonym: 'SocialMonitor',
+      disclosureLevel: 'public' as const,
+      publicInfo: {
+        displayName: 'Equipo de Investigación de Redes Sociales',
+        location: 'Remoto',
+        bio: 'Rastreando campañas coordinadas en redes sociales y analizando patrones de engagement.',
+      },
+    },
+  },
+};
+
+/**
+ * Get profile data for a seed credential.
+ * Returns null if credential is not a seed user.
+ */
+export function getSeedProfileData(
+  credentialId: string,
+  locale: Locale
+): FireflyProfileUpdate | null {
+  const profile = seedProfileData[credentialId as keyof typeof seedProfileData];
+  if (!profile) return null;
+  return profile[locale];
+}

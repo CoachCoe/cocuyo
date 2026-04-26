@@ -9,12 +9,11 @@
  */
 
 import type { ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
-import type { Claim, PostId, Campaign } from '@cocuyo/types';
+import type { Claim, PostId, Campaign, ClaimId } from '@cocuyo/types';
 import { formatPUSDCompact, createPUSDAmount } from '@cocuyo/types';
 import { useExtractClaim } from '@/components/ExtractClaimSheet';
 import { useCreateBounty } from '@/components/CreateBountySheet';
+import { useFactCheckConfirm } from '@/components/FactCheckConfirmModal';
 import { useAppState } from '@/components/AppStateProvider';
 
 interface ClaimSectionProps {
@@ -58,19 +57,26 @@ function getBountyStatus(campaigns: Campaign[]): {
   };
 }
 
+/** Truncate text for aria-labels, adding ellipsis only when content is actually truncated */
+function truncateForLabel(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return `${text.slice(0, maxLength)}...`;
+}
+
 export function ClaimSection({ claims, postId }: ClaimSectionProps): ReactElement {
-  const router = useRouter();
-  const locale = useLocale();
   const { openSheet } = useExtractClaim();
   const { openSheet: openBountySheet } = useCreateBounty();
+  const { openModal: openFactCheckModal } = useFactCheckConfirm();
   const { getClaimCampaigns } = useAppState();
 
   const handleExtractClaim = (): void => {
     openSheet(postId);
   };
 
-  const handleFactCheck = (claimId: string): void => {
-    router.push(`/${locale}/claim/${claimId}`);
+  const handleFactCheck = (claimId: ClaimId): void => {
+    openFactCheckModal(claimId);
   };
 
   return (
@@ -123,17 +129,21 @@ export function ClaimSection({ claims, postId }: ClaimSectionProps): ReactElemen
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => handleFactCheck(claim.id)}
-                      className="text-xs text-[var(--color-firefly-gold)] hover:underline"
-                    >
-                      Fact Check
-                    </button>
+                    {claim.status === 'pending' && (
+                      <button
+                        type="button"
+                        onClick={() => handleFactCheck(claim.id)}
+                        className="text-xs text-[var(--color-firefly-gold)] hover:underline"
+                        aria-label={`Submit for fact-checking: ${truncateForLabel(claim.statement, 50)}`}
+                      >
+                        Fact Check
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => openBountySheet(claim.id)}
                       className="text-xs text-[var(--fg-accent)] hover:underline"
+                      aria-label={`Fund bounty for: ${truncateForLabel(claim.statement, 50)}`}
                     >
                       Fund Bounty
                     </button>

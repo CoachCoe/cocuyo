@@ -17,6 +17,10 @@ import { TrustDrawerProvider, TrustDrawer } from '@/components/TrustDrawer';
 import { AddToStoryProvider, AddToStorySheet } from '@/components/AddToStorySheet';
 import { ExtractClaimProvider, ExtractClaimSheet } from '@/components/ExtractClaimSheet';
 import { CreateBountyProvider, CreateBountySheet } from '@/components/CreateBountySheet';
+import {
+  FactCheckConfirmProvider,
+  FactCheckConfirmModal,
+} from '@/components/FactCheckConfirmModal';
 import { AppNavbar } from '@/components/AppNavbar';
 import { routing } from '../../../i18n/routing';
 
@@ -62,15 +66,18 @@ export default async function LocaleLayout({
                           <AddToStoryProvider>
                             <ExtractClaimProvider>
                               <CreateBountyProvider>
-                                <AppNavbar />
-                                <div className="min-h-screen pt-16">{children}</div>
-                                <AppFooter />
-                                <IlluminateModal />
-                                <CorroborateDisputeSheet />
-                                <TrustDrawer />
-                                <AddToStorySheet />
-                                <ExtractClaimSheet />
-                                <CreateBountySheet />
+                                <FactCheckConfirmProvider>
+                                  <AppNavbar />
+                                  <div className="min-h-screen pt-16">{children}</div>
+                                  <AppFooter />
+                                  <IlluminateModal />
+                                  <CorroborateDisputeSheet />
+                                  <TrustDrawer />
+                                  <AddToStorySheet />
+                                  <ExtractClaimSheet />
+                                  <CreateBountySheet />
+                                  <FactCheckConfirmModal />
+                                </FactCheckConfirmProvider>
                               </CreateBountyProvider>
                             </ExtractClaimProvider>
                           </AddToStoryProvider>

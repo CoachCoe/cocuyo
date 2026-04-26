@@ -497,7 +497,66 @@
     "posts": "Publicaciones",
     "corroborations": "Corroboraciones",
     "challenges": "Cuestionamientos",
-    "noActivity": "Aún no tienes actividad. ¡Comienza iluminando una publicación!"
+    "noActivity": "Aún no tienes actividad. ¡Comienza iluminando una publicación!",
+    "loadError": "Error al cargar perfil",
+    "retry": "Intentar de Nuevo"
+  },
+  "publicProfile": {
+    "title": "Perfil de Luciérnaga",
+    "backToExplore": "Volver a Historias",
+    "memberSince": "Miembro desde",
+    "noCollectives": "No es miembro de ningún colectivo",
+    "noPosts": "Sin publicaciones aún",
+    "posts": "Publicaciones",
+    "corroborations": "Corroboraciones",
+    "reputation": "Reputación",
+    "collectives": "Colectivos",
+    "recentPosts": "Publicaciones Recientes",
+    "notFound": "Perfil No Encontrado",
+    "notFoundDescription": "Este perfil no existe o ha sido eliminado.",
+    "personhood": {
+      "full": "Verificado",
+      "lite": "Lite",
+      "none": "No Verificado"
+    },
+    "factChecker": {
+      "verified": "Verificador de Hechos",
+      "suspended": "Suspendido"
+    }
+  },
+  "profileEdit": {
+    "editProfile": "Editar Perfil",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "pseudonym": "Pseudónimo",
+    "pseudonymHint": "Tu nombre público",
+    "displayName": "Nombre para Mostrar",
+    "displayNameHint": "Nombre real u organización (opcional)",
+    "location": "Ubicación",
+    "locationHint": "Ciudad, región o área general",
+    "bio": "Biografía",
+    "bioHint": "Una breve descripción sobre ti",
+    "disclosureLevel": "Nivel de Privacidad",
+    "anonymous": "Anónimo",
+    "anonymousDesc": "Solo tu pseudónimo es visible",
+    "partial": "Parcial",
+    "partialDesc": "Pseudónimo y ubicación son visibles",
+    "public": "Público",
+    "publicDesc": "Nombre, ubicación y biografía son visibles",
+    "saved": "Perfil guardado",
+    "saveFailed": "Error al guardar perfil",
+    "collectives": "Colectivos",
+    "noCollectives": "No es miembro de ningún colectivo",
+    "personhood": {
+      "full": "Verificado",
+      "lite": "Lite",
+      "none": "No Verificado"
+    },
+    "factChecker": {
+      "verified": "Verificador de Hechos",
+      "suspended": "Suspendido"
+    }
   },
   "emptyStates": {
     "posts": {

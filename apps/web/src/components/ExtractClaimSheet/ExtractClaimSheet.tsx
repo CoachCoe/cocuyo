@@ -121,7 +121,7 @@ export function ExtractClaimSheet(): ReactElement | null {
 
   return (
     <div
-      className="animate-in fade-in fixed inset-0 z-50 flex items-end justify-center bg-black/60 duration-200"
+      className="animate-in fade-in fixed inset-0 z-[110] flex items-end justify-center bg-black/60 duration-200"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

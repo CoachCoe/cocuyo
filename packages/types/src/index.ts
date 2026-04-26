@@ -99,6 +99,11 @@ export type {
   FireflyProfile,
   FireflyAuthor,
   NewFireflyProfile,
+  FactCheckerStatus,
+  CollectiveMembershipSummary,
+  FireflyProfileUpdate,
+  PublicFireflyProfile,
+  PostPreviewForProfile,
 } from './identity';
 
 // Collective types
@@ -225,6 +230,8 @@ export type {
   CoinageError,
   CoinageService,
   PaymentRouter,
+  // Profile services
+  FireflyProfileService,
 } from './services';
 
 export { ok, err } from './services';
@@ -305,4 +312,6 @@ export {
   safeParsePost,
   safeParseChainPreview,
   safeParsePostPreview,
+  // DIM credential validation
+  validateDIMCredential,
 } from './validators';

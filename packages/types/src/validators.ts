@@ -18,6 +18,7 @@ import type {
   Post,
   ChainPreview,
   PostPreview,
+  DIMCredential,
 } from './index';
 
 // ============================================================
@@ -248,4 +249,50 @@ export function parsePostPreview(data: unknown): PostPreview {
 export function safeParsePostPreview(data: unknown): PostPreview | null {
   const result = PostPreviewSchema.safeParse(data);
   return result.success ? (result.data as PostPreview) : null;
+}
+
+// ============================================================
+// DIM Credential validators
+// ============================================================
+
+/**
+ * Validate a string as a DIM credential.
+ *
+ * DIM credentials must:
+ * - Be a non-empty string
+ * - Start with 'dim-' prefix (for seed data) or be a valid hash
+ * - Not contain path traversal characters
+ *
+ * Returns the branded DIMCredential if valid, null otherwise.
+ */
+export function validateDIMCredential(id: unknown): DIMCredential | null {
+  // Must be a string
+  if (typeof id !== 'string') {
+    return null;
+  }
+
+  // Must not be empty
+  if (id.length === 0) {
+    return null;
+  }
+
+  // Security: prevent path traversal
+  if (id.includes('..') || id.includes('/') || id.includes('\\')) {
+    return null;
+  }
+
+  // Security: prevent excessively long inputs
+  if (id.length > 256) {
+    return null;
+  }
+
+  // Must match expected format:
+  // - dim-* prefix (seed data)
+  // - or alphanumeric/hex hash (real credentials)
+  const validPattern = /^(dim-[a-zA-Z0-9-]+|[a-fA-F0-9]{32,64})$/;
+  if (!validPattern.test(id)) {
+    return null;
+  }
+
+  return createDIMCredential(id);
 }
